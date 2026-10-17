@@ -76,12 +76,20 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.defaultMuted = true;
-      videoRef.current.muted = true;
-      videoRef.current.play().catch((err) => {
-        console.warn("Background video autoplay note:", err);
-      });
+    const v = videoRef.current;
+    if (v) {
+      v.defaultMuted = true;
+      v.muted = true;
+      const tryPlay = () => {
+        v.play().catch(() => {});
+      };
+      tryPlay();
+      window.addEventListener('pointerdown', tryPlay, { once: true });
+      window.addEventListener('scroll', tryPlay, { once: true });
+      return () => {
+        window.removeEventListener('pointerdown', tryPlay);
+        window.removeEventListener('scroll', tryPlay);
+      };
     }
   }, []);
 
