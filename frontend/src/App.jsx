@@ -19,7 +19,7 @@ import AnalyticsReportsPage from './pages/AnalyticsReportsPage';
 import SettingsModelPage from './pages/SettingsModelPage';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [currentPage, setCurrentPage] = useState('landing');
   const [selectedAccount, setSelectedAccount] = useState('MULE_AGG_01');
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);

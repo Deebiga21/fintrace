@@ -22,7 +22,7 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
     {
       title: "OVERVIEW",
       items: [
-        { id: "landing", label: "Portal Landing", icon: Home },
+        { id: "landing", label: "Portal Landing", icon: Home, badge: "3D Globe" },
         { id: "dashboard", label: "Executive Dashboard", icon: LayoutDashboard },
       ]
     },

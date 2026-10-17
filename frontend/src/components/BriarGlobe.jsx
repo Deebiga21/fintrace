@@ -810,7 +810,7 @@ export default function BriarGlobe({
     let lostAt = 0
     let litNode = -1
     let litAlpha = 0
-    let visible = false
+    let visible = true
     let introStart = -1
     let introKey = ""
     let pointsIn = 1

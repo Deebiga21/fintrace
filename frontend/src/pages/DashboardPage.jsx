@@ -121,6 +121,14 @@ export default function DashboardPage({
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setCurrentPage("landing")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-electric-950/70 hover:bg-electric-900 text-electric-300 border border-electric-500/40 text-xs font-semibold transition"
+            title="Jump to the 3D Relational Network Sphere and Forensic Surveillance HUD Video"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-electric-400 animate-ping"></span>
+            <span>3D Globe & Video HUD</span>
+          </button>
+          <button
             onClick={() => setCurrentPage("upload")}
             className="px-3 py-1.5 rounded-lg bg-navy-850 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-medium transition"
           >
