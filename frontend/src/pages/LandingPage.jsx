@@ -36,6 +36,33 @@ import {
 import RiskBadge from '../components/RiskBadge';
 import BriarGlobe from '../components/BriarGlobe';
 
+class GlobeErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err) {
+    console.warn("GlobeErrorBoundary caught error:", err);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full p-6 text-center font-mono">
+          <div className="w-12 h-12 rounded-xl bg-electric-500/20 text-electric-400 flex items-center justify-center mb-3">
+            <Network className="w-6 h-6 animate-pulse" />
+          </div>
+          <span className="text-white text-sm font-bold">3D Relational Topology</span>
+          <span className="text-slate-400 text-xs mt-1">WebGL Network Stream Loaded</span>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   // Simulator State
   const [activeScenario, setActiveScenario] = useState('smurfing');
@@ -326,42 +353,44 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
 
             {/* BriarGlobe Component Container */}
             <div className="absolute inset-0 w-full h-full">
-              <BriarGlobe
-                background="transparent"
-                lines={{
-                  color: "#38BDF8",
-                  accent: "#EF4444",
-                  thickness: 0.65,
-                  opacity: 5.5,
-                  depth: 8.5
-                }}
-                hover={{
-                  reach: 24,
-                  glowSize: 140,
-                  glow: "#0284C7",
-                  pill: "rgba(15, 23, 42, 0.92)",
-                  lag: 4.2
-                }}
-                network={{
-                  nodes: 850,
-                  hubs: 26,
-                  links: 5
-                }}
-                labels={[
-                  "Mule Ring: Aggregator 01",
-                  "Phishing Smurfing Funnel",
-                  "Rapid Pass Conduit (₹4.9L)",
-                  "Circular Loop (A→B→C→D→A)",
-                  "Offshore Shell Transit",
-                  "Cybercrime Portal (1930) Link",
-                  "Crypto OTC Cashout Node",
-                  "Turnover Drain Ratio: 98.5%"
-                ]}
-                textColor="#38BDF8"
-                speed={2.2}
-                tilt={16}
-                parallax={7}
-              />
+              <GlobeErrorBoundary>
+                <BriarGlobe
+                  background="transparent"
+                  lines={{
+                    color: "#38BDF8",
+                    accent: "#EF4444",
+                    thickness: 0.65,
+                    opacity: 5.5,
+                    depth: 8.5
+                  }}
+                  hover={{
+                    reach: 24,
+                    glowSize: 140,
+                    glow: "#0284C7",
+                    pill: "rgba(15, 23, 42, 0.92)",
+                    lag: 4.2
+                  }}
+                  network={{
+                    nodes: 850,
+                    hubs: 26,
+                    links: 5
+                  }}
+                  labels={[
+                    "Mule Ring: Aggregator 01",
+                    "Phishing Smurfing Funnel",
+                    "Rapid Pass Conduit (₹4.9L)",
+                    "Circular Loop (A→B→C→D→A)",
+                    "Offshore Shell Transit",
+                    "Cybercrime Portal (1930) Link",
+                    "Crypto OTC Cashout Node",
+                    "Turnover Drain Ratio: 98.5%"
+                  ]}
+                  textColor="#38BDF8"
+                  speed={2.2}
+                  tilt={16}
+                  parallax={7}
+                />
+              </GlobeErrorBoundary>
             </div>
 
             <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-navy-900/90 px-3 py-1.5 rounded-lg border border-slate-800 backdrop-blur-md">
