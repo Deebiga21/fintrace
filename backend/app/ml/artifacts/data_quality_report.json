@@ -1,6 +1,6 @@
 {
   "dataset_health_score": 100.0,
-  "total_records": 1810,
+  "total_records": 10262,
   "duplicate_records": 0,
   "duplicate_percentage": 0.0,
   "missing_values_by_column": {
@@ -9,10 +9,17 @@
     "receiver_account": 0,
     "amount": 0,
     "timestamp": 0,
-    "status": 0,
+    "step": 0,
     "transaction_type": 0,
-    "description": 0,
-    "is_ground_truth_mule": 0
+    "status": 0,
+    "is_fraud": 0,
+    "is_ground_truth_mule": 0,
+    "is_flagged_fraud": 0,
+    "sender_old_balance": 0,
+    "sender_new_balance": 0,
+    "receiver_old_balance": 0,
+    "receiver_new_balance": 0,
+    "is_mule_account_involved": 0
   },
   "missing_percentages": {
     "transaction_id": 0.0,
@@ -20,10 +27,17 @@
     "receiver_account": 0.0,
     "amount": 0.0,
     "timestamp": 0.0,
-    "status": 0.0,
+    "step": 0.0,
     "transaction_type": 0.0,
-    "description": 0.0,
-    "is_ground_truth_mule": 0.0
+    "status": 0.0,
+    "is_fraud": 0.0,
+    "is_ground_truth_mule": 0.0,
+    "is_flagged_fraud": 0.0,
+    "sender_old_balance": 0.0,
+    "sender_new_balance": 0.0,
+    "receiver_old_balance": 0.0,
+    "receiver_new_balance": 0.0,
+    "is_mule_account_involved": 0.0
   },
   "has_temporal_ordering": true,
   "has_ground_truth_labels": true,

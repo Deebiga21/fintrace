@@ -1,37 +1,35 @@
 {
-  "evaluation_timestamp": "2026-10-17T19:53:47.645943",
-  "real_samples_count": 1810,
-  "synthetic_samples_count": 400,
-  "overall_fidelity_score": 70.08,
+  "evaluation_timestamp": "2026-10-17T20:23:58.512591",
+  "real_samples_count": 10262,
+  "synthetic_samples_count": 500,
+  "overall_fidelity_score": 81.46,
   "usable_for_augmentation": true,
   "numerical_distribution_fidelity": {
-    "wasserstein_distance_log_amount": 1.9388,
-    "ks_statistic": 0.2975,
+    "wasserstein_distance_log_amount": 1.2654,
+    "ks_statistic": 0.1626,
     "ks_pvalue": 0.0,
-    "real_mean_amount": 24841.72,
-    "synth_mean_amount": 30538.29,
-    "real_median_amount": 6259.74,
-    "synth_median_amount": 18884.84,
-    "numerical_fidelity_score": 51.53
+    "real_mean_amount": 206357.61,
+    "synth_mean_amount": 231207.24,
+    "real_median_amount": 106339.0,
+    "synth_median_amount": 148897.91,
+    "numerical_fidelity_score": 68.36
   },
   "categorical_distribution_fidelity": {
     "transaction_type": {
-      "total_variation_distance": 0.2274,
-      "fidelity_score": 77.26,
+      "total_variation_distance": 0.1088,
+      "fidelity_score": 89.12,
       "real_frequencies": {
-        "IMPS": 0.2392,
-        "NET_BANKING": 0.2127,
-        "POS": 0.2099,
-        "UPI": 0.1956,
-        "NEFT": 0.1359,
-        "RTGS": 0.0066
+        "CASH_OUT": 0.383,
+        "PAYMENT": 0.2741,
+        "CASH_IN": 0.2315,
+        "TRANSFER": 0.1021,
+        "DEBIT": 0.0093
       },
       "synth_frequencies": {
-        "IMPS": 0.3225,
-        "POS": 0.28,
-        "NEFT": 0.21,
-        "UPI": 0.15,
-        "NET_BANKING": 0.0375
+        "CASH_OUT": 0.426,
+        "PAYMENT": 0.334,
+        "CASH_IN": 0.132,
+        "TRANSFER": 0.108
       }
     },
     "status": {
@@ -48,7 +46,7 @@
   "privacy_and_memorization_audit": {
     "account_identifier_leakage": 0,
     "privacy_risk_status": "PASSED (ZERO LEAKAGE)",
-    "exact_feature_match_rate": "0.0%",
-    "novel_sample_diversity_rate": "100.0%"
+    "exact_feature_match_rate": "0.2%",
+    "novel_sample_diversity_rate": "99.8%"
   }
 }

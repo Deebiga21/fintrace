@@ -109,6 +109,7 @@ class SyntheticTransactionGenerator:
 
         # Is ground truth label
         df_out["is_ground_truth_mule"] = (conditions_arr[:, 1] == 1.0)
+        df_out["is_fraud"] = (conditions_arr[:, 1] == 1.0).astype(int)
         df_out["is_synthetic"] = True
 
         # Generate realistic synthetic identifiers

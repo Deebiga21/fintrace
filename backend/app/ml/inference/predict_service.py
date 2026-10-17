@@ -18,6 +18,7 @@ from ..data.preprocess import TransactionPreprocessor
 from ..data.build_graph import TransactionGraphBuilder
 from ..analysis.money_trail import MoneyFlowAnalyzer
 from ..analysis.community_detection import SyndicateCommunityDetector
+from ..data.inspect_dataset import DatasetInspector
 
 logger = logging.getLogger("FinTrace.ML.PredictService")
 
@@ -102,11 +103,12 @@ class MLInferenceService:
             clf_weights = os.path.join(self.artifacts_dir, "classifier_baseline.pt")
         if os.path.exists(clf_weights) and self.preprocessor is not None:
             try:
-                feat_dim = len(self.preprocessor.feature_names)
-                self.classifier_model = TabularFraudClassifier(in_features=feat_dim)
-                self.classifier_model.load_state_dict(torch.load(clf_weights, map_location=self.device, weights_only=True))
+                state_dict = torch.load(clf_weights, map_location=self.device, weights_only=True)
+                ckpt_dim = state_dict["net.0.weight"].shape[1]
+                self.classifier_model = TabularFraudClassifier(in_features=ckpt_dim)
+                self.classifier_model.load_state_dict(state_dict)
                 self.classifier_model.eval()
-                logger.info(f"Loaded Tabular Fraud Classifier weights from {os.path.basename(clf_weights)}.")
+                logger.info(f"Loaded Tabular Fraud Classifier weights from {os.path.basename(clf_weights)} (in_features={ckpt_dim}).")
             except Exception as e:
                 logger.warning(f"Could not load Classifier model: {e}")
 
@@ -247,6 +249,27 @@ class MLInferenceService:
         results.sort(key=lambda x: x["mule_probability"], reverse=True)
         return results[:limit]
 
+    def set_active_dataset(self, dataset_key: str):
+        """
+        Switches FinTrace's active transaction dataset between 'paysim' and 'benchmark'.
+        """
+        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
+        if "paysim" in dataset_key.lower():
+            target_csv = os.path.join(data_dir, "paysim_transactions.csv")
+        else:
+            target_csv = os.path.join(data_dir, "benchmark_transactions.csv")
+            if not os.path.exists(target_csv):
+                target_csv = os.path.join(data_dir, "sample_transactions.csv")
+
+        if not os.path.exists(target_csv):
+            raise FileNotFoundError(f"Dataset file {target_csv} does not exist.")
+
+        self.data_csv = target_csv
+        inspector = DatasetInspector(self.data_csv, self.artifacts_dir)
+        inspector.run_inspection()
+        self.reload_models()
+        return self.get_system_status()
+
     def get_system_status(self) -> Dict[str, Any]:
         """
         Returns full health and readiness status of GAN & GNN components.
@@ -256,6 +279,11 @@ class MLInferenceService:
             if os.path.exists(p):
                 return {"available": True, "size_bytes": os.path.getsize(p), "last_modified": os.path.getmtime(p)}
             return {"available": False}
+
+        # Check active dataset info
+        active_name = os.path.basename(self.data_csv)
+        is_paysim = "paysim" in active_name.lower()
+        active_key = "paysim" if is_paysim else "benchmark"
 
         # Load metrics if available
         gnn_metrics_path = os.path.join(self.artifacts_dir, "gnn_evaluation_metrics.json")
@@ -284,6 +312,30 @@ class MLInferenceService:
 
         return {
             "status": "OPERATIONAL",
+            "active_dataset": active_key,
+            "active_dataset_filename": active_name,
+            "available_datasets": [
+                {
+                    "key": "paysim",
+                    "name": "Kaggle PaySim1 (ealaxi/paysim1)",
+                    "provenance": "Kaggle ealaxi/paysim1 (Lopez-Rojas et al.)",
+                    "transactions": 10262,
+                    "accounts": 17755,
+                    "fraud_count": 187,
+                    "domain": "Mobile Money (TRANSFER / CASH_OUT)",
+                    "description": "Authentic mobile money simulation dataset with real fraud labels and agent accounts."
+                },
+                {
+                    "key": "benchmark",
+                    "name": "FinTrace Multi-Typology Synthetic Benchmark",
+                    "provenance": "FinTrace Research & Benchmark Generator",
+                    "transactions": 1810,
+                    "accounts": 217,
+                    "fraud_count": 55,
+                    "domain": "Indian Banking / UPI Laundering",
+                    "description": "Structured multi-hop bank transfer network with smurfing rings, circular loops, and rapid pass-through conduits."
+                }
+            ],
             "indexed_accounts_in_graph": len(self.node_to_idx),
             "total_transactions_in_memory": len(self.df_txns) if self.df_txns is not None else 0,
             "models_ready": {

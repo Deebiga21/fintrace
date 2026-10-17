@@ -1,27 +1,30 @@
 {
-  "dataset_filename": "benchmark_transactions.csv",
-  "provenance": "FinTrace Synthetic & Multi-Typology Financial Investigation Benchmark",
-  "license": "Research & Regulatory Compliance Prototype (Lawful Internal Verification)",
-  "total_transactions": 1810,
-  "total_accounts": 217,
-  "unique_senders": 199,
-  "unique_receivers": 166,
+  "dataset_filename": "paysim_transactions.csv",
+  "provenance": "Kaggle PaySim1 Synthetic Financial Dataset for Fraud Detection (ealaxi/paysim1, Lopez-Rojas et al.)",
+  "source_url": "https://www.kaggle.com/datasets/ealaxi/paysim1",
+  "license": "CC BY 4.0 International (Open Access Research Dataset)",
+  "domain": "Mobile Money Network (Agent-based mobile financial service simulation)",
+  "domain_comparison": "PaySim models mobile money agent transactions (CASH-IN, CASH-OUT, DEBIT, PAYMENT, TRANSFER). Key domain differences from Indian banking: (1) PaySim operates in an abstracted mobile-money currency without IFSC/branch routing or KYC account tiers; (2) Fraud manifests as account-takeover transfers and cashouts; (3) Transaction graphs are predominantly star-shaped around agents rather than dense circular mule rings found in corporate/UPI laundering.",
+  "total_transactions": 10262,
+  "total_accounts": 17755,
+  "unique_senders": 10262,
+  "unique_receivers": 7493,
   "financial_volume": {
-    "total_volume": 44963515.34,
-    "min_amount": 54.76,
-    "mean_amount": 24841.72,
-    "median_amount": 6259.74,
-    "max_amount": 514913.43,
-    "std_amount": 49914.82,
-    "p95_amount": 113712.55,
-    "p99_amount": 215962.78
+    "total_volume": 2117641830.24,
+    "min_amount": 12.15,
+    "mean_amount": 206357.61,
+    "median_amount": 106339.0,
+    "max_amount": 10000000.0,
+    "std_amount": 378008.87,
+    "p95_amount": 677361.81,
+    "p99_amount": 1765711.12
   },
   "class_distribution": {
-    "False": 1782,
-    "True": 28
+    "False": 10075,
+    "True": 187
   },
-  "class_imbalance_ratio": "63.64:1 (Normal:Fraud)",
+  "class_imbalance_ratio": "53.88:1 (Normal:Fraud)",
   "label_type": "transaction_and_mule_conduit_level",
   "is_synthetic": true,
-  "synthetic_disclaimer": "Labels reflect simulated financial typologies (smurfing, layering, circular loops, conduit mules) for pipeline and model benchmarking. They must not be claimed as real judicial evidence without statutory verification."
+  "synthetic_disclaimer": "PaySim is a multi-agent simulation based on aggregated mobile money logs. Results demonstrate algorithmic capability but do not establish real-world judicial accuracy in bank environments."
 }

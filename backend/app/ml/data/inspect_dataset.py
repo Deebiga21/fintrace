@@ -160,10 +160,34 @@ class DatasetInspector:
             json.dump(quality_report, f, indent=2)
 
         # 9. Produce dataset_summary.json
+        is_paysim = "paysim" in os.path.basename(self.data_path).lower() or "ps_" in os.path.basename(self.data_path).lower()
+        if is_paysim:
+            provenance = "Kaggle PaySim1 Synthetic Financial Dataset for Fraud Detection (ealaxi/paysim1, Lopez-Rojas et al.)"
+            license_info = "CC BY 4.0 International (Open Access Research Dataset)"
+            source_url = "https://www.kaggle.com/datasets/ealaxi/paysim1"
+            domain_info = "Mobile Money Network (Agent-based mobile financial service simulation)"
+            domain_diff = (
+                "PaySim models mobile money agent transactions (CASH-IN, CASH-OUT, DEBIT, PAYMENT, TRANSFER). "
+                "Key domain differences from Indian banking: (1) PaySim operates in an abstracted mobile-money currency without "
+                "IFSC/branch routing or KYC account tiers; (2) Fraud manifests as account-takeover transfers and cashouts; "
+                "(3) Transaction graphs are predominantly star-shaped around agents rather than dense circular mule rings found in corporate/UPI laundering."
+            )
+            disclaimer = "PaySim is a multi-agent simulation based on aggregated mobile money logs. Results demonstrate algorithmic capability but do not establish real-world judicial accuracy in bank environments."
+        else:
+            provenance = "FinTrace Synthetic & Multi-Typology Financial Investigation Benchmark"
+            license_info = "Research & Regulatory Compliance Prototype (Lawful Internal Verification)"
+            source_url = "FinTrace Internal Benchmark Generator"
+            domain_info = "Indian Banking & UPI Multi-Typology Mule Network"
+            domain_diff = "Custom synthetic benchmark featuring smurfing rings, circular round-trip layering, and rapid pass-through conduit mules."
+            disclaimer = "Labels reflect simulated financial typologies (smurfing, layering, circular loops, conduit mules) for pipeline and model benchmarking. They must not be claimed as real judicial evidence without statutory verification."
+
         summary = {
             "dataset_filename": os.path.basename(self.data_path),
-            "provenance": "FinTrace Synthetic & Multi-Typology Financial Investigation Benchmark",
-            "license": "Research & Regulatory Compliance Prototype (Lawful Internal Verification)",
+            "provenance": provenance,
+            "source_url": source_url,
+            "license": license_info,
+            "domain": domain_info,
+            "domain_comparison": domain_diff,
             "total_transactions": total_rows,
             "total_accounts": total_unique_accounts,
             "unique_senders": unique_senders,
@@ -173,7 +197,7 @@ class DatasetInspector:
             "class_imbalance_ratio": f"{imbalance_ratio}:1 (Normal:Fraud)",
             "label_type": "transaction_and_mule_conduit_level",
             "is_synthetic": True,
-            "synthetic_disclaimer": "Labels reflect simulated financial typologies (smurfing, layering, circular loops, conduit mules) for pipeline and model benchmarking. They must not be claimed as real judicial evidence without statutory verification."
+            "synthetic_disclaimer": disclaimer
         }
         summary_path = os.path.join(self.output_dir, "dataset_summary.json")
         with open(summary_path, "w") as f:

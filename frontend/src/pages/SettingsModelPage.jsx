@@ -49,7 +49,23 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
   const [isTrainingGNN, setIsTrainingGNN] = useState(false);
 
   const [isBenchmarking, setIsBenchmarking] = useState(false);
+  const [switchingDataset, setSwitchingDataset] = useState(false);
   const [actionError, setActionError] = useState(null);
+
+  const handleSelectDataset = async (datasetKey) => {
+    setSwitchingDataset(true);
+    setActionError(null);
+    try {
+      await api.selectDataset(datasetKey);
+      await loadAllData();
+      if (setRefreshTrigger) setRefreshTrigger((prev) => prev + 1);
+    } catch (err) {
+      console.error(err);
+      setActionError(err.message || 'Failed to switch dataset.');
+    } finally {
+      setSwitchingDataset(false);
+    }
+  };
 
   const loadAllData = async () => {
     setLoading(true);
@@ -249,12 +265,109 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
             </div>
           </div>
 
+          {/* Dataset Switcher & Benchmark Selector */}
+          <div className="p-6 rounded-2xl bg-[#0E1424] border border-slate-800 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Database className="w-4 h-4 text-rose-400" />
+                  <span>Select Active Fraud Investigation Dataset</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Seamlessly train and test the GNN and CWGAN-GP on real Kaggle PaySim transactions or multi-typology synthetic bank networks.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono text-slate-400">Active:</span>
+                <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                  {status?.active_dataset === 'paysim' ? 'Kaggle PaySim1 (ealaxi/paysim1)' : 'Multi-Typology Benchmark'}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Option 1: PaySim */}
+              <div
+                onClick={() => !switchingDataset && handleSelectDataset('paysim')}
+                className={`p-4 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
+                  status?.active_dataset === 'paysim'
+                    ? 'bg-rose-500/10 border-rose-500/50 shadow-lg shadow-rose-950/20'
+                    : 'bg-black/30 border-slate-800 hover:border-slate-700 hover:bg-slate-900/40'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-bold text-white flex items-center gap-1.5">
+                      <span>Kaggle PaySim1 Mobile Money</span>
+                      <a
+                        href="https://www.kaggle.com/datasets/ealaxi/paysim1"
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    </span>
+                    {status?.active_dataset === 'paysim' && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500 text-white">ACTIVE</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Official benchmark dataset (Lopez-Rojas et al.) simulating mobile-money financial crime with authentic TRANSFER and CASH_OUT fraud events.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-slate-800/60 text-[10px] font-mono">
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">10,262 txns</span>
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">17,755 accounts</span>
+                  <span className="px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/40">187 fraud events</span>
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">CC BY 4.0</span>
+                </div>
+              </div>
+
+              {/* Option 2: Benchmark */}
+              <div
+                onClick={() => !switchingDataset && handleSelectDataset('benchmark')}
+                className={`p-4 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
+                  status?.active_dataset !== 'paysim'
+                    ? 'bg-sky-500/10 border-sky-500/50 shadow-lg shadow-sky-950/20'
+                    : 'bg-black/30 border-slate-800 hover:border-slate-700 hover:bg-slate-900/40'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-bold text-white">FinTrace Multi-Typology Benchmark</span>
+                    {status?.active_dataset !== 'paysim' && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-500 text-white">ACTIVE</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Custom multi-hop banking topology featuring smurfing aggregation rings, circular wash loops, and rapid pass-through conduits.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-slate-800/60 text-[10px] font-mono">
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">1,810 txns</span>
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">217 accounts</span>
+                  <span className="px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800/40">55 mule rings</span>
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Multi-Hop Loops</span>
+                </div>
+              </div>
+            </div>
+
+            {switchingDataset && (
+              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center gap-2 text-xs font-mono text-slate-300">
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-400" />
+                <span>Switching active dataset, rebuilding transaction graph & reloading models...</span>
+              </div>
+            )}
+          </div>
+
           {/* Dataset Health & Summary */}
           {datasetInfo?.dataset_summary && (
             <div className="p-6 rounded-2xl bg-[#0E1424] border border-slate-800 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
-                  <Database className="w-4 h-4 text-rose-400" />
+                  <FileText className="w-4 h-4 text-rose-400" />
                   <h3 className="text-sm font-bold text-white">Dataset Summary & Provenance</h3>
                 </div>
                 <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold">
@@ -276,10 +389,23 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                   <span className="text-base font-bold text-rose-400">{datasetInfo.dataset_summary.class_imbalance_ratio}</span>
                 </div>
                 <div className="p-3 rounded-lg bg-black/40 border border-slate-800">
-                  <span className="text-slate-500 block text-[10px]">DUPLICATE RECORDS</span>
-                  <span className="text-base font-bold text-emerald-400">{datasetInfo.data_quality_report?.duplicate_records || 0} (0%)</span>
+                  <span className="text-slate-500 block text-[10px]">LICENSE / PROVENANCE</span>
+                  <span className="text-xs font-bold text-emerald-400 truncate block">{datasetInfo.dataset_summary.license}</span>
                 </div>
               </div>
+
+              {/* Domain Comparison Callout */}
+              {datasetInfo.dataset_summary.domain_comparison && (
+                <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
+                    <Info className="w-3.5 h-3.5" />
+                    <span>Domain Architecture & Research Context ({datasetInfo.dataset_summary.domain})</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                    {datasetInfo.dataset_summary.domain_comparison}
+                  </p>
+                </div>
+              )}
 
               <p className="text-xs text-slate-400 italic">
                 * {datasetInfo.dataset_summary.synthetic_disclaimer}

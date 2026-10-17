@@ -1,11 +1,11 @@
 {
   "status": "COMPLETED",
-  "epochs_trained": 40,
-  "final_critic_loss": -0.4311,
-  "final_generator_loss": 0.6655,
-  "final_wasserstein_distance": 0.6396,
-  "training_samples": 1267,
-  "total_features": 11,
+  "epochs_trained": 25,
+  "final_critic_loss": -0.1379,
+  "final_generator_loss": 2.2434,
+  "final_wasserstein_distance": 0.2363,
+  "training_samples": 7183,
+  "total_features": 10,
   "artifacts": {
     "generator_weights": "generator.pt",
     "critic_weights": "critic.pt",

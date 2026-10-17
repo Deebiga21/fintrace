@@ -94,6 +94,32 @@ def get_dataset_summary():
         "data_quality_report": quality_data
     }
 
+@router.get("/dataset/list")
+def list_available_datasets():
+    status = ml_service.get_system_status()
+    return {
+        "active_dataset": status.get("active_dataset"),
+        "active_dataset_filename": status.get("active_dataset_filename"),
+        "available_datasets": status.get("available_datasets", [])
+    }
+
+class SelectDatasetRequest(BaseModel):
+    dataset_key: str
+
+@router.post("/dataset/select")
+def select_dataset(req: SelectDatasetRequest):
+    try:
+        new_status = ml_service.set_active_dataset(req.dataset_key)
+        return {
+            "status": "SUCCESS",
+            "message": f"Active dataset switched to '{req.dataset_key}'.",
+            "active_dataset": new_status.get("active_dataset"),
+            "system_status": new_status
+        }
+    except Exception as e:
+        logger.error(f"Failed to switch dataset: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
 # ==========================================
 # 2. Tabular GAN Endpoints
 # ==========================================

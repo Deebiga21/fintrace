@@ -162,4 +162,10 @@ export const api = {
   getCircularLoopsAnalysis: () => request("/ml/analysis/loops"),
   getRapidConduitsAnalysis: () => request("/ml/analysis/conduits"),
   getArtifactPlotUrl: (plotName) => `${API_BASE}/ml/artifacts/plot/${plotName}`,
+  listDatasets: () => request("/ml/dataset/list"),
+  selectDataset: (datasetKey) =>
+    request("/ml/dataset/select", {
+      method: "POST",
+      body: JSON.stringify({ dataset_key: datasetKey }),
+    }),
 };

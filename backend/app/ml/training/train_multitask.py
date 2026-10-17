@@ -119,7 +119,7 @@ class MultiTaskGNNTrainer:
         }
 
         best_val_f1 = -1.0
-        best_state = None
+        best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
 
         logger.info(f"Training Multi-Task GraphSAGE on {num_nodes} accounts & {num_edges} transfers...")
 

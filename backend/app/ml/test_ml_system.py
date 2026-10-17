@@ -66,8 +66,11 @@ def test_ml_system_pipeline():
     # 5. Test Synthetic Quality & Privacy Audit
     synth_csv = os.path.join(artifacts_dir, "synthetic_transactions.csv")
     if os.path.exists(synth_csv):
+        df_s = pd.read_csv(synth_csv)
+        is_paysim_synth = 'CASH_OUT' in df_s.get('transaction_type', pd.Series()).values or 'TRANSFER' in df_s.get('transaction_type', pd.Series()).values
+        eval_csv = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "paysim_transactions.csv")) if is_paysim_synth else data_csv
         validator = SyntheticQualityValidator(artifacts_dir)
-        q_report = validator.evaluate(data_csv, synth_csv)
+        q_report = validator.evaluate(eval_csv, synth_csv)
         assert q_report["overall_fidelity_score"] >= 65.0
         assert q_report["privacy_and_memorization_audit"]["privacy_risk_status"] == "PASSED (ZERO LEAKAGE)"
         print("[PASS] Criterion 5 Passed: Synthetic quality validation and zero-leakage privacy audit.")

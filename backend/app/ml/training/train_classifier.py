@@ -52,14 +52,21 @@ class FraudClassifierBenchmark:
         df_real = pd.read_csv(real_csv)
         train_df, val_df, test_df, meta = preprocessor.fit_transform_split(df_real)
 
+        def get_labels(d):
+            if 'is_ground_truth_mule' in d.columns:
+                return d['is_ground_truth_mule'].values.astype(np.float32)
+            elif 'is_fraud' in d.columns:
+                return d['is_fraud'].values.astype(np.float32)
+            return np.zeros(len(d), dtype=np.float32)
+
         X_train_real = np.stack(train_df['features'].values)
-        y_train_real = train_df['is_ground_truth_mule'].values.astype(np.float32)
+        y_train_real = get_labels(train_df)
 
         X_val_real = np.stack(val_df['features'].values)
-        y_val_real = val_df['is_ground_truth_mule'].values.astype(np.float32)
+        y_val_real = get_labels(val_df)
 
         X_test_real = np.stack(test_df['features'].values)
-        y_test_real = test_df['is_ground_truth_mule'].values.astype(np.float32)
+        y_test_real = get_labels(test_df)
 
         feature_dim = X_train_real.shape[1]
 
@@ -69,7 +76,7 @@ class FraudClassifierBenchmark:
         
         df_synth = pd.read_csv(synthetic_csv)
         X_synth = preprocessor.transform_inference(df_synth)
-        y_synth = df_synth['is_ground_truth_mule'].values.astype(np.float32)
+        y_synth = get_labels(df_synth)
 
         X_train_aug = np.vstack([X_train_real, X_synth])
         y_train_aug = np.concatenate([y_train_real, y_synth])

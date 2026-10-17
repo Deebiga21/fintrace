@@ -118,17 +118,30 @@ class TransactionGraphBuilder:
         edge_attr = torch.tensor(norm_edge_amts[:, None], dtype=torch.float32)
 
         # 5. Account-level ground truth labels
-        # An account is flagged as mule if it actively acts as a mule conduit / aggregator / loop node
+        # An account is flagged as mule if it actively acts as a mule conduit / aggregator / receiver / cashout node
         account_labels = np.zeros(num_nodes, dtype=np.int64)
-        if 'is_ground_truth_mule' in df.columns:
-            mule_txns = df[df['is_ground_truth_mule'] == True]
-            # Flag sender of mule transaction as conduit/aggregator
-            for s_acc in mule_txns['sender_account'].unique():
-                if str(s_acc) in self.node_to_idx:
-                    account_labels[self.node_to_idx[str(s_acc)]] = 1
+        fraud_mask = None
+        if 'is_fraud' in df.columns:
+            fraud_mask = df['is_fraud'].astype(int) == 1
+        elif 'is_ground_truth_mule' in df.columns:
+            fraud_mask = df['is_ground_truth_mule'].astype(bool)
+
+        if fraud_mask is not None:
+            mule_txns = df[fraud_mask]
+            for _, r in mule_txns.iterrows():
+                s_acc = str(r['sender_account'])
+                d_acc = str(r['receiver_account'])
+                tx_type = str(r.get('transaction_type', '')).upper()
+                
+                # Senders of fraud/cashout or smurfing are mules/compromised
+                if s_acc in self.node_to_idx:
+                    account_labels[self.node_to_idx[s_acc]] = 1
+                # Receivers of fraudulent transfer are mule collection accounts
+                if 'TRANSFER' in tx_type and d_acc in self.node_to_idx:
+                    account_labels[self.node_to_idx[d_acc]] = 1
 
         y = torch.tensor(account_labels, dtype=torch.long)
-        edge_y = torch.tensor(df['is_ground_truth_mule'].values.astype(np.int64), dtype=torch.long) if 'is_ground_truth_mule' in df.columns else None
+        edge_y = torch.tensor(fraud_mask.values.astype(np.int64), dtype=torch.long) if fraud_mask is not None else None
 
         # Build PyG Data object
         data = Data(
