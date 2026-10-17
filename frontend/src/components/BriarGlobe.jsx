@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { AnimatePresence, motion } from "motion/react"
 
 const TAU = Math.PI * 2
 const FILL = 0.86
@@ -1247,35 +1246,30 @@ export default function BriarGlobe({
         }}
       >
         <div style={{ transform: "translate(-50%, -50%)" }}>
-          <AnimatePresence>
-            {word !== null && (
-              <motion.div
-                key="pill"
-                initial={{ opacity: 0, scale: 0.82, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 4 }}
-                transition={transition}
-                style={{
-                  padding: "0.5em 1.1em",
-                  borderRadius: 999,
-                  backgroundColor: resolvedHover.pill,
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                  border: "1px solid rgba(56, 189, 248, 0.4)",
-                  boxShadow: "0 4px 20px -2px rgba(56, 189, 248, 0.35)",
-                  color: textColor,
-                  whiteSpace: "nowrap",
-                  userSelect: "none",
-                  ...pillFont,
-                }}
-              >
-                <span className="flex items-center gap-1.5 font-mono text-xs">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block"></span>
-                  {pillWord}
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {word !== null && (
+            <div
+              key="pill"
+              className="transition-all duration-150 ease-out transform animate-in fade-in zoom-in-95"
+              style={{
+                padding: "0.5em 1.1em",
+                borderRadius: 999,
+                backgroundColor: resolvedHover.pill,
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(56, 189, 248, 0.4)",
+                boxShadow: "0 4px 20px -2px rgba(56, 189, 248, 0.35)",
+                color: textColor,
+                whiteSpace: "nowrap",
+                userSelect: "none",
+                ...pillFont,
+              }}
+            >
+              <span className="flex items-center gap-1.5 font-mono text-xs">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block"></span>
+                {pillWord}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
