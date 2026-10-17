@@ -313,19 +313,19 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           </div>
 
           {/* Right Column: 3D Interactive WebGL Thread Globe (BriarGlobe) (5 cols) */}
-          <div className="lg:col-span-5 h-[440px] rounded-2xl bg-navy-950/90 border border-slate-800 relative overflow-hidden shadow-glass flex flex-col justify-between group">
+          <div className="lg:col-span-5 h-[480px] min-h-[440px] rounded-2xl bg-navy-950/95 border border-slate-800 relative overflow-hidden shadow-glass group">
             <div className="absolute top-3 left-4 right-4 z-20 flex items-center justify-between text-xs font-mono pointer-events-none">
-              <div className="flex items-center gap-2 bg-navy-900/80 px-2.5 py-1 rounded-full border border-slate-800 backdrop-blur-sm">
+              <div className="flex items-center gap-2 bg-navy-900/90 px-2.5 py-1 rounded-full border border-slate-800 backdrop-blur-md">
                 <span className="w-2 h-2 rounded-full bg-electric-400 animate-ping"></span>
                 <span className="text-white font-bold text-[11px]">3D RELATIONAL TOPOLOGY</span>
               </div>
-              <span className="text-[10px] text-slate-400 bg-navy-900/80 px-2 py-0.5 rounded border border-slate-800">
+              <span className="text-[10px] text-slate-300 bg-navy-900/90 px-2 py-0.5 rounded border border-slate-800">
                 Hover Nodes to Inspect
               </span>
             </div>
 
-            {/* BriarGlobe Component */}
-            <div className="w-full h-full">
+            {/* BriarGlobe Component Container */}
+            <div className="absolute inset-0 w-full h-full">
               <BriarGlobe
                 background="transparent"
                 lines={{
@@ -364,9 +364,9 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
               />
             </div>
 
-            <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-navy-900/80 px-3 py-1.5 rounded-lg border border-slate-800 backdrop-blur-sm">
-              <span className="text-emerald-400 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-navy-900/90 px-3 py-1.5 rounded-lg border border-slate-800 backdrop-blur-md">
+              <span className="text-emerald-400 flex items-center gap-1 font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 Real-Time Topological Projection
               </span>
               <span className="text-slate-400">8D Sparse Feature Tensor</span>
