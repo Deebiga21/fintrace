@@ -250,47 +250,26 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   return (
     <div className="min-h-screen bg-[#0B0F19] text-slate-100 selection:bg-rose-500 selection:text-white relative overflow-x-hidden font-sans">
       
-      {/* 1. Full-Screen Ambient Motion Video Background */}
-      <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+      {/* 1. Full-Screen Elegant Watermark Animation Background */}
+      <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0 select-none">
         <video
           ref={videoRef}
           src="/the_creation_of_adam-recording.mp4"
           autoPlay
           loop
-          muted={isMuted}
+          muted={true}
           playsInline
           preload="auto"
-          className="w-full h-full object-cover opacity-25 filter contrast-125 saturate-150 transform scale-105"
+          className="w-full h-full object-cover opacity-[0.09] filter grayscale contrast-125 brightness-75 mix-blend-screen transform scale-105"
         />
-        {/* Dark Cinematic Vignette & Ambient Radial Lighting */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19]/90 via-[#0B0F19]/80 to-[#0B0F19]"></div>
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0F19]/60 to-[#0B0F19]"></div>
+        {/* Soft Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19]/95 via-[#0B0F19]/80 to-[#0B0F19]"></div>
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0F19]/50 to-[#0B0F19]"></div>
       </div>
 
       {/* Floating Ambient Corner Glows (Matching Reference Mockup ca9a92ff.png) */}
       <div className="fixed -top-40 -left-40 w-[600px] h-[600px] bg-rose-500/12 rounded-full blur-[140px] pointer-events-none z-0"></div>
       <div className="fixed -bottom-40 -right-40 w-[650px] h-[650px] bg-orange-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-
-      {/* Floating HUD Audio & Playback Controller for Background Video */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 p-2 rounded-full bg-[#0E1424]/90 border border-rose-500/40 shadow-2xl backdrop-blur-md font-mono text-xs">
-        <button
-          onClick={togglePlay}
-          className="p-2 rounded-full bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white transition"
-          title={isPlaying ? "Pause Background Animation" : "Play Background Animation"}
-        >
-          {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-        </button>
-        <button
-          onClick={toggleMute}
-          className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
-          title={isMuted ? "Unmute Audio" : "Mute Audio"}
-        >
-          {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-        </button>
-        <span className="text-[10px] text-slate-300 pr-2 hidden sm:inline">
-          Background Motion Stream
-        </span>
-      </div>
 
       {/* 2. Standalone Modern SaaS Top Navbar (Matching Reference Image) */}
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0F19]/80 border-b border-slate-800/80 px-6 lg:px-12 py-4">
