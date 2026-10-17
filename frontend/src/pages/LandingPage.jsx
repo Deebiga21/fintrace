@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ShieldAlert,
   Network,
@@ -14,6 +14,9 @@ import {
   TrendingUp,
   AlertTriangle,
   Play,
+  Pause,
+  Volume2,
+  VolumeX,
   RotateCcw,
   Sliders,
   Check,
@@ -26,13 +29,40 @@ import {
   Shield,
   Eye,
   FileText,
-  Search
+  Search,
+  Maximize2,
+  Video
 } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
+import BriarGlobe from '../components/BriarGlobe';
 
 export default function LandingPage({ setCurrentPage, onAccountSelect }) {
-  // Simulator State in Hero
+  // Simulator State
   const [activeScenario, setActiveScenario] = useState('smurfing');
+
+  // Video State
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
 
   const scenarios = {
     smurfing: {
@@ -217,10 +247,10 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </div>
       </div>
 
-      {/* 2. Hero Section with Live Interactive Mini-Graph Sandbox */}
+      {/* 2. Command Center Hero: Headline & 3D Interactive WebGL Thread Globe */}
       <div className="relative rounded-2xl bg-gradient-to-b from-navy-900 via-navy-900 to-navy-950 border border-slate-800 p-6 md:p-10 overflow-hidden shadow-2xl">
-        {/* Ambient Glow Backdrops */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-electric-500/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+        {/* Ambient Glows */}
+        <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-electric-500/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -236,7 +266,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
             </h1>
 
             <p className="text-slate-300 text-sm md:text-base leading-relaxed">
-              FinTrace AI analyzes institutional banking ledgers through deep **Graph Neural Networks (GraphSAGE)**. By learning relational multi-hop topological representations, it exposes smurfing rings, circular layering evasion, and conduit accounts that evade conventional tabular models like XGBoost.
+              FinTrace AI exposes complex money laundering networks and conduit accounts through deep **Graph Neural Networks (GraphSAGE)**. By evaluating multi-hop topological structures and fund velocity over isolated transaction slicing, it defeats smurfing aggregators and circular layering evasion.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -282,137 +312,292 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
             </div>
           </div>
 
-          {/* Right Column: Live Interactive Mini-Simulation Sandbox (5 cols) */}
-          <div className="lg:col-span-5 bg-navy-950/80 border border-slate-800 rounded-xl p-5 shadow-glass space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-rose-400" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                  LIVE FRAUD TOPOLOGY SIMULATOR
-                </h3>
+          {/* Right Column: 3D Interactive WebGL Thread Globe (BriarGlobe) (5 cols) */}
+          <div className="lg:col-span-5 h-[440px] rounded-2xl bg-navy-950/90 border border-slate-800 relative overflow-hidden shadow-glass flex flex-col justify-between group">
+            <div className="absolute top-3 left-4 right-4 z-20 flex items-center justify-between text-xs font-mono pointer-events-none">
+              <div className="flex items-center gap-2 bg-navy-900/80 px-2.5 py-1 rounded-full border border-slate-800 backdrop-blur-sm">
+                <span className="w-2 h-2 rounded-full bg-electric-400 animate-ping"></span>
+                <span className="text-white font-bold text-[11px]">3D RELATIONAL TOPOLOGY</span>
               </div>
-              <span className="text-[9px] font-mono text-electric-400 bg-electric-500/10 px-2 py-0.5 rounded border border-electric-500/20">
-                INTERACTIVE
+              <span className="text-[10px] text-slate-400 bg-navy-900/80 px-2 py-0.5 rounded border border-slate-800">
+                Hover Nodes to Inspect
               </span>
             </div>
 
-            {/* Scenario Selector Tabs */}
-            <div className="flex gap-1.5 p-1 bg-navy-900 rounded-lg border border-slate-800 text-[11px] font-mono">
-              <button
-                onClick={() => setActiveScenario('smurfing')}
-                className={`flex-1 py-1 rounded transition text-center font-semibold ${
-                  activeScenario === 'smurfing'
-                    ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Smurfing
-              </button>
-              <button
-                onClick={() => setActiveScenario('circular')}
-                className={`flex-1 py-1 rounded transition text-center font-semibold ${
-                  activeScenario === 'circular'
-                    ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Circular Loop
-              </button>
-              <button
-                onClick={() => setActiveScenario('rapid')}
-                className={`flex-1 py-1 rounded transition text-center font-semibold ${
-                  activeScenario === 'rapid'
-                    ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Rapid Pass
-              </button>
+            {/* BriarGlobe Component */}
+            <div className="w-full h-full">
+              <BriarGlobe
+                background="transparent"
+                lines={{
+                  color: "#38BDF8",
+                  accent: "#EF4444",
+                  thickness: 0.65,
+                  opacity: 5.5,
+                  depth: 8.5
+                }}
+                hover={{
+                  reach: 24,
+                  glowSize: 140,
+                  glow: "#0284C7",
+                  pill: "rgba(15, 23, 42, 0.92)",
+                  lag: 4.2
+                }}
+                network={{
+                  nodes: 850,
+                  hubs: 26,
+                  links: 5
+                }}
+                labels={[
+                  "Mule Ring: Aggregator 01",
+                  "Phishing Smurfing Funnel",
+                  "Rapid Pass Conduit (₹4.9L)",
+                  "Circular Loop (A→B→C→D→A)",
+                  "Offshore Shell Transit",
+                  "Cybercrime Portal (1930) Link",
+                  "Crypto OTC Cashout Node",
+                  "Turnover Drain Ratio: 98.5%"
+                ]}
+                textColor="#38BDF8"
+                speed={2.2}
+                tilt={16}
+                parallax={7}
+              />
             </div>
 
-            {/* Scenario Details & Live Flow Diagram */}
-            <div className="space-y-3">
-              <div>
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-white font-mono">{currentScenario.title}</h4>
-                  <RiskBadge level={currentScenario.riskLevel} score={currentScenario.riskScore} size="sm" />
-                </div>
-                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                  {currentScenario.description}
-                </p>
+            <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-navy-900/80 px-3 py-1.5 rounded-lg border border-slate-800 backdrop-blur-sm">
+              <span className="text-emerald-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                Real-Time Topological Projection
+              </span>
+              <span className="text-slate-400">8D Sparse Feature Tensor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Forensic Surveillance & Tactical Video Screen */}
+      <div className="rounded-2xl bg-navy-900 border border-slate-800 p-6 md:p-8 space-y-4 shadow-glass">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-electric-500/20 text-electric-400 border border-electric-500/30 flex items-center justify-center">
+              <Video className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                <span className="font-mono text-xs font-bold text-rose-400 tracking-wider">
+                  SURVEILLANCE HUD STREAM #01
+                </span>
+                <span className="text-[10px] font-mono text-slate-400 bg-navy-950 px-2 py-0.5 rounded border border-slate-800">
+                  CLASSIFIED FORENSIC FEED
+                </span>
               </div>
+              <h3 className="text-base font-bold text-white mt-0.5">
+                Financial Crime Forensic Motion Reconstruction
+              </h3>
+            </div>
+          </div>
 
-              {/* Animated Interactive Multi-Hop Flow Visualization */}
-              <div className="p-3 rounded-lg bg-navy-900/90 border border-slate-800 space-y-2">
-                <div className="text-[10px] text-slate-400 font-mono uppercase tracking-wider flex items-center justify-between">
-                  <span>DISSEMINATION SEQUENCE</span>
-                  <span className="text-rose-400 font-semibold">{currentScenario.pattern}</span>
-                </div>
+          <div className="flex items-center gap-2 text-xs font-mono">
+            <span className="px-2.5 py-1 rounded bg-slate-950 text-slate-300 border border-slate-800">
+              RESOLUTION: 1080P HUD
+            </span>
+            <span className="px-2.5 py-1 rounded bg-slate-950 text-emerald-400 border border-slate-800">
+              STATUS: ARCHIVED STREAM
+            </span>
+          </div>
+        </div>
 
-                <div className="flex items-center justify-between gap-1 pt-1 font-mono text-[10px]">
-                  {currentScenario.flowNodes.map((node, i) => (
-                    <React.Fragment key={node.id}>
-                      <div className="flex flex-col items-center text-center">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[9px] border transition-all ${
-                          node.type === 'victim'
-                            ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40'
-                            : node.type === 'target'
-                            ? 'bg-rose-950 text-rose-200 border-rose-500 shadow-glow-danger animate-pulse'
-                            : node.type === 'layer'
-                            ? 'bg-amber-950/70 text-amber-300 border-amber-500/40'
-                            : 'bg-purple-950/70 text-purple-300 border-purple-500/40'
-                        }`}>
-                          {i + 1}
-                        </div>
-                        <span className="text-[9px] font-bold text-slate-300 mt-1 truncate max-w-[65px]">
-                          {node.label}
-                        </span>
-                        <span className="text-[8px] text-slate-400 truncate max-w-[65px]">
-                          {node.sub}
-                        </span>
-                      </div>
-                      {i < currentScenario.flowNodes.length - 1 && (
-                        <div className="flex items-center pb-5">
-                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 animate-pulse" />
-                        </div>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
+        {/* Video Player Display Container */}
+        <div className="relative rounded-xl overflow-hidden bg-black border border-slate-800 group shadow-2xl">
+          {/* Cyber HUD Overlay Corners */}
+          <div className="absolute top-3 left-4 z-10 font-mono text-[11px] text-electric-400/80 bg-black/60 px-3 py-1 rounded-md backdrop-blur-md border border-electric-500/20 pointer-events-none">
+            [CAM-01: THE CREATION OF ADAM — FRAUD INTEL RECONSTRUCTION]
+          </div>
 
-              {/* Live Metric Badges */}
-              <div className="grid grid-cols-3 gap-2 font-mono text-[10px]">
-                <div className="p-2 rounded bg-navy-900 border border-slate-800">
-                  <span className="text-slate-400 block text-[9px]">DRAIN VELOCITY</span>
-                  <span className="font-bold text-rose-400">{currentScenario.metrics.velocity}</span>
-                </div>
-                <div className="p-2 rounded bg-navy-900 border border-slate-800">
-                  <span className="text-slate-400 block text-[9px]">TURNOVER RATIO</span>
-                  <span className="font-bold text-amber-400">{currentScenario.metrics.drainRatio}</span>
-                </div>
-                <div className="p-2 rounded bg-navy-900 border border-slate-800">
-                  <span className="text-slate-400 block text-[9px]">FLOW HOPS</span>
-                  <span className="font-bold text-electric-300">
-                    {currentScenario.metrics.inflowHops} in / {currentScenario.metrics.outflowHops} out
-                  </span>
-                </div>
-              </div>
+          <div className="absolute top-3 right-4 z-10 font-mono text-[10px] text-rose-400 bg-black/60 px-2.5 py-1 rounded-md backdrop-blur-md border border-rose-500/30 flex items-center gap-1.5 pointer-events-none">
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+            <span>LIVE FORENSIC MONITOR</span>
+          </div>
 
-              {/* 1-Click Launch Button */}
+          <video
+            ref={videoRef}
+            src="/the_creation_of_adam-recording.mp4"
+            autoPlay
+            loop
+            muted={isMuted}
+            playsInline
+            className="w-full max-h-[520px] object-contain mx-auto bg-black"
+          />
+
+          {/* Bottom HUD Floating Controls Bar */}
+          <div className="absolute bottom-3 left-4 right-4 z-10 p-3 rounded-lg bg-navy-950/85 backdrop-blur-md border border-slate-800/80 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-3">
               <button
-                onClick={() => handleLaunchScenario(currentScenario.targetAccount)}
-                className="w-full py-2 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-xs rounded-lg shadow-glow-danger transition flex items-center justify-center gap-1.5"
+                onClick={togglePlay}
+                className="p-1.5 rounded-lg bg-electric-600/30 hover:bg-electric-600 text-electric-300 hover:text-white border border-electric-500/40 transition"
+                title={isPlaying ? "Pause Video" : "Play Video"}
               >
-                <Share2 className="w-3.5 h-3.5" />
-                <span>Trace {currentScenario.targetAccount} Money Trail Live</span>
+                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              </button>
+
+              <button
+                onClick={toggleMute}
+                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700"
+                title={isMuted ? "Unmute Audio" : "Mute Audio"}
+              >
+                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+
+              <span className="text-[11px] font-mono text-slate-300 hidden sm:inline">
+                Forensic Motion Telemetry • Case Reference: #CASE-2026-D00D33
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  if (onAccountSelect) onAccountSelect('MULE_AGG_01');
+                  setCurrentPage('graph');
+                }}
+                className="px-3 py-1 bg-electric-600 hover:bg-electric-500 text-white font-semibold rounded text-xs transition"
+              >
+                Investigate Graph
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 3. GraphSAGE vs Traditional XGBoost Battle Arena */}
+      {/* 4. Live Interactive Fraud Topology Simulator */}
+      <div className="p-6 md:p-8 rounded-2xl bg-navy-900 border border-slate-800 space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                TACTICAL SANDBOX
+              </span>
+            </div>
+            <h2 className="text-lg md:text-xl font-bold text-white tracking-wide mt-1">
+              Interactive Attack Vector Simulator
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Simulate and inspect the 3 primary financial crime typologies modeled in FinTrace AI.
+            </p>
+          </div>
+
+          {/* Scenario Tabs */}
+          <div className="flex gap-2 p-1 bg-navy-950 rounded-lg border border-slate-800 text-xs font-mono">
+            <button
+              onClick={() => setActiveScenario('smurfing')}
+              className={`px-3 py-1.5 rounded-md font-semibold transition ${
+                activeScenario === 'smurfing'
+                  ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              1. Smurfing Aggregator
+            </button>
+            <button
+              onClick={() => setActiveScenario('circular')}
+              className={`px-3 py-1.5 rounded-md font-semibold transition ${
+                activeScenario === 'circular'
+                  ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              2. Circular Loop
+            </button>
+            <button
+              onClick={() => setActiveScenario('rapid')}
+              className={`px-3 py-1.5 rounded-md font-semibold transition ${
+                activeScenario === 'rapid'
+                  ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              3. Rapid Pass Conduit
+            </button>
+          </div>
+        </div>
+
+        {/* Active Scenario Flow Card */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div className="lg:col-span-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-white font-mono">{currentScenario.title}</h3>
+              <RiskBadge level={currentScenario.riskLevel} score={currentScenario.riskScore} />
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {currentScenario.description}
+            </p>
+
+            <div className="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1">
+              <div className="p-2.5 rounded-lg bg-navy-950 border border-slate-800">
+                <span className="text-slate-500 text-[10px] block">VELOCITY</span>
+                <span className="font-bold text-rose-400">{currentScenario.metrics.velocity}</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-navy-950 border border-slate-800">
+                <span className="text-slate-500 text-[10px] block">TURNOVER</span>
+                <span className="font-bold text-amber-400">{currentScenario.metrics.drainRatio}</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-navy-950 border border-slate-800">
+                <span className="text-slate-500 text-[10px] block">FLOW HOPS</span>
+                <span className="font-bold text-electric-300">
+                  {currentScenario.metrics.inflowHops} in / {currentScenario.metrics.outflowHops} out
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleLaunchScenario(currentScenario.targetAccount)}
+              className="w-full py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-xs rounded-lg shadow-glow-danger transition flex items-center justify-center gap-2"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>Trace {currentScenario.targetAccount} Money Trail Live</span>
+            </button>
+          </div>
+
+          {/* Sequence Diagram Display */}
+          <div className="lg:col-span-7 p-5 rounded-xl bg-navy-950 border border-slate-800 space-y-4">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-slate-400">DISSEMINATION SEQUENCE</span>
+              <span className="text-rose-400 font-bold">{currentScenario.pattern}</span>
+            </div>
+
+            <div className="flex items-center justify-between gap-2 pt-2 font-mono">
+              {currentScenario.flowNodes.map((node, i) => (
+                <React.Fragment key={node.id}>
+                  <div className="flex-1 flex flex-col items-center text-center p-3 rounded-lg bg-navy-900 border border-slate-800">
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-xs border mb-2 ${
+                      node.type === 'victim'
+                        ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40'
+                        : node.type === 'target'
+                        ? 'bg-rose-950 text-rose-200 border-rose-500 shadow-glow-danger animate-pulse'
+                        : node.type === 'layer'
+                        ? 'bg-amber-950/70 text-amber-300 border-amber-500/40'
+                        : 'bg-purple-950/70 text-purple-300 border-purple-500/40'
+                    }`}>
+                      {i + 1}
+                    </div>
+                    <span className="text-xs font-bold text-slate-200 truncate w-full">
+                      {node.label}
+                    </span>
+                    <span className="text-[10px] text-slate-500 truncate w-full mt-0.5">
+                      {node.sub}
+                    </span>
+                  </div>
+                  {i < currentScenario.flowNodes.length - 1 && (
+                    <ArrowRight className="w-4 h-4 text-slate-600 shrink-0" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. GraphSAGE vs Traditional XGBoost Battle Arena */}
       <div className="p-6 md:p-8 rounded-2xl bg-navy-900 border border-slate-800 space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
@@ -477,7 +662,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </div>
       </div>
 
-      {/* 4. Interactive 4-Way Fraud Attack Vector Showcase */}
+      {/* 6. Interactive 4-Way Fraud Attack Vector Showcase */}
       <div className="space-y-4">
         <div className="border-b border-slate-800 pb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
@@ -647,7 +832,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </div>
       </div>
 
-      {/* 5. End-to-End Operational Lifecycle Stepper */}
+      {/* 7. End-to-End Operational Lifecycle Stepper */}
       <div className="space-y-6">
         <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
           <div>
@@ -690,7 +875,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </div>
       </div>
 
-      {/* 6. Legal & Scientific Transparency Disclaimer */}
+      {/* 8. Legal & Scientific Transparency Disclaimer */}
       <div className="p-4 rounded-xl bg-navy-950 border border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Shield className="w-5 h-5 text-electric-400 shrink-0" />
