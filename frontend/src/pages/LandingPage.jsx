@@ -70,7 +70,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   // Simulator State
   const [activeScenario, setActiveScenario] = useState('smurfing');
 
-  // Video State
+  // Video State for Full-Screen Background Animation
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
@@ -249,12 +249,51 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-slate-100 selection:bg-rose-500 selection:text-white relative overflow-x-hidden font-sans">
-      {/* Ambient Radial Corner Glows (Matching Reference Image) */}
+      
+      {/* 1. Full-Screen Ambient Motion Video Background */}
+      <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <video
+          ref={videoRef}
+          src="/the_creation_of_adam-recording.mp4"
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          preload="auto"
+          className="w-full h-full object-cover opacity-25 filter contrast-125 saturate-150 transform scale-105"
+        />
+        {/* Dark Cinematic Vignette & Ambient Radial Lighting */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19]/90 via-[#0B0F19]/80 to-[#0B0F19]"></div>
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0F19]/60 to-[#0B0F19]"></div>
+      </div>
+
+      {/* Floating Ambient Corner Glows (Matching Reference Mockup ca9a92ff.png) */}
       <div className="fixed -top-40 -left-40 w-[600px] h-[600px] bg-rose-500/12 rounded-full blur-[140px] pointer-events-none z-0"></div>
       <div className="fixed -bottom-40 -right-40 w-[650px] h-[650px] bg-orange-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
-      {/* 1. Standalone Modern SaaS Top Navbar (Matching Reference Image) */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0B0F19]/80 border-b border-slate-800/80 px-6 lg:px-12 py-4">
+      {/* Floating HUD Audio & Playback Controller for Background Video */}
+      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 p-2 rounded-full bg-[#0E1424]/90 border border-rose-500/40 shadow-2xl backdrop-blur-md font-mono text-xs">
+        <button
+          onClick={togglePlay}
+          className="p-2 rounded-full bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white transition"
+          title={isPlaying ? "Pause Background Animation" : "Play Background Animation"}
+        >
+          {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+        </button>
+        <button
+          onClick={toggleMute}
+          className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+          title={isMuted ? "Unmute Audio" : "Mute Audio"}
+        >
+          {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+        </button>
+        <span className="text-[10px] text-slate-300 pr-2 hidden sm:inline">
+          Background Motion Stream
+        </span>
+      </div>
+
+      {/* 2. Standalone Modern SaaS Top Navbar (Matching Reference Image) */}
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0F19]/80 border-b border-slate-800/80 px-6 lg:px-12 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Logo */}
           <div
@@ -279,8 +318,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           {/* Center Navigation Links */}
           <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-slate-300">
             <a href="#overview" className="hover:text-white transition">Overview</a>
-            <a href="#topology-3d" className="hover:text-white transition">3D Topology</a>
-            <a href="#forensic-video" className="hover:text-white transition">Forensic HUD</a>
+            <a href="#topology-3d" className="hover:text-white transition">3D Topology Box</a>
             <a href="#simulator" className="hover:text-white transition">Attack Simulator</a>
             <a href="#battle-arena" className="hover:text-white transition">GNN vs XGBoost</a>
             <a href="#pipeline" className="hover:text-white transition">Workflow</a>
@@ -335,26 +373,26 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           </div>
         </div>
 
-        {/* 2. Hero Section (Styled Exactly After the Reference Image) */}
+        {/* 3. Hero Section (Styled Exactly After the Reference Image) */}
         <section id="overview" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4">
           
           {/* Left Column: Headline, Subtitle & CTAs (7 Cols) */}
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold font-mono tracking-wide">
               <Zap className="w-3.5 h-3.5 text-rose-400" />
-              <span>Here's the new intelligence standard for you</span>
+              <span>Here's the apps for you</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.12]">
               The new era of{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-orange-400 to-amber-300">
-                financial crime
+                finance technology
               </span>{' '}
-              technology.
+              intelligence.
             </h1>
 
             <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-xl">
-              Managing your financial crime risk in the easiest way. FinTrace unmasks smurfing rings, circular laundering loops, and high-velocity conduit accounts through deep multi-hop Graph Neural Networks (GraphSAGE).
+              Managing your financial business in easy way. FinTrace unmasks smurfing rings, circular laundering loops, and conduit accounts through deep Graph Neural Networks (GraphSAGE).
             </p>
 
             {/* Action Buttons (Matching Reference Image Style: [Try it free] & [▶ Show me the demo]) */}
@@ -363,18 +401,21 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
                 onClick={() => setCurrentPage("dashboard")}
                 className="px-8 py-3.5 rounded-full bg-gradient-to-r from-rose-600 via-rose-500 to-orange-500 hover:from-rose-500 hover:to-orange-400 text-white font-bold text-sm shadow-glow-danger transition transform hover:-translate-y-0.5 active:translate-y-0"
               >
-                Launch Command Center →
+                Try it free →
               </button>
 
-              <a
-                href="#forensic-video"
+              <button
+                onClick={() => {
+                  const el = document.getElementById('topology-3d');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-navy-900/90 hover:bg-navy-850 text-slate-200 border border-rose-500/40 hover:border-rose-500 font-semibold text-sm transition group"
               >
                 <div className="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
                   <Play className="w-2.5 h-2.5 fill-rose-400" />
                 </div>
-                <span>Watch Forensic HUD Demo</span>
-              </a>
+                <span>Show me the demo</span>
+              </button>
 
               <button
                 onClick={() => setCurrentPage("graph")}
@@ -402,31 +443,39 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
             </div>
           </div>
 
-          {/* Right Column: Isometric 3D Command Deck (Matching 3D Card Stack in Reference Image) */}
+          {/* Right Column: 3D Model in Elevated Isometric Device Box (Matching the Box in Reference Mockup ca9a92ff.png) */}
           <div id="topology-3d" className="lg:col-span-5 relative">
-            <div className="relative h-[500px] lg:h-[540px] rounded-3xl bg-gradient-to-b from-[#0F172A]/90 via-[#0C1220]/95 to-[#090D18] border border-slate-800 shadow-2xl overflow-hidden group">
+            {/* The 3D Box Container */}
+            <div className="relative h-[530px] lg:h-[570px] rounded-3xl bg-gradient-to-br from-[#111827] via-[#0E1424] to-[#0A0E17] border-2 border-rose-500/40 shadow-[0_25px_60px_-15px_rgba(244,63,94,0.35)] overflow-hidden group">
               
-              {/* Header Badge */}
-              <div className="absolute top-4 left-5 right-5 z-20 flex items-center justify-between text-xs font-mono pointer-events-none">
-                <div className="flex items-center gap-2 bg-[#0B0F19]/90 px-3 py-1.5 rounded-full border border-slate-800/90 backdrop-blur-md">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                  <span className="text-white font-bold text-[11px]">3D RELATIONAL TOPOLOGY</span>
+              {/* Box Top Toolbar (Modeled like High-Tech Device Header in Reference Image) */}
+              <div className="absolute top-0 left-0 right-0 z-30 px-5 py-3.5 border-b border-slate-800/90 bg-[#0B0F19]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                  </div>
+                  <span className="text-white font-bold text-[11px] ml-2">3D RELATIONAL NETWORK BOX</span>
                 </div>
-                <span className="text-[10px] text-slate-400 bg-[#0B0F19]/90 px-2.5 py-1 rounded-full border border-slate-800/90">
-                  Interactive WebGL Deck
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  <span className="text-[10px] text-slate-300 bg-black/60 px-2 py-0.5 rounded border border-slate-800">
+                    Live WebGL
+                  </span>
+                </div>
               </div>
 
-              {/* 3D WebGL Relational Network Sphere */}
-              <div className="absolute inset-0 w-full h-full">
+              {/* 3D WebGL Model Component inside the Box */}
+              <div className="absolute inset-0 pt-12 w-full h-full">
                 <GlobeErrorBoundary>
                   <BriarGlobe
                     background="transparent"
                     lines={{
                       color: "#38BDF8",
                       accent: "#F43F5E",
-                      thickness: 0.65,
-                      opacity: 5.5,
+                      thickness: 0.7,
+                      opacity: 6,
                       depth: 8.5
                     }}
                     hover={{
@@ -459,149 +508,52 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
                 </GlobeErrorBoundary>
               </div>
 
-              {/* Floating Isometric 3D Cards (Directly Replicating Reference Image Visual Elements) */}
+              {/* Floating Isometric 3D Cards inside the Box (Exact Replicas of Reference Image Elements) */}
               
-              {/* Floating Card 1: 3D Bar Chart Stack (Top-Right) */}
-              <div className="absolute top-16 right-4 z-20 p-3 rounded-xl bg-[#0B0F19]/90 border border-slate-800/90 shadow-xl backdrop-blur-md font-mono text-[11px] pointer-events-none transform hover:scale-105 transition-transform">
+              {/* Floating Card 1: 3D Inflow Convergence Vertical Bars */}
+              <div className="absolute top-20 right-4 z-20 p-3 rounded-2xl bg-[#0B0F19]/90 border border-slate-800/90 shadow-2xl backdrop-blur-md font-mono text-[11px] pointer-events-none transform group-hover:-translate-y-1 transition-transform">
                 <div className="flex items-center justify-between gap-3 text-slate-400 mb-2">
                   <span className="text-[10px] font-bold text-rose-400">INFLOW CONVERGENCE</span>
                   <span className="text-[9px] text-slate-500">6 HOPS</span>
                 </div>
-                {/* 5 Vertical Colorful Isometric Bars */}
+                {/* 5 Vertical Colorful Isometric Bars (Exact Match of Reference Image) */}
                 <div className="flex items-end gap-1.5 h-12 w-28 px-1">
-                  <div className="flex-1 bg-sky-400 rounded-t h-4"></div>
-                  <div className="flex-1 bg-indigo-500 rounded-t h-7"></div>
-                  <div className="flex-1 bg-purple-500 rounded-t h-9"></div>
-                  <div className="flex-1 bg-pink-500 rounded-t h-11"></div>
-                  <div className="flex-1 bg-rose-500 rounded-t h-12 shadow-glow-danger"></div>
+                  <div className="flex-1 bg-gradient-to-t from-sky-500 to-sky-300 rounded-t h-4"></div>
+                  <div className="flex-1 bg-gradient-to-t from-indigo-600 to-indigo-400 rounded-t h-7"></div>
+                  <div className="flex-1 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t h-9"></div>
+                  <div className="flex-1 bg-gradient-to-t from-pink-600 to-pink-400 rounded-t h-11"></div>
+                  <div className="flex-1 bg-gradient-to-t from-rose-600 to-rose-400 rounded-t h-12 shadow-glow-danger"></div>
                 </div>
-                <div className="text-[9px] text-slate-400 mt-1 truncate">MULE_AGG_01 Funnel</div>
+                <div className="text-[9px] text-slate-400 mt-1 truncate">MULE_AGG_01 Consolidation</div>
               </div>
 
-              {/* Floating Card 2: 70% / 98.5% Donut Meter (Bottom-Left) */}
-              <div className="absolute bottom-14 left-4 z-20 p-3 rounded-xl bg-[#0B0F19]/90 border border-slate-800/90 shadow-xl backdrop-blur-md font-mono text-[11px] pointer-events-none">
+              {/* Floating Card 2: 70% / 98% Donut Meter */}
+              <div className="absolute bottom-16 left-4 z-20 p-3 rounded-2xl bg-[#0B0F19]/90 border border-slate-800/90 shadow-2xl backdrop-blur-md font-mono text-[11px] pointer-events-none transform group-hover:translate-y-1 transition-transform">
                 <div className="flex items-center gap-3">
-                  {/* Donut Ring Mock */}
-                  <div className="relative w-10 h-10 rounded-full border-4 border-slate-800 border-t-rose-500 border-r-orange-400 flex items-center justify-center">
-                    <span className="text-[10px] font-bold text-white">98%</span>
+                  <div className="relative w-11 h-11 rounded-full border-4 border-slate-800 border-t-rose-500 border-r-orange-400 flex items-center justify-center">
+                    <span className="text-[11px] font-bold text-white">98%</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-slate-400 block">DRAIN RATIO</span>
+                    <span className="text-[9px] text-slate-400 block font-bold">TURNOVER DRAIN</span>
                     <span className="text-xs font-bold text-rose-400">38m Velocity</span>
                   </div>
                 </div>
               </div>
 
-              {/* Floating Card 3: Alert Chip (Bottom-Right) */}
-              <div className="absolute bottom-14 right-4 z-20 p-2.5 rounded-xl bg-[#0B0F19]/90 border border-rose-500/30 shadow-xl backdrop-blur-md font-mono text-[10px] text-slate-200 pointer-events-none flex items-center gap-2">
+              {/* Floating Card 3: Rapid Pass Conduit Badge */}
+              <div className="absolute bottom-16 right-4 z-20 p-2.5 rounded-2xl bg-[#0B0F19]/90 border border-rose-500/30 shadow-2xl backdrop-blur-md font-mono text-[10px] text-slate-200 pointer-events-none flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
                 <span>₹4,90,000 Conduit</span>
                 <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">0.94</span>
               </div>
 
-              {/* Bottom Telemetry Bar */}
-              <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-[#0B0F19]/90 px-3 py-1.5 rounded-lg border border-slate-800/90 backdrop-blur-md">
+              {/* Box Footer Status Bar */}
+              <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-[#0B0F19]/90 px-3.5 py-1.5 rounded-xl border border-slate-800 backdrop-blur-md">
                 <span className="text-emerald-400 flex items-center gap-1 font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  Real-Time Topological Projection
+                  3D Topological Projection Engine
                 </span>
                 <span className="text-slate-400">8D Sparse Feature Tensor</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 3. Forensic Surveillance & Tactical Video Screen */}
-        <section id="forensic-video" className="rounded-3xl bg-[#0E1424]/90 border border-slate-800 p-6 md:p-8 space-y-4 shadow-2xl backdrop-blur-md">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center">
-                <Video className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                  <span className="font-mono text-xs font-bold text-rose-400 tracking-wider">
-                    SURVEILLANCE HUD STREAM #01
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-400 bg-black/60 px-2 py-0.5 rounded border border-slate-800">
-                    CLASSIFIED FORENSIC FEED
-                  </span>
-                </div>
-                <h3 className="text-base font-bold text-white mt-0.5">
-                  Financial Crime Forensic Motion Reconstruction
-                </h3>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="px-2.5 py-1 rounded bg-black/60 text-slate-300 border border-slate-800">
-                RESOLUTION: 1080P HUD
-              </span>
-              <span className="px-2.5 py-1 rounded bg-black/60 text-emerald-400 border border-slate-800">
-                STATUS: ARCHIVED STREAM
-              </span>
-            </div>
-          </div>
-
-          {/* Video Player Display Container */}
-          <div className="relative rounded-2xl overflow-hidden bg-black border border-slate-800 group shadow-2xl">
-            {/* Cyber HUD Overlay Corners */}
-            <div className="absolute top-3 left-4 z-10 font-mono text-[11px] text-rose-400/90 bg-black/70 px-3 py-1 rounded-md backdrop-blur-md border border-rose-500/20 pointer-events-none">
-              [CAM-01: THE CREATION OF ADAM — FRAUD INTEL RECONSTRUCTION]
-            </div>
-
-            <div className="absolute top-3 right-4 z-10 font-mono text-[10px] text-rose-400 bg-black/70 px-2.5 py-1 rounded-md backdrop-blur-md border border-rose-500/30 flex items-center gap-1.5 pointer-events-none">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-              <span>LIVE FORENSIC MONITOR</span>
-            </div>
-
-            <video
-              ref={videoRef}
-              src="/the_creation_of_adam-recording.mp4"
-              autoPlay
-              loop
-              muted={isMuted}
-              playsInline
-              preload="auto"
-              className="w-full max-h-[520px] object-contain mx-auto bg-black"
-            />
-
-            {/* Bottom HUD Floating Controls Bar */}
-            <div className="absolute bottom-3 left-4 right-4 z-10 p-3 rounded-xl bg-black/80 backdrop-blur-md border border-slate-800 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={togglePlay}
-                  className="p-1.5 rounded-lg bg-rose-600/30 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 transition"
-                  title={isPlaying ? "Pause Video" : "Play Video"}
-                >
-                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                </button>
-
-                <button
-                  onClick={toggleMute}
-                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700"
-                  title={isMuted ? "Unmute Audio" : "Mute Audio"}
-                >
-                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </button>
-
-                <span className="text-[11px] font-mono text-slate-300 hidden sm:inline">
-                  Forensic Motion Telemetry • Case Reference: #CASE-2026-D00D33
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    if (onAccountSelect) onAccountSelect('MULE_AGG_01');
-                    setCurrentPage('graph');
-                  }}
-                  className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono text-[11px] font-semibold transition flex items-center gap-1.5 shadow-glow-danger"
-                >
-                  <Network className="w-3.5 h-3.5" />
-                  <span>Investigate Target in Graph Canvas</span>
-                </button>
               </div>
             </div>
           </div>
@@ -686,7 +638,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
 
               <button
                 onClick={() => handleLaunchScenario(currentScenario.targetAccount)}
-                className="w-full py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-xs rounded-xl shadow-glow-danger transition flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-orange-400 text-white font-bold text-xs rounded-xl shadow-glow-danger transition flex items-center justify-center gap-2"
               >
                 <Share2 className="w-4 h-4" />
                 <span>Trace {currentScenario.targetAccount} Money Trail Live</span>
@@ -858,7 +810,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           </button>
         </section>
 
-        {/* 8. Modern Fintech SaaS Footer (Matching Reference Image) */}
+        {/* 8. Modern Fintech SaaS Footer */}
         <footer className="pt-8 pb-12 border-t border-slate-800/80 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-0.5">
