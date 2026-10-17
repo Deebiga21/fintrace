@@ -76,8 +76,18 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
 
-  // Scroll to top indicator state
+  // Scroll & Navigation State
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState('overview');
+
+  const sectionIds = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'topology-3d', label: '3D Network Box' },
+    { id: 'simulator', label: 'Crime Simulator' },
+    { id: 'battle-arena', label: 'GNN vs XGBoost' },
+    { id: 'pipeline', label: 'Pipeline' }
+  ];
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
@@ -86,11 +96,38 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
     }
   };
 
+  const scrollToNextSection = () => {
+    const currentIdx = sectionIds.findIndex(s => s.id === activeSection);
+    if (currentIdx !== -1 && currentIdx < sectionIds.length - 1) {
+      scrollToSection(sectionIds[currentIdx + 1].id);
+    } else {
+      scrollToSection('simulator');
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 350);
+      const scrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min(100, Math.max(0, (scrollY / docHeight) * 100)) : 0;
+      setScrollProgress(progress);
+      setShowScrollTop(scrollY > 300);
+
+      // Detect active section based on viewport position
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sectionIds[i].id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 240) {
+            setActiveSection(sectionIds[i].id);
+            break;
+          }
+        }
+      }
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -285,7 +322,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-100 selection:bg-rose-500 selection:text-white relative overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-[#0B0F19] text-slate-100 selection:bg-rose-500 selection:text-white relative overflow-x-clip font-sans">
       
       {/* 1. Full-Screen Cinematic Animation Background */}
       <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0 select-none">
@@ -297,11 +334,11 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           muted={true}
           playsInline
           preload="auto"
-          className="w-full h-full object-cover opacity-35 filter contrast-110 saturate-125 transform scale-105"
+          className="w-full h-full object-cover opacity-35 filter contrast-110 saturate-125 transform scale-105 pointer-events-none select-none"
         />
         {/* Soft Vignette Overlay ensuring text readability while animation is clearly visible */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19]/80 via-[#0B0F19]/60 to-[#0B0F19]/85"></div>
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0F19]/40 to-[#0B0F19]/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19]/80 via-[#0B0F19]/60 to-[#0B0F19]/85 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0F19]/40 to-[#0B0F19]/80 pointer-events-none"></div>
       </div>
 
       {/* Floating Ambient Corner Glows (Matching Reference Mockup ca9a92ff.png) */}
@@ -333,11 +370,11 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
 
           {/* Center Navigation Links */}
           <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-slate-300">
-            <button onClick={() => scrollToSection('overview')} className="hover:text-white transition">Overview</button>
-            <button onClick={() => scrollToSection('topology-3d')} className="hover:text-white transition">3D Topology Box</button>
-            <button onClick={() => scrollToSection('simulator')} className="hover:text-white transition">Attack Simulator</button>
-            <button onClick={() => scrollToSection('battle-arena')} className="hover:text-white transition">GNN vs XGBoost</button>
-            <button onClick={() => scrollToSection('pipeline')} className="hover:text-white transition">Workflow</button>
+            <button onClick={() => scrollToSection('overview')} className={`transition hover:text-white ${activeSection === 'overview' ? 'text-rose-400 font-bold' : ''}`}>Overview</button>
+            <button onClick={() => scrollToSection('topology-3d')} className={`transition hover:text-white ${activeSection === 'topology-3d' ? 'text-rose-400 font-bold' : ''}`}>3D Topology Box</button>
+            <button onClick={() => scrollToSection('simulator')} className={`transition hover:text-white ${activeSection === 'simulator' ? 'text-rose-400 font-bold' : ''}`}>Attack Simulator</button>
+            <button onClick={() => scrollToSection('battle-arena')} className={`transition hover:text-white ${activeSection === 'battle-arena' ? 'text-rose-400 font-bold' : ''}`}>GNN vs XGBoost</button>
+            <button onClick={() => scrollToSection('pipeline')} className={`transition hover:text-white ${activeSection === 'pipeline' ? 'text-rose-400 font-bold' : ''}`}>Workflow</button>
           </nav>
 
           {/* Right Action CTAs */}
@@ -357,6 +394,42 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           </div>
         </div>
       </header>
+
+      {/* Top Scroll Progress Indicator */}
+      <div className="fixed top-[65px] left-0 right-0 h-[2.5px] bg-slate-900/60 z-50 overflow-hidden pointer-events-none">
+        <div
+          className="h-full bg-gradient-to-r from-rose-500 via-orange-400 to-amber-300 shadow-[0_0_10px_rgba(244,63,94,0.9)] transition-[width] duration-75 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
+      {/* Floating Side Rail for Instant Section Navigation */}
+      <div className="hidden xl:flex fixed right-5 top-1/2 -translate-y-1/2 z-40 flex-col items-end gap-3 pointer-events-auto">
+        <div className="p-2.5 rounded-2xl bg-[#0E1424]/90 border border-slate-800/90 backdrop-blur-md shadow-2xl flex flex-col gap-3">
+          {sectionIds.map((sec) => {
+            const isActive = activeSection === sec.id;
+            return (
+              <button
+                key={sec.id}
+                onClick={() => scrollToSection(sec.id)}
+                className="group relative flex items-center justify-end focus:outline-none cursor-pointer"
+                aria-label={`Jump to ${sec.label}`}
+              >
+                <span className="absolute right-7 px-2.5 py-1 rounded-lg bg-[#0E1424] border border-slate-700 text-[10px] font-mono font-bold text-slate-200 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
+                  {sec.label}
+                </span>
+                <span
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    isActive
+                      ? 'bg-rose-500 scale-125 shadow-[0_0_10px_rgba(244,63,94,1)]'
+                      : 'bg-slate-700 hover:bg-slate-400'
+                  }`}
+                />
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Main Content Container */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-8 space-y-28 lg:space-y-36">
@@ -585,6 +658,22 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
             </div>
           </div>
         </section>
+
+        {/* Dedicated Inter-Section Scroll Guide */}
+        <div className="flex flex-col items-center justify-center -my-10 sm:-my-16">
+          <button
+            onClick={() => scrollToSection('simulator')}
+            className="group flex items-center gap-3 px-6 py-2.5 rounded-full bg-[#0E1424]/90 hover:bg-[#131B30] border border-slate-800 hover:border-rose-500/60 shadow-xl backdrop-blur-md transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
+          >
+            <div className="w-4 h-6 rounded-full border border-slate-600 group-hover:border-rose-400 flex items-start justify-center p-0.5 transition-colors">
+              <div className="w-1 h-2 bg-rose-400 rounded-full animate-bounce"></div>
+            </div>
+            <span className="font-mono text-xs font-bold text-slate-300 group-hover:text-rose-300 tracking-wider flex items-center gap-2">
+              <span>EXPLORE FRAUD TYPOLOGY SIMULATOR</span>
+              <ChevronDown className="w-4 h-4 text-rose-400 group-hover:translate-y-0.5 transition-transform animate-pulse" />
+            </span>
+          </button>
+        </div>
 
         {/* 4. Interactive Fraud Topology Simulator */}
         <section id="simulator" className="scroll-mt-28 space-y-6 rounded-3xl bg-[#0E1424]/90 border border-slate-800 p-6 md:p-8 backdrop-blur-md">
@@ -869,16 +958,30 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </footer>
       </div>
 
-      {/* Floating Scroll-to-Top Button */}
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={`fixed bottom-8 right-8 z-50 p-3.5 rounded-full bg-rose-600/90 hover:bg-rose-500 text-white shadow-[0_4px_24px_rgba(244,63,94,0.45)] backdrop-blur-md border border-rose-400/40 transition-all duration-300 transform cursor-pointer ${
-          showScrollTop ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-90 pointer-events-none'
-        }`}
-        aria-label="Scroll to top"
-      >
-        <ChevronUp className="w-5 h-5" />
-      </button>
+      {/* Floating Scroll Navigation Pod */}
+      <div className="fixed bottom-8 right-8 z-50 flex flex-col items-center gap-2.5">
+        {scrollProgress < 90 && (
+          <button
+            onClick={scrollToNextSection}
+            className="p-3.5 rounded-full bg-[#0E1424]/95 hover:bg-rose-600 text-slate-300 hover:text-white shadow-[0_4px_24px_rgba(0,0,0,0.6)] backdrop-blur-md border border-slate-700 hover:border-rose-400 transition-all duration-300 transform hover:scale-110 cursor-pointer group"
+            title="Scroll down to next section"
+            aria-label="Scroll down to next section"
+          >
+            <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform animate-pulse" />
+          </button>
+        )}
+
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className={`p-3.5 rounded-full bg-rose-600/90 hover:bg-rose-500 text-white shadow-[0_4px_24px_rgba(244,63,94,0.45)] backdrop-blur-md border border-rose-400/40 transition-all duration-300 transform cursor-pointer ${
+            showScrollTop ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-90 pointer-events-none'
+          }`}
+          title="Scroll to top"
+          aria-label="Scroll to top"
+        >
+          <ChevronUp className="w-5 h-5" />
+        </button>
+      </div>
     </div>
   );
 }

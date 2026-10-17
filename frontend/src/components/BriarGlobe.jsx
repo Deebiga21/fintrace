@@ -1218,6 +1218,7 @@ export default function BriarGlobe({
         width: "100%",
         height: "100%",
         overflow: "hidden",
+        touchAction: "pan-y",
         backgroundColor: background,
         ...style,
       }}
