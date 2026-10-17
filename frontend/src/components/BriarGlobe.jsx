@@ -46,7 +46,7 @@ const INTRO_LINE_FLOOR = 0.12
 const INTRO_POINT_SIZE = 2.6
 const INTRO_POINT_ALPHA = 0.85
 const INTRO_FADE_IN = 0.5
-const MAX_SPIN = 0.5
+const MAX_SPIN = 1.6
 const SEED = 0xb41a4
 
 const DEFAULT_LABELS = [
@@ -819,6 +819,15 @@ export default function BriarGlobe({
     const glow = { x: 0, y: 0, amount: 0, seeded: false }
     const pill = { x: 0, y: 0, vx: 0, vy: 0, sway: 0, hiddenAt: -Infinity, written: "" }
 
+    // User Interactive Drag-to-Rotate & Inertia
+    let userYaw = 0
+    let userPitch = 0
+    let isDragging = false
+    let hasDragged = false
+    const lastDrag = { x: 0, y: 0 }
+    const dragVelocity = { x: 0, y: 0 }
+    let lastDt = 0.016
+
     function resize() {
       const rect = host.getBoundingClientRect()
       const nextW = host.clientWidth || rect.width
@@ -841,8 +850,8 @@ export default function BriarGlobe({
       const p = paramsRef.current
       const rot = pose.rot
       const rockAt = pose.clock * WOBBLE_RATE
-      const yaw = phase + lean.x
-      const pitch = p.tilt + lean.y + Math.sin(rockAt) * p.rock
+      const yaw = phase + userYaw + lean.x
+      const pitch = clamp(p.tilt + userPitch + lean.y + Math.sin(rockAt) * p.rock, -Math.PI * 0.48, Math.PI * 0.48)
       const roll = Math.cos(rockAt) * p.rock
       const cy = Math.cos(yaw)
       const sy0 = Math.sin(yaw)
@@ -881,7 +890,7 @@ export default function BriarGlobe({
 
     function pick(g) {
       const p = paramsRef.current
-      if (!pointer.inside || !p.pickable || pose.intro < 1) return null
+      if (isDragging || hasDragged || !pointer.inside || !p.pickable || pose.intro < 1) return null
       const reach = p.reach
       let best = -1
       let bestD = reach * reach
@@ -1074,7 +1083,19 @@ export default function BriarGlobe({
       pose.inflate = p.introInflate
       const introRunning = pose.intro < 1
 
-      phase += p.spin * dt
+      lastDt = dt
+      if (!isDragging) {
+        phase += p.spin * dt
+        // Apply inertia decay after manual drag
+        if (Math.abs(dragVelocity.x) > 0.0001 || Math.abs(dragVelocity.y) > 0.0001) {
+          userYaw += dragVelocity.x * dt
+          userPitch = clamp(userPitch + dragVelocity.y * dt, -Math.PI * 0.45, Math.PI * 0.45)
+          const damping = Math.pow(0.92, dt * 60)
+          dragVelocity.x *= damping
+          dragVelocity.y *= damping
+          invalidRef.current = true
+        }
+      }
       pose.clock += p.pace * dt
       pose.breathe = p.breathe
       pose.jelly = p.jelly
@@ -1140,11 +1161,25 @@ export default function BriarGlobe({
 
       stepPill(dt, now)
 
-      const alive = p.spin !== 0 || p.rock > 0 || p.breathe > 0 || p.jelly > 0
+      const alive = p.spin !== 0 || p.rock > 0 || p.breathe > 0 || p.jelly > 0 || isDragging || Math.abs(dragVelocity.x) > 0.0001 || Math.abs(dragVelocity.y) > 0.0001
       if (alive || introRunning || pointsIn < 1 || leaning || glowing || fading || invalidRef.current) {
         invalidRef.current = false
         draw()
       }
+    }
+
+    function onPointerDown(event) {
+      if (event.button !== 0 && event.pointerType === "mouse") return
+      isDragging = true
+      hasDragged = false
+      lastDrag.x = event.clientX
+      lastDrag.y = event.clientY
+      dragVelocity.x = 0
+      dragVelocity.y = 0
+      host.style.cursor = "grabbing"
+      try {
+        host.setPointerCapture(event.pointerId)
+      } catch (_) {}
     }
 
     function onPointerMove(event) {
@@ -1153,10 +1188,48 @@ export default function BriarGlobe({
       pointer.x = ((event.clientX - rect.left) * width) / rect.width
       pointer.y = ((event.clientY - rect.top) * height) / rect.height
       pointer.inside = true
+
+      if (isDragging) {
+        const dx = event.clientX - lastDrag.x
+        const dy = event.clientY - lastDrag.y
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+          hasDragged = true
+        }
+        lastDrag.x = event.clientX
+        lastDrag.y = event.clientY
+
+        const sensitivity = 0.0065
+        userYaw += dx * sensitivity
+        userPitch = clamp(userPitch - dy * sensitivity, -Math.PI * 0.45, Math.PI * 0.45)
+
+        const safeDt = Math.max(lastDt, 0.008)
+        dragVelocity.x = (dx * sensitivity) / safeDt
+        dragVelocity.y = (-dy * sensitivity) / safeDt
+
+        invalidRef.current = true
+      }
+    }
+
+    function onPointerUp(event) {
+      if (isDragging) {
+        isDragging = false
+        host.style.cursor = "grab"
+        setTimeout(() => {
+          hasDragged = false
+        }, 120)
+        try {
+          host.releasePointerCapture(event.pointerId)
+        } catch (_) {}
+      }
     }
 
     function onPointerLeave() {
       pointer.inside = false
+      if (isDragging) {
+        isDragging = false
+        host.style.cursor = "grab"
+        hasDragged = false
+      }
     }
 
     function onContextLost(event) {
@@ -1180,9 +1253,12 @@ export default function BriarGlobe({
     })
     seen.observe(host)
 
+    host.addEventListener("pointerdown", onPointerDown)
     host.addEventListener("pointermove", onPointerMove, { capture: true })
+    host.addEventListener("pointerup", onPointerUp)
     host.addEventListener("pointerleave", onPointerLeave)
     host.addEventListener("pointercancel", onPointerLeave)
+    window.addEventListener("pointerup", onPointerUp)
     canvas.addEventListener("webglcontextlost", onContextLost)
     canvas.addEventListener("webglcontextrestored", onContextRestored)
     window.addEventListener("resize", resize)
@@ -1193,9 +1269,12 @@ export default function BriarGlobe({
       cancelAnimationFrame(frame)
       observer.disconnect()
       seen.disconnect()
+      host.removeEventListener("pointerdown", onPointerDown)
       host.removeEventListener("pointermove", onPointerMove, { capture: true })
+      host.removeEventListener("pointerup", onPointerUp)
       host.removeEventListener("pointerleave", onPointerLeave)
       host.removeEventListener("pointercancel", onPointerLeave)
+      window.removeEventListener("pointerup", onPointerUp)
       canvas.removeEventListener("webglcontextlost", onContextLost)
       canvas.removeEventListener("webglcontextrestored", onContextRestored)
       window.removeEventListener("resize", resize)
@@ -1218,7 +1297,10 @@ export default function BriarGlobe({
         width: "100%",
         height: "100%",
         overflow: "hidden",
-        touchAction: "pan-y",
+        cursor: "grab",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        touchAction: "none",
         backgroundColor: background,
         ...style,
       }}

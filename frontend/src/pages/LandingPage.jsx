@@ -76,6 +76,11 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
 
+  // 3D Model Interactive Motion & Spin Controls
+  const [globeSpeed, setGlobeSpeed] = useState(5.5);
+  const [globeDirection, setGlobeDirection] = useState('right');
+  const [isGlobeSpinning, setIsGlobeSpinning] = useState(true);
+
   // Scroll & Navigation State
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -548,21 +553,65 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
             {/* The 3D Box Container */}
             <div className="relative h-[530px] lg:h-[570px] rounded-3xl bg-gradient-to-br from-[#111827] via-[#0E1424] to-[#0A0E17] border-2 border-rose-500/40 shadow-[0_25px_60px_-15px_rgba(244,63,94,0.35)] overflow-hidden group">
               
-              {/* Box Top Toolbar (Modeled like High-Tech Device Header in Reference Image) */}
-              <div className="absolute top-0 left-0 right-0 z-30 px-5 py-3.5 border-b border-slate-800/90 bg-[#0B0F19]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
+              {/* Box Top Toolbar with Interactive 3D Controls */}
+              <div className="absolute top-0 left-0 right-0 z-30 px-4 py-3 border-b border-slate-800/90 bg-[#0B0F19]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
                   </div>
-                  <span className="text-white font-bold text-[11px] ml-2">3D RELATIONAL NETWORK BOX</span>
+                  <span className="text-white font-bold text-[11px] ml-1.5 hidden sm:inline">3D RELATIONAL NETWORK</span>
                 </div>
+
+                {/* Interactive Motion & Movable Controls */}
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span className="text-[10px] text-slate-300 bg-black/60 px-2 py-0.5 rounded border border-slate-800">
-                    Live WebGL
+                  {/* Movable drag hint pill */}
+                  <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold flex items-center gap-1 animate-pulse">
+                    <span>🖐️</span>
+                    <span>Drag to Rotate</span>
                   </span>
+
+                  {/* Reverse Orbit Direction */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGlobeDirection(prev => prev === 'right' ? 'left' : 'right');
+                    }}
+                    title="Reverse 3D Spin Direction"
+                    className="p-1.5 rounded-lg bg-black/60 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-[10px] flex items-center justify-center transition cursor-pointer"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                  </button>
+
+                  {/* Play/Pause Auto-Rotation */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsGlobeSpinning(prev => !prev);
+                    }}
+                    title={isGlobeSpinning ? "Pause Auto-Rotation" : "Resume Auto-Rotation"}
+                    className="p-1.5 rounded-lg bg-black/60 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-[10px] flex items-center justify-center transition cursor-pointer"
+                  >
+                    {isGlobeSpinning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                  </button>
+
+                  {/* Speed Boost Toggle */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGlobeSpeed(prev => prev > 6 ? 5.5 : 9.5);
+                    }}
+                    title="Toggle Rotation Speed"
+                    className={`px-2 py-0.5 rounded-lg border text-[10px] transition flex items-center gap-1 cursor-pointer ${
+                      globeSpeed > 6
+                        ? 'bg-rose-600 text-white border-rose-400 shadow-glow-danger'
+                        : 'bg-black/60 text-slate-300 border-slate-800 hover:bg-slate-800'
+                    }`}
+                  >
+                    <Zap className="w-2.5 h-2.5" />
+                    <span>{globeSpeed > 6 ? 'Turbo' : 'Fast'}</span>
+                  </button>
                 </div>
               </div>
 
@@ -601,7 +650,9 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
                       "Turnover Drain Ratio: 98.5%"
                     ]}
                     textColor="#38BDF8"
-                    speed={2.2}
+                    speed={isGlobeSpinning ? globeSpeed : 0}
+                    direction={globeDirection}
+                    motion={{ style: "both", amount: 6, pace: 5 }}
                     tilt={16}
                     parallax={7}
                   />
@@ -651,9 +702,9 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
               <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-[#0B0F19]/90 px-3.5 py-1.5 rounded-xl border border-slate-800 backdrop-blur-md">
                 <span className="text-emerald-400 flex items-center gap-1 font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  3D Topological Projection Engine
+                  Interactive 3D Sphere: Movable • Drag to Rotate
                 </span>
-                <span className="text-slate-400">8D Sparse Feature Tensor</span>
+                <span className="text-rose-400 font-bold">Inertia Physics Active</span>
               </div>
             </div>
           </div>
