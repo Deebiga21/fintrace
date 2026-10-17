@@ -6,6 +6,7 @@
   overflow: hidden;
   isolation: isolate;
   border-radius: inherit;
+  touch-action: pan-y;
 }
 
 .warp-text canvas {
@@ -15,6 +16,7 @@
   height: 100%;
   display: block;
   cursor: pointer;
+  touch-action: pan-y;
 }
 
 .warp-text__fallback {

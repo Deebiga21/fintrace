@@ -1300,7 +1300,7 @@ export default function BriarGlobe({
         cursor: "grab",
         userSelect: "none",
         WebkitUserSelect: "none",
-        touchAction: "none",
+        touchAction: "pan-y",
         backgroundColor: background,
         ...style,
       }}
