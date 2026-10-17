@@ -35,10 +35,12 @@ import {
   BarChart3,
   ExternalLink,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Sparkles
 } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
 import BriarGlobe from '../components/BriarGlobe';
+import WarpText from '../components/WarpText';
 
 class GlobeErrorBoundary extends React.Component {
   constructor(props) {
@@ -472,18 +474,41 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           
           {/* Left Column: Headline, Subtitle & CTAs (7 Cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold font-mono tracking-wide">
-              <Zap className="w-3.5 h-3.5 text-rose-400" />
-              <span>Here's the apps for you</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold font-mono tracking-wide">
+                <Zap className="w-3.5 h-3.5 text-rose-400" />
+                <span>Here's the apps for you</span>
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-semibold">
+                <Sparkles className="w-3 h-3 text-amber-400 animate-spin" style={{ animationDuration: '4s' }} />
+                <span>Interactive Liquid Font • Move Cursor or Click Text</span>
+              </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.12]">
-              The new era of{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-orange-400 to-amber-300">
-                finance technology
-              </span>{' '}
-              intelligence.
-            </h1>
+            {/* Interactive Liquid WebGL Warp Headline */}
+            <div className="w-full relative min-h-[165px] sm:min-h-[190px] lg:min-h-[210px] select-none">
+              <WarpText
+                text={"The new era of\nfinance technology\nintelligence."}
+                color="#FFFFFF"
+                warpStrength={0.08}
+                warpScale={1.7}
+                speed={0.6}
+                pointerInfluence={0.42}
+                pointerStrength={0.38}
+                refraction={0.022}
+                chromatic={0.4}
+                ripple={true}
+                clickRipple={true}
+                idleDrift={0.2}
+                lens="bulge"
+                align="left"
+                fontSize="clamp(2.3rem, 4.3vw, 3.8rem)"
+                fontWeight={900}
+                letterSpacing="-0.04em"
+                lineHeight={1.08}
+                className="h-[165px] sm:h-[190px] lg:h-[210px]"
+              />
+            </div>
 
             <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-xl">
               Managing your financial business in easy way. FinTrace unmasks smurfing rings, circular laundering loops, and conduit accounts through deep Graph Neural Networks (GraphSAGE).
