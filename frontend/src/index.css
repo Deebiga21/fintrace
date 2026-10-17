@@ -9,23 +9,40 @@
   }
 }
 
-/* Custom Scrollbar for Intelligence Consoles */
+/* Ergonomic High-Usability Scrollbar (Easy to Grab & Drag) */
+html {
+  scrollbar-width: auto;
+  scrollbar-color: #475569 #070A12;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 12px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B1120;
+  background: #070A12;
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 4px;
+  background: #475569;
+  border: 2px solid #070A12;
+  border-radius: 9999px;
+  min-height: 48px;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #F43F5E;
+  border: 2px solid #070A12;
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #FB7185;
+  border: 1px solid #070A12;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.9);
 }
 
 /* Glassmorphism Surface */
