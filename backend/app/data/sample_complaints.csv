@@ -1,0 +1,6 @@
+complaint_id,date_reported,complainant_name,description,reported_account_id,transaction_id,amount_lost,status,source
+CMP-2026-8812,2026-10-12T23:00:00,Ramesh Kumar Gupta,"Victim received fraudulent call pretending to be Bank KYC Dept. Transferred Rs 65,000 under duress to account MULE_AGG_01.",MULE_AGG_01,TXN_10165,65000.0,Linked,National Cyber Crime Reporting Portal (1930)
+CMP-2026-8815,2026-10-13T00:00:00,Ananya Sengupta,Part-time job task scam victim. Deputed funds to beneficiary account MULE_AGG_01 for purported crypto task commission.,MULE_AGG_01,TXN_10166,72000.0,Linked,State Police Cyber Cell
+CMP-2026-8902,2026-10-14T22:00:00,Pinnacle Logistics Finance Desk,Unauthorized ERP access diverted payment invoice to conduit account RAPID_CONDUIT_77.,RAPID_CONDUIT_77,TXN_10178,490000.0,Under_Investigation,Corporate Fraud Grievance Officer
+CMP-2026-8944,2026-10-14T03:00:00,Dr. Vikas Mehra,Digital arrest scam where imposter police coerced emergency bond deposit into account CIRC_MULE_A.,CIRC_MULE_A,TXN_10174,185000.0,New,National Cyber Crime Reporting Portal (1930)
+CMP-2026-9011,2026-10-15T20:00:00,Kavita S. Rao,Phishing link SMS regarding electricity disconnection led to unauthorized netbanking debit routed to DISP_SMURF_88.,DISP_SMURF_88,TXN_10183,250000.0,New,Bank Anti-Fraud Operations

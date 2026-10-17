@@ -1,0 +1,12 @@
+fastapi>=0.110.0
+uvicorn>=0.28.0
+sqlalchemy>=2.0.0
+pydantic>=2.6.0
+pandas>=2.2.0
+networkx>=3.2.0
+torch>=2.2.0
+torch_geometric>=2.5.0
+scikit-learn>=1.4.0
+python-multipart>=0.0.9
+python-jose>=3.3.0
+passlib>=1.7.4
