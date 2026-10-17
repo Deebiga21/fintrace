@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   ShieldAlert,
   Network,
@@ -74,6 +74,16 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch((err) => {
+        console.warn("Background video autoplay note:", err);
+      });
+    }
+  }, []);
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -250,7 +260,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   return (
     <div className="min-h-screen bg-[#0B0F19] text-slate-100 selection:bg-rose-500 selection:text-white relative overflow-x-hidden font-sans">
       
-      {/* 1. Full-Screen Elegant Watermark Animation Background */}
+      {/* 1. Full-Screen Cinematic Animation Background */}
       <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0 select-none">
         <video
           ref={videoRef}
@@ -260,11 +270,11 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           muted={true}
           playsInline
           preload="auto"
-          className="w-full h-full object-cover opacity-[0.09] filter grayscale contrast-125 brightness-75 mix-blend-screen transform scale-105"
+          className="w-full h-full object-cover opacity-35 filter contrast-110 saturate-125 transform scale-105"
         />
-        {/* Soft Vignette Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19]/95 via-[#0B0F19]/80 to-[#0B0F19]"></div>
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0F19]/50 to-[#0B0F19]"></div>
+        {/* Soft Vignette Overlay ensuring text readability while animation is clearly visible */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19]/80 via-[#0B0F19]/60 to-[#0B0F19]/85"></div>
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0F19]/40 to-[#0B0F19]/80"></div>
       </div>
 
       {/* Floating Ambient Corner Glows (Matching Reference Mockup ca9a92ff.png) */}
