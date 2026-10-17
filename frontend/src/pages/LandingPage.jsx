@@ -31,7 +31,10 @@ import {
   FileText,
   Search,
   Maximize2,
-  Video
+  Video,
+  BarChart3,
+  ExternalLink,
+  ChevronDown
 } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
 import BriarGlobe from '../components/BriarGlobe';
@@ -51,11 +54,11 @@ class GlobeErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center h-full p-6 text-center font-mono">
-          <div className="w-12 h-12 rounded-xl bg-electric-500/20 text-electric-400 flex items-center justify-center mb-3">
+          <div className="w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center mb-3">
             <Network className="w-6 h-6 animate-pulse" />
           </div>
           <span className="text-white text-sm font-bold">3D Relational Topology</span>
-          <span className="text-slate-400 text-xs mt-1">WebGL Network Stream Loaded</span>
+          <span className="text-slate-400 text-xs mt-1">WebGL Network Stream Active</span>
         </div>
       );
     }
@@ -245,680 +248,646 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   };
 
   return (
-    <div className="space-y-12 max-w-7xl mx-auto py-2">
-      {/* 1. Live Threat Telemetry & Surveillance Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-xl bg-navy-900 border border-slate-800 text-xs shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="font-mono font-bold text-white tracking-wider text-[11px]">
-              GNN SURVEILLANCE NODE ACTIVE
-            </span>
-          </div>
-          <span className="text-slate-600 hidden sm:inline">|</span>
-          <div className="hidden md:flex items-center gap-4 text-[11px] text-slate-400 font-mono">
-            <span>MODEL: <strong className="text-electric-400">GraphSAGE v1.0 (PyG)</strong></span>
-            <span>NODES: <strong className="text-white">74 Monitored</strong></span>
-            <span>TRANSACTIONS: <strong className="text-white">182 Processed</strong></span>
-            <span>FLAGGED MULES: <strong className="text-rose-400">16 Leads</strong></span>
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#0B0F19] text-slate-100 selection:bg-rose-500 selection:text-white relative overflow-x-hidden font-sans">
+      {/* Ambient Radial Corner Glows (Matching Reference Image) */}
+      <div className="fixed -top-40 -left-40 w-[600px] h-[600px] bg-rose-500/12 rounded-full blur-[140px] pointer-events-none z-0"></div>
+      <div className="fixed -bottom-40 -right-40 w-[650px] h-[650px] bg-orange-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
-        <div className="flex items-center gap-2 text-xs font-mono">
-          <span className="px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-semibold text-[10px]">
-            FIU-IND COMPLIANT
-          </span>
-          <span className="px-2 py-0.5 rounded bg-electric-950/60 text-electric-300 border border-electric-500/30 font-semibold text-[10px]">
-            ZERO-HALLUCINATION POLICY
-          </span>
-        </div>
-      </div>
-
-      {/* 2. Command Center Hero: Headline & 3D Interactive WebGL Thread Globe */}
-      <div className="relative rounded-2xl bg-gradient-to-b from-navy-900 via-navy-900 to-navy-950 border border-slate-800 p-6 md:p-10 overflow-hidden shadow-2xl">
-        {/* Ambient Glows */}
-        <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-electric-500/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
-
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column: Vision & CTAs (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-electric-500/15 border border-electric-500/30 text-electric-300 text-xs font-semibold font-mono">
-              <Cpu className="w-3.5 h-3.5 text-electric-400 animate-pulse" />
-              GRAPH NEURAL NETWORK FRAUD INTELLIGENCE
-            </div>
-
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
-              Intelligent Mule Account Detection & Financial Crime Investigation
-            </h1>
-
-            <p className="text-slate-300 text-sm md:text-base leading-relaxed">
-              FinTrace AI exposes complex money laundering networks and conduit accounts through deep **Graph Neural Networks (GraphSAGE)**. By evaluating multi-hop topological structures and fund velocity over isolated transaction slicing, it defeats smurfing aggregators and circular layering evasion.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <button
-                onClick={() => setCurrentPage("dashboard")}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-electric-600 to-electric-500 hover:from-electric-500 hover:to-electric-400 text-white font-bold text-sm shadow-glow-electric transition group"
-              >
-                <span>Launch Command Center</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <button
-                onClick={() => setCurrentPage("graph")}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-navy-850 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm transition"
-              >
-                <Network className="w-4 h-4 text-electric-400" />
-                <span>Explore Full Graph Canvas</span>
-              </button>
-
-              <button
-                onClick={() => setCurrentPage("upload")}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 font-medium text-xs transition font-mono"
-              >
-                <Database className="w-3.5 h-3.5 text-sky-400" />
-                <span>Upload CSV Dataset</span>
-              </button>
-            </div>
-
-            {/* Micro Stats Row */}
-            <div className="grid grid-cols-3 gap-3 pt-3 border-t border-slate-800/80 text-xs font-mono">
-              <div>
-                <span className="text-[10px] text-slate-400 block">MODEL ACCURACY</span>
-                <span className="text-base font-black text-emerald-400">95.6% Validated</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 block">GNN INFERENCE</span>
-                <span className="text-base font-black text-electric-300">&lt; 45ms Latency</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 block">NEURAL ARCHITECTURE</span>
-                <span className="text-base font-black text-white">2-Layer SAGEConv</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: 3D Interactive WebGL Thread Globe (BriarGlobe) (5 cols) */}
-          <div className="lg:col-span-5 h-[480px] min-h-[440px] rounded-2xl bg-navy-950/95 border border-slate-800 relative overflow-hidden shadow-glass group">
-            <div className="absolute top-3 left-4 right-4 z-20 flex items-center justify-between text-xs font-mono pointer-events-none">
-              <div className="flex items-center gap-2 bg-navy-900/90 px-2.5 py-1 rounded-full border border-slate-800 backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-electric-400 animate-ping"></span>
-                <span className="text-white font-bold text-[11px]">3D RELATIONAL TOPOLOGY</span>
-              </div>
-              <span className="text-[10px] text-slate-300 bg-navy-900/90 px-2 py-0.5 rounded border border-slate-800">
-                Hover Nodes to Inspect
-              </span>
-            </div>
-
-            {/* BriarGlobe Component Container */}
-            <div className="absolute inset-0 w-full h-full">
-              <GlobeErrorBoundary>
-                <BriarGlobe
-                  background="transparent"
-                  lines={{
-                    color: "#38BDF8",
-                    accent: "#EF4444",
-                    thickness: 0.65,
-                    opacity: 5.5,
-                    depth: 8.5
-                  }}
-                  hover={{
-                    reach: 24,
-                    glowSize: 140,
-                    glow: "#0284C7",
-                    pill: "rgba(15, 23, 42, 0.92)",
-                    lag: 4.2
-                  }}
-                  network={{
-                    nodes: 850,
-                    hubs: 26,
-                    links: 5
-                  }}
-                  labels={[
-                    "Mule Ring: Aggregator 01",
-                    "Phishing Smurfing Funnel",
-                    "Rapid Pass Conduit (₹4.9L)",
-                    "Circular Loop (A→B→C→D→A)",
-                    "Offshore Shell Transit",
-                    "Cybercrime Portal (1930) Link",
-                    "Crypto OTC Cashout Node",
-                    "Turnover Drain Ratio: 98.5%"
-                  ]}
-                  textColor="#38BDF8"
-                  speed={2.2}
-                  tilt={16}
-                  parallax={7}
-                />
-              </GlobeErrorBoundary>
-            </div>
-
-            <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-navy-900/90 px-3 py-1.5 rounded-lg border border-slate-800 backdrop-blur-md">
-              <span className="text-emerald-400 flex items-center gap-1 font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Real-Time Topological Projection
-              </span>
-              <span className="text-slate-400">8D Sparse Feature Tensor</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Forensic Surveillance & Tactical Video Screen */}
-      <div className="rounded-2xl bg-navy-900 border border-slate-800 p-6 md:p-8 space-y-4 shadow-glass">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-electric-500/20 text-electric-400 border border-electric-500/30 flex items-center justify-center">
-              <Video className="w-5 h-5" />
+      {/* 1. Standalone Modern SaaS Top Navbar (Matching Reference Image) */}
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0B0F19]/80 border-b border-slate-800/80 px-6 lg:px-12 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Brand Logo */}
+          <div
+            className="flex items-center gap-3 cursor-pointer group"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-6 bg-gradient-to-b from-rose-500 to-orange-500 rounded-full transform -skew-x-12"></span>
+              <span className="w-1.5 h-6 bg-gradient-to-b from-rose-500 to-orange-500 rounded-full transform -skew-x-12 opacity-80"></span>
+              <span className="w-1.5 h-6 bg-gradient-to-b from-rose-500 to-orange-500 rounded-full transform -skew-x-12 opacity-50"></span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                <span className="font-mono text-xs font-bold text-rose-400 tracking-wider">
-                  SURVEILLANCE HUD STREAM #01
-                </span>
-                <span className="text-[10px] font-mono text-slate-400 bg-navy-950 px-2 py-0.5 rounded border border-slate-800">
-                  CLASSIFIED FORENSIC FEED
+                <span className="font-extrabold text-white text-xl tracking-tight">FinTrace</span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                  GNN AI
                 </span>
               </div>
-              <h3 className="text-base font-bold text-white mt-0.5">
-                Financial Crime Forensic Motion Reconstruction
-              </h3>
+            </div>
+          </div>
+
+          {/* Center Navigation Links */}
+          <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-slate-300">
+            <a href="#overview" className="hover:text-white transition">Overview</a>
+            <a href="#topology-3d" className="hover:text-white transition">3D Topology</a>
+            <a href="#forensic-video" className="hover:text-white transition">Forensic HUD</a>
+            <a href="#simulator" className="hover:text-white transition">Attack Simulator</a>
+            <a href="#battle-arena" className="hover:text-white transition">GNN vs XGBoost</a>
+            <a href="#pipeline" className="hover:text-white transition">Workflow</a>
+          </nav>
+
+          {/* Right Action CTAs */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setCurrentPage('login')}
+              className="text-xs font-semibold text-slate-300 hover:text-white transition hidden sm:inline-block"
+            >
+              Investigator Login
+            </button>
+            <button
+              onClick={() => setCurrentPage('dashboard')}
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-rose-600 via-rose-500 to-orange-500 hover:from-rose-500 hover:to-orange-400 text-white font-bold text-xs shadow-glow-danger transition transform hover:scale-105"
+            >
+              Launch Command Center →
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Container */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-8 space-y-20">
+        
+        {/* Telemetry Status Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-2xl bg-[#0E1424]/90 border border-slate-800/90 text-xs shadow-lg backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="font-mono font-bold text-white tracking-wider text-[11px]">
+                GNN SURVEILLANCE NODE ACTIVE
+              </span>
+            </div>
+            <span className="text-slate-700 hidden sm:inline">|</span>
+            <div className="hidden md:flex items-center gap-4 text-[11px] text-slate-400 font-mono">
+              <span>MODEL: <strong className="text-rose-400">GraphSAGE v1.0 (PyG)</strong></span>
+              <span>NODES: <strong className="text-white">74 Monitored</strong></span>
+              <span>TRANSACTIONS: <strong className="text-white">182 Processed</strong></span>
+              <span>FLAGGED MULES: <strong className="text-rose-400">16 Leads</strong></span>
             </div>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-mono">
-            <span className="px-2.5 py-1 rounded bg-slate-950 text-slate-300 border border-slate-800">
-              RESOLUTION: 1080P HUD
+            <span className="px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-semibold text-[10px]">
+              FIU-IND COMPLIANT
             </span>
-            <span className="px-2.5 py-1 rounded bg-slate-950 text-emerald-400 border border-slate-800">
-              STATUS: ARCHIVED STREAM
+            <span className="px-2.5 py-1 rounded-full bg-rose-950/60 text-rose-300 border border-rose-500/30 font-semibold text-[10px]">
+              ZERO-HALLUCINATION POLICY
             </span>
           </div>
         </div>
 
-        {/* Video Player Display Container */}
-        <div className="relative rounded-xl overflow-hidden bg-black border border-slate-800 group shadow-2xl">
-          {/* Cyber HUD Overlay Corners */}
-          <div className="absolute top-3 left-4 z-10 font-mono text-[11px] text-electric-400/80 bg-black/60 px-3 py-1 rounded-md backdrop-blur-md border border-electric-500/20 pointer-events-none">
-            [CAM-01: THE CREATION OF ADAM — FRAUD INTEL RECONSTRUCTION]
-          </div>
-
-          <div className="absolute top-3 right-4 z-10 font-mono text-[10px] text-rose-400 bg-black/60 px-2.5 py-1 rounded-md backdrop-blur-md border border-rose-500/30 flex items-center gap-1.5 pointer-events-none">
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-            <span>LIVE FORENSIC MONITOR</span>
-          </div>
-
-          <video
-            ref={videoRef}
-            src="/the_creation_of_adam-recording.mp4"
-            autoPlay
-            loop
-            muted={isMuted}
-            playsInline
-            className="w-full max-h-[520px] object-contain mx-auto bg-black"
-          />
-
-          {/* Bottom HUD Floating Controls Bar */}
-          <div className="absolute bottom-3 left-4 right-4 z-10 p-3 rounded-lg bg-navy-950/85 backdrop-blur-md border border-slate-800/80 flex items-center justify-between text-xs">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={togglePlay}
-                className="p-1.5 rounded-lg bg-electric-600/30 hover:bg-electric-600 text-electric-300 hover:text-white border border-electric-500/40 transition"
-                title={isPlaying ? "Pause Video" : "Play Video"}
-              >
-                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              </button>
-
-              <button
-                onClick={toggleMute}
-                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700"
-                title={isMuted ? "Unmute Audio" : "Mute Audio"}
-              >
-                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-              </button>
-
-              <span className="text-[11px] font-mono text-slate-300 hidden sm:inline">
-                Forensic Motion Telemetry • Case Reference: #CASE-2026-D00D33
-              </span>
+        {/* 2. Hero Section (Styled Exactly After the Reference Image) */}
+        <section id="overview" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4">
+          
+          {/* Left Column: Headline, Subtitle & CTAs (7 Cols) */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold font-mono tracking-wide">
+              <Zap className="w-3.5 h-3.5 text-rose-400" />
+              <span>Here's the new intelligence standard for you</span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('MULE_AGG_01');
-                  setCurrentPage('graph');
-                }}
-                className="px-3 py-1 bg-electric-600 hover:bg-electric-500 text-white font-semibold rounded text-xs transition"
-              >
-                Investigate Graph
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.12]">
+              The new era of{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-orange-400 to-amber-300">
+                financial crime
+              </span>{' '}
+              technology.
+            </h1>
 
-      {/* 4. Live Interactive Fraud Topology Simulator */}
-      <div className="p-6 md:p-8 rounded-2xl bg-navy-900 border border-slate-800 space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                TACTICAL SANDBOX
-              </span>
-            </div>
-            <h2 className="text-lg md:text-xl font-bold text-white tracking-wide mt-1">
-              Interactive Attack Vector Simulator
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Simulate and inspect the 3 primary financial crime typologies modeled in FinTrace AI.
-            </p>
-          </div>
-
-          {/* Scenario Tabs */}
-          <div className="flex gap-2 p-1 bg-navy-950 rounded-lg border border-slate-800 text-xs font-mono">
-            <button
-              onClick={() => setActiveScenario('smurfing')}
-              className={`px-3 py-1.5 rounded-md font-semibold transition ${
-                activeScenario === 'smurfing'
-                  ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              1. Smurfing Aggregator
-            </button>
-            <button
-              onClick={() => setActiveScenario('circular')}
-              className={`px-3 py-1.5 rounded-md font-semibold transition ${
-                activeScenario === 'circular'
-                  ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              2. Circular Loop
-            </button>
-            <button
-              onClick={() => setActiveScenario('rapid')}
-              className={`px-3 py-1.5 rounded-md font-semibold transition ${
-                activeScenario === 'rapid'
-                  ? 'bg-rose-950 text-rose-300 border border-rose-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              3. Rapid Pass Conduit
-            </button>
-          </div>
-        </div>
-
-        {/* Active Scenario Flow Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          <div className="lg:col-span-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-white font-mono">{currentScenario.title}</h3>
-              <RiskBadge level={currentScenario.riskLevel} score={currentScenario.riskScore} />
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              {currentScenario.description}
+            <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-xl">
+              Managing your financial crime risk in the easiest way. FinTrace unmasks smurfing rings, circular laundering loops, and high-velocity conduit accounts through deep multi-hop Graph Neural Networks (GraphSAGE).
             </p>
 
-            <div className="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1">
-              <div className="p-2.5 rounded-lg bg-navy-950 border border-slate-800">
-                <span className="text-slate-500 text-[10px] block">VELOCITY</span>
-                <span className="font-bold text-rose-400">{currentScenario.metrics.velocity}</span>
+            {/* Action Buttons (Matching Reference Image Style: [Try it free] & [▶ Show me the demo]) */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <button
+                onClick={() => setCurrentPage("dashboard")}
+                className="px-8 py-3.5 rounded-full bg-gradient-to-r from-rose-600 via-rose-500 to-orange-500 hover:from-rose-500 hover:to-orange-400 text-white font-bold text-sm shadow-glow-danger transition transform hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Launch Command Center →
+              </button>
+
+              <a
+                href="#forensic-video"
+                className="flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-navy-900/90 hover:bg-navy-850 text-slate-200 border border-rose-500/40 hover:border-rose-500 font-semibold text-sm transition group"
+              >
+                <div className="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
+                  <Play className="w-2.5 h-2.5 fill-rose-400" />
+                </div>
+                <span>Watch Forensic HUD Demo</span>
+              </a>
+
+              <button
+                onClick={() => setCurrentPage("graph")}
+                className="flex items-center gap-2 px-5 py-3.5 rounded-full bg-slate-900/70 hover:bg-slate-800 text-slate-300 border border-slate-800 font-mono text-xs transition"
+              >
+                <Network className="w-3.5 h-3.5 text-sky-400" />
+                <span>Explore Full Canvas</span>
+              </button>
+            </div>
+
+            {/* Micro Stats Row */}
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-800/80 text-xs font-mono">
+              <div>
+                <span className="text-[10px] text-slate-500 block uppercase">MODEL ACCURACY</span>
+                <span className="text-lg font-black text-emerald-400">95.6% Validated</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-navy-950 border border-slate-800">
-                <span className="text-slate-500 text-[10px] block">TURNOVER</span>
-                <span className="font-bold text-amber-400">{currentScenario.metrics.drainRatio}</span>
+              <div>
+                <span className="text-[10px] text-slate-500 block uppercase">GNN INFERENCE</span>
+                <span className="text-lg font-black text-rose-400">&lt; 45ms Latency</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-navy-950 border border-slate-800">
-                <span className="text-slate-500 text-[10px] block">FLOW HOPS</span>
-                <span className="font-bold text-electric-300">
-                  {currentScenario.metrics.inflowHops} in / {currentScenario.metrics.outflowHops} out
+              <div>
+                <span className="text-[10px] text-slate-500 block uppercase">NEURAL ARCHITECTURE</span>
+                <span className="text-lg font-black text-white">2-Layer SAGEConv</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Isometric 3D Command Deck (Matching 3D Card Stack in Reference Image) */}
+          <div id="topology-3d" className="lg:col-span-5 relative">
+            <div className="relative h-[500px] lg:h-[540px] rounded-3xl bg-gradient-to-b from-[#0F172A]/90 via-[#0C1220]/95 to-[#090D18] border border-slate-800 shadow-2xl overflow-hidden group">
+              
+              {/* Header Badge */}
+              <div className="absolute top-4 left-5 right-5 z-20 flex items-center justify-between text-xs font-mono pointer-events-none">
+                <div className="flex items-center gap-2 bg-[#0B0F19]/90 px-3 py-1.5 rounded-full border border-slate-800/90 backdrop-blur-md">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                  <span className="text-white font-bold text-[11px]">3D RELATIONAL TOPOLOGY</span>
+                </div>
+                <span className="text-[10px] text-slate-400 bg-[#0B0F19]/90 px-2.5 py-1 rounded-full border border-slate-800/90">
+                  Interactive WebGL Deck
                 </span>
               </div>
-            </div>
 
-            <button
-              onClick={() => handleLaunchScenario(currentScenario.targetAccount)}
-              className="w-full py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-xs rounded-lg shadow-glow-danger transition flex items-center justify-center gap-2"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>Trace {currentScenario.targetAccount} Money Trail Live</span>
-            </button>
-          </div>
+              {/* 3D WebGL Relational Network Sphere */}
+              <div className="absolute inset-0 w-full h-full">
+                <GlobeErrorBoundary>
+                  <BriarGlobe
+                    background="transparent"
+                    lines={{
+                      color: "#38BDF8",
+                      accent: "#F43F5E",
+                      thickness: 0.65,
+                      opacity: 5.5,
+                      depth: 8.5
+                    }}
+                    hover={{
+                      reach: 24,
+                      glowSize: 140,
+                      glow: "#0284C7",
+                      pill: "rgba(15, 23, 42, 0.95)",
+                      lag: 4.2
+                    }}
+                    network={{
+                      nodes: 850,
+                      hubs: 26,
+                      links: 5
+                    }}
+                    labels={[
+                      "Mule Ring: Aggregator 01",
+                      "Phishing Smurfing Funnel",
+                      "Rapid Pass Conduit (₹4.9L)",
+                      "Circular Loop (A→B→C→D→A)",
+                      "Offshore Shell Transit",
+                      "Cybercrime Portal (1930) Link",
+                      "Crypto OTC Cashout Node",
+                      "Turnover Drain Ratio: 98.5%"
+                    ]}
+                    textColor="#38BDF8"
+                    speed={2.2}
+                    tilt={16}
+                    parallax={7}
+                  />
+                </GlobeErrorBoundary>
+              </div>
 
-          {/* Sequence Diagram Display */}
-          <div className="lg:col-span-7 p-5 rounded-xl bg-navy-950 border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-slate-400">DISSEMINATION SEQUENCE</span>
-              <span className="text-rose-400 font-bold">{currentScenario.pattern}</span>
-            </div>
+              {/* Floating Isometric 3D Cards (Directly Replicating Reference Image Visual Elements) */}
+              
+              {/* Floating Card 1: 3D Bar Chart Stack (Top-Right) */}
+              <div className="absolute top-16 right-4 z-20 p-3 rounded-xl bg-[#0B0F19]/90 border border-slate-800/90 shadow-xl backdrop-blur-md font-mono text-[11px] pointer-events-none transform hover:scale-105 transition-transform">
+                <div className="flex items-center justify-between gap-3 text-slate-400 mb-2">
+                  <span className="text-[10px] font-bold text-rose-400">INFLOW CONVERGENCE</span>
+                  <span className="text-[9px] text-slate-500">6 HOPS</span>
+                </div>
+                {/* 5 Vertical Colorful Isometric Bars */}
+                <div className="flex items-end gap-1.5 h-12 w-28 px-1">
+                  <div className="flex-1 bg-sky-400 rounded-t h-4"></div>
+                  <div className="flex-1 bg-indigo-500 rounded-t h-7"></div>
+                  <div className="flex-1 bg-purple-500 rounded-t h-9"></div>
+                  <div className="flex-1 bg-pink-500 rounded-t h-11"></div>
+                  <div className="flex-1 bg-rose-500 rounded-t h-12 shadow-glow-danger"></div>
+                </div>
+                <div className="text-[9px] text-slate-400 mt-1 truncate">MULE_AGG_01 Funnel</div>
+              </div>
 
-            <div className="flex items-center justify-between gap-2 pt-2 font-mono">
-              {currentScenario.flowNodes.map((node, i) => (
-                <React.Fragment key={node.id}>
-                  <div className="flex-1 flex flex-col items-center text-center p-3 rounded-lg bg-navy-900 border border-slate-800">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-xs border mb-2 ${
-                      node.type === 'victim'
-                        ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40'
-                        : node.type === 'target'
-                        ? 'bg-rose-950 text-rose-200 border-rose-500 shadow-glow-danger animate-pulse'
-                        : node.type === 'layer'
-                        ? 'bg-amber-950/70 text-amber-300 border-amber-500/40'
-                        : 'bg-purple-950/70 text-purple-300 border-purple-500/40'
-                    }`}>
-                      {i + 1}
-                    </div>
-                    <span className="text-xs font-bold text-slate-200 truncate w-full">
-                      {node.label}
-                    </span>
-                    <span className="text-[10px] text-slate-500 truncate w-full mt-0.5">
-                      {node.sub}
-                    </span>
+              {/* Floating Card 2: 70% / 98.5% Donut Meter (Bottom-Left) */}
+              <div className="absolute bottom-14 left-4 z-20 p-3 rounded-xl bg-[#0B0F19]/90 border border-slate-800/90 shadow-xl backdrop-blur-md font-mono text-[11px] pointer-events-none">
+                <div className="flex items-center gap-3">
+                  {/* Donut Ring Mock */}
+                  <div className="relative w-10 h-10 rounded-full border-4 border-slate-800 border-t-rose-500 border-r-orange-400 flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-white">98%</span>
                   </div>
-                  {i < currentScenario.flowNodes.length - 1 && (
-                    <ArrowRight className="w-4 h-4 text-slate-600 shrink-0" />
-                  )}
-                </React.Fragment>
-              ))}
+                  <div>
+                    <span className="text-[9px] text-slate-400 block">DRAIN RATIO</span>
+                    <span className="text-xs font-bold text-rose-400">38m Velocity</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Card 3: Alert Chip (Bottom-Right) */}
+              <div className="absolute bottom-14 right-4 z-20 p-2.5 rounded-xl bg-[#0B0F19]/90 border border-rose-500/30 shadow-xl backdrop-blur-md font-mono text-[10px] text-slate-200 pointer-events-none flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                <span>₹4,90,000 Conduit</span>
+                <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">0.94</span>
+              </div>
+
+              {/* Bottom Telemetry Bar */}
+              <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-[#0B0F19]/90 px-3 py-1.5 rounded-lg border border-slate-800/90 backdrop-blur-md">
+                <span className="text-emerald-400 flex items-center gap-1 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Real-Time Topological Projection
+                </span>
+                <span className="text-slate-400">8D Sparse Feature Tensor</span>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* 5. GraphSAGE vs Traditional XGBoost Battle Arena */}
-      <div className="p-6 md:p-8 rounded-2xl bg-navy-900 border border-slate-800 space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-electric-500/20 text-electric-300 border border-electric-500/30">
-                METHODOLOGY COMPARISON
+        {/* 3. Forensic Surveillance & Tactical Video Screen */}
+        <section id="forensic-video" className="rounded-3xl bg-[#0E1424]/90 border border-slate-800 p-6 md:p-8 space-y-4 shadow-2xl backdrop-blur-md">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center">
+                <Video className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                  <span className="font-mono text-xs font-bold text-rose-400 tracking-wider">
+                    SURVEILLANCE HUD STREAM #01
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400 bg-black/60 px-2 py-0.5 rounded border border-slate-800">
+                    CLASSIFIED FORENSIC FEED
+                  </span>
+                </div>
+                <h3 className="text-base font-bold text-white mt-0.5">
+                  Financial Crime Forensic Motion Reconstruction
+                </h3>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-mono">
+              <span className="px-2.5 py-1 rounded bg-black/60 text-slate-300 border border-slate-800">
+                RESOLUTION: 1080P HUD
+              </span>
+              <span className="px-2.5 py-1 rounded bg-black/60 text-emerald-400 border border-slate-800">
+                STATUS: ARCHIVED STREAM
               </span>
             </div>
-            <h2 className="text-lg md:text-xl font-bold text-white tracking-wide mt-1">
-              Why GraphSAGE Outperforms Traditional XGBoost in Mule Detection
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Financial crime syndicates intentionally design transaction amounts to blend into normal distributions, rendering row-by-row tabular classifiers ineffective.
-            </p>
           </div>
 
-          <div className="flex items-center gap-2 font-mono text-xs">
-            <span className="flex items-center gap-1 text-rose-400 font-semibold">
-              <X className="w-3.5 h-3.5 text-rose-500" />
-              Tabular Limitations
-            </span>
-            <span className="text-slate-600">vs</span>
-            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
-              <Check className="w-3.5 h-3.5 text-emerald-500" />
-              GraphSAGE Superpowers
-            </span>
-          </div>
-        </div>
+          {/* Video Player Display Container */}
+          <div className="relative rounded-2xl overflow-hidden bg-black border border-slate-800 group shadow-2xl">
+            {/* Cyber HUD Overlay Corners */}
+            <div className="absolute top-3 left-4 z-10 font-mono text-[11px] text-rose-400/90 bg-black/70 px-3 py-1 rounded-md backdrop-blur-md border border-rose-500/20 pointer-events-none">
+              [CAM-01: THE CREATION OF ADAM — FRAUD INTEL RECONSTRUCTION]
+            </div>
 
-        {/* Comparison Table / Matrix */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px] bg-navy-950">
-                <th className="py-3 px-4 w-1/4">INVESTIGATION CAPABILITY</th>
-                <th className="py-3 px-4 w-3/8 text-slate-400">TRADITIONAL XGBOOST / RANDOM FOREST</th>
-                <th className="py-3 px-4 w-3/8 text-electric-400 font-bold">FINTRACE AI (GRAPHSAGE GNN)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60 font-sans">
-              {comparisonRows.map((row, idx) => (
-                <tr key={idx} className="hover:bg-slate-800/30 transition">
-                  <td className="py-3.5 px-4 font-semibold text-slate-200 font-mono text-[11px]">
-                    {row.feature}
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-400 text-xs">
-                    <div className="flex items-start gap-2">
-                      <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-                      <span>{row.xgboost}</span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-200 text-xs">
-                    <div className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                      <span className="font-medium text-slate-100">{row.graphsage}</span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            <div className="absolute top-3 right-4 z-10 font-mono text-[10px] text-rose-400 bg-black/70 px-2.5 py-1 rounded-md backdrop-blur-md border border-rose-500/30 flex items-center gap-1.5 pointer-events-none">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+              <span>LIVE FORENSIC MONITOR</span>
+            </div>
 
-      {/* 6. Interactive 4-Way Fraud Attack Vector Showcase */}
-      <div className="space-y-4">
-        <div className="border-b border-slate-800 pb-3 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-rose-400" />
-              <span>4 Real-World Attack Topologies Flagged in Demo Network</span>
-            </h2>
-            <p className="text-xs text-slate-400">
-              Click any topology below to immediately inspect its ego network, money trail, and correlated cyber fraud reports.
-            </p>
-          </div>
-          <span className="text-xs font-mono text-electric-400">Synthetically Modelled</span>
-        </div>
+            <video
+              ref={videoRef}
+              src="/the_creation_of_adam-recording.mp4"
+              autoPlay
+              loop
+              muted={isMuted}
+              playsInline
+              preload="auto"
+              className="w-full max-h-[520px] object-contain mx-auto bg-black"
+            />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card 1 */}
-          <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 hover:border-rose-500/50 flex flex-col justify-between space-y-3 transition group">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold bg-rose-950 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded">
-                  SMURFING AGGREGATOR
+            {/* Bottom HUD Floating Controls Bar */}
+            <div className="absolute bottom-3 left-4 right-4 z-10 p-3 rounded-xl bg-black/80 backdrop-blur-md border border-slate-800 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={togglePlay}
+                  className="p-1.5 rounded-lg bg-rose-600/30 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 transition"
+                  title={isPlaying ? "Pause Video" : "Play Video"}
+                >
+                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                </button>
+
+                <button
+                  onClick={toggleMute}
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700"
+                  title={isMuted ? "Unmute Audio" : "Mute Audio"}
+                >
+                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                </button>
+
+                <span className="text-[11px] font-mono text-slate-300 hidden sm:inline">
+                  Forensic Motion Telemetry • Case Reference: #CASE-2026-D00D33
                 </span>
-                <span className="text-xs font-mono font-bold text-white">₹3,40,000</span>
               </div>
-              <h4 className="text-sm font-bold text-white group-hover:text-electric-300 transition font-mono">
-                MULE_AGG_01
-              </h4>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                6 phishing victim credits consolidated and transferred in 40 minutes to layering conduit <code className="text-electric-400">MULE_LAYER_02</code>.
-              </p>
-            </div>
-            <div className="pt-2 border-t border-slate-800 flex gap-2">
-              <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('MULE_AGG_01');
-                  setCurrentPage('money-trail');
-                }}
-                className="flex-1 py-1.5 bg-navy-850 hover:bg-slate-800 text-electric-300 border border-slate-700 rounded text-[11px] font-semibold transition"
-              >
-                Trace Trail
-              </button>
-              <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('MULE_AGG_01');
-                  setCurrentPage('graph');
-                }}
-                className="flex-1 py-1.5 bg-navy-850 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded text-[11px] font-semibold transition"
-              >
-                Graph
-              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    if (onAccountSelect) onAccountSelect('MULE_AGG_01');
+                    setCurrentPage('graph');
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono text-[11px] font-semibold transition flex items-center gap-1.5 shadow-glow-danger"
+                >
+                  <Network className="w-3.5 h-3.5" />
+                  <span>Investigate Target in Graph Canvas</span>
+                </button>
+              </div>
             </div>
           </div>
+        </section>
 
-          {/* Card 2 */}
-          <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 hover:border-rose-500/50 flex flex-col justify-between space-y-3 transition group">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold bg-rose-950 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded">
-                  CIRCULAR LAYERING
+        {/* 4. Interactive Fraud Topology Simulator */}
+        <section id="simulator" className="space-y-6 rounded-3xl bg-[#0E1424]/90 border border-slate-800 p-6 md:p-8 backdrop-blur-md">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Activity className="w-4 h-4 text-rose-400" />
+                <span className="font-mono text-xs font-bold text-rose-400 tracking-wider">
+                  TOPOLOGY SIMULATOR
                 </span>
-                <span className="text-xs font-mono font-bold text-white">₹1,85,000</span>
               </div>
-              <h4 className="text-sm font-bold text-white group-hover:text-electric-300 transition font-mono">
-                CIRC_MULE_A
-              </h4>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                4-hop closed cycle loop (A → B → C → D → A) designed to evade linear AML rules and obscure ultimate beneficial ownership.
-              </p>
+              <h2 className="text-xl font-bold text-white mt-1">
+                Simulate Known Financial Crime Typologies
+              </h2>
             </div>
-            <div className="pt-2 border-t border-slate-800 flex gap-2">
+
+            <div className="flex items-center gap-2 p-1 rounded-xl bg-black/60 border border-slate-800">
               <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('CIRC_MULE_A');
-                  setCurrentPage('money-trail');
-                }}
-                className="flex-1 py-1.5 bg-navy-850 hover:bg-slate-800 text-electric-300 border border-slate-700 rounded text-[11px] font-semibold transition"
+                onClick={() => setActiveScenario('smurfing')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
+                  activeScenario === 'smurfing'
+                    ? 'bg-rose-600 text-white shadow-glow-danger'
+                    : 'text-slate-400 hover:text-white'
+                }`}
               >
-                Trace Trail
+                Fan-In Smurfing
               </button>
               <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('CIRC_MULE_A');
-                  setCurrentPage('graph');
-                }}
-                className="flex-1 py-1.5 bg-navy-850 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded text-[11px] font-semibold transition"
+                onClick={() => setActiveScenario('circular')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
+                  activeScenario === 'circular'
+                    ? 'bg-rose-600 text-white shadow-glow-danger'
+                    : 'text-slate-400 hover:text-white'
+                }`}
               >
-                Graph
+                Circular Loop
+              </button>
+              <button
+                onClick={() => setActiveScenario('rapid')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
+                  activeScenario === 'rapid'
+                    ? 'bg-rose-600 text-white shadow-glow-danger'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Rapid Pass
               </button>
             </div>
           </div>
 
-          {/* Card 3 */}
-          <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 hover:border-rose-500/50 flex flex-col justify-between space-y-3 transition group">
-            <div className="space-y-2">
+          {/* Active Scenario Flow Card */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div className="lg:col-span-5 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold bg-rose-950 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded">
-                  RAPID CONDUIT
-                </span>
-                <span className="text-xs font-mono font-bold text-white">₹4,90,000</span>
+                <h3 className="text-base font-bold text-white font-mono">{currentScenario.title}</h3>
+                <RiskBadge level={currentScenario.riskLevel} score={currentScenario.riskScore} />
               </div>
-              <h4 className="text-sm font-bold text-white group-hover:text-electric-300 transition font-mono">
-                RAPID_CONDUIT_77
-              </h4>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                Single high-value inbound invoice credit drained in 14 minutes across 3 offshore shell accounts to prevent freezing.
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {currentScenario.description}
               </p>
-            </div>
-            <div className="pt-2 border-t border-slate-800 flex gap-2">
-              <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('RAPID_CONDUIT_77');
-                  setCurrentPage('money-trail');
-                }}
-                className="flex-1 py-1.5 bg-navy-850 hover:bg-slate-800 text-electric-300 border border-slate-700 rounded text-[11px] font-semibold transition"
-              >
-                Trace Trail
-              </button>
-              <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('RAPID_CONDUIT_77');
-                  setCurrentPage('graph');
-                }}
-                className="flex-1 py-1.5 bg-navy-850 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded text-[11px] font-semibold transition"
-              >
-                Graph
-              </button>
-            </div>
-          </div>
 
-          {/* Card 4 */}
-          <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 hover:border-rose-500/50 flex flex-col justify-between space-y-3 transition group">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold bg-rose-950 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded">
-                  SMURF DISPERSION
-                </span>
-                <span className="text-xs font-mono font-bold text-white">₹2,50,000</span>
-              </div>
-              <h4 className="text-sm font-bold text-white group-hover:text-electric-300 transition font-mono">
-                DISP_SMURF_88
-              </h4>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                Staging escrow credit split into 5 sub-₹50,000 micro-transfers to stay under mandatory institutional CTR audit limits.
-              </p>
-            </div>
-            <div className="pt-2 border-t border-slate-800 flex gap-2">
-              <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('DISP_SMURF_88');
-                  setCurrentPage('money-trail');
-                }}
-                className="flex-1 py-1.5 bg-navy-850 hover:bg-slate-800 text-electric-300 border border-slate-700 rounded text-[11px] font-semibold transition"
-              >
-                Trace Trail
-              </button>
-              <button
-                onClick={() => {
-                  if (onAccountSelect) onAccountSelect('DISP_SMURF_88');
-                  setCurrentPage('graph');
-                }}
-                className="flex-1 py-1.5 bg-navy-850 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded text-[11px] font-semibold transition"
-              >
-                Graph
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 7. End-to-End Operational Lifecycle Stepper */}
-      <div className="space-y-6">
-        <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-white tracking-wide">
-              Connected 7-Stage Financial Crime Investigation Lifecycle
-            </h2>
-            <p className="text-xs text-slate-400">
-              Click any stage below to jump directly into the live analyst workbench.
-            </p>
-          </div>
-          <span className="text-xs font-mono text-electric-400">Fully Connected Platform</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {steps.map((s, idx) => {
-            const Icon = s.icon;
-            return (
-              <div
-                key={idx}
-                onClick={() => setCurrentPage(s.page)}
-                className="p-5 rounded-xl bg-navy-900/90 border border-slate-800 hover:border-electric-500/50 hover:bg-navy-850 cursor-pointer transition group flex flex-col justify-between space-y-3 shadow-sm"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-electric-400 bg-electric-500/10 px-2 py-0.5 rounded border border-electric-500/20">
-                    STAGE {s.num}
+              <div className="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1">
+                <div className="p-2.5 rounded-xl bg-black/60 border border-slate-800">
+                  <span className="text-slate-500 text-[10px] block">VELOCITY</span>
+                  <span className="font-bold text-rose-400">{currentScenario.metrics.velocity}</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/60 border border-slate-800">
+                  <span className="text-slate-500 text-[10px] block">TURNOVER</span>
+                  <span className="font-bold text-amber-400">{currentScenario.metrics.drainRatio}</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/60 border border-slate-800">
+                  <span className="text-slate-500 text-[10px] block">FLOW HOPS</span>
+                  <span className="font-bold text-rose-300">
+                    {currentScenario.metrics.inflowHops} in / {currentScenario.metrics.outflowHops} out
                   </span>
-                  <Icon className="w-4 h-4 text-slate-400 group-hover:text-electric-400 transition" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-white group-hover:text-electric-300 transition">{s.title}</h4>
-                  <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{s.desc}</p>
-                </div>
-                <div className="text-[10px] font-mono text-slate-400 group-hover:text-electric-400 flex items-center gap-1 pt-1 border-t border-slate-800/80">
-                  <span>Open analyst view</span>
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* 8. Legal & Scientific Transparency Disclaimer */}
-      <div className="p-4 rounded-xl bg-navy-950 border border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Shield className="w-5 h-5 text-electric-400 shrink-0" />
-          <p className="text-[11px] leading-relaxed">
-            <strong className="text-slate-200">Scientific & Judicial Disclaimer:</strong> All alerts generated by GraphSAGE are investigative intelligence leads requiring corroboration. Accuracy metrics and confusion matrices are computed strictly on validation splits without fabrication.
-          </p>
-        </div>
+              <button
+                onClick={() => handleLaunchScenario(currentScenario.targetAccount)}
+                className="w-full py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-xs rounded-xl shadow-glow-danger transition flex items-center justify-center gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>Trace {currentScenario.targetAccount} Money Trail Live</span>
+              </button>
+            </div>
 
-        <button
-          onClick={() => setCurrentPage('settings-model')}
-          className="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-mono shrink-0 transition"
-        >
-          Inspect Model Architecture
-        </button>
+            {/* Sequence Diagram Display */}
+            <div className="lg:col-span-7 p-5 rounded-2xl bg-black/60 border border-slate-800 space-y-4">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-slate-400">DISSEMINATION SEQUENCE</span>
+                <span className="text-rose-400 font-bold">{currentScenario.pattern}</span>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-2 font-mono">
+                {currentScenario.flowNodes.map((node, i) => (
+                  <React.Fragment key={node.id}>
+                    <div className="flex-1 flex flex-col items-center text-center p-3 rounded-xl bg-[#0E1424] border border-slate-800">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border mb-2 ${
+                        node.type === 'victim'
+                          ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40'
+                          : node.type === 'target'
+                          ? 'bg-rose-950 text-rose-200 border-rose-500 shadow-glow-danger animate-pulse'
+                          : node.type === 'layer'
+                          ? 'bg-amber-950/70 text-amber-300 border-amber-500/40'
+                          : 'bg-purple-950/70 text-purple-300 border-purple-500/40'
+                      }`}>
+                        {i + 1}
+                      </div>
+                      <span className="text-xs font-bold text-slate-200 truncate w-full">
+                        {node.label}
+                      </span>
+                      <span className="text-[10px] text-slate-500 truncate w-full mt-0.5">
+                        {node.sub}
+                      </span>
+                    </div>
+                    {i < currentScenario.flowNodes.length - 1 && (
+                      <ArrowRight className="w-4 h-4 text-slate-600 shrink-0" />
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. GraphSAGE vs Traditional XGBoost Battle Arena */}
+        <section id="battle-arena" className="p-6 md:p-8 rounded-3xl bg-[#0E1424]/90 border border-slate-800 space-y-6 backdrop-blur-md">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Cpu className="w-4 h-4 text-rose-400" />
+                <span className="font-mono text-xs font-bold text-rose-400 tracking-wider">
+                  ARCHITECTURAL COMPARISON
+                </span>
+              </div>
+              <h2 className="text-xl font-bold text-white mt-1">
+                Why GraphSAGE GNN Outperforms Traditional XGBoost
+              </h2>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-mono">
+              <span className="px-3 py-1 rounded-full bg-emerald-950/70 text-emerald-400 border border-emerald-500/30">
+                PyTorch Geometric Native
+              </span>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-800 text-[11px] font-mono text-slate-400 uppercase">
+                  <th className="py-3 px-4">Financial Crime Topology</th>
+                  <th className="py-3 px-4 text-rose-400">XGBoost (Tabular Row-by-Row)</th>
+                  <th className="py-3 px-4 text-emerald-400">FinTrace GraphSAGE (GNN)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60 font-sans">
+                {comparisonRows.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-slate-800/30 transition-colors">
+                    <td className="py-3.5 px-4 font-semibold text-white">
+                      {row.feature}
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-400">
+                      <span className="inline-block px-2 py-0.5 rounded bg-rose-950/40 text-rose-300 font-mono text-[11px] mr-1.5">
+                        Limit
+                      </span>
+                      {row.xgboost}
+                    </td>
+                    <td className="py-3.5 px-4 text-emerald-300 font-medium">
+                      <span className="inline-block px-2 py-0.5 rounded bg-emerald-950/50 text-emerald-300 font-mono text-[11px] mr-1.5">
+                        Native
+                      </span>
+                      {row.graphsage}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* 6. End-to-End Operational Lifecycle Stepper */}
+        <section id="pipeline" className="space-y-6">
+          <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <Network className="w-4 h-4 text-rose-400" />
+                <span className="font-mono text-xs font-bold text-rose-400 tracking-wider">
+                  INVESTIGATION PIPELINE
+                </span>
+              </div>
+              <h2 className="text-xl font-bold text-white mt-1">
+                7-Stage End-to-End Operational Lifecycle
+              </h2>
+            </div>
+            <button
+              onClick={() => setCurrentPage('upload')}
+              className="text-xs font-mono text-rose-400 hover:text-rose-300 flex items-center gap-1"
+            >
+              <span>Begin Ingestion</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((st) => {
+              const Icon = st.icon;
+              return (
+                <div
+                  key={st.num}
+                  onClick={() => setCurrentPage(st.page)}
+                  className="p-5 rounded-2xl bg-[#0E1424]/90 border border-slate-800 hover:border-rose-500/50 transition cursor-pointer group flex flex-col justify-between shadow-lg"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-bold text-rose-400">STAGE {st.num}</span>
+                      <Icon className="w-4 h-4 text-slate-400 group-hover:text-rose-400 transition-colors" />
+                    </div>
+                    <h3 className="font-bold text-sm text-white group-hover:text-rose-300 transition-colors">
+                      {st.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {st.desc}
+                    </p>
+                  </div>
+                  <div className="pt-4 flex items-center text-[11px] font-mono text-rose-400 group-hover:translate-x-1 transition-transform">
+                    <span>Access Tool</span>
+                    <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* 7. Institutional Trust & Compliance Notice */}
+        <section className="p-5 rounded-2xl bg-black/60 border border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Shield className="w-5 h-5 text-rose-400 shrink-0" />
+            <span>
+              <strong>Regulatory Integrity & Evidentiary Standard:</strong> FinTrace AI strictly distinguishes heuristic pattern alerts from verified judicial evidence. Designed for FIU-IND compliance, STR generation, and cybercrime taskforces under the Prevention of Money Laundering Act (PMLA).
+            </span>
+          </div>
+          <button
+            onClick={() => setCurrentPage("settings-model")}
+            className="shrink-0 px-3 py-1.5 rounded-lg bg-[#0E1424] hover:bg-slate-800 text-slate-300 border border-slate-800 font-mono text-[11px] transition"
+          >
+            Review GNN Weights
+          </button>
+        </section>
+
+        {/* 8. Modern Fintech SaaS Footer (Matching Reference Image) */}
+        <footer className="pt-8 pb-12 border-t border-slate-800/80 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0.5">
+              <span className="w-1 h-4 bg-rose-500 rounded-full transform -skew-x-12"></span>
+              <span className="w-1 h-4 bg-orange-500 rounded-full transform -skew-x-12"></span>
+            </div>
+            <span className="font-bold text-white text-sm">FinTrace AI</span>
+            <span className="text-slate-600">|</span>
+            <span>Intelligent Mule Account Detection Platform</span>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <button onClick={() => setCurrentPage('dashboard')} className="hover:text-white transition">
+              Dashboard
+            </button>
+            <button onClick={() => setCurrentPage('graph')} className="hover:text-white transition">
+              Graph Canvas
+            </button>
+            <button onClick={() => setCurrentPage('money-trail')} className="hover:text-white transition">
+              Money Trail
+            </button>
+            <button onClick={() => setCurrentPage('cases')} className="hover:text-white transition">
+              Case Dossiers
+            </button>
+            <button onClick={() => setCurrentPage('login')} className="hover:text-white transition">
+              Investigator Login
+            </button>
+          </div>
+        </footer>
       </div>
     </div>
   );

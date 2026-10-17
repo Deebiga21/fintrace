@@ -43,6 +43,16 @@ export default function App() {
     setSelectedAccount(accountId);
   };
 
+  // Standalone Full-Screen Landing Showcase (Like modern SaaS reference)
+  if (currentPage === 'landing') {
+    return (
+      <LandingPage
+        setCurrentPage={setCurrentPage}
+        onAccountSelect={handleAccountSelect}
+      />
+    );
+  }
+
   return (
     <div className="flex h-screen bg-navy-950 text-slate-100 overflow-hidden font-sans">
       {/* Consistent Navigation Sidebar */}
