@@ -3,9 +3,19 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
   body {
     @apply bg-navy-950 text-slate-100 min-h-screen antialiased selection:bg-electric-500 selection:text-white;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #root {
+    min-height: 100vh;
   }
 }
 

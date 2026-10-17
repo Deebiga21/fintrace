@@ -231,7 +231,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-100 selection:bg-rose-500 selection:text-white relative overflow-x-clip font-sans">
+    <div className="min-h-screen w-full bg-[#0B0F19] text-slate-100 selection:bg-rose-500 selection:text-white relative overflow-x-hidden font-sans">
       
       {/* 1. Full-Screen Cinematic Animation Background */}
       <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0 select-none">
@@ -305,38 +305,40 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
       </header>
 
       {/* Main Content Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-8 space-y-28 lg:space-y-36">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pt-4 pb-20 space-y-24 lg:space-y-32">
         
-        {/* Telemetry Status Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-2xl bg-[#0E1424]/90 border border-slate-800/90 text-xs shadow-lg backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="font-mono font-bold text-white tracking-wider text-[11px]">
-                GNN SURVEILLANCE NODE ACTIVE
+        {/* Top Hero Container (Telemetry Bar + Hero Grid aligned) */}
+        <div className="space-y-6">
+          {/* Telemetry Status Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 p-3 rounded-2xl bg-[#0E1424]/90 border border-slate-800/90 text-xs shadow-lg backdrop-blur-md">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span className="font-mono font-bold text-white tracking-wider text-[11px]">
+                  GNN SURVEILLANCE NODE ACTIVE
+                </span>
+              </div>
+              <span className="text-slate-700 hidden sm:inline">|</span>
+              <div className="hidden md:flex items-center gap-4 text-[11px] text-slate-400 font-mono">
+                <span>MODEL: <strong className="text-rose-400">GraphSAGE v1.0 (PyG)</strong></span>
+                <span>NODES: <strong className="text-white">74 Monitored</strong></span>
+                <span>TRANSACTIONS: <strong className="text-white">182 Processed</strong></span>
+                <span>FLAGGED MULES: <strong className="text-rose-400">16 Leads</strong></span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-mono">
+              <span className="px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-semibold text-[10px]">
+                FIU-IND COMPLIANT
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-rose-950/60 text-rose-300 border border-rose-500/30 font-semibold text-[10px]">
+                ZERO-HALLUCINATION POLICY
               </span>
             </div>
-            <span className="text-slate-700 hidden sm:inline">|</span>
-            <div className="hidden md:flex items-center gap-4 text-[11px] text-slate-400 font-mono">
-              <span>MODEL: <strong className="text-rose-400">GraphSAGE v1.0 (PyG)</strong></span>
-              <span>NODES: <strong className="text-white">74 Monitored</strong></span>
-              <span>TRANSACTIONS: <strong className="text-white">182 Processed</strong></span>
-              <span>FLAGGED MULES: <strong className="text-rose-400">16 Leads</strong></span>
-            </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono">
-            <span className="px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-semibold text-[10px]">
-              FIU-IND COMPLIANT
-            </span>
-            <span className="px-2.5 py-1 rounded-full bg-rose-950/60 text-rose-300 border border-rose-500/30 font-semibold text-[10px]">
-              ZERO-HALLUCINATION POLICY
-            </span>
-          </div>
-        </div>
-
-        {/* 3. Hero Section (Styled Exactly After the Reference Image) */}
-        <section id="overview" className="scroll-mt-28 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4">
+          {/* 3. Hero Section (Styled Exactly After the Reference Image) */}
+          <section id="overview" className="scroll-mt-28 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* Left Column: Headline, Subtitle & CTAs (7 Cols) */}
           <div className="lg:col-span-7 space-y-6">
@@ -422,7 +424,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           {/* Right Column: 3D Model in Elevated Isometric Device Box (Matching the Box in Reference Mockup ca9a92ff.png) */}
           <div id="topology-3d" className="scroll-mt-28 lg:col-span-5 relative">
             {/* The 3D Box Container */}
-            <div className="relative h-[530px] lg:h-[570px] rounded-3xl bg-gradient-to-br from-[#111827] via-[#0E1424] to-[#0A0E17] border-2 border-rose-500/40 shadow-[0_25px_60px_-15px_rgba(244,63,94,0.35)] overflow-hidden group">
+            <div className="relative h-[480px] lg:h-[530px] rounded-3xl bg-gradient-to-br from-[#111827] via-[#0E1424] to-[#0A0E17] border-2 border-rose-500/40 shadow-[0_25px_60px_-15px_rgba(244,63,94,0.35)] overflow-hidden group">
               
               {/* Box Top Toolbar */}
               <div className="absolute top-0 left-0 right-0 z-30 px-5 py-3.5 border-b border-slate-800/90 bg-[#0B0F19]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
@@ -536,8 +538,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
             </div>
           </div>
         </section>
-
-
+        </div>
 
         {/* 4. Interactive Fraud Topology Simulator */}
         <section id="simulator" className="scroll-mt-28 space-y-6 rounded-3xl bg-[#0E1424]/90 border border-slate-800 p-6 md:p-8 backdrop-blur-md">
