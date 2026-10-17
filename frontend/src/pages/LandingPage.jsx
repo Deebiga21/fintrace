@@ -34,7 +34,8 @@ import {
   Video,
   BarChart3,
   ExternalLink,
-  ChevronDown
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
 import BriarGlobe from '../components/BriarGlobe';
@@ -74,6 +75,24 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+
+  // Scroll to top indicator state
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 350);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -314,11 +333,11 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
 
           {/* Center Navigation Links */}
           <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-slate-300">
-            <a href="#overview" className="hover:text-white transition">Overview</a>
-            <a href="#topology-3d" className="hover:text-white transition">3D Topology Box</a>
-            <a href="#simulator" className="hover:text-white transition">Attack Simulator</a>
-            <a href="#battle-arena" className="hover:text-white transition">GNN vs XGBoost</a>
-            <a href="#pipeline" className="hover:text-white transition">Workflow</a>
+            <button onClick={() => scrollToSection('overview')} className="hover:text-white transition">Overview</button>
+            <button onClick={() => scrollToSection('topology-3d')} className="hover:text-white transition">3D Topology Box</button>
+            <button onClick={() => scrollToSection('simulator')} className="hover:text-white transition">Attack Simulator</button>
+            <button onClick={() => scrollToSection('battle-arena')} className="hover:text-white transition">GNN vs XGBoost</button>
+            <button onClick={() => scrollToSection('pipeline')} className="hover:text-white transition">Workflow</button>
           </nav>
 
           {/* Right Action CTAs */}
@@ -340,7 +359,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
       </header>
 
       {/* Main Content Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-8 space-y-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-8 space-y-28 lg:space-y-36">
         
         {/* Telemetry Status Bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-2xl bg-[#0E1424]/90 border border-slate-800/90 text-xs shadow-lg backdrop-blur-md">
@@ -371,7 +390,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </div>
 
         {/* 3. Hero Section (Styled Exactly After the Reference Image) */}
-        <section id="overview" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4">
+        <section id="overview" className="scroll-mt-28 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4">
           
           {/* Left Column: Headline, Subtitle & CTAs (7 Cols) */}
           <div className="lg:col-span-7 space-y-6">
@@ -402,10 +421,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
               </button>
 
               <button
-                onClick={() => {
-                  const el = document.getElementById('topology-3d');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onClick={() => scrollToSection('topology-3d')}
                 className="flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-navy-900/90 hover:bg-navy-850 text-slate-200 border border-rose-500/40 hover:border-rose-500 font-semibold text-sm transition group"
               >
                 <div className="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
@@ -438,10 +454,24 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
                 <span className="text-lg font-black text-white">2-Layer SAGEConv</span>
               </div>
             </div>
+
+            {/* Neat Scroll Down Indicator */}
+            <div className="pt-2">
+              <button
+                onClick={() => scrollToSection('simulator')}
+                className="inline-flex items-center gap-3 text-xs font-mono text-slate-400 hover:text-rose-400 transition group cursor-pointer"
+              >
+                <div className="w-5 h-8 rounded-full border border-slate-700 group-hover:border-rose-500/70 flex items-start justify-center p-1 transition-colors">
+                  <div className="w-1.5 h-2 bg-rose-400 rounded-full animate-bounce"></div>
+                </div>
+                <span>Scroll to explore crime typologies & GNN benchmarks</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-500 group-hover:text-rose-400 transition-colors animate-pulse" />
+              </button>
+            </div>
           </div>
 
           {/* Right Column: 3D Model in Elevated Isometric Device Box (Matching the Box in Reference Mockup ca9a92ff.png) */}
-          <div id="topology-3d" className="lg:col-span-5 relative">
+          <div id="topology-3d" className="scroll-mt-28 lg:col-span-5 relative">
             {/* The 3D Box Container */}
             <div className="relative h-[530px] lg:h-[570px] rounded-3xl bg-gradient-to-br from-[#111827] via-[#0E1424] to-[#0A0E17] border-2 border-rose-500/40 shadow-[0_25px_60px_-15px_rgba(244,63,94,0.35)] overflow-hidden group">
               
@@ -557,7 +587,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </section>
 
         {/* 4. Interactive Fraud Topology Simulator */}
-        <section id="simulator" className="space-y-6 rounded-3xl bg-[#0E1424]/90 border border-slate-800 p-6 md:p-8 backdrop-blur-md">
+        <section id="simulator" className="scroll-mt-28 space-y-6 rounded-3xl bg-[#0E1424]/90 border border-slate-800 p-6 md:p-8 backdrop-blur-md">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
             <div>
               <div className="flex items-center gap-2">
@@ -682,7 +712,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </section>
 
         {/* 5. GraphSAGE vs Traditional XGBoost Battle Arena */}
-        <section id="battle-arena" className="p-6 md:p-8 rounded-3xl bg-[#0E1424]/90 border border-slate-800 space-y-6 backdrop-blur-md">
+        <section id="battle-arena" className="scroll-mt-28 p-6 md:p-8 rounded-3xl bg-[#0E1424]/90 border border-slate-800 space-y-6 backdrop-blur-md">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
             <div>
               <div className="flex items-center gap-2">
@@ -738,7 +768,7 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
         </section>
 
         {/* 6. End-to-End Operational Lifecycle Stepper */}
-        <section id="pipeline" className="space-y-6">
+        <section id="pipeline" className="scroll-mt-28 space-y-6">
           <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
@@ -838,6 +868,17 @@ export default function LandingPage({ setCurrentPage, onAccountSelect }) {
           </div>
         </footer>
       </div>
+
+      {/* Floating Scroll-to-Top Button */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={`fixed bottom-8 right-8 z-50 p-3.5 rounded-full bg-rose-600/90 hover:bg-rose-500 text-white shadow-[0_4px_24px_rgba(244,63,94,0.45)] backdrop-blur-md border border-rose-400/40 transition-all duration-300 transform cursor-pointer ${
+          showScrollTop ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-90 pointer-events-none'
+        }`}
+        aria-label="Scroll to top"
+      >
+        <ChevronUp className="w-5 h-5" />
+      </button>
     </div>
   );
 }
