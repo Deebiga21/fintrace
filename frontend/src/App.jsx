@@ -185,6 +185,8 @@ export default function App() {
             <SettingsModelPage
               refreshTrigger={refreshTrigger}
               setRefreshTrigger={setRefreshTrigger}
+              onAccountSelect={handleAccountSelect}
+              setCurrentPage={setCurrentPage}
             />
           )}
         </main>

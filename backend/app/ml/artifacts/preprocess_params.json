@@ -1,0 +1,44 @@
+{
+  "num_features": 11,
+  "feature_names": [
+    "amount",
+    "log_amount",
+    "hour_of_day",
+    "day_of_week",
+    "transaction_type_IMPS",
+    "transaction_type_NEFT",
+    "transaction_type_NET_BANKING",
+    "transaction_type_POS",
+    "transaction_type_RTGS",
+    "transaction_type_UPI",
+    "status_COMPLETED"
+  ],
+  "train_size": 1267,
+  "val_size": 271,
+  "test_size": 272,
+  "scaler_means": {
+    "amount": 27343.9055406472,
+    "log_amount": 9.033909785914608,
+    "hour_of_day": 12.484609313338595,
+    "day_of_week": 3.0134175217048145
+  },
+  "scaler_scales": {
+    "amount": 47430.03554884366,
+    "log_amount": 1.6457457052009286,
+    "hour_of_day": 6.812776999957683,
+    "day_of_week": 1.84881879612591
+  },
+  "categorical_categories": {
+    "transaction_type": [
+      "IMPS",
+      "NEFT",
+      "NET_BANKING",
+      "POS",
+      "RTGS",
+      "UPI"
+    ],
+    "status": [
+      "COMPLETED"
+    ]
+  }
+}

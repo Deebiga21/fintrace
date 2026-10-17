@@ -1,0 +1,38 @@
+{
+  "dataset_health_score": 100.0,
+  "total_records": 1810,
+  "duplicate_records": 0,
+  "duplicate_percentage": 0.0,
+  "missing_values_by_column": {
+    "transaction_id": 0,
+    "sender_account": 0,
+    "receiver_account": 0,
+    "amount": 0,
+    "timestamp": 0,
+    "status": 0,
+    "transaction_type": 0,
+    "description": 0,
+    "is_ground_truth_mule": 0
+  },
+  "missing_percentages": {
+    "transaction_id": 0.0,
+    "sender_account": 0.0,
+    "receiver_account": 0.0,
+    "amount": 0.0,
+    "timestamp": 0.0,
+    "status": 0.0,
+    "transaction_type": 0.0,
+    "description": 0.0,
+    "is_ground_truth_mule": 0.0
+  },
+  "has_temporal_ordering": true,
+  "has_ground_truth_labels": true,
+  "schema_integrity": "VALID",
+  "detected_roles": {
+    "sender_col": "sender_account",
+    "receiver_col": "receiver_account",
+    "amount_col": "amount",
+    "time_col": "timestamp",
+    "label_col": "is_ground_truth_mule"
+  }
+}

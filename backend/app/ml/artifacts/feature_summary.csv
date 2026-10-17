@@ -1,0 +1,10 @@
+column_name,data_type,unique_values,missing_values,missing_pct,min,mean,max,std
+transaction_id,str,1810,0,0.0,,,,
+sender_account,str,199,0,0.0,,,,
+receiver_account,str,166,0,0.0,,,,
+amount,float64,1808,0,0.0,54.76,24841.7212,514913.43,49914.8167
+timestamp,str,1784,0,0.0,,,,
+status,str,1,0,0.0,,,,
+transaction_type,str,6,0,0.0,,,,
+description,str,10,0,0.0,,,,
+is_ground_truth_mule,bool,2,0,0.0,0.0,0.0155,1.0,0.1234

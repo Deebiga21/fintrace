@@ -27,7 +27,8 @@ from .api import (
     complaints_router,
     cases_router,
     analytics_router,
-    auth_router
+    auth_router,
+    ml_router
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -87,6 +88,7 @@ app.include_router(money_trail_router, prefix=prefix)
 app.include_router(complaints_router, prefix=prefix)
 app.include_router(cases_router, prefix=prefix)
 app.include_router(analytics_router, prefix=prefix)
+app.include_router(ml_router, prefix=prefix)
 
 @app.get("/")
 def root():

@@ -1,0 +1,35 @@
+{
+  "model_architecture": "Shared 2-Layer GraphSAGE (PyG SAGEConv Mean Aggregator)",
+  "encoder_embedding_dimension": 16,
+  "trained_epochs": 50,
+  "training_loss": 0.029,
+  "task_a_account_mule_classification": {
+    "test_precision": 0.6,
+    "test_recall": 1.0,
+    "test_f1_score": 0.75,
+    "test_roc_auc": 1.0,
+    "test_confusion_matrix": [
+      [
+        29,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ],
+    "operating_threshold": 0.5
+  },
+  "task_b_transaction_suspicious_classification": {
+    "precision": 0.3684,
+    "recall": 1.0,
+    "f1_score": 0.5385,
+    "pr_auc": 1.0
+  },
+  "task_c_unsupervised_anomaly_detection": {
+    "method": "GNN Latent Embedding Bottleneck Reconstruction (MSE)",
+    "mean_anomaly_score_mules": 0.1729000061750412,
+    "mean_anomaly_score_normal": 0.1509999930858612,
+    "anomaly_divergence_ratio": 1.15
+  }
+}

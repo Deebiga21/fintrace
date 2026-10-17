@@ -119,4 +119,47 @@ export const api = {
       body: JSON.stringify(data),
     }),
   getCaseDossier: (caseId) => request(`/cases/${caseId}/dossier`),
+
+  // Complete Multi-Task GNN & Tabular GAN Intelligence API
+  getMLStatus: () => request("/ml/status"),
+  getMLDatasetSummary: () => request("/ml/dataset/summary"),
+  trainGAN: (data = {}) =>
+    request("/ml/gan/train", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getGANMetrics: () => request("/ml/gan/metrics"),
+  generateSynthetic: (data = {}) =>
+    request("/ml/gan/generate", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getSyntheticQuality: () => request("/ml/gan/quality"),
+  runClassifierBenchmark: () =>
+    request("/ml/classifier/benchmark", { method: "POST" }),
+  getClassifierMetrics: () => request("/ml/classifier/metrics"),
+  trainMultiTaskGNN: (data = {}) =>
+    request("/ml/gnn/train", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getGNNMetrics: () => request("/ml/gnn/metrics"),
+  predictAccount: (accountId) =>
+    request("/ml/predict/account", {
+      method: "POST",
+      body: JSON.stringify({ account_id: accountId }),
+    }),
+  predictTransaction: (data) =>
+    request("/ml/predict/transaction", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getRankedAccounts: (limit = 50) => request(`/ml/accounts/ranked?limit=${limit}`),
+  getMoneyTrailAnalysis: (accountId, maxHops = 4) =>
+    request(`/ml/analysis/money-trail/${accountId}?max_hops=${maxHops}`),
+  getCommunitiesAnalysis: (minSize = 3) =>
+    request(`/ml/analysis/communities?min_size=${minSize}`),
+  getCircularLoopsAnalysis: () => request("/ml/analysis/loops"),
+  getRapidConduitsAnalysis: () => request("/ml/analysis/conduits"),
+  getArtifactPlotUrl: (plotName) => `${API_BASE}/ml/artifacts/plot/${plotName}`,
 };

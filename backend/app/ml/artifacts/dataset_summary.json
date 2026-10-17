@@ -1,0 +1,27 @@
+{
+  "dataset_filename": "benchmark_transactions.csv",
+  "provenance": "FinTrace Synthetic & Multi-Typology Financial Investigation Benchmark",
+  "license": "Research & Regulatory Compliance Prototype (Lawful Internal Verification)",
+  "total_transactions": 1810,
+  "total_accounts": 217,
+  "unique_senders": 199,
+  "unique_receivers": 166,
+  "financial_volume": {
+    "total_volume": 44963515.34,
+    "min_amount": 54.76,
+    "mean_amount": 24841.72,
+    "median_amount": 6259.74,
+    "max_amount": 514913.43,
+    "std_amount": 49914.82,
+    "p95_amount": 113712.55,
+    "p99_amount": 215962.78
+  },
+  "class_distribution": {
+    "False": 1782,
+    "True": 28
+  },
+  "class_imbalance_ratio": "63.64:1 (Normal:Fraud)",
+  "label_type": "transaction_and_mule_conduit_level",
+  "is_synthetic": true,
+  "synthetic_disclaimer": "Labels reflect simulated financial typologies (smurfing, layering, circular loops, conduit mules) for pipeline and model benchmarking. They must not be claimed as real judicial evidence without statutory verification."
+}
