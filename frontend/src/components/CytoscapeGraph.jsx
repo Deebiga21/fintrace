@@ -47,7 +47,12 @@ export default function CytoscapeGraph({
     const elements = [...filteredNodes, ...filteredEdges];
 
     if (cyRef.current) {
-      cyRef.current.destroy();
+      try {
+        cyRef.current.stop();
+        cyRef.current.destroy();
+      } catch (e) {
+        // ignore
+      }
     }
 
     const cy = cytoscape({
@@ -74,7 +79,7 @@ export default function CytoscapeGraph({
             'height': 28,
             'border-width': 2,
             'border-color': '#334155',
-            'transition-property': 'background-color, border-color, width, height, shadow-blur',
+            'transition-property': 'background-color, border-color, width, height',
             'transition-duration': '0.2s'
           }
         },
@@ -96,10 +101,7 @@ export default function CytoscapeGraph({
             'border-color': '#991B1B',
             'border-width': 3,
             'width': 40,
-            'height': 40,
-            'shadow-blur': 15,
-            'shadow-color': 'rgba(239, 68, 68, 0.75)',
-            'shadow-opacity': 0.8
+            'height': 40
           }
         },
         // Root / Target Node
@@ -109,9 +111,7 @@ export default function CytoscapeGraph({
             'border-color': '#38BDF8',
             'border-width': 4,
             'width': 46,
-            'height': 46,
-            'shadow-blur': 25,
-            'shadow-color': 'rgba(56, 189, 248, 0.9)'
+            'height': 46
           }
         },
         // Selected Node Highlight
@@ -120,9 +120,7 @@ export default function CytoscapeGraph({
           style: {
             'border-color': '#38BDF8',
             'border-width': 4,
-            'background-color': '#0284C7',
-            'shadow-blur': 20,
-            'shadow-color': '#38BDF8'
+            'background-color': '#0284C7'
           }
         },
         // Edge styling (directed arrow)
@@ -199,7 +197,15 @@ export default function CytoscapeGraph({
     cyRef.current = cy;
 
     return () => {
-      cy.destroy();
+      if (cyRef.current) {
+        try {
+          cyRef.current.stop();
+          cyRef.current.destroy();
+          cyRef.current = null;
+        } catch (e) {
+          // ignore
+        }
+      }
     };
   }, [graphData, layoutName, riskFilter, minAmount]);
 

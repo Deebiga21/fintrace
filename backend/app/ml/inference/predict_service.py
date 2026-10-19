@@ -30,9 +30,13 @@ class MLInferenceService:
             self.artifacts_dir = artifacts_dir
 
         if data_csv is None:
-            self.data_csv = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "benchmark_transactions.csv"))
-            if not os.path.exists(self.data_csv):
-                self.data_csv = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "sample_transactions.csv"))
+            proposed_csv = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "proposed_cleaned_transactions.csv"))
+            if os.path.exists(proposed_csv):
+                self.data_csv = proposed_csv
+            else:
+                self.data_csv = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "benchmark_transactions.csv"))
+                if not os.path.exists(self.data_csv):
+                    self.data_csv = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "sample_transactions.csv"))
         else:
             self.data_csv = data_csv
 
@@ -251,10 +255,12 @@ class MLInferenceService:
 
     def set_active_dataset(self, dataset_key: str):
         """
-        Switches FinTrace's active transaction dataset between 'paysim' and 'benchmark'.
+        Switches FinTrace's active transaction dataset between 'paysim', 'benchmark', and 'proposed'.
         """
         data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
-        if "paysim" in dataset_key.lower():
+        if "proposed" in dataset_key.lower():
+            target_csv = os.path.join(data_dir, "proposed_cleaned_transactions.csv")
+        elif "paysim" in dataset_key.lower():
             target_csv = os.path.join(data_dir, "paysim_transactions.csv")
         else:
             target_csv = os.path.join(data_dir, "benchmark_transactions.csv")
@@ -282,8 +288,12 @@ class MLInferenceService:
 
         # Check active dataset info
         active_name = os.path.basename(self.data_csv)
-        is_paysim = "paysim" in active_name.lower()
-        active_key = "paysim" if is_paysim else "benchmark"
+        if "proposed" in active_name.lower():
+            active_key = "proposed"
+        elif "paysim" in active_name.lower():
+            active_key = "paysim"
+        else:
+            active_key = "benchmark"
 
         # Load metrics if available
         gnn_metrics_path = os.path.join(self.artifacts_dir, "gnn_evaluation_metrics.json")
@@ -315,6 +325,16 @@ class MLInferenceService:
             "active_dataset": active_key,
             "active_dataset_filename": active_name,
             "available_datasets": [
+                {
+                    "key": "proposed",
+                    "name": "Proposed Bank Statements (25 SOAs)",
+                    "provenance": "Proposed_Data_Randomized_Final Archive (Core Banking Extracts)",
+                    "transactions": 494260,
+                    "accounts": 25,
+                    "fraud_count": 21,
+                    "domain": "Core Banking CBS Statements (₹785+ Crore)",
+                    "description": "Real-world randomized bank statement extracts with 494,260 transactions totaling ₹785+ Crore, containing pass-through conduits and frozen accounts."
+                },
                 {
                     "key": "paysim",
                     "name": "Kaggle PaySim1 (ealaxi/paysim1)",

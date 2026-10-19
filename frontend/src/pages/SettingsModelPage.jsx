@@ -280,13 +280,47 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-mono text-slate-400">Active:</span>
                 <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                  {status?.active_dataset === 'paysim' ? 'Kaggle PaySim1 (ealaxi/paysim1)' : 'Multi-Typology Benchmark'}
+                  {status?.active_dataset === 'proposed'
+                    ? 'Proposed Banking Statements (494k Txns)'
+                    : status?.active_dataset === 'paysim'
+                    ? 'Kaggle PaySim1 (ealaxi/paysim1)'
+                    : 'Multi-Typology Benchmark'}
                 </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Option 1: PaySim */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Option 1: Proposed Dataset */}
+              <div
+                onClick={() => !switchingDataset && handleSelectDataset('proposed')}
+                className={`p-4 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
+                  status?.active_dataset === 'proposed'
+                    ? 'bg-emerald-500/10 border-emerald-500/50 shadow-lg shadow-emerald-950/20'
+                    : 'bg-black/30 border-slate-800 hover:border-slate-700 hover:bg-slate-900/40'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-bold text-white flex items-center gap-1.5">
+                      <span>Proposed Bank Statements</span>
+                    </span>
+                    {status?.active_dataset === 'proposed' && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500 text-white">ACTIVE</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    25 Core Banking Statements (CBS Finacle/BaNCS). Real-world conduit accounts, frozen/dormant mules, and high turnover drains.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-slate-800/60 text-[10px] font-mono">
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">494,260 txns</span>
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">25 accounts</span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/40">₹785 Cr Volume</span>
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">CBS Finacle</span>
+                </div>
+              </div>
+
+              {/* Option 2: PaySim */}
               <div
                 onClick={() => !switchingDataset && handleSelectDataset('paysim')}
                 className={`p-4 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
@@ -298,7 +332,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-sm font-bold text-white flex items-center gap-1.5">
-                      <span>Kaggle PaySim1 Mobile Money</span>
+                      <span>Kaggle PaySim1 Mobile</span>
                       <a
                         href="https://www.kaggle.com/datasets/ealaxi/paysim1"
                         target="_blank"
@@ -314,30 +348,30 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                     )}
                   </div>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    Official benchmark dataset (Lopez-Rojas et al.) simulating mobile-money financial crime with authentic TRANSFER and CASH_OUT fraud events.
+                    Official benchmark dataset (Lopez-Rojas et al.) simulating mobile-money financial crime with authentic TRANSFER/CASH_OUT events.
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-slate-800/60 text-[10px] font-mono">
                   <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">10,262 txns</span>
                   <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">17,755 accounts</span>
-                  <span className="px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/40">187 fraud events</span>
+                  <span className="px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/40">187 fraud</span>
                   <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">CC BY 4.0</span>
                 </div>
               </div>
 
-              {/* Option 2: Benchmark */}
+              {/* Option 3: Benchmark */}
               <div
                 onClick={() => !switchingDataset && handleSelectDataset('benchmark')}
                 className={`p-4 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
-                  status?.active_dataset !== 'paysim'
+                  status?.active_dataset === 'benchmark'
                     ? 'bg-sky-500/10 border-sky-500/50 shadow-lg shadow-sky-950/20'
                     : 'bg-black/30 border-slate-800 hover:border-slate-700 hover:bg-slate-900/40'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-sm font-bold text-white">FinTrace Multi-Typology Benchmark</span>
-                    {status?.active_dataset !== 'paysim' && (
+                    <span className="text-sm font-bold text-white">Multi-Typology Benchmark</span>
+                    {status?.active_dataset === 'benchmark' && (
                       <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-500 text-white">ACTIVE</span>
                     )}
                   </div>

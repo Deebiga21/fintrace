@@ -1,156 +1,173 @@
 # FinTrace AI — Intelligent Mule Account Detection & Financial Crime Investigation Platform
 
-[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
-[![PyTorch](https://img.shields.io/badge/Deep%20Learning-PyTorch%20%2F%20PyG-EE4C2C.svg?style=flat&logo=pytorch)](https://pytorch.org/)
-[![GraphSAGE](https://img.shields.io/badge/GNN%20Architecture-GraphSAGE-6366F1.svg?style=flat)](#gnn-architecture)
-[![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB.svg?style=flat&logo=react)](https://vitejs.dev/)
+[![Rust](https://img.shields.io/badge/Primary%20Backend-Rust%20(Axum%20%2B%20SQLx)-orange.svg?style=flat&logo=rust)](https://www.rust-lang.org/)
+[![Python](https://img.shields.io/badge/ML%20Service-Python%20%2F%20FastAPI-009688.svg?style=flat&logo=python)](https://fastapi.tiangolo.com)
+[![PyTorch](https://img.shields.io/badge/Generative%20AI-CWGAN--GP%20%2F%20GraphSAGE-EE4C2C.svg?style=flat&logo=pytorch)](https://pytorch.org/)
+[![React](https://img.shields.io/badge/Frontend-React%2019%20%2B%20Vite-61DAFB.svg?style=flat&logo=react)](https://vitejs.dev/)
 [![Cytoscape.js](https://img.shields.io/badge/Graph%20Engine-Cytoscape.js-0284C7.svg?style=flat)](#graph-investigation)
 
-**FinTrace AI** is an institutional financial crime investigation platform designed for Anti-Money Laundering (AML) analysts, cybercrime cells, and Financial Intelligence Units (FIU). It replaces legacy isolated tabular models (such as XGBoost) with a **Graph Neural Network (GraphSAGE using PyTorch & PyTorch Geometric)** to analyze relational transaction topologies, detect mule account networks, trace multi-hop layering flows, and correlate cyber fraud complaints.
+**FinTrace AI** is an institutional financial crime investigation platform designed for Anti-Money Laundering (AML) analysts, cybercrime task forces, and Financial Intelligence Units (FIU). It features a **high-throughput asynchronous Rust backend (Axum, Tokio, SQLx)** communicating with a dedicated **Python PyTorch ML microservice (Tabular CWGAN-GP + Multi-Task GraphSAGE)** to evaluate complex relational transaction graphs, synthesize non-leaking transaction records, detect mule accounts, and trace multi-hop money trails.
 
 ---
 
-## 1. System Architecture: GraphSAGE vs. XGBoost
-
-Standard fraud detection models treat transactions in isolation or compute shallow tabular aggregations. Financial criminals routinely circumvent these by:
-1. **Smurfing / Fan-In Aggregation:** Depositing small sums from multiple accounts into a conduit mule account to evade threshold reporting limits.
-2. **Rapid Fund Pass-Through:** Draining incoming funds within minutes across multiple outbound hops.
-3. **Circular Money Laundering Rings:** Moving funds in closed directed cycles ($A \to B \to C \to D \to A$) to obscure origin.
-
-### Why GraphSAGE?
-Unlike XGBoost which evaluates accounts in isolation, **GraphSAGE (Graph Sample and Aggregate)** generates account embeddings by sampling and aggregating feature information from an account's local 1-hop and 2-hop graph neighborhood:
-
-$$h_v^{(k)} = \sigma \left( W^{(k)} \cdot \left[ h_v^{(k-1)} \parallel \text{AGG} \left( \{ h_u^{(k-1)}, \forall u \in \mathcal{N}(v) \} \right) \right] \right)$$
-
-* **Input Features ($d=8$):** In-Degree, Out-Degree, Total Incoming Volume ($\log_{1p}$), Total Outgoing Volume ($\log_{1p}$), Turnover Ratio, Unique Counterparties, PageRank Centrality, Betweenness Centrality.
-* **Neighborhood Aggregator:** Mean aggregation over directed counterparty edges.
-* **Latent Embeddings:** 16-dimensional dense topological representation feeding a supervised classification head.
-
----
-
-## 2. Complete 10-Step Investigation Workflow
+## 1. System Architecture
 
 ```
-[1. CSV Ingestion] ────► [2. Graph Construction] ────► [3. GraphSAGE Scoring]
-                                                               │
-                                                               ▼
-[6. Money Trail] ◄──── [5. Interactive Graph] ◄──── [4. Fraud Patterns]
-       │
-       ▼
-[7. Complaints] ────► [8. Case Management] ────► [9. Risk Explain] ────► [10. Audit Report]
+[ Frontend: React 19 + Vite ] ──► (Port 5173)
+            │
+            ▼
+[ Rust API Backend: Axum + SQLx ] ──► (Port 8000)
+    │                  │
+    ▼                  ▼
+[ Database:        [ Internal HTTP Client (reqwest) ]
+  PostgreSQL / SQLite] │
+                       ▼
+         [ Python ML Microservice: FastAPI + PyTorch ] ──► (Port 8001)
+           - Tabular CWGAN-GP Synthetic Generator
+           - Multi-Task GraphSAGE GNN
+           - Tabular Fraud Classifier Benchmark
+           - Synthetic Privacy & Fidelity Auditing
 ```
 
-1. **Transaction Data Ingestion:** Upload institution CSVs with validation for mandatory headers, duplicate rejection, and automatic account registration.
-2. **Transaction Processing & Normalization:** Directed graph construction with timestamps, transaction types, and structural metric computation.
-3. **GNN Mule Account Detection:** GraphSAGE predicts continuous risk scores ($0.0 - 1.0$) categorized into **High ($\ge 0.75$)**, **Medium ($\ge 0.40$)**, and **Low ($< 0.40$)**.
-4. **Suspicious Transaction Detection:** Automated tagging of rapid pass-through conduit flows ($< 2$ hours), fan-in aggregators, high turnover drain ($> 90\%$), and cycle loops.
-5. **Interactive Graph Canvas:** Cytoscape.js directed visual graph with dynamic layouts, risk color coding, edge inspection, and 2-hop ego subgraphs.
-6. **Multi-Hop Money Trail:** Backward source tracking (victim origins) and forward outbound tracing (crypto cash-out / offshore accounts) with layering depth metrics.
-7. **Complaint Cross-Correlation:** Cross-referencing victim reports from the National Cyber Crime Reporting Portal (1930) and police FIRs with suspect accounts.
-8. **Investigation Case Docket:** Case creation, priority assignment (Critical, High, Medium, Low), status tracking (New, Under Investigation, Escalated, Closed), and evidence locker.
-9. **Risk Explainability:** Honest model explanations featuring latent embeddings, structural degree, and connected high-risk counterparties.
-10. **Reports & Analytics:** Supervised evaluation metrics (**Precision**, **Recall**, **F1-Score**, **Confusion Matrix**) and exportable legal dossiers.
+* **Rust API Backend (`rust_backend/`)**: Acts as the single source of truth for accounts, transactions, cases, evidence, complaints, alerts, and audit logs. Provides WebSocket streaming (`/ws`) for real-time AML updates.
+* **Python ML Microservice (`backend/`)**: Dedicated generative AI and deep learning microservice executing PyTorch neural networks for synthetic transaction synthesis and GraphSAGE neighborhood aggregation.
+* **Frontend Web Application (`frontend/`)**: High-performance dark-navy glassmorphism dashboard built with React 19, Cytoscape.js, Recharts, and Tailwind CSS.
 
 ---
 
-## 3. Technology Stack
+## 2. Key Modules & Capabilities
 
-* **Backend:**
-  * Python 3.11+ / 3.14
-  * FastAPI (High-performance async REST API)
-  * PyTorch & PyTorch Geometric (PyG `SAGEConv` with native PyTorch fallback)
-  * NetworkX (Ego-networks, cycle detection, PageRank, Betweenness)
-  * SQLAlchemy (ORM with SQLite default; zero-change migration to PostgreSQL)
-  * Scikit-Learn (Precision, Recall, F1, and Confusion Matrix calculation)
-  * Pandas (CSV ingestion and validation)
-* **Frontend:**
-  * React 19 + Vite
-  * Tailwind CSS (Dark financial intelligence palette)
-  * Cytoscape.js (Interactive high-performance graph visualization)
-  * Recharts (Executive metrics, donut charts, area flows, and bar charts)
-  * Lucide React (Financial crime investigation iconography)
+1. **Authentication & RBAC (`auth`)**: Investigator login with Argon2 password hashing and 7-day secure JWT access tokens.
+2. **Transaction Management (`transactions`)**: Idempotent CSV ingestion, duplicate detection, and streaming transaction queries.
+3. **Mule Account Risk Assessment (`accounts`)**: Continuous GraphSAGE risk scores ($0.0 - 1.0$), topological degree, and turnover ratio drain analysis.
+4. **Graph Canvas & Cycle Detection (`graph`)**: Interactive Cytoscape.js directed graph, 2-hop ego subgraphs, and Petgraph elementary cycle detection ($A \to B \to C \to A$).
+5. **Multi-Hop Money Trail (`money_trail`)**: Breadth-first inbound origin tracing (cyber victims) and outbound cash-out tracing (crypto / offshore conduits).
+6. **Cyber Complaint Cross-Correlation (`complaints`)**: Links National Cyber Crime Portal complaints to suspect recipient accounts.
+7. **Investigation Case Docket (`cases`)**: Case management, priority assignment, evidence locker, and official legal dossier compilation.
+8. **Generative Adversarial Network (`ml_client/gan`)**: Conditional WGAN with Gradient Penalty (CWGAN-GP) synthesizing realistic financial transactions.
+9. **Synthetic Data Quality & Privacy Audit (`ml_client/quality`)**: Wasserstein distance, KS statistics, total variation distance, and exact-memorization leakage tests.
+10. **Supervised Fraud Classifier (`ml_client/classifier`)**: Evaluates real-only training vs real + validated synthetic augmentation on held-out test splits.
 
 ---
 
-## 4. Quick Start & Setup Instructions
+## 3. Quick Start & Startup Instructions
 
 ### Prerequisites
+* Rust 1.80+ (with Cargo)
 * Python 3.10+ (with pip)
 * Node.js v18+ (with npm)
+* Docker & Docker Compose (optional for containerized deployments)
 
-### Backend Setup
+---
+
+### Running with Docker Compose (Single Command)
+
+```bash
+docker compose up --build
+```
+* **Frontend**: `http://localhost:5173`
+* **Rust API Backend**: `http://127.0.0.1:8000`
+* **Python ML Microservice**: `http://127.0.0.1:8001`
+* **PostgreSQL**: `localhost:5432`
+
+---
+
+### Running Locally (Native Development)
+
+#### 1. Start Python ML Microservice (Port 8001)
 ```bash
 cd backend
-
-# (Optional) create virtual environment
-python -m venv venv
-# Windows:
-venv\Scripts\activate
-# Linux/Mac:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the FastAPI server (runs on port 8000)
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
 ```
-* Backend API Documentation: `http://127.0.0.1:8000/docs`
-* Backend Health Check: `http://127.0.0.1:8000/health`
 
-### Frontend Setup
+#### 2. Start Rust API Backend (Port 8000)
+```bash
+cd rust_backend
+cargo run
+```
+
+#### 3. Start Frontend Dashboard (Port 5173)
 ```bash
 cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server (runs on port 5173)
-npm run dev -- --host 127.0.0.1 --port 5173
+npm run dev
 ```
-* Application Portal: `http://127.0.0.1:5173`
 
 ---
 
-## 5. Pre-Packaged Synthetic Demonstration Dataset
+## 4. Default Investigator Credentials
 
-The platform includes a synthetic financial network (`backend/app/data/sample_transactions.csv` and `sample_complaints.csv`) containing:
-* **74 Accounts** and **182 Transactions**
-* **Mule Ring 1 (Smurfing Aggregator):** 6 cyber phishing victim accounts (`VICTIM_PHISH_01`..`06`) deposit funds into `MULE_AGG_01`, which consolidates and immediately wires ₹3,40,000 to `MULE_LAYER_02`, terminating in offshore crypto conduit `CASHOUT_CRYPTO_09`.
-* **Mule Ring 2 (Circular Layering):** `CIRC_MULE_A` $\to$ `CIRC_MULE_B` $\to$ `CIRC_MULE_C` $\to$ `CIRC_MULE_D` $\to$ `CIRC_MULE_A`.
-* **Mule Ring 3 (Rapid Conduit):** High-value corporate debit diverted to `RAPID_CONDUIT_77`, with $98\%$ drained in 15 minutes across 3 offshore shell accounts.
-* **Correlated Complaints:** 5 real-world cybercrime complaints matching victim accounts and transaction IDs.
-
-*All synthetic data is explicitly labelled as synthetic simulation data for hackathon and academic demonstration purposes.*
+* **Investigator Badge ID**: `INV-7809-DELHI` (Pre-filled on login screen)
+* **Password**: `admin123` (or any password in local demo mode)
+* **Access Level**: Level 4 Institutional AML Analyst
 
 ---
 
-## 6. REST API Reference
+## 5. Running Automated Tests
+
+### Rust Backend Tests (Unit & Integration)
+```bash
+cd rust_backend
+cargo test
+```
+Tests verify:
+- Argon2 password hashing and verification
+- JWT claims creation, signing, and decoding
+- Database schema initialization
+- Idempotent transaction insertion and duplicate rejection
+- Case management and evidence locker attachments
+- Alert creation and status transitions
+
+### Python ML Pipeline Acceptance Tests
+```bash
+cd backend
+python -m app.ml.test_ml_system
+```
+Tests verify:
+- Leakage-free temporal preprocessing
+- Directed transaction graph construction
+- CWGAN-GP forward pass & gradient-penalty compatibility
+- Synthetic data quality validation and zero-leakage privacy audit
+- Multi-Task GraphSAGE encoder and prediction heads
+- Money-flow loop and conduit detection
+- Modularity-based syndicate community detection
+
+---
+
+## 6. REST API Reference (Rust Backend on Port 8000)
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/v1/transactions/upload` | Upload and validate transactions CSV |
-| `POST` | `/api/v1/transactions/load-sample` | Seed pre-packaged synthetic transaction and complaint network |
-| `GET` | `/api/v1/transactions/` | List and filter transactions by account, amount, or suspicious status |
-| `GET` | `/api/v1/accounts/` | List scored accounts with risk levels and behavioral flags |
-| `GET` | `/api/v1/accounts/{id}/explanation` | Detailed GraphSAGE risk explanation and structural signals |
-| `POST` | `/api/v1/gnn/train` | Supervised training run on graph with real precision/recall/F1 |
-| `POST` | `/api/v1/gnn/infer` | Execute forward pass to score all accounts |
-| `GET` | `/api/v1/gnn/runs` | Fetch model training and evaluation audit history |
-| `GET` | `/api/v1/graph/` | Nodes and directed edges formatted for Cytoscape.js |
-| `GET` | `/api/v1/graph/subgraph/{id}` | Extract 2-hop ego network around a specific account |
-| `GET` | `/api/v1/graph/cycles` | Find closed circular money laundering loops |
-| `GET` | `/api/v1/money-trail/{id}` | Multi-hop inbound and outbound chronological flow analysis |
-| `GET` | `/api/v1/complaints/` | List cybercrime complaints with linked accounts |
-| `POST` | `/api/v1/cases/` | Create a formal investigation case with initial evidence |
+| `GET` | `/health` | Rust backend health check |
+| `POST` | `/api/v1/auth/login` | Authenticate investigator and issue JWT |
+| `GET` | `/api/v1/auth/me` | Retrieve active investigator profile |
+| `GET` | `/api/v1/analytics/overview` | Executive KPI dashboard and risk distributions |
+| `GET` | `/api/v1/analytics/audit-logs` | Retrieve recent audit history |
+| `GET` | `/api/v1/transactions/` | Filter transactions by account, amount, or type |
+| `POST` | `/api/v1/transactions/upload` | Multipart CSV transaction ingestion |
+| `POST` | `/api/v1/transactions/load-sample` | Seed pre-packaged demonstration network |
+| `GET` | `/api/v1/accounts/` | List risk-scored accounts |
+| `GET` | `/api/v1/accounts/{id}/explanation` | Detailed GraphSAGE explanation and structural signals |
+| `GET` | `/api/v1/graph/` | Cytoscape.js formatted nodes and edges |
+| `GET` | `/api/v1/graph/subgraph/{id}` | Extract 2-hop ego network around suspect account |
+| `GET` | `/api/v1/graph/cycles` | Petgraph circular money laundering loop detection |
+| `GET` | `/api/v1/money-trail/{id}` | Multi-hop inbound origin and outbound cash-out tracing |
+| `GET` | `/api/v1/complaints/` | List cybercrime victim reports |
+| `POST` | `/api/v1/complaints/` | Register cybercrime complaint |
+| `GET` | `/api/v1/cases/` | List investigation case dockets |
+| `POST` | `/api/v1/cases/` | Create new formal investigation case |
 | `GET` | `/api/v1/cases/{id}/dossier` | Export comprehensive legal evidence dossier |
-| `GET` | `/api/v1/analytics/overview` | Executive KPI dashboard and pattern distribution |
+| `GET` | `/api/v1/ml/status` | ML system health, model readiness, and dataset metrics |
+| `POST` | `/api/v1/ml/gan/train` | Train CWGAN-GP tabular generator on background job |
+| `POST` | `/api/v1/ml/gan/generate` | Generate labeled synthetic financial transactions |
+| `GET` | `/api/v1/ml/gan/quality` | Tabular fidelity metrics and zero-leakage privacy report |
+| `POST` | `/api/v1/ml/classifier/benchmark`| Train real-only vs GAN-augmented fraud classifier |
+| `GET` | `/api/v1/ml/classifier/metrics` | Precision, recall, F1, PR-AUC, and confusion matrix |
+| `WS` | `/ws` | Real-time WebSocket event stream for alerts & notifications |
 
 ---
 
 ## 7. Model Evaluation Transparency
 
-In accordance with strict legal and academic standards:
-* **Precision, Recall, F1-Score, and the 2x2 Confusion Matrix** are computed strictly on validation splits using PyTorch Cross-Entropy Loss and Scikit-Learn evaluation functions.
-* If a model is untrained or ground truth labels are absent, the platform clearly badges risk metrics as *Simulated / Heuristic Baselines* and does not claim trained accuracy.
-* Fraud alerts generated by the platform represent **investigative leads** for human verification, not definitive judicial proof of criminal conduct.
+* **Synthetic Data Quality vs Fraud Detection**: Tabular GAN quality is evaluated strictly through statistical distribution similarity (Wasserstein distance, Kolmogorov-Smirnov test, Total Variation distance) and memorization risk audits. A high GAN quality score is an assessment of fidelity, not classification accuracy.
+* **Evaluation on Held-Out Real Splits**: Supervised classifier metrics (Precision, Recall, F1, PR-AUC, Confusion Matrix) are computed strictly on held-out real validation partitions that were never exposed during GAN training or feature scaling.
+* **Investigative Lead Standard**: Alerts generated by GraphSAGE and CWGAN-GP represent automated investigative leads for human verification, complying with legal guidelines for financial crime investigations.

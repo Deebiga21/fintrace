@@ -57,6 +57,8 @@ class FraudClassifierBenchmark:
                 return d['is_ground_truth_mule'].values.astype(np.float32)
             elif 'is_fraud' in d.columns:
                 return d['is_fraud'].values.astype(np.float32)
+            elif 'is_suspicious' in d.columns:
+                return d['is_suspicious'].values.astype(np.float32)
             return np.zeros(len(d), dtype=np.float32)
 
         X_train_real = np.stack(train_df['features'].values)

@@ -125,6 +125,8 @@ class TransactionGraphBuilder:
             fraud_mask = df['is_fraud'].astype(int) == 1
         elif 'is_ground_truth_mule' in df.columns:
             fraud_mask = df['is_ground_truth_mule'].astype(bool)
+        elif 'is_suspicious' in df.columns:
+            fraud_mask = df['is_suspicious'].astype(int) == 1
 
         if fraud_mask is not None:
             mule_txns = df[fraud_mask]

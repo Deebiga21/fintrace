@@ -48,3 +48,12 @@ Thumbs.db
 # Environment variables
 .env
 .env.local
+
+# Rust build artifacts
+target/
+rust_backend/target/
+**/*.rs.bk
+
+# Large raw archive files
+*.zip
+backend/app/data/proposed_raw/

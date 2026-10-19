@@ -70,6 +70,8 @@ class GANTrainer:
             labels = train_df['is_ground_truth_mule'].values.astype(int)
         elif 'is_fraud' in train_df.columns:
             labels = train_df['is_fraud'].values.astype(int)
+        elif 'is_suspicious' in train_df.columns:
+            labels = train_df['is_suspicious'].values.astype(int)
         else:
             labels = np.zeros(len(train_df), dtype=int)
         conditions = np.zeros((len(labels), 2), dtype=np.float32)

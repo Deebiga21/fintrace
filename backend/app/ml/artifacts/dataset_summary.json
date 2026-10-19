@@ -1,30 +1,30 @@
 {
-  "dataset_filename": "paysim_transactions.csv",
-  "provenance": "Kaggle PaySim1 Synthetic Financial Dataset for Fraud Detection (ealaxi/paysim1, Lopez-Rojas et al.)",
-  "source_url": "https://www.kaggle.com/datasets/ealaxi/paysim1",
-  "license": "CC BY 4.0 International (Open Access Research Dataset)",
-  "domain": "Mobile Money Network (Agent-based mobile financial service simulation)",
-  "domain_comparison": "PaySim models mobile money agent transactions (CASH-IN, CASH-OUT, DEBIT, PAYMENT, TRANSFER). Key domain differences from Indian banking: (1) PaySim operates in an abstracted mobile-money currency without IFSC/branch routing or KYC account tiers; (2) Fraud manifests as account-takeover transfers and cashouts; (3) Transaction graphs are predominantly star-shaped around agents rather than dense circular mule rings found in corporate/UPI laundering.",
-  "total_transactions": 10262,
-  "total_accounts": 17755,
-  "unique_senders": 10262,
-  "unique_receivers": 7493,
+  "dataset_filename": "proposed_cleaned_transactions.csv",
+  "provenance": "Proposed Randomized Banking Statements (25 Accounts from CBS Finacle/BaNCS Extracts)",
+  "source_url": "Proposed_Data_Randomized_Final Archive",
+  "license": "Core Banking Transaction Extracts (Strictly Randomized & Anonymized for Research)",
+  "domain": "Indian Core Banking System (CBS) Statement of Accounts (INR 785.36 Crore)",
+  "domain_comparison": "Real Core Banking Statement of Accounts (SOAs) across 25 primary entities and 254,617 counterparties. Features high-velocity pass-through conduit behavior (turnover ratios 0.98 - 1.04), abrupt account closures, and regulatory total freeze ground truths (ACC_SOA_03).",
+  "total_transactions": 494262,
+  "total_accounts": 254617,
+  "unique_senders": 194851,
+  "unique_receivers": 84495,
   "financial_volume": {
-    "total_volume": 2117641830.24,
-    "min_amount": 12.15,
-    "mean_amount": 206357.61,
-    "median_amount": 106339.0,
-    "max_amount": 10000000.0,
-    "std_amount": 378008.87,
-    "p95_amount": 677361.81,
-    "p99_amount": 1765711.12
+    "total_volume": 7853617492.11,
+    "min_amount": 0.02,
+    "mean_amount": 15889.58,
+    "median_amount": 2320.0,
+    "max_amount": 31558812.96,
+    "std_amount": 107185.76,
+    "p95_amount": 40373.16,
+    "p99_amount": 314390.01
   },
   "class_distribution": {
-    "False": 10075,
-    "True": 187
+    "0": 478683,
+    "1": 15579
   },
-  "class_imbalance_ratio": "53.88:1 (Normal:Fraud)",
+  "class_imbalance_ratio": "30.73:1 (Normal:Fraud)",
   "label_type": "transaction_and_mule_conduit_level",
   "is_synthetic": true,
-  "synthetic_disclaimer": "PaySim is a multi-agent simulation based on aggregated mobile money logs. Results demonstrate algorithmic capability but do not establish real-world judicial accuracy in bank environments."
+  "synthetic_disclaimer": "Statements are randomized for AML/PMLA mule detection research and benchmarking. Statutory verification is required before judicial submission."
 }
