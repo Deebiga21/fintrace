@@ -1,35 +1,35 @@
 {
   "model_architecture": "Shared 2-Layer GraphSAGE (PyG SAGEConv Mean Aggregator)",
   "encoder_embedding_dimension": 16,
-  "trained_epochs": 25,
-  "training_loss": 1.2285,
+  "trained_epochs": 50,
+  "training_loss": 0.289,
   "task_a_account_mule_classification": {
-    "test_precision": 0.44,
-    "test_recall": 0.275,
-    "test_f1_score": 0.3385,
-    "test_roc_auc": 0.7274,
+    "test_precision": 0.4474,
+    "test_recall": 0.9709,
+    "test_f1_score": 0.6126,
+    "test_roc_auc": 0.9981,
     "test_confusion_matrix": [
       [
-        2610,
-        14
+        37741,
+        247
       ],
       [
-        29,
-        11
+        6,
+        200
       ]
     ],
     "operating_threshold": 0.5
   },
   "task_b_transaction_suspicious_classification": {
-    "precision": 0.0646,
-    "recall": 0.7861,
-    "f1_score": 0.1193,
-    "pr_auc": 0.0457
+    "precision": 0.5655,
+    "recall": 0.9705,
+    "f1_score": 0.7146,
+    "pr_auc": 0.9538
   },
   "task_c_unsupervised_anomaly_detection": {
     "method": "GNN Latent Embedding Bottleneck Reconstruction (MSE)",
-    "mean_anomaly_score_mules": 0.10440000146627426,
-    "mean_anomaly_score_normal": 0.05570000037550926,
-    "anomaly_divergence_ratio": 1.87
+    "mean_anomaly_score_mules": 0.27570000290870667,
+    "mean_anomaly_score_normal": 0.08479999750852585,
+    "anomaly_divergence_ratio": 3.25
   }
 }

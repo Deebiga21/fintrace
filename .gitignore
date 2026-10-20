@@ -53,6 +53,7 @@ Thumbs.db
 target/
 rust_backend/target/
 **/*.rs.bk
+rust_backend/uploads/*.csv
 
 # Large raw archive files
 *.zip

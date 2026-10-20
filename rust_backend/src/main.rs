@@ -5,8 +5,8 @@ use axum::{
     Json, Router,
 };
 use fintrace_backend::{
-    accounts, alerts, analytics, auth, cases, complaints, config, database, graph, ml_client,
-    money_trail, transactions, ws,
+    accounts, alerts, analytics, audit, auth, cases, complaints, config, dashboard, database,
+    datasets, demo, graph, ingestion, jobs, ml_client, models_api, money_trail, pipeline, surveillance, transactions, ws,
 };
 use serde_json::json;
 use std::net::SocketAddr;
@@ -39,6 +39,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Method::GET,
             Method::POST,
             Method::PUT,
+            Method::PATCH,
             Method::DELETE,
             Method::OPTIONS,
         ])
@@ -51,12 +52,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .nest("/accounts", accounts::router(pool.clone()))
         .nest("/graph", graph::router(pool.clone()))
         .nest("/money-trail", money_trail::router(pool.clone()))
+        .nest("/money-trails", money_trail::router(pool.clone()))
+        .nest("/investigations", money_trail::investigations_router(pool.clone()))
         .nest("/complaints", complaints::router(pool.clone()))
         .nest("/cases", cases::router(pool.clone()))
+        .nest("/evidence", cases::evidence_router(pool.clone()))
         .nest("/alerts", alerts::router(pool.clone()))
         .nest("/analytics", analytics::router(pool.clone()))
+        .nest("/patterns", analytics::patterns_router(pool.clone()))
+        .nest("/dashboard", dashboard::router(pool.clone()))
+        .nest("/surveillance", surveillance::router(pool.clone()))
+        .nest("/demo", demo::router(pool.clone()))
+        .nest("/jobs", jobs::router(pool.clone()))
+        .nest("/datasets", datasets::router(pool.clone()))
+        .nest("/ingestion", ingestion::router(pool.clone()))
+        .nest("/models", models_api::router(pool.clone(), cfg.ml_service_url.clone()))
+        .nest("/audit-logs", audit::router(pool.clone()))
         .nest("/ml", ml_client::router(pool.clone(), cfg.ml_service_url.clone()))
-        .nest("/gnn", ml_client::legacy_gnn_router(pool.clone(), cfg.ml_service_url.clone()));
+        .nest("/gnn", ml_client::legacy_gnn_router(pool.clone(), cfg.ml_service_url.clone()))
+        .nest("/pipeline", pipeline::router(pool.clone(), cfg.ml_service_url.clone()))
+        .route("/health", get(health_handler));
 
     let app = Router::new()
         .route("/", get(root_handler))
@@ -82,6 +97,7 @@ async fn root_handler() -> impl IntoResponse {
         "status": "operational",
         "version": "1.0.0",
         "documentation": "/api/v1/docs",
+        "dataset": "25 Bank Statement of Accounts (SOA)",
         "ml_service": "Python PyTorch Microservice"
     }))
 }

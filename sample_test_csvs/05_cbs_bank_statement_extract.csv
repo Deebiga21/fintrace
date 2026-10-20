@@ -1,0 +1,4 @@
+transaction_id,sender_account,receiver_account,amount,timestamp,status,transaction_type,is_suspicious,description
+TXN_CBS_SOA_901,ACC_SOA_03,ACC_SOA_02,1250000.0,2026-10-20T15:00:00Z,COMPLETED,RTGS,1,Core Banking conduit inter-transfer Rohan Kumar Sah to Mahendra Kumar
+TXN_CBS_SOA_902,ACC_SOA_02,ACC_SOA_48,1240000.0,2026-10-20T15:22:00Z,COMPLETED,RTGS,1,Egress conduit dispersal to dormant peer statement
+TXN_CBS_SOA_903,ACC_SOA_48,VENDOR_EXTRACT_08,1235000.0,2026-10-20T15:45:00Z,COMPLETED,NEFT,1,Final layering exit transfer from dormant freeze cluster

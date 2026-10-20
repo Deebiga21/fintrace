@@ -213,7 +213,7 @@ export default function MuleDetectionPage({
                   <p className="text-[11px] text-slate-400 mt-0.5">{explanation.customer_name}</p>
                 </div>
                 <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                  {explanation.is_simulated ? "Heuristic Simulation" : "Trained GraphSAGE"}
+                  {explanation.is_simulated ? "Heuristic Rule Flag" : "GraphSAGE Neural Inference"}
                 </span>
               </div>
 
@@ -225,19 +225,19 @@ export default function MuleDetectionPage({
                 <div className="grid grid-cols-2 gap-2 font-mono text-[11px]">
                   <div className="p-2 rounded bg-navy-950 border border-slate-800">
                     <span className="text-slate-500 block text-[10px]">In-Degree / Senders</span>
-                    <span className="font-bold text-emerald-400">{explanation.structural_features.in_degree}</span>
+                    <span className="font-bold text-emerald-400">{explanation.structural_features?.in_degree ?? explanation.in_degree ?? 0}</span>
                   </div>
                   <div className="p-2 rounded bg-navy-950 border border-slate-800">
                     <span className="text-slate-500 block text-[10px]">Out-Degree / Targets</span>
-                    <span className="font-bold text-rose-400">{explanation.structural_features.out_degree}</span>
+                    <span className="font-bold text-rose-400">{explanation.structural_features?.out_degree ?? explanation.out_degree ?? 0}</span>
                   </div>
                   <div className="p-2 rounded bg-navy-950 border border-slate-800">
                     <span className="text-slate-500 block text-[10px]">Turnover Velocity</span>
-                    <span className="font-bold text-amber-400">{explanation.structural_features.turnover_ratio}x</span>
+                    <span className="font-bold text-amber-400">{explanation.structural_features?.turnover_ratio ?? explanation.turnover_ratio ?? 0}x</span>
                   </div>
                   <div className="p-2 rounded bg-navy-950 border border-slate-800">
                     <span className="text-slate-500 block text-[10px]">Unique Peers</span>
-                    <span className="font-bold text-electric-300">{explanation.structural_features.unique_counterparties}</span>
+                    <span className="font-bold text-electric-300">{explanation.structural_features?.unique_counterparties ?? explanation.unique_counterparties ?? 0}</span>
                   </div>
                 </div>
               </div>
@@ -247,9 +247,9 @@ export default function MuleDetectionPage({
                 <div className="text-[11px] font-bold text-slate-400 uppercase font-mono">
                   DETECTED BEHAVIORAL PATTERNS
                 </div>
-                {explanation.detected_patterns && explanation.detected_patterns.length > 0 ? (
+                {(explanation.detected_patterns || explanation.flags) && (explanation.detected_patterns || explanation.flags).length > 0 ? (
                   <div className="space-y-1.5">
-                    {explanation.detected_patterns.map((pat, idx) => (
+                    {(explanation.detected_patterns || explanation.flags).map((pat, idx) => (
                       <div key={idx} className="p-2 rounded bg-rose-950/40 border border-rose-500/30 flex items-center gap-2 text-rose-300">
                         <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-400" />
                         <span className="font-medium text-[11px]">{pat}</span>

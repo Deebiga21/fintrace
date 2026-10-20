@@ -29,15 +29,25 @@ export default function CytoscapeGraph({
   useEffect(() => {
     if (!containerRef.current || !graphData) return;
 
+    const rawElements = Array.isArray(graphData)
+      ? graphData
+      : (graphData.elements || [
+          ...(graphData.nodes || []),
+          ...(graphData.edges || [])
+        ]);
+
+    const allNodes = graphData.nodes || rawElements.filter(e => e.group === 'nodes' || (!e.data?.source && e.data?.id));
+    const allEdges = graphData.edges || rawElements.filter(e => e.group === 'edges' || Boolean(e.data?.source));
+
     // Filter elements according to current UI filters
-    const filteredNodes = (graphData.nodes || []).filter(n => {
+    const filteredNodes = allNodes.filter(n => {
       if (riskFilter === 'ALL') return true;
-      return n.data.risk_level?.toUpperCase() === riskFilter;
+      return n.data?.risk_level?.toUpperCase() === riskFilter;
     });
 
     const activeNodeIds = new Set(filteredNodes.map(n => n.data.id));
 
-    const filteredEdges = (graphData.edges || []).filter(e => {
+    const filteredEdges = allEdges.filter(e => {
       const srcOk = activeNodeIds.has(e.data.source);
       const dstOk = activeNodeIds.has(e.data.target);
       const amtOk = (e.data.weight || e.data.amount || 0) >= minAmount;
@@ -65,18 +75,14 @@ export default function CytoscapeGraph({
         {
           selector: 'node',
           style: {
-            'label': 'data(id)',
-            'color': '#F8FAFC',
-            'font-family': 'JetBrains Mono, monospace',
+            'label': 'data(label)',
             'font-size': '10px',
-            'font-weight': 'bold',
+            'font-family': 'monospace',
+            'font-weight': 600,
+            'color': '#E2E8F0',
             'text-valign': 'bottom',
-            'text-margin-y': 5,
-            'text-outline-width': 2,
-            'text-outline-color': '#0B1120',
-            'background-color': '#10B981',
-            'width': 28,
-            'height': 28,
+            'text-margin-y': 4,
+            'background-color': '#1E293B',
             'border-width': 2,
             'border-color': '#334155',
             'transition-property': 'background-color, border-color, width, height',
@@ -85,7 +91,7 @@ export default function CytoscapeGraph({
         },
         // Medium Risk
         {
-          selector: 'node[risk_level = "Medium"]',
+          selector: 'node[risk_level = "Medium"], node[risk_level = "MEDIUM"]',
           style: {
             'background-color': '#F59E0B',
             'border-color': '#B45309',
@@ -95,7 +101,7 @@ export default function CytoscapeGraph({
         },
         // High Risk Node
         {
-          selector: 'node[risk_level = "High"]',
+          selector: 'node[risk_level = "High"], node[risk_level = "HIGH"]',
           style: {
             'background-color': '#EF4444',
             'border-color': '#991B1B',
@@ -209,6 +215,24 @@ export default function CytoscapeGraph({
     };
   }, [graphData, layoutName, riskFilter, minAmount]);
 
+  // Highlight cycle elements
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+    cy.elements().removeClass('cycle-highlight');
+
+    if (!highlightCycles || highlightCycles.length === 0) return;
+
+    highlightCycles.forEach(c => {
+      const accs = Array.isArray(c) ? c : (c?.accounts || []);
+      accs.forEach((accId, i) => {
+        const nextId = accs[(i + 1) % accs.length];
+        cy.getElementById(accId).addClass('cycle-highlight');
+        cy.edges(`[source = "${accId}"][target = "${nextId}"]`).addClass('cycle-highlight');
+      });
+    });
+  }, [highlightCycles]);
+
   // Center on selected node if passed
   useEffect(() => {
     if (!cyRef.current || !selectedNodeId) return;
@@ -251,73 +275,71 @@ export default function CytoscapeGraph({
           ))}
         </div>
 
+        {/* Layout Switcher */}
         <div className="flex items-center gap-2">
           <span className="text-slate-400 font-mono text-[11px]">LAYOUT:</span>
-          {['cose', 'concentric', 'breadthfirst', 'circle'].map((l) => (
-            <button
-              key={l}
-              onClick={() => setLayoutName(l)}
-              className={`px-2 py-1 rounded text-[11px] font-mono capitalize transition ${
-                layoutName === l
-                  ? 'bg-slate-700 text-white font-medium'
-                  : 'bg-navy-850 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {l}
-            </button>
-          ))}
+          <select
+            value={layoutName}
+            onChange={(e) => setLayoutName(e.target.value)}
+            className="bg-navy-850 border border-slate-700 text-slate-200 text-xs rounded px-2.5 py-1 focus:outline-none focus:border-electric-500 font-mono"
+          >
+            <option value="cose">Force-Directed (cose)</option>
+            <option value="circle">Circular Ring</option>
+            <option value="breadthfirst">Hierarchical (Tree)</option>
+            <option value="concentric">Concentric Layers</option>
+            <option value="grid">Grid</option>
+          </select>
         </div>
 
-        <div className="flex items-center gap-1.5 border-l border-slate-800 pl-3">
+        {/* Zoom Controls */}
+        <div className="flex items-center gap-1 bg-navy-850 p-1 rounded-lg border border-slate-800">
           <button
             onClick={handleZoomIn}
+            className="p-1 hover:bg-slate-700 text-slate-300 rounded"
             title="Zoom In"
-            className="p-1.5 bg-navy-850 hover:bg-slate-800 text-slate-300 rounded border border-slate-700 transition"
           >
-            <ZoomIn className="w-3.5 h-3.5" />
+            <ZoomIn className="w-4 h-4" />
           </button>
           <button
             onClick={handleZoomOut}
+            className="p-1 hover:bg-slate-700 text-slate-300 rounded"
             title="Zoom Out"
-            className="p-1.5 bg-navy-850 hover:bg-slate-800 text-slate-300 rounded border border-slate-700 transition"
           >
-            <ZoomOut className="w-3.5 h-3.5" />
+            <ZoomOut className="w-4 h-4" />
           </button>
           <button
             onClick={handleFit}
-            title="Fit to Screen"
-            className="p-1.5 bg-navy-850 hover:bg-slate-800 text-slate-300 rounded border border-slate-700 transition"
+            className="p-1 hover:bg-slate-700 text-slate-300 rounded"
+            title="Fit Canvas"
           >
-            <Maximize2 className="w-3.5 h-3.5" />
+            <Maximize2 className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* Graph Visual Canvas */}
-      <div ref={containerRef} className="flex-1 w-full h-full bg-grid-pattern relative cursor-grab active:cursor-grabbing" />
+      {/* Canvas Mount Container */}
+      <div ref={containerRef} className="flex-1 w-full h-full min-h-[460px] cursor-grab active:cursor-grabbing" />
 
-      {/* Legend Footer */}
-      <div className="px-4 py-2 bg-navy-900/80 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+      {/* Bottom Canvas Stats & Legend */}
+      <div className="p-2.5 bg-navy-900/90 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400 px-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500"></span>
-            <span>High Risk Mule</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-            <span>Medium Risk</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <span>Low Risk / Standard</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-5 h-0.5 bg-rose-500 border border-dashed border-rose-500 inline-block"></span>
-            <span>Suspicious Transfer</span>
-          </div>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> High Risk Mule
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Medium Risk
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-slate-600" /> Low Risk Account
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-4 border-t-2 border-dashed border-rose-500" /> Flagged Transfer
+          </span>
         </div>
-        <div className="font-mono text-[10px] text-slate-400">
-          Click any node or transaction edge to inspect evidence
+
+        <div className="flex items-center gap-3">
+          <span>{cyRef.current ? cyRef.current.nodes().length : 0} Nodes Rendered</span>
+          <span>{cyRef.current ? cyRef.current.edges().length : 0} Edges</span>
         </div>
       </div>
     </div>

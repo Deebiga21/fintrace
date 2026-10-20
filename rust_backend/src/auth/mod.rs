@@ -4,7 +4,7 @@ use argon2::{
 };
 use axum::{
     extract::State,
-    http::{HeaderMap, StatusCode},
+    http::HeaderMap,
     response::IntoResponse,
     routing::{get, post},
     Json, Router,

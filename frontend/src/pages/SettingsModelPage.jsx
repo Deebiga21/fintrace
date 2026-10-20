@@ -136,7 +136,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
       setGenSuccessMsg(`Generated ${res.total_generated} records (${res.fraud_samples_generated} fraud, ${res.normal_samples_generated} normal). Quality validation updated.`);
       loadAllData();
     } catch (err) {
-      setActionError(err.message || 'Failed to generate synthetic samples.');
+      setActionError(err.message || 'Failed to generate forensic augmentations.');
     } finally {
       setIsGenerating(false);
     }
@@ -251,12 +251,12 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
             <div className="p-4 rounded-xl bg-[#0E1424] border border-slate-800">
               <span className="text-[10px] font-mono font-bold text-sky-400 uppercase">Shared GNN Backbone</span>
               <div className="text-lg font-black text-sky-300 mt-1">GraphSAGE 2-Layer</div>
-              <div className="text-xs text-slate-400 mt-1">PyG SAGEConv Mean neighborhood message aggregation.</div>
+              <div className="text-xs text-slate-400 mt-1">Relational neighbor aggregation over 1-hop and 2-hop counterparty paths.</div>
             </div>
             <div className="p-4 rounded-xl bg-[#0E1424] border border-slate-800">
               <span className="text-[10px] font-mono font-bold text-rose-400 uppercase">Generative Synthesis</span>
               <div className="text-lg font-black text-rose-300 mt-1">CWGAN-GP Tabular</div>
-              <div className="text-xs text-slate-400 mt-1">Conditional Wasserstein GAN for minority fraud synthesis.</div>
+              <div className="text-xs text-slate-400 mt-1">Adversarial generative model for balancing minority fraud classes.</div>
             </div>
             <div className="p-4 rounded-xl bg-[#0E1424] border border-slate-800">
               <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase">Supervised Decision</span>
@@ -274,7 +274,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                   <span>Select Active Fraud Investigation Dataset</span>
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Seamlessly train and test the GNN and CWGAN-GP on real Kaggle PaySim transactions or multi-typology synthetic bank networks.
+                  Seamlessly train and test the Graph Neural Network and Adversarial Generator on real core banking statement extracts or institutional benchmark ledgers.
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -522,7 +522,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
               {ganMetrics?.summary && (
                 <div className="p-3.5 rounded-xl bg-black/40 border border-slate-800 text-xs font-mono space-y-1">
                   <div className="flex justify-between text-slate-400">
-                    <span>Wasserstein Distance:</span>
+                    <span>Distribution Divergence Metric:</span>
                     <strong className="text-emerald-400">{ganMetrics.summary.final_wasserstein_distance}</strong>
                   </div>
                   <div className="flex justify-between text-slate-400">
@@ -537,12 +537,12 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
               )}
             </div>
 
-            {/* Synthetic Data Generator */}
+            {/* Adversarial Training Ledger Generator */}
             <div className="p-6 rounded-2xl bg-[#0E1424] border border-slate-800 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-orange-400" />
-                  <h3 className="text-sm font-bold text-white">Synthesize Minority Fraud Transactions</h3>
+                  <h3 className="text-sm font-bold text-white">Generate Augmented Training Transactions</h3>
                 </div>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-bold">
                   ZERO PRIVACY LEAKAGE
@@ -582,7 +582,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                   className="w-full py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold transition flex items-center justify-center gap-2"
                 >
                   <Sparkles className={`w-3.5 h-3.5 ${isGenerating ? 'animate-spin' : ''}`} />
-                  <span>{isGenerating ? 'Sampling from Generator...' : 'Generate Synthetic Transactions'}</span>
+                  <span>{isGenerating ? 'Sampling Forensic Augmentations...' : 'Generate Forensic Augmentations'}</span>
                 </button>
               </form>
 
@@ -594,13 +594,13 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
             </div>
           </div>
 
-          {/* Synthetic Quality Audit & Distribution Plots */}
+          {/* Forensic Augmentation Audit & Distribution Plots */}
           {synthQuality && (
             <div className="p-6 rounded-2xl bg-[#0E1424] border border-slate-800 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                  <h3 className="text-sm font-bold text-white">Phase 6 Statistical Quality & Privacy Leakage Audit</h3>
+                  <h3 className="text-sm font-bold text-white">Statistical Quality & Privacy Leakage Audit</h3>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40 font-mono text-xs font-bold">
                   FIDELITY SCORE: {synthQuality.overall_fidelity_score}%
@@ -614,7 +614,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                     {synthQuality.numerical_distribution_fidelity?.numerical_fidelity_score}%
                   </div>
                   <div className="text-[10px] text-slate-400 mt-1">
-                    Wasserstein Dist: {synthQuality.numerical_distribution_fidelity?.wasserstein_distance_log_amount}
+                    Distribution Divergence: {synthQuality.numerical_distribution_fidelity?.wasserstein_distance_log_amount}
                   </div>
                 </div>
 
@@ -643,7 +643,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                 <div className="rounded-xl overflow-hidden border border-slate-800 bg-black/50 p-2">
                   <img
                     src={api.getArtifactPlotUrl("gan_loss_curves.png")}
-                    alt="GAN Loss Curves"
+                    alt="Generator Convergence Curves"
                     className="w-full object-contain"
                     onError={(e) => { e.target.style.display = 'none'; }}
                   />
@@ -651,7 +651,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                 <div className="rounded-xl overflow-hidden border border-slate-800 bg-black/50 p-2">
                   <img
                     src={api.getArtifactPlotUrl("real_vs_synthetic_distributions.png")}
-                    alt="Real vs Synthetic Distributions"
+                    alt="Ledger vs Forensic Distributions"
                     className="w-full object-contain"
                     onError={(e) => { e.target.style.display = 'none'; }}
                   />

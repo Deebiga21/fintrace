@@ -14,7 +14,8 @@ import {
   LogIn,
   Home,
   ShieldAlert,
-  ChevronRight
+  ChevronRight,
+  Workflow
 } from 'lucide-react';
 
 export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, selectedCaseId }) {
@@ -22,7 +23,8 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
     {
       title: "OVERVIEW",
       items: [
-        { id: "landing", label: "Exit to Showcase", icon: Home, badge: "3D Showcase" },
+        { id: "landing", label: "Command Overview", icon: Home, badge: "Intelligence" },
+        { id: "pipeline", label: "System Pipeline", icon: Workflow, badge: "Core" },
         { id: "dashboard", label: "Executive Dashboard", icon: LayoutDashboard },
       ]
     },

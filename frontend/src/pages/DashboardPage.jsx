@@ -28,6 +28,7 @@ import {
 } from 'recharts';
 import { api } from '../services/api';
 import RiskBadge from '../components/RiskBadge';
+import AnimaticPipelineStepper from '../components/AnimaticPipelineStepper';
 
 const RISK_COLORS = {
   High: '#EF4444',
@@ -39,7 +40,9 @@ export default function DashboardPage({
   setCurrentPage,
   onAccountSelect,
   onOpenCreateCase,
-  refreshTrigger
+  refreshTrigger,
+  onOpenLivePipeline,
+  embedded = false
 }) {
   const [overview, setOverview] = useState(null);
   const [auditLogs, setAuditLogs] = useState([]);
@@ -92,10 +95,21 @@ export default function DashboardPage({
     );
   }
 
+  const totalAccounts = overview?.total_accounts ?? overview?.metrics?.total_accounts ?? 0;
+  const totalTransactions = overview?.total_transactions ?? overview?.metrics?.total_transactions ?? 0;
+  const totalVolume = overview?.total_volume ?? overview?.metrics?.total_volume ?? 0;
+  const highRiskAccounts = overview?.high_risk_accounts ?? overview?.metrics?.high_risk_mules ?? 0;
+  const mediumRiskAccounts = overview?.medium_risk_accounts ?? 0;
+  const lowRiskAccounts = overview?.low_risk_accounts ?? 0;
+  const openCases = overview?.open_cases ?? overview?.metrics?.active_cases ?? 0;
+  const closedCases = overview?.closed_cases ?? 0;
+  const totalComplaints = overview?.total_complaints ?? overview?.metrics?.total_complaints ?? 0;
+  const totalComplaintAmount = overview?.total_complaint_amount ?? 0;
+
   const riskPieData = [
-    { name: 'High Risk', value: overview?.high_risk_accounts || 0, color: '#EF4444' },
-    { name: 'Medium Risk', value: overview?.medium_risk_accounts || 0, color: '#F59E0B' },
-    { name: 'Low Risk', value: overview?.low_risk_accounts || 0, color: '#10B981' }
+    { name: 'High Risk', value: highRiskAccounts, color: '#EF4444' },
+    { name: 'Medium Risk', value: mediumRiskAccounts, color: '#F59E0B' },
+    { name: 'Low Risk', value: lowRiskAccounts, color: '#10B981' }
   ];
 
   const patternData = Object.entries(overview?.top_suspicious_patterns || {}).map(([key, val]) => ({
@@ -110,24 +124,37 @@ export default function DashboardPage({
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
           <div>
-            <div className="text-xs font-bold text-white tracking-wide">
-              GRAPH SURVEILLANCE ACTIVE
+            <div className="text-xs font-bold text-white tracking-wide flex items-center gap-2">
+              <span>GRAPH SURVEILLANCE ACTIVE</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950/70 text-emerald-400 border border-emerald-500/30">
+                LIVE PRODUCTION
+              </span>
             </div>
             <div className="text-[11px] text-slate-400">
-              GraphSAGE monitoring multi-hop flow across {overview?.total_accounts || 0} financial nodes
+              GraphSAGE monitoring multi-hop flow across {totalAccounts.toLocaleString()} financial nodes
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setCurrentPage("landing")}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-electric-950/70 hover:bg-electric-900 text-electric-300 border border-electric-500/40 text-xs font-semibold transition"
-            title="Jump to the 3D Relational Network Sphere and Forensic Surveillance HUD Video"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-electric-400 animate-ping"></span>
-            <span>3D Globe & Video HUD</span>
-          </button>
+          {embedded ? (
+            <button
+              onClick={() => setCurrentPage("dashboard")}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-electric-600 to-cyan-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-xs shadow-glow-electric transition transform hover:scale-105"
+            >
+              <span>Open Full Dashboard</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              onClick={() => setCurrentPage("landing")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-electric-950/70 hover:bg-electric-900 text-electric-300 border border-electric-500/40 text-xs font-semibold transition"
+              title="Jump to the 3D Relational Network Sphere and Forensic Surveillance HUD Video"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-electric-400 animate-ping"></span>
+              <span>3D Globe & Video HUD</span>
+            </button>
+          )}
           <button
             onClick={() => setCurrentPage("upload")}
             className="px-3 py-1.5 rounded-lg bg-navy-850 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-medium transition"
@@ -140,74 +167,95 @@ export default function DashboardPage({
           >
             Open Graph Canvas
           </button>
+          <button
+            onClick={onOpenLivePipeline}
+            className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-electric-600 via-cyan-500 to-emerald-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-xs shadow-glow-electric transition transform hover:scale-105 active:scale-95 flex items-center gap-1.5"
+            title="Execute All 12 Stages in Real Time"
+          >
+            <span>⚡ Run Real-Time Pipeline</span>
+          </button>
         </div>
       </div>
 
+      {/* Animatic Step-by-Step Processing Pipeline */}
+      <AnimaticPipelineStepper
+        setCurrentPage={setCurrentPage}
+        onAccountSelect={onAccountSelect}
+        onOpenLivePipeline={onOpenLivePipeline}
+        stats={{
+          totalAccounts,
+          totalTransactions,
+          totalVolume,
+          highRiskAccounts,
+          openCases
+        }}
+      />
+
       {/* KPI Metrics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between">
+        <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
           <div className="flex items-center justify-between text-slate-400 text-xs">
             <span>Accounts</span>
             <Users className="w-4 h-4 text-electric-400" />
           </div>
           <div className="mt-2">
-            <div className="text-xl font-black text-white font-mono">{overview?.total_accounts}</div>
+            <div className="text-xl font-black text-white font-mono">{totalAccounts.toLocaleString()}</div>
             <div className="text-[10px] text-slate-400">Total Analyzed</div>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between">
+        <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
           <div className="flex items-center justify-between text-slate-400 text-xs">
             <span>Transactions</span>
             <CreditCard className="w-4 h-4 text-electric-400" />
           </div>
           <div className="mt-2">
-            <div className="text-xl font-black text-white font-mono">{overview?.total_transactions}</div>
-            <div className="text-[10px] text-slate-400">₹{(overview?.total_volume || 0).toLocaleString()} vol</div>
+            <div className="text-xl font-black text-white font-mono">{totalTransactions.toLocaleString()}</div>
+            <div className="text-[10px] text-slate-400">₹{Math.round(totalVolume).toLocaleString()} vol</div>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-rose-950/30 border border-rose-500/40 flex flex-col justify-between">
+        <div className="p-4 rounded-xl bg-rose-950/30 border border-rose-500/40 flex flex-col justify-between hover:border-rose-500/60 transition">
           <div className="flex items-center justify-between text-rose-300 text-xs">
             <span className="font-bold">High Risk Mules</span>
             <AlertTriangle className="w-4 h-4 text-rose-400" />
           </div>
           <div className="mt-2">
-            <div className="text-xl font-black text-rose-300 font-mono">{overview?.high_risk_accounts}</div>
+            <div className="text-xl font-black text-rose-300 font-mono">{highRiskAccounts.toLocaleString()}</div>
             <div className="text-[10px] text-rose-400 font-medium">Flagged for freeze</div>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/30 flex flex-col justify-between">
+        <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/30 flex flex-col justify-between hover:border-amber-500/50 transition">
           <div className="flex items-center justify-between text-amber-300 text-xs">
             <span>Medium Risk</span>
             <Activity className="w-4 h-4 text-amber-400" />
           </div>
           <div className="mt-2">
-            <div className="text-xl font-black text-amber-300 font-mono">{overview?.medium_risk_accounts}</div>
+            <div className="text-xl font-black text-amber-300 font-mono">{mediumRiskAccounts.toLocaleString()}</div>
             <div className="text-[10px] text-amber-400">Under observation</div>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between">
+        <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
           <div className="flex items-center justify-between text-slate-400 text-xs">
             <span>Active Cases</span>
             <Briefcase className="w-4 h-4 text-electric-400" />
           </div>
           <div className="mt-2">
-            <div className="text-xl font-black text-white font-mono">{overview?.open_cases}</div>
-            <div className="text-[10px] text-slate-400">{overview?.closed_cases} closed</div>
+            <div className="text-xl font-black text-white font-mono">{openCases.toLocaleString()}</div>
+            <div className="text-[10px] text-slate-400">{closedCases} closed</div>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between">
+        <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
           <div className="flex items-center justify-between text-slate-400 text-xs">
             <span>Complaints</span>
             <FileWarning className="w-4 h-4 text-electric-400" />
           </div>
           <div className="mt-2">
-            <div className="text-xl font-black text-white font-mono">{overview?.total_complaints}</div>
-            <div className="text-[10px] text-slate-400">₹{(overview?.total_complaint_amount || 0).toLocaleString()} lost</div>
+            <div className="text-xl font-black text-white font-mono">{totalComplaints.toLocaleString()}</div>
+            <div className="text-[10px] text-slate-400">₹{Math.round(totalComplaintAmount).toLocaleString()} lost</div>
           </div>
         </div>
       </div>
@@ -246,7 +294,7 @@ export default function DashboardPage({
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-2xl font-black text-white font-mono">{overview?.flagged_accounts}</span>
+              <span className="text-2xl font-black text-white font-mono">{highRiskAccounts + mediumRiskAccounts}</span>
               <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Flagged</span>
             </div>
           </div>
@@ -306,7 +354,7 @@ export default function DashboardPage({
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="date" stroke="#64748B" fontSize={9} />
-                <YAxis stroke="#64748B" fontSize={9} tickFormatter={(val) => `₹${val/1000}k`} />
+                <YAxis stroke="#64748B" fontSize={9} tickFormatter={(val) => `₹${Math.round(val/1000)}k`} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', borderRadius: '8px', fontSize: '11px' }}
                 />
@@ -368,9 +416,9 @@ export default function DashboardPage({
                     {(acc.risk_score * 100).toFixed(1)}%
                   </td>
                   <td className="py-3 px-3 text-slate-300 text-[11px]">
-                    <span className="text-emerald-400">↓₹{(acc.total_incoming || 0).toLocaleString()}</span>
+                    <span className="text-emerald-400">↓₹{Math.round(acc.total_incoming || 0).toLocaleString()}</span>
                     <span className="mx-1.5 text-slate-600">/</span>
-                    <span className="text-rose-400">↑₹{(acc.total_outgoing || 0).toLocaleString()}</span>
+                    <span className="text-rose-400">↑₹{Math.round(acc.total_outgoing || 0).toLocaleString()}</span>
                   </td>
                   <td className="py-3 px-3 font-sans">
                     <div className="flex flex-wrap gap-1">

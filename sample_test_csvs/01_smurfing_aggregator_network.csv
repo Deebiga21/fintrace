@@ -1,0 +1,12 @@
+transaction_id,sender_account,receiver_account,amount,timestamp,status,transaction_type,is_suspicious,description
+TXN_SMURF_IN_001,VICTIM_USER_101,MULE_AGG_01,45450,2026-10-20T09:12:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 101
+TXN_SMURF_IN_002,VICTIM_USER_102,MULE_AGG_01,45900,2026-10-20T09:14:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 102
+TXN_SMURF_IN_003,VICTIM_USER_103,MULE_AGG_01,46350,2026-10-20T09:16:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 103
+TXN_SMURF_IN_004,VICTIM_USER_104,MULE_AGG_01,46800,2026-10-20T09:18:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 104
+TXN_SMURF_IN_005,VICTIM_USER_105,MULE_AGG_01,47250,2026-10-20T09:20:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 105
+TXN_SMURF_IN_006,VICTIM_USER_106,MULE_AGG_01,47700,2026-10-20T09:22:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 106
+TXN_SMURF_IN_007,VICTIM_USER_107,MULE_AGG_01,48150,2026-10-20T09:24:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 107
+TXN_SMURF_IN_008,VICTIM_USER_108,MULE_AGG_01,48600,2026-10-20T09:26:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 108
+TXN_SMURF_IN_009,VICTIM_USER_109,MULE_AGG_01,49050,2026-10-20T09:28:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 109
+TXN_SMURF_IN_010,VICTIM_USER_110,MULE_AGG_01,49500,2026-10-20T09:30:00Z,COMPLETED,UPI,1,Smurfing micro-inflow tranche from victim user 110
+TXN_SMURF_OUT_001,MULE_AGG_01,CRYPTO_OFFRAMP_09,475000.0,2026-10-20T10:05:00Z,COMPLETED,IMPS,1,Bulk egress off-ramp transfer aggregating smurfed tranches

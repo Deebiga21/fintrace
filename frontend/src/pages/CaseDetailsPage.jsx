@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
-  FileText,
   Briefcase,
-  AlertTriangle,
-  Plus,
+  ArrowLeft,
   Save,
   Download,
-  ArrowLeft,
-  CheckCircle2,
+  Plus,
+  Trash2,
+  FileText,
+  ShieldAlert,
   Clock,
-  ShieldCheck,
-  Building,
-  CreditCard,
-  FileWarning,
+  UserCheck,
+  CheckCircle2,
+  AlertTriangle,
   RefreshCw,
-  Printer
+  FolderOpen
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -25,6 +24,7 @@ export default function CaseDetailsPage({
   refreshTrigger
 }) {
   const [caseData, setCaseData] = useState(null);
+  const [allCases, setAllCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -43,55 +43,79 @@ export default function CaseDetailsPage({
   const [evDesc, setEvDesc] = useState('');
   const [isAddingEv, setIsAddingEv] = useState(false);
 
-  const fetchCase = async () => {
-    if (!caseId) {
-      // If no case selected, load latest case
-      try {
-        const cases = await api.getCases({ limit: 1 });
-        if (cases && cases.length > 0) {
-          loadCaseData(cases[0].case_id);
-        } else {
-          setLoading(false);
-        }
-      } catch (err) {
+  const fetchCasesAndCurrent = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const casesRes = await api.getCases({ limit: 50 }).catch(() => []);
+      const casesList = Array.isArray(casesRes) ? casesRes : (casesRes?.cases || []);
+      setAllCases(casesList);
+
+      const targetId = caseId || (casesList.length > 0 ? casesList[0].case_id : null);
+      if (targetId) {
+        await loadCaseData(targetId);
+      } else {
         setLoading(false);
       }
-      return;
+    } catch (err) {
+      setError(err.message || "Failed to initialize case details.");
+      setLoading(false);
     }
-    loadCaseData(caseId);
   };
 
   const loadCaseData = async (id) => {
+    if (!id || id === 'undefined' || id === 'null') {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
+    setError(null);
     try {
       const data = await api.getCase(id);
-      setCaseData(data);
-      setStatus(data.status);
-      setPriority(data.priority);
-      setSummary(data.summary || '');
-      setFindings(data.findings || '');
+      const rawCase = data.case || data;
+      const rawEvidence = data.evidence || data.evidence_items || rawCase.evidence_items || rawCase.evidence || [];
+
+      const normalizedCase = {
+        ...rawCase,
+        evidence_items: rawEvidence
+      };
+
+      setCaseData(normalizedCase);
+      setStatus(normalizedCase.status || 'New');
+      setPriority(normalizedCase.priority || 'High');
+      setSummary(normalizedCase.summary || '');
+      setFindings(normalizedCase.findings || '');
     } catch (err) {
-      setError(err.message || "Failed to load case.");
+      setError(err.message || "Failed to load case data.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCase();
+    fetchCasesAndCurrent();
   }, [caseId, refreshTrigger]);
 
   const handleSaveCase = async () => {
-    if (!caseData) return;
+    const activeCaseId = caseData?.case_id || caseId;
+    if (!activeCaseId || activeCaseId === 'undefined') {
+      alert("No valid case active to update.");
+      return;
+    }
     setIsSaving(true);
     try {
-      const updated = await api.updateCase(caseData.case_id, {
+      const updated = await api.updateCase(activeCaseId, {
         status,
         priority,
         summary,
         findings
       });
-      setCaseData(updated);
+      const rawCase = updated.case || updated;
+      const rawEvidence = updated.evidence || updated.evidence_items || caseData?.evidence_items || [];
+      setCaseData({
+        ...rawCase,
+        evidence_items: rawEvidence
+      });
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
@@ -103,18 +127,26 @@ export default function CaseDetailsPage({
 
   const handleAddEvidence = async (e) => {
     e.preventDefault();
-    if (!caseData || !evRef) return;
+    const activeCaseId = caseData?.case_id || caseId;
+    if (!activeCaseId || activeCaseId === 'undefined') {
+      alert("No valid case selected to attach evidence to. Please select an active case first.");
+      return;
+    }
+    if (!evRef.trim()) {
+      alert("Please enter a reference ID (such as a Transaction ID, Account ID, or FIR reference).");
+      return;
+    }
     setIsAddingEv(true);
     try {
-      await api.addCaseEvidence(caseData.case_id, {
+      await api.addCaseEvidence(activeCaseId, {
         evidence_type: evType,
-        reference_id: evRef,
-        description: evDesc || "Investigative evidence supporting case findings."
+        reference_id: evRef.trim(),
+        description: evDesc.trim() || "Investigative evidence supporting case findings."
       });
       setShowAddEvidence(false);
       setEvRef('');
       setEvDesc('');
-      loadCaseData(caseData.case_id);
+      await loadCaseData(activeCaseId);
     } catch (err) {
       alert("Failed to add evidence: " + err.message);
     } finally {
@@ -123,14 +155,15 @@ export default function CaseDetailsPage({
   };
 
   const handleExportDossier = async () => {
-    if (!caseData) return;
+    const activeCaseId = caseData?.case_id || caseId;
+    if (!activeCaseId || activeCaseId === 'undefined') return;
     try {
-      const dossier = await api.getCaseDossier(caseData.case_id);
+      const dossier = await api.getCaseDossier(activeCaseId);
       const blob = new Blob([JSON.stringify(dossier, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `CASE_DOSSIER_${caseData.case_id}.json`;
+      a.download = `CASE_DOSSIER_${activeCaseId}.json`;
       a.click();
     } catch (err) {
       alert("Export failed: " + err.message);
@@ -150,8 +183,8 @@ export default function CaseDetailsPage({
     return (
       <div className="p-12 text-center rounded-xl bg-navy-900 border border-slate-800 text-slate-400 space-y-4 max-w-xl mx-auto">
         <Briefcase className="w-10 h-10 text-slate-500 mx-auto" />
-        <h3 className="text-base font-bold text-white">No Case Selected</h3>
-        <p className="text-xs">Please select an investigation case from the Cases page or spawn a new case.</p>
+        <h3 className="text-base font-bold text-white">No Investigation Cases in Docket</h3>
+        <p className="text-xs">Create an investigation case first from Mule Detection, Complaints, or Cases page.</p>
         <button
           onClick={() => setCurrentPage('cases')}
           className="px-4 py-2 bg-electric-600 hover:bg-electric-500 text-white font-bold rounded-lg text-xs"
@@ -174,12 +207,31 @@ export default function CaseDetailsPage({
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-xs font-bold text-electric-400 bg-electric-500/10 px-2 py-0.5 rounded border border-electric-500/30">
                 {caseData.case_id}
               </span>
+
+              {/* Case Quick Selector Dropdown */}
+              {allCases.length > 1 && (
+                <div className="flex items-center gap-1.5 text-xs font-mono">
+                  <span className="text-slate-500 text-[11px]">SWITCH CASE:</span>
+                  <select
+                    value={caseData.case_id}
+                    onChange={(e) => loadCaseData(e.target.value)}
+                    className="px-2 py-0.5 bg-navy-950 border border-slate-700 rounded text-electric-300 text-xs font-mono focus:outline-none focus:border-electric-400"
+                  >
+                    {allCases.map((c) => (
+                      <option key={c.case_id} value={c.case_id}>
+                        {c.case_id} - {c.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <span className="text-slate-400 text-xs font-mono">
-                Initiated: {new Date(caseData.created_at).toLocaleDateString()}
+                Initiated: {caseData.created_at ? new Date(caseData.created_at).toLocaleDateString() : 'Active'}
               </span>
             </div>
             <h2 className="text-lg font-bold text-white tracking-wide mt-0.5">
@@ -211,12 +263,19 @@ export default function CaseDetailsPage({
       {saveSuccess && (
         <div className="p-3 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          <span>Case dossier and findings successfully updated in secure database.</span>
+          <span>Case docket and findings successfully updated in secure database.</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-3 rounded-lg bg-rose-950/80 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-rose-400" />
+          <span>{error}</span>
         </div>
       )}
 
       {/* Case Metadata Form Bar */}
-      <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+      <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono">
         <div>
           <label className="block text-slate-400 font-mono text-[10px] mb-1">INVESTIGATION STAGE</label>
           <select
@@ -248,7 +307,7 @@ export default function CaseDetailsPage({
         <div>
           <label className="block text-slate-400 font-mono text-[10px] mb-1">PRIMARY SUBJECT ACCOUNT</label>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold text-electric-300 bg-navy-950 px-3 py-2 rounded-lg border border-slate-700 flex-1">
+            <span className="font-mono text-xs font-bold text-electric-300 bg-navy-950 px-3 py-2 rounded-lg border border-slate-700 flex-1 truncate">
               {caseData.primary_account_id || "Multi-Account Syndicate"}
             </span>
             {caseData.primary_account_id && (
@@ -267,8 +326,8 @@ export default function CaseDetailsPage({
 
         <div>
           <label className="block text-slate-400 font-mono text-[10px] mb-1">ASSIGNED INVESTIGATOR</label>
-          <div className="font-semibold text-slate-200 bg-navy-950 px-3 py-2 rounded-lg border border-slate-700 text-xs">
-            {caseData.assigned_investigator}
+          <div className="font-semibold text-slate-200 bg-navy-950 px-3 py-2 rounded-lg border border-slate-700 text-xs truncate">
+            {caseData.assigned_investigator || "Lead Financial Crime Specialist"}
           </div>
         </div>
       </div>
@@ -285,7 +344,7 @@ export default function CaseDetailsPage({
               rows={3}
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
-              className="w-full px-3 py-2.5 bg-navy-950 border border-slate-700 rounded-lg text-slate-200 text-xs focus:outline-none focus:border-electric-400 leading-relaxed resize-none"
+              className="w-full px-3 py-2.5 bg-navy-950 border border-slate-700 rounded-lg text-slate-200 text-xs focus:outline-none focus:border-electric-400 leading-relaxed resize-none font-sans"
             />
           </div>
 
@@ -298,7 +357,7 @@ export default function CaseDetailsPage({
               value={findings}
               onChange={(e) => setFindings(e.target.value)}
               placeholder="Record forensic observations, transaction timestamps, victim statements, and freeze recommendations..."
-              className="w-full px-3 py-2.5 bg-navy-950 border border-slate-700 rounded-lg text-slate-200 text-xs focus:outline-none focus:border-electric-400 leading-relaxed resize-none font-mono"
+              className="w-full px-3 py-2.5 bg-navy-950 border border-slate-700 rounded-lg text-slate-200 text-xs focus:outline-none focus:border-electric-400 leading-relaxed resize-none font-sans"
             />
           </div>
         </div>
@@ -315,7 +374,7 @@ export default function CaseDetailsPage({
               </div>
               <button
                 onClick={() => setShowAddEvidence(!showAddEvidence)}
-                className="px-2.5 py-1 bg-navy-850 hover:bg-slate-800 text-electric-300 border border-slate-700 rounded text-[11px] font-semibold flex items-center gap-1 transition"
+                className="px-2.5 py-1 bg-navy-850 hover:bg-slate-800 text-electric-300 border border-slate-700 rounded text-[11px] font-semibold flex items-center gap-1 transition font-mono"
               >
                 <Plus className="w-3 h-3" />
                 <span>Attach</span>
@@ -324,7 +383,7 @@ export default function CaseDetailsPage({
 
             {/* Add Evidence Form Drawer */}
             {showAddEvidence && (
-              <form onSubmit={handleAddEvidence} className="p-3 rounded-lg bg-navy-950 border border-slate-700 space-y-3 text-xs">
+              <form onSubmit={handleAddEvidence} className="p-3 rounded-lg bg-navy-950 border border-slate-700 space-y-3 text-xs animate-fadeIn font-mono">
                 <div>
                   <label className="block text-slate-400 text-[10px] mb-1 font-mono">EVIDENCE TYPE</label>
                   <select
@@ -347,7 +406,7 @@ export default function CaseDetailsPage({
                     value={evRef}
                     onChange={(e) => setEvRef(e.target.value)}
                     placeholder="e.g. TXN_10165 or MULE_AGG_01"
-                    className="w-full px-2 py-1.5 bg-navy-900 border border-slate-700 rounded text-white font-mono text-xs"
+                    className="w-full px-2 py-1.5 bg-navy-900 border border-slate-700 rounded text-white font-mono text-xs focus:outline-none focus:border-electric-400"
                   />
                 </div>
                 <div>
@@ -357,10 +416,10 @@ export default function CaseDetailsPage({
                     value={evDesc}
                     onChange={(e) => setEvDesc(e.target.value)}
                     placeholder="Notes on why this evidence is critical..."
-                    className="w-full px-2 py-1.5 bg-navy-900 border border-slate-700 rounded text-white text-xs"
+                    className="w-full px-2 py-1.5 bg-navy-900 border border-slate-700 rounded text-white text-xs focus:outline-none focus:border-electric-400"
                   />
                 </div>
-                <div className="flex justify-end gap-2 pt-1">
+                <div className="flex justify-end gap-2 pt-1 font-mono">
                   <button
                     type="button"
                     onClick={() => setShowAddEvidence(false)}
@@ -371,9 +430,10 @@ export default function CaseDetailsPage({
                   <button
                     type="submit"
                     disabled={isAddingEv}
-                    className="px-3 py-1 bg-electric-600 hover:bg-electric-500 text-white rounded text-xs font-semibold"
+                    className="px-3 py-1 bg-electric-600 hover:bg-electric-500 disabled:opacity-50 text-white rounded text-xs font-semibold flex items-center gap-1"
                   >
-                    {isAddingEv ? "Adding..." : "Add to Locker"}
+                    {isAddingEv ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                    <span>{isAddingEv ? "Adding..." : "Add to Locker"}</span>
                   </button>
                 </div>
               </form>
@@ -384,7 +444,7 @@ export default function CaseDetailsPage({
               {(caseData.evidence_items || []).map((ev) => (
                 <div
                   key={ev.id}
-                  className="p-3 rounded-lg bg-navy-950 border border-slate-800 text-xs space-y-1.5"
+                  className="p-3 rounded-lg bg-navy-950 border border-slate-800 text-xs space-y-1.5 hover:border-slate-700 transition"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[9px] font-bold text-electric-400 bg-electric-500/10 px-1.5 py-0.5 rounded border border-electric-500/30">
@@ -404,7 +464,7 @@ export default function CaseDetailsPage({
               ))}
 
               {(!caseData.evidence_items || caseData.evidence_items.length === 0) && (
-                <div className="p-6 text-center text-slate-500 text-xs">
+                <div className="p-6 text-center text-slate-500 text-xs font-mono">
                   No evidence attached yet. Click Attach to log accounts or transactions.
                 </div>
               )}

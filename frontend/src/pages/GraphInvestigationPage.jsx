@@ -16,6 +16,27 @@ import { api } from '../services/api';
 import CytoscapeGraph from '../components/CytoscapeGraph';
 import RiskBadge from '../components/RiskBadge';
 
+const normalizeGraphData = (data) => {
+  if (!data) return { nodes: [], edges: [], elements: [] };
+  const rawElements = Array.isArray(data)
+    ? data
+    : data.elements || [
+        ...(data.nodes || []),
+        ...(data.edges || [])
+      ];
+
+  const nodes = data.nodes || rawElements.filter(e => e.group === 'nodes' || (!e.data?.source && e.data?.id));
+  const edges = data.edges || rawElements.filter(e => e.group === 'edges' || Boolean(e.data?.source));
+
+  return {
+    nodes,
+    edges,
+    elements: rawElements,
+    total_nodes: data.total_nodes ?? nodes.length,
+    total_edges: data.total_edges ?? edges.length,
+  };
+};
+
 export default function GraphInvestigationPage({
   setCurrentPage,
   selectedAccount,
@@ -33,14 +54,22 @@ export default function GraphInvestigationPage({
   const fetchGraphData = async () => {
     setLoading(true);
     try {
-      const [gData, cData] = await Promise.all([
+      const [gData, cData] = await Promise.allSettled([
         api.getGraphData({ limit_nodes: 200 }),
         api.getCycles()
       ]);
-      setGraphData(gData);
-      setCycles(cData.cycles || []);
+
+      if (gData.status === 'fulfilled' && gData.value) {
+        setGraphData(normalizeGraphData(gData.value));
+      }
+      if (cData.status === 'fulfilled' && cData.value) {
+        const rawCycles = Array.isArray(cData.value)
+          ? cData.value
+          : (cData.value.cycles || []);
+        setCycles(rawCycles);
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load graph data:", err);
     } finally {
       setLoading(false);
     }
@@ -65,14 +94,14 @@ export default function GraphInvestigationPage({
     setLoading(true);
     try {
       const egoData = await api.getSubgraph(accId, 2);
+      const normalized = normalizeGraphData(egoData);
       setGraphData({
-        nodes: egoData.nodes,
-        edges: egoData.edges,
+        ...normalized,
         statistics: {
-          total_nodes: egoData.nodes.length,
-          total_edges: egoData.edges.length,
-          high_risk_nodes: egoData.nodes.filter(n => n.data.risk_level === 'High').length,
-          suspicious_edges: egoData.edges.filter(e => e.data.is_suspicious).length
+          total_nodes: normalized.nodes.length,
+          total_edges: normalized.edges.length,
+          high_risk_nodes: normalized.nodes.filter(n => n.data?.risk_level === 'High' || n.data?.risk_level === 'HIGH').length,
+          suspicious_edges: normalized.edges.filter(e => e.data?.is_suspicious).length
         }
       });
     } catch (err) {
@@ -136,7 +165,7 @@ export default function GraphInvestigationPage({
               onSelectNode={handleSelectNode}
               onSelectEdge={handleSelectEdge}
               selectedNodeId={selectedAccount}
-              highlightCycles={cycles}
+              highlightCycles={cycleHighlightActive ? cycles : []}
             />
           )}
         </div>
@@ -158,97 +187,95 @@ export default function GraphInvestigationPage({
                 <div className="text-[11px] font-bold text-slate-400 uppercase font-mono">ACCOUNT METRICS</div>
                 <div className="space-y-1.5 font-mono text-[11px]">
                   <div className="flex justify-between p-2 rounded bg-navy-950 border border-slate-800">
-                    <span className="text-slate-400">Current Balance:</span>
-                    <span className="text-white font-bold">₹{(selectedNode.balance || 0).toLocaleString()}</span>
+                    <span className="text-slate-400">In-Degree:</span>
+                    <span className="text-white font-bold">{selectedNode.in_degree ?? selectedNode.inDegree ?? '-'}</span>
                   </div>
                   <div className="flex justify-between p-2 rounded bg-navy-950 border border-slate-800">
-                    <span className="text-slate-400">Total Inflow:</span>
-                    <span className="text-emerald-400 font-bold">₹{(selectedNode.incoming || 0).toLocaleString()}</span>
+                    <span className="text-slate-400">Out-Degree:</span>
+                    <span className="text-white font-bold">{selectedNode.out_degree ?? selectedNode.outDegree ?? '-'}</span>
                   </div>
                   <div className="flex justify-between p-2 rounded bg-navy-950 border border-slate-800">
-                    <span className="text-slate-400">Total Outflow:</span>
-                    <span className="text-rose-400 font-bold">₹{(selectedNode.outgoing || 0).toLocaleString()}</span>
+                    <span className="text-slate-400">Turnover Ratio:</span>
+                    <span className="text-amber-400 font-bold">
+                      {typeof selectedNode.turnover_ratio === 'number' ? selectedNode.turnover_ratio.toFixed(2) : '-'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between p-2 rounded bg-navy-950 border border-slate-800">
+                    <span className="text-slate-400">Total Outgoing:</span>
+                    <span className="text-slate-200">
+                      ₹{typeof selectedNode.total_outgoing === 'number' ? selectedNode.total_outgoing.toLocaleString() : '-'}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {selectedNode.flags && selectedNode.flags.length > 0 && (
-                <div className="space-y-1.5">
-                  <div className="text-[11px] font-bold text-slate-400 uppercase font-mono">FLAGGED SIGNALS</div>
-                  <div className="flex flex-wrap gap-1">
-                    {selectedNode.flags.map((fl, i) => (
-                      <span key={i} className="text-[10px] bg-rose-950/50 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded font-sans">
-                        {fl}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="pt-2 border-t border-slate-800 space-y-2">
+              <div className="space-y-2 pt-2 border-t border-slate-800">
                 <button
                   onClick={() => handleExpandEgo(selectedNode.id)}
-                  className="w-full py-2 bg-navy-850 hover:bg-slate-800 border border-slate-700 text-electric-300 font-semibold rounded-lg flex items-center justify-center gap-1.5 transition text-xs"
+                  className="w-full py-2 bg-electric-600 hover:bg-electric-500 text-white font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-glow-electric transition"
                 >
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>Isolate 2-Hop Ego Network</span>
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Expand 2-Hop Ego Graph</span>
                 </button>
-
                 <button
                   onClick={() => {
                     if (onAccountSelect) onAccountSelect(selectedNode.id);
                     setCurrentPage('money-trail');
                   }}
-                  className="w-full py-2 bg-navy-850 hover:bg-slate-800 border border-slate-700 text-rose-300 font-semibold rounded-lg flex items-center justify-center gap-1.5 transition text-xs"
+                  className="w-full py-2 bg-navy-850 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition"
                 >
-                  <Share2 className="w-3.5 h-3.5" />
-                  <span>Trace Multi-Hop Money Trail</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-electric-400" />
+                  <span>Open Money Trail</span>
                 </button>
-
-                <button
-                  onClick={() => {
-                    if (onOpenCreateCase) onOpenCreateCase(selectedNode);
-                  }}
-                  className="w-full py-2 bg-electric-600 hover:bg-electric-500 text-white font-bold rounded-lg shadow-glow-electric flex items-center justify-center gap-1.5 transition text-xs"
-                >
-                  <Briefcase className="w-3.5 h-3.5" />
-                  <span>Create Formal Case</span>
-                </button>
+                {onOpenCreateCase && (
+                  <button
+                    onClick={() => onOpenCreateCase({
+                      account_id: selectedNode.id,
+                      description: `High risk account flagged in Graph Canvas (Risk: ${selectedNode.risk_level}, Score: ${selectedNode.risk_score}).`
+                    })}
+                    className="w-full py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition"
+                  >
+                    <Briefcase className="w-3.5 h-3.5 text-rose-400" />
+                    <span>Open Case</span>
+                  </button>
+                )}
               </div>
             </div>
           ) : selectedEdge ? (
             <div className="space-y-4 text-xs">
               <div className="border-b border-slate-800 pb-3">
-                <span className="text-[10px] text-slate-400 font-mono">SELECTED TRANSACTION EDGE</span>
-                <div className="font-mono text-sm font-bold text-white mt-1">
-                  {selectedEdge.source} → {selectedEdge.target}
+                <span className="text-[10px] text-slate-400 font-mono">SELECTED TRANSACTION</span>
+                <div className="font-mono text-sm font-bold text-white mt-1 break-all">{selectedEdge.id}</div>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${
+                    selectedEdge.is_suspicious
+                      ? 'bg-rose-950/80 text-rose-400 border border-rose-500/50'
+                      : 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/50'
+                  }`}>
+                    {selectedEdge.is_suspicious ? 'SUSPICIOUS' : 'STANDARD'}
+                  </span>
+                  <span className="text-[11px] font-mono text-slate-400">{selectedEdge.transaction_type || 'TRANSFER'}</span>
                 </div>
               </div>
 
-              <div className="space-y-1.5 font-mono text-[11px]">
-                <div className="flex justify-between p-2 rounded bg-navy-950 border border-slate-800">
-                  <span className="text-slate-400">Total Volume:</span>
-                  <span className="text-white font-bold">₹{(selectedEdge.weight || selectedEdge.amount || 0).toLocaleString()}</span>
+              <div className="space-y-2 font-mono text-[11px]">
+                <div className="p-2.5 rounded bg-navy-950 border border-slate-800 space-y-1">
+                  <div className="text-[10px] text-slate-400">TRANSFER VALUE</div>
+                  <div className="text-base font-bold text-emerald-400">
+                    ₹{typeof selectedEdge.amount === 'number' ? selectedEdge.amount.toLocaleString() : selectedEdge.amount}
+                  </div>
                 </div>
-                <div className="flex justify-between p-2 rounded bg-navy-950 border border-slate-800">
-                  <span className="text-slate-400">Transfer Count:</span>
-                  <span className="text-electric-300 font-bold">{selectedEdge.count || 1}</span>
+                <div className="p-2 rounded bg-navy-950 border border-slate-800">
+                  <div className="text-[10px] text-slate-400">SOURCE SENDER</div>
+                  <div className="text-white font-semibold truncate">{selectedEdge.source}</div>
                 </div>
-                <div className="flex justify-between p-2 rounded bg-navy-950 border border-slate-800">
-                  <span className="text-slate-400">Channel / Type:</span>
-                  <span className="text-slate-200">{selectedEdge.type || 'IMPS'}</span>
+                <div className="p-2 rounded bg-navy-950 border border-slate-800">
+                  <div className="text-[10px] text-slate-400">TARGET RECEIVER</div>
+                  <div className="text-white font-semibold truncate">{selectedEdge.target}</div>
                 </div>
               </div>
 
-              {selectedEdge.is_suspicious && (
-                <div className="p-2.5 rounded bg-rose-950/60 border border-rose-500/40 text-rose-300 text-[11px] flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-                  <span>Flagged as potential rapid pass-through or layering step.</span>
-                </div>
-              )}
-
-              <div className="pt-2 border-t border-slate-800 space-y-2">
+              <div className="space-y-2 pt-2 border-t border-slate-800">
                 <button
                   onClick={() => {
                     if (onAccountSelect) onAccountSelect(selectedEdge.source);
@@ -291,31 +318,46 @@ export default function GraphInvestigationPage({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {cycles.map((cycle, idx) => (
-              <div key={idx} className="p-3 rounded-lg bg-navy-950 border border-slate-800 text-xs font-mono space-y-2">
-                <div className="flex items-center justify-between text-slate-400 text-[10px]">
-                  <span>CYCLE #{idx + 1} ({cycle.length} ACCOUNTS)</span>
-                  <span className="text-rose-400 font-semibold">High Suspicion Loop</span>
+            {cycles.map((cycle, idx) => {
+              const accountList = Array.isArray(cycle) ? cycle : (cycle?.accounts || []);
+              const cycleLength = cycle.cycle_length || accountList.length;
+              const confidence = cycle.confidence
+                ? `${(cycle.confidence * 100).toFixed(0)}% Confidence`
+                : "High Suspicion Loop";
+
+              return (
+                <div key={idx} className="p-3.5 rounded-lg bg-navy-950 border border-rose-900/40 hover:border-rose-500/50 transition text-xs font-mono space-y-2">
+                  <div className="flex items-center justify-between text-slate-400 text-[10px]">
+                    <span className="font-bold text-rose-300">CYCLE #{idx + 1} ({cycleLength} ACCOUNTS)</span>
+                    <span className="text-rose-400 font-semibold px-2 py-0.5 rounded bg-rose-950/60 border border-rose-800/40">
+                      {confidence}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                    {accountList.map((acc, aIdx) => (
+                      <React.Fragment key={aIdx}>
+                        <button
+                          onClick={() => {
+                            if (onAccountSelect) onAccountSelect(acc);
+                            handleExpandEgo(acc);
+                          }}
+                          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-electric-300 border border-slate-700 text-[11px] font-semibold transition hover:scale-105"
+                          title={`Click to view ego network of ${acc}`}
+                        >
+                          {acc}
+                        </button>
+                        <ArrowRight className="w-3 h-3 text-rose-500 shrink-0" />
+                      </React.Fragment>
+                    ))}
+                    {accountList.length > 0 && (
+                      <span className="text-rose-400 font-bold px-1.5 py-0.5 rounded bg-rose-950/50 border border-rose-500/30">
+                        {accountList[0]}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {cycle.map((acc, aIdx) => (
-                    <React.Fragment key={aIdx}>
-                      <button
-                        onClick={() => {
-                          if (onAccountSelect) onAccountSelect(acc);
-                          handleExpandEgo(acc);
-                        }}
-                        className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-electric-300 border border-slate-700 text-[11px]"
-                      >
-                        {acc}
-                      </button>
-                      <ArrowRight className="w-3 h-3 text-slate-500 shrink-0" />
-                    </React.Fragment>
-                  ))}
-                  <span className="text-rose-400 font-bold">{cycle[0]}</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

@@ -13,7 +13,7 @@ impl Config {
     pub fn from_env() -> Self {
         dotenvy::dotenv().ok();
 
-        let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+        let host = env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
         let port = env::var("PORT")
             .ok()
             .and_then(|p| p.parse().ok())

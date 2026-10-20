@@ -170,10 +170,104 @@ async fn create_tables(pool: &DbPool) -> Result<(), sqlx::Error> {
             is_read INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL
         );
+
+        CREATE TABLE IF NOT EXISTS datasets (
+            dataset_id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            filename TEXT NOT NULL,
+            total_rows INTEGER DEFAULT 0,
+            valid_rows INTEGER DEFAULT 0,
+            invalid_rows INTEGER DEFAULT 0,
+            readiness_score REAL DEFAULT 10.0,
+            status TEXT DEFAULT 'COMPLETED',
+            fingerprint TEXT,
+            metadata_json TEXT DEFAULT '{}',
+            created_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS jobs (
+            job_id TEXT PRIMARY KEY,
+            job_type TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'COMPLETED',
+            progress REAL DEFAULT 100.0,
+            result_json TEXT DEFAULT '{}',
+            error_message TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS money_trails (
+            trail_id TEXT PRIMARY KEY,
+            target_account TEXT NOT NULL,
+            inbound_hops_json TEXT DEFAULT '[]',
+            outbound_hops_json TEXT DEFAULT '[]',
+            total_inbound REAL DEFAULT 0.0,
+            total_outbound REAL DEFAULT 0.0,
+            summary TEXT,
+            created_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS ingestion_jobs (
+            job_id TEXT PRIMARY KEY,
+            filename TEXT NOT NULL,
+            file_path TEXT,
+            file_size INTEGER DEFAULT 0,
+            stage TEXT NOT NULL DEFAULT 'UPLOADED',
+            detected_columns_json TEXT DEFAULT '[]',
+            column_mapping_json TEXT DEFAULT '{}',
+            total_rows INTEGER DEFAULT 0,
+            valid_rows INTEGER DEFAULT 0,
+            invalid_rows INTEGER DEFAULT 0,
+            duplicate_rows INTEGER DEFAULT 0,
+            readiness_score REAL DEFAULT 0.0,
+            quality_report_json TEXT DEFAULT '{}',
+            preview_json TEXT DEFAULT '[]',
+            fraud_distribution_json TEXT DEFAULT '{}',
+            quarantine_sample_json TEXT DEFAULT '[]',
+            error_message TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_acc_risk_score ON accounts(risk_score);
+        CREATE INDEX IF NOT EXISTS idx_acc_risk_level ON accounts(risk_level);
+        CREATE INDEX IF NOT EXISTS idx_cases_status ON cases(status);
+        CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts(status);
+        CREATE INDEX IF NOT EXISTS idx_jobs_type ON jobs(job_type);
+
+        INSERT OR IGNORE INTO datasets (dataset_id, name, filename, total_rows, valid_rows, invalid_rows, readiness_score, status, fingerprint, metadata_json, created_at)
+        VALUES ('dataset-soa-proposed', 'Proposed Bank Statements of Account (25 CBS Extracts)', 'Proposed_Data_Randomized_Final-20261019T113144Z-1-001.zip', 494262, 3160, 0, 9.8, 'ACTIVE', 'SHA256:44168672:PROP_SOA', '{"provenance":"25 Core Banking Statements","mule_candidates":21,"currency":"INR"}', datetime('now'));
         "#,
     )
     .execute(pool)
     .await?;
+
+    // Safe schema additions for complaints and money trails
+    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN category TEXT DEFAULT 'Cyber Fraud'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN assigned_to TEXT DEFAULT 'Unassigned'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN linked_case_id TEXT").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN correlation_data_json TEXT DEFAULT '{}'").execute(pool).await;
+
+    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN source_account TEXT").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN paths_json TEXT DEFAULT '[]'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN patterns_json TEXT DEFAULT '[]'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN report_json TEXT DEFAULT '{}'").execute(pool).await;
+
+    let _ = sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS complaint_correlations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            complaint_id TEXT NOT NULL,
+            matched_type TEXT NOT NULL,
+            matched_id TEXT NOT NULL,
+            confidence_score REAL DEFAULT 0.0,
+            explanation TEXT NOT NULL,
+            evidence_json TEXT DEFAULT '{}',
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (complaint_id) REFERENCES complaints(complaint_id)
+        );
+        "#
+    ).execute(pool).await;
 
     Ok(())
 }

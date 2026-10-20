@@ -6,7 +6,8 @@ import {
   Shield,
   UserCheck,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Play
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -15,7 +16,8 @@ export default function Navbar({
   onSearch,
   onAccountSelect,
   refreshTrigger,
-  setRefreshTrigger
+  setRefreshTrigger,
+  onOpenLivePipeline
 }) {
   const [searchInput, setSearchInput] = useState('');
   const [isSyncing, setIsSyncing] = useState(false);
@@ -33,10 +35,10 @@ export default function Navbar({
     setIsSyncing(true);
     try {
       const res = await api.loadSampleDataset();
-      setActionNotice({ type: 'success', text: `Sample data reloaded (${res.result?.valid_records || 182} records).` });
+      setActionNotice({ type: 'success', text: `Benchmark data synchronized (${res.result?.valid_records || 182} records).` });
       if (setRefreshTrigger) setRefreshTrigger(prev => prev + 1);
     } catch (err) {
-      setActionNotice({ type: 'error', text: `Failed to reload sample data: ${err.message}` });
+      setActionNotice({ type: 'error', text: `Failed to sync benchmark data: ${err.message}` });
     } finally {
       setIsSyncing(false);
       setTimeout(() => setActionNotice(null), 4000);
@@ -106,12 +108,13 @@ export default function Navbar({
         <button
           onClick={handleReloadSampleData}
           disabled={isSyncing}
-          title="Reload bundled synthetic financial network"
+          title="Sync benchmark banking network"
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-750 border border-slate-700 text-xs font-medium text-slate-200 transition hover:border-slate-600 disabled:opacity-50"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-electric-400" : "text-slate-400"}`} />
-          <span className="hidden sm:inline">Reset Demo Data</span>
+          <span className="hidden sm:inline">Sync Benchmark</span>
         </button>
+
 
         <button
           onClick={handleRunInference}
@@ -120,6 +123,16 @@ export default function Navbar({
         >
           <Cpu className="w-3.5 h-3.5 text-electric-400" />
           <span className="hidden sm:inline">Run GNN Scoring</span>
+        </button>
+
+        <button
+          onClick={onOpenLivePipeline}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-electric-600 via-cyan-500 to-emerald-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-xs shadow-glow-electric transition transform hover:scale-105 active:scale-95"
+          title="Run Real-Time End-to-End Pipeline Execution with live logs"
+        >
+          <Play className="w-3.5 h-3.5 fill-white" />
+          <span className="hidden md:inline">Run Live Pipeline</span>
+          <span className="text-[9px] bg-black/40 px-1.5 py-0.2 rounded font-mono">⚡ Real-Time</span>
         </button>
       </div>
 

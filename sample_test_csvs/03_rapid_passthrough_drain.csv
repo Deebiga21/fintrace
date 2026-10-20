@@ -1,0 +1,4 @@
+transaction_id,sender_account,receiver_account,amount,timestamp,status,transaction_type,is_suspicious,description
+TXN_DRAIN_IN_01,CORP_ESCROW_77,CONDUIT_DRAIN_01,1500000.0,2026-10-20T12:00:00Z,COMPLETED,RTGS,1,Large high-value deposit into conduit
+TXN_DRAIN_OUT_01,CONDUIT_DRAIN_01,LAYER_MULE_11,748000.0,2026-10-20T12:06:00Z,COMPLETED,IMPS,1,Rapid pass-through debit hop 1 (6 mins after credit)
+TXN_DRAIN_OUT_02,CONDUIT_DRAIN_01,LAYER_MULE_12,750000.0,2026-10-20T12:11:00Z,COMPLETED,IMPS,1,Rapid pass-through debit hop 2 draining 99.8% balance

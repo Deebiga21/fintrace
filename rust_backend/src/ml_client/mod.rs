@@ -9,7 +9,7 @@ use axum::{
 use reqwest::Client;
 use serde_json::json;
 use std::sync::Arc;
-use tracing::{error, info};
+use tracing::error;
 
 use crate::{
     database::DbPool,

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import CreateCaseModal from './components/CreateCaseModal';
+import LivePipelineExecutionModal from './components/LivePipelineExecutionModal';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -17,12 +18,14 @@ import CasesPage from './pages/CasesPage';
 import CaseDetailsPage from './pages/CaseDetailsPage';
 import AnalyticsReportsPage from './pages/AnalyticsReportsPage';
 import SettingsModelPage from './pages/SettingsModelPage';
+import SystemPipelinePage from './pages/SystemPipelinePage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
-  const [selectedAccount, setSelectedAccount] = useState('MULE_AGG_01');
+  const [selectedAccount, setSelectedAccount] = useState('ACC_SOA_03');
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isLivePipelineOpen, setIsLivePipelineOpen] = useState(false);
 
   // Global Create Case Modal
   const [isCreateCaseOpen, setIsCreateCaseOpen] = useState(false);
@@ -43,13 +46,30 @@ export default function App() {
     setSelectedAccount(accountId);
   };
 
-  // Standalone Full-Screen Landing Showcase (Like modern SaaS reference)
+  // Standalone Full-Screen Landing Showcase (Integrated Dashboard-First Experience)
   if (currentPage === 'landing') {
     return (
-      <LandingPage
-        setCurrentPage={setCurrentPage}
-        onAccountSelect={handleAccountSelect}
+      <>
+        <LandingPage
+          setCurrentPage={setCurrentPage}
+          onAccountSelect={handleAccountSelect}
+          onOpenCreateCase={handleOpenCreateCase}
+          refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
+        />
+        <CreateCaseModal
+          isOpen={isCreateCaseOpen}
+          onClose={() => setIsCreateCaseOpen(false)}
+          initialData={createCaseData}
+          onCaseCreated={handleCaseCreated}
       />
+      <LivePipelineExecutionModal
+        isOpen={isLivePipelineOpen}
+        onClose={() => setIsLivePipelineOpen(false)}
+        setCurrentPage={setCurrentPage}
+        setRefreshTrigger={setRefreshTrigger}
+        />
+      </>
     );
   }
 
@@ -75,6 +95,7 @@ export default function App() {
           }}
           onAccountSelect={handleAccountSelect}
           refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
           setRefreshTrigger={setRefreshTrigger}
         />
 
@@ -94,12 +115,24 @@ export default function App() {
             />
           )}
 
+          {currentPage === 'pipeline' && (
+            <SystemPipelinePage
+              setCurrentPage={setCurrentPage}
+              onAccountSelect={handleAccountSelect}
+              setSelectedCaseId={setSelectedCaseId}
+              refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
+              setRefreshTrigger={setRefreshTrigger}
+            />
+          )}
+
           {currentPage === 'dashboard' && (
             <DashboardPage
               setCurrentPage={setCurrentPage}
               onAccountSelect={handleAccountSelect}
               onOpenCreateCase={handleOpenCreateCase}
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
@@ -115,6 +148,7 @@ export default function App() {
               setCurrentPage={setCurrentPage}
               onAccountSelect={handleAccountSelect}
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
@@ -125,6 +159,7 @@ export default function App() {
               onAccountSelect={handleAccountSelect}
               onOpenCreateCase={handleOpenCreateCase}
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
@@ -135,6 +170,7 @@ export default function App() {
               onAccountSelect={handleAccountSelect}
               onOpenCreateCase={handleOpenCreateCase}
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
@@ -145,6 +181,7 @@ export default function App() {
               setCurrentPage={setCurrentPage}
               onOpenCreateCase={handleOpenCreateCase}
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
@@ -154,6 +191,7 @@ export default function App() {
               onAccountSelect={handleAccountSelect}
               onOpenCreateCase={handleOpenCreateCase}
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
@@ -163,6 +201,7 @@ export default function App() {
               setSelectedCaseId={setSelectedCaseId}
               onOpenCreateCase={handleOpenCreateCase}
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
@@ -172,18 +211,21 @@ export default function App() {
               setCurrentPage={setCurrentPage}
               onAccountSelect={handleAccountSelect}
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
           {currentPage === 'analytics-reports' && (
             <AnalyticsReportsPage
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
           )}
 
           {currentPage === 'settings-model' && (
             <SettingsModelPage
               refreshTrigger={refreshTrigger}
+          onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
               setRefreshTrigger={setRefreshTrigger}
               onAccountSelect={handleAccountSelect}
               setCurrentPage={setCurrentPage}
@@ -198,6 +240,12 @@ export default function App() {
         onClose={() => setIsCreateCaseOpen(false)}
         initialData={createCaseData}
         onCaseCreated={handleCaseCreated}
+      />
+      <LivePipelineExecutionModal
+        isOpen={isLivePipelineOpen}
+        onClose={() => setIsLivePipelineOpen(false)}
+        setCurrentPage={setCurrentPage}
+        setRefreshTrigger={setRefreshTrigger}
       />
     </div>
   );

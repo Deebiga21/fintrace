@@ -1,7 +1,7 @@
 use axum::{
     extract::{Path, Query, State},
     response::IntoResponse,
-    routing::{get, post, put},
+    routing::{get, patch, post, put},
     Json, Router,
 };
 use chrono::Utc;
@@ -27,10 +27,20 @@ pub fn router(pool: DbPool) -> Router {
     Router::new()
         .route("/", get(list_cases))
         .route("/", post(create_case))
+        .route("/summary", get(get_cases_summary))
+        .route("/evidence/:evidence_id", get(get_evidence_by_id))
         .route("/:id", get(get_case))
         .route("/:id", put(update_case))
+        .route("/:id", patch(update_case))
+        .route("/:id/evidence", get(list_case_evidence))
         .route("/:id/evidence", post(add_evidence))
         .route("/:id/dossier", get(get_dossier))
+        .with_state(pool)
+}
+
+pub fn evidence_router(pool: DbPool) -> Router {
+    Router::new()
+        .route("/:evidence_id", get(get_evidence_by_id))
         .with_state(pool)
 }
 
@@ -64,13 +74,17 @@ async fn get_case(
     State(pool): State<DbPool>,
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
+    if id.trim().is_empty() || id == "undefined" || id == "null" {
+        return Err(AppError::BadRequest("Invalid case ID: case ID cannot be empty or 'undefined'.".to_string()));
+    }
+
     let kase = sqlx::query_as::<_, InvestigationCase>(
         "SELECT case_id, title, priority, assigned_investigator, status, primary_account_id, created_at, updated_at, summary, findings FROM cases WHERE case_id = $1"
     )
     .bind(&id)
     .fetch_optional(&pool)
     .await?
-    .ok_or_else(|| AppError::NotFound(format!("Case {} not found", id)))?;
+    .ok_or_else(|| AppError::NotFound(format!("Case {} not found in docket", id)))?;
 
     let evidence = sqlx::query_as::<_, CaseEvidence>(
         "SELECT id, case_id, evidence_type, reference_id, description, metadata_json, created_at FROM case_evidence WHERE case_id = $1 ORDER BY created_at DESC"
@@ -80,6 +94,17 @@ async fn get_case(
     .await?;
 
     Ok(Json(json!({
+        "case_id": kase.case_id,
+        "title": kase.title,
+        "priority": kase.priority,
+        "assigned_investigator": kase.assigned_investigator,
+        "status": kase.status,
+        "primary_account_id": kase.primary_account_id,
+        "created_at": kase.created_at,
+        "updated_at": kase.updated_at,
+        "summary": kase.summary,
+        "findings": kase.findings,
+        "evidence_items": evidence,
         "case": kase,
         "evidence": evidence
     })))
@@ -132,6 +157,10 @@ async fn update_case(
     Path(id): Path<String>,
     Json(payload): Json<UpdateCaseRequest>,
 ) -> Result<impl IntoResponse, AppError> {
+    if id.trim().is_empty() || id == "undefined" || id == "null" {
+        return Err(AppError::BadRequest("Invalid case ID: case ID cannot be empty or 'undefined'.".to_string()));
+    }
+
     let now = Utc::now().to_rfc3339();
 
     let existing = sqlx::query_as::<_, InvestigationCase>(
@@ -140,7 +169,7 @@ async fn update_case(
     .bind(&id)
     .fetch_optional(&pool)
     .await?
-    .ok_or_else(|| AppError::NotFound(format!("Case {} not found", id)))?;
+    .ok_or_else(|| AppError::NotFound(format!("Case {} not found in docket", id)))?;
 
     let title = payload.title.unwrap_or(existing.title);
     let priority = payload.priority.unwrap_or(existing.priority.unwrap_or_else(|| "High".to_string()));
@@ -189,7 +218,29 @@ async fn update_case(
     .fetch_one(&pool)
     .await?;
 
-    Ok(Json(updated))
+    let evidence = sqlx::query_as::<_, CaseEvidence>(
+        "SELECT id, case_id, evidence_type, reference_id, description, metadata_json, created_at FROM case_evidence WHERE case_id = $1 ORDER BY created_at DESC"
+    )
+    .bind(&id)
+    .fetch_all(&pool)
+    .await
+    .unwrap_or_default();
+
+    Ok(Json(json!({
+        "case_id": updated.case_id,
+        "title": updated.title,
+        "priority": updated.priority,
+        "assigned_investigator": updated.assigned_investigator,
+        "status": updated.status,
+        "primary_account_id": updated.primary_account_id,
+        "created_at": updated.created_at,
+        "updated_at": updated.updated_at,
+        "summary": updated.summary,
+        "findings": updated.findings,
+        "evidence_items": evidence,
+        "case": updated,
+        "evidence": evidence
+    })))
 }
 
 async fn add_evidence(
@@ -197,6 +248,20 @@ async fn add_evidence(
     Path(id): Path<String>,
     Json(payload): Json<AddEvidenceRequest>,
 ) -> Result<impl IntoResponse, AppError> {
+    if id.trim().is_empty() || id == "undefined" || id == "null" {
+        return Err(AppError::BadRequest("Invalid case ID: case ID cannot be empty or 'undefined'. Please select a valid case before attaching evidence.".to_string()));
+    }
+
+    let case_exists: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE case_id = $1")
+        .bind(&id)
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
+
+    if case_exists == 0 {
+        return Err(AppError::NotFound(format!("Investigation case '{}' not found in docket. Please select a valid case before attaching evidence.", id)));
+    }
+
     let now = Utc::now().to_rfc3339();
     let meta_str = payload.metadata.map(|m| m.to_string()).unwrap_or_else(|| "{}".to_string());
 
@@ -271,4 +336,60 @@ async fn get_dossier(
     };
 
     Ok(Json(dossier))
+}
+
+async fn get_cases_summary(
+    State(pool): State<DbPool>,
+) -> Result<impl IntoResponse, AppError> {
+    let total_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases")
+        .fetch_one(&pool).await.unwrap_or(0);
+    let active_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE status != 'Closed' AND status != 'Resolved'")
+        .fetch_one(&pool).await.unwrap_or(0);
+    let critical_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE priority = 'Critical' OR priority = 'CRITICAL'")
+        .fetch_one(&pool).await.unwrap_or(0);
+    let high_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE priority = 'High' OR priority = 'HIGH'")
+        .fetch_one(&pool).await.unwrap_or(0);
+    let closed_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE status = 'Closed' OR status = 'Resolved'")
+        .fetch_one(&pool).await.unwrap_or(0);
+
+    Ok(Json(json!({
+        "total_cases": total_cases,
+        "active_cases": active_cases,
+        "critical_priority": critical_cases,
+        "high_priority": high_cases,
+        "closed_cases": closed_cases
+    })))
+}
+
+async fn list_case_evidence(
+    State(pool): State<DbPool>,
+    Path(id): Path<String>,
+) -> Result<impl IntoResponse, AppError> {
+    let evidence = sqlx::query_as::<_, CaseEvidence>(
+        "SELECT id, case_id, evidence_type, reference_id, description, metadata_json, created_at FROM case_evidence WHERE case_id = $1 ORDER BY id DESC"
+    )
+    .bind(&id)
+    .fetch_all(&pool)
+    .await?;
+
+    Ok(Json(json!({
+        "case_id": id,
+        "count": evidence.len(),
+        "evidence": evidence
+    })))
+}
+
+async fn get_evidence_by_id(
+    State(pool): State<DbPool>,
+    Path(evidence_id): Path<i64>,
+) -> Result<impl IntoResponse, AppError> {
+    let ev = sqlx::query_as::<_, CaseEvidence>(
+        "SELECT id, case_id, evidence_type, reference_id, description, metadata_json, created_at FROM case_evidence WHERE id = $1"
+    )
+    .bind(evidence_id)
+    .fetch_optional(&pool)
+    .await?
+    .ok_or_else(|| AppError::NotFound(format!("Evidence record {} not found", evidence_id)))?;
+
+    Ok(Json(ev))
 }

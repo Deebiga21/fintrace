@@ -128,7 +128,7 @@ export default function AnalyticsReportsPage({ refreshTrigger }) {
 
           <div className="flex items-center gap-2 text-xs font-mono">
             <span className="text-[10px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded">
-              Model: {latestRun?.model_name || "GraphSAGE (PyG SAGEConv)"}
+              Model: {latestRun?.model_name || "GraphSAGE (Relational Neural Network)"}
             </span>
             <span className="text-[10px] bg-emerald-950/60 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded">
               Ground Truth Validated
