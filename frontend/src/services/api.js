@@ -157,7 +157,7 @@ export const api = {
   },
   getCase: (id) => request(`/cases/${id}`),
   createCase: (data) =>
-    request("/cases/", {
+    request("/cases", {
       method: "POST",
       body: JSON.stringify(data),
     }),

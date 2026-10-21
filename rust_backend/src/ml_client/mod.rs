@@ -11,11 +11,7 @@ use serde_json::json;
 use std::sync::Arc;
 use tracing::error;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-    models::model_run::ModelRun,
-};
+use crate::{database::DbPool, errors::AppError, models::model_run::ModelRun};
 
 #[derive(Clone)]
 pub struct MLClientState {
@@ -83,19 +79,16 @@ async fn forward_get(state: &MLClientState, path: &str) -> Result<serde_json::Va
             if res.status().is_success() {
                 res.json().await.map_err(AppError::from)
             } else {
-                let err_text = res.text().await.unwrap_or_else(|_| "Upstream error".to_string());
+                let err_text = res
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "Upstream error".to_string());
                 Err(AppError::Internal(err_text))
             }
         }
         Err(e) => {
             error!("Error contacting ML service at {}: {}", url, e);
-            // Return sensible fallback status if Python ML service is starting up
-            Ok(json!({
-                "service": "FinTrace ML Engine",
-                "status": "INITIALIZING",
-                "detail": format!("Python ML service is launching: {}", e),
-                "device": "cpu"
-            }))
+            Err(AppError::ReqwestError(e))
         }
     }
 }
@@ -111,7 +104,10 @@ async fn forward_post(
             if res.status().is_success() {
                 res.json().await.map_err(AppError::from)
             } else {
-                let err_text = res.text().await.unwrap_or_else(|_| "Upstream error".to_string());
+                let err_text = res
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "Upstream error".to_string());
                 Err(AppError::Internal(err_text))
             }
         }
@@ -122,17 +118,46 @@ async fn forward_post(
     }
 }
 
-async fn get_status(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
-    let val = forward_get(&state, "/ml/status").await?;
-    Ok(Json(val))
+async fn get_status(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
+    let url = format!("{}/ml/status", state.ml_service_url);
+    match state.client.get(&url).send().await {
+        Ok(res) => {
+            if res.status().is_success() {
+                let json_val: serde_json::Value = res.json().await.map_err(AppError::from)?;
+                Ok(Json(json_val))
+            } else {
+                let err_text = res
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "Upstream error".to_string());
+                Err(AppError::Internal(err_text))
+            }
+        }
+        Err(e) => {
+            error!("Error contacting ML status service at {}: {}", url, e);
+            Ok(Json(json!({
+                "service": "FinTrace ML Engine",
+                "status": "UNAVAILABLE",
+                "online": false,
+                "detail": format!("Python ML service unreachable: {}", e),
+                "device": "cpu"
+            })))
+        }
+    }
 }
 
-async fn get_dataset_summary(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
+async fn get_dataset_summary(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/dataset/summary").await?;
     Ok(Json(val))
 }
 
-async fn list_datasets(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
+async fn list_datasets(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/dataset/list").await?;
     Ok(Json(val))
 }
@@ -153,7 +178,9 @@ async fn train_gan(
     Ok(Json(val))
 }
 
-async fn get_gan_metrics(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
+async fn get_gan_metrics(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/gan/metrics").await?;
     Ok(Json(val))
 }
@@ -166,7 +193,9 @@ async fn generate_synthetic(
     Ok(Json(val))
 }
 
-async fn get_synthetic_quality(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
+async fn get_synthetic_quality(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/gan/quality").await?;
     Ok(Json(val))
 }
@@ -178,7 +207,9 @@ async fn benchmark_classifier(
     Ok(Json(val))
 }
 
-async fn get_classifier_metrics(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
+async fn get_classifier_metrics(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/classifier/metrics").await?;
     Ok(Json(val))
 }
@@ -191,7 +222,9 @@ async fn train_gnn_ml(
     Ok(Json(val))
 }
 
-async fn get_gnn_metrics(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
+async fn get_gnn_metrics(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/gnn/metrics").await?;
     Ok(Json(val))
 }
@@ -227,7 +260,11 @@ async fn get_analysis_money_trail(
     Query(params): Query<std::collections::HashMap<String, String>>,
 ) -> Result<impl IntoResponse, AppError> {
     let max_hops = params.get("max_hops").map(|s| s.as_str()).unwrap_or("4");
-    let val = forward_get(&state, &format!("/ml/analysis/money-trail/{}?max_hops={}", id, max_hops)).await?;
+    let val = forward_get(
+        &state,
+        &format!("/ml/analysis/money-trail/{}?max_hops={}", id, max_hops),
+    )
+    .await?;
     Ok(Json(val))
 }
 
@@ -236,16 +273,24 @@ async fn get_analysis_communities(
     Query(params): Query<std::collections::HashMap<String, String>>,
 ) -> Result<impl IntoResponse, AppError> {
     let min_size = params.get("min_size").map(|s| s.as_str()).unwrap_or("3");
-    let val = forward_get(&state, &format!("/ml/analysis/communities?min_size={}", min_size)).await?;
+    let val = forward_get(
+        &state,
+        &format!("/ml/analysis/communities?min_size={}", min_size),
+    )
+    .await?;
     Ok(Json(val))
 }
 
-async fn get_analysis_loops(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
+async fn get_analysis_loops(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/analysis/loops").await?;
     Ok(Json(val))
 }
 
-async fn get_analysis_conduits(State(state): State<Arc<MLClientState>>) -> Result<impl IntoResponse, AppError> {
+async fn get_analysis_conduits(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/analysis/conduits").await?;
     Ok(Json(val))
 }
@@ -266,7 +311,7 @@ async fn get_artifact_plot(
                 .to_string();
 
             let bytes = res.bytes().await.map_err(AppError::from)?;
-            
+
             let mut headers = HeaderMap::new();
             if let Ok(val) = HeaderValue::from_str(&content_type) {
                 headers.insert(axum::http::header::CONTENT_TYPE, val);
@@ -285,20 +330,20 @@ async fn legacy_train_gnn(
     let url = format!("{}/gnn/train", state.ml_service_url);
     match state.client.post(&url).json(&body).send().await {
         Ok(res) => {
-            let json_val: serde_json::Value = res.json().await.unwrap_or_default();
-            Ok(Json(json_val))
+            if res.status().is_success() {
+                let json_val: serde_json::Value = res.json().await.unwrap_or_default();
+                Ok(Json(json_val))
+            } else {
+                let err_text = res
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "GNN training failed upstream".to_string());
+                Err(AppError::Internal(err_text))
+            }
         }
-        Err(_) => {
-            // Fallback response for training trigger
-            Ok(Json(json!({
-                "status": "success",
-                "message": "GraphSAGE model training scheduled on background executor",
-                "epochs": 60,
-                "learning_rate": 0.01,
-                "precision": 0.89,
-                "recall": 0.86,
-                "f1_score": 0.875
-            })))
+        Err(e) => {
+            tracing::error!("Error connecting to GNN training service at {}: {}", url, e);
+            Err(AppError::ReqwestError(e))
         }
     }
 }
@@ -309,16 +354,24 @@ async fn legacy_infer_gnn(
     let url = format!("{}/gnn/infer", state.ml_service_url);
     match state.client.post(&url).send().await {
         Ok(res) => {
-            let json_val: serde_json::Value = res.json().await.unwrap_or_default();
-            Ok(Json(json_val))
+            if res.status().is_success() {
+                let json_val: serde_json::Value = res.json().await.unwrap_or_default();
+                Ok(Json(json_val))
+            } else {
+                let err_text = res
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "GNN inference failed upstream".to_string());
+                Err(AppError::Internal(err_text))
+            }
         }
-        Err(_) => {
-            Ok(Json(json!({
-                "status": "success",
-                "scored_accounts": 74,
-                "flagged_high_risk": 9,
-                "message": "GNN forward pass completed across all accounts."
-            })))
+        Err(e) => {
+            tracing::error!(
+                "Error connecting to GNN inference service at {}: {}",
+                url,
+                e
+            );
+            Err(AppError::ReqwestError(e))
         }
     }
 }

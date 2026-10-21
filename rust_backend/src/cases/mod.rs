@@ -13,7 +13,10 @@ use crate::{
     errors::AppError,
     models::{
         account::Account,
-        case::{AddEvidenceRequest, CaseDossier, CaseEvidence, CreateCaseRequest, InvestigationCase, UpdateCaseRequest},
+        case::{
+            AddEvidenceRequest, CaseDossier, CaseEvidence, CreateCaseRequest, InvestigationCase,
+            UpdateCaseRequest,
+        },
     },
 };
 
@@ -75,7 +78,9 @@ async fn get_case(
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
     if id.trim().is_empty() || id == "undefined" || id == "null" {
-        return Err(AppError::BadRequest("Invalid case ID: case ID cannot be empty or 'undefined'.".to_string()));
+        return Err(AppError::BadRequest(
+            "Invalid case ID: case ID cannot be empty or 'undefined'.".to_string(),
+        ));
     }
 
     let kase = sqlx::query_as::<_, InvestigationCase>(
@@ -114,7 +119,10 @@ async fn create_case(
     State(pool): State<DbPool>,
     Json(payload): Json<CreateCaseRequest>,
 ) -> Result<impl IntoResponse, AppError> {
-    let case_id = format!("CASE-{}", uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_uppercase());
+    let case_id = format!(
+        "CASE-{}",
+        uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_uppercase()
+    );
     let now = Utc::now().to_rfc3339();
 
     sqlx::query(
@@ -158,7 +166,9 @@ async fn update_case(
     Json(payload): Json<UpdateCaseRequest>,
 ) -> Result<impl IntoResponse, AppError> {
     if id.trim().is_empty() || id == "undefined" || id == "null" {
-        return Err(AppError::BadRequest("Invalid case ID: case ID cannot be empty or 'undefined'.".to_string()));
+        return Err(AppError::BadRequest(
+            "Invalid case ID: case ID cannot be empty or 'undefined'.".to_string(),
+        ));
     }
 
     let now = Utc::now().to_rfc3339();
@@ -172,9 +182,17 @@ async fn update_case(
     .ok_or_else(|| AppError::NotFound(format!("Case {} not found in docket", id)))?;
 
     let title = payload.title.unwrap_or(existing.title);
-    let priority = payload.priority.unwrap_or(existing.priority.unwrap_or_else(|| "High".to_string()));
-    let assigned = payload.assigned_investigator.unwrap_or(existing.assigned_investigator.unwrap_or_else(|| "Lead Financial Crime Specialist".to_string()));
-    let status = payload.status.unwrap_or(existing.status.unwrap_or_else(|| "New".to_string()));
+    let priority = payload
+        .priority
+        .unwrap_or(existing.priority.unwrap_or_else(|| "High".to_string()));
+    let assigned = payload.assigned_investigator.unwrap_or(
+        existing
+            .assigned_investigator
+            .unwrap_or_else(|| "Lead Financial Crime Specialist".to_string()),
+    );
+    let status = payload
+        .status
+        .unwrap_or(existing.status.unwrap_or_else(|| "New".to_string()));
     let summary = payload.summary.or(existing.summary);
     let findings = payload.findings.or(existing.findings);
 
@@ -189,7 +207,7 @@ async fn update_case(
             findings = $6,
             updated_at = $7
         WHERE case_id = $8
-        "#
+        "#,
     )
     .bind(&title)
     .bind(&priority)
@@ -263,7 +281,10 @@ async fn add_evidence(
     }
 
     let now = Utc::now().to_rfc3339();
-    let meta_str = payload.metadata.map(|m| m.to_string()).unwrap_or_else(|| "{}".to_string());
+    let meta_str = payload
+        .metadata
+        .map(|m| m.to_string())
+        .unwrap_or_else(|| "{}".to_string());
 
     sqlx::query(
         r#"
@@ -338,19 +359,35 @@ async fn get_dossier(
     Ok(Json(dossier))
 }
 
-async fn get_cases_summary(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn get_cases_summary(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let total_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases")
-        .fetch_one(&pool).await.unwrap_or(0);
-    let active_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE status != 'Closed' AND status != 'Resolved'")
-        .fetch_one(&pool).await.unwrap_or(0);
-    let critical_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE priority = 'Critical' OR priority = 'CRITICAL'")
-        .fetch_one(&pool).await.unwrap_or(0);
-    let high_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE priority = 'High' OR priority = 'HIGH'")
-        .fetch_one(&pool).await.unwrap_or(0);
-    let closed_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE status = 'Closed' OR status = 'Resolved'")
-        .fetch_one(&pool).await.unwrap_or(0);
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
+    let active_cases: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM cases WHERE status != 'Closed' AND status != 'Resolved'",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap_or(0);
+    let critical_cases: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM cases WHERE priority = 'Critical' OR priority = 'CRITICAL'",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap_or(0);
+    let high_cases: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM cases WHERE priority = 'High' OR priority = 'HIGH'",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap_or(0);
+    let closed_cases: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM cases WHERE status = 'Closed' OR status = 'Resolved'",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap_or(0);
 
     Ok(Json(json!({
         "total_cases": total_cases,

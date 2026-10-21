@@ -1,16 +1,8 @@
-use axum::{
-    extract::State,
-    response::IntoResponse,
-    routing::post,
-    Json, Router,
-};
+use axum::{extract::State, response::IntoResponse, routing::post, Json, Router};
 use chrono::Utc;
 use serde_json::json;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-};
+use crate::{database::DbPool, errors::AppError};
 
 pub fn router(pool: DbPool) -> Router {
     Router::new()
@@ -18,9 +10,7 @@ pub fn router(pool: DbPool) -> Router {
         .with_state(pool)
 }
 
-async fn reset_demo_data(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn reset_demo_data(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let now = Utc::now().to_rfc3339();
 
     // Run within a transaction for safety
@@ -52,7 +42,7 @@ async fn reset_demo_data(
             customer_name = 'Mahendra Kumar',
             status = 'Dormant - Core Banking Freeze'
         WHERE account_id = 'ACC_SOA_02'
-        "#
+        "#,
     )
     .execute(&mut *tx)
     .await?;

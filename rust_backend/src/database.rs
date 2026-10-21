@@ -7,8 +7,7 @@ pub type DbPool = SqlitePool;
 pub async fn init_db(database_url: &str) -> Result<DbPool, sqlx::Error> {
     info!("Connecting to SQLite database: {}", database_url);
 
-    let connection_options = SqliteConnectOptions::from_str(database_url)?
-        .create_if_missing(true);
+    let connection_options = SqliteConnectOptions::from_str(database_url)?.create_if_missing(true);
 
     let pool = SqlitePoolOptions::new()
         .max_connections(20)
@@ -243,15 +242,32 @@ async fn create_tables(pool: &DbPool) -> Result<(), sqlx::Error> {
     .await?;
 
     // Safe schema additions for complaints and money trails
-    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN category TEXT DEFAULT 'Cyber Fraud'").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN assigned_to TEXT DEFAULT 'Unassigned'").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN linked_case_id TEXT").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN correlation_data_json TEXT DEFAULT '{}'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN category TEXT DEFAULT 'Cyber Fraud'")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN assigned_to TEXT DEFAULT 'Unassigned'")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE complaints ADD COLUMN linked_case_id TEXT")
+        .execute(pool)
+        .await;
+    let _ =
+        sqlx::query("ALTER TABLE complaints ADD COLUMN correlation_data_json TEXT DEFAULT '{}'")
+            .execute(pool)
+            .await;
 
-    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN source_account TEXT").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN paths_json TEXT DEFAULT '[]'").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN patterns_json TEXT DEFAULT '[]'").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN report_json TEXT DEFAULT '{}'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN source_account TEXT")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN paths_json TEXT DEFAULT '[]'")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN patterns_json TEXT DEFAULT '[]'")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE money_trails ADD COLUMN report_json TEXT DEFAULT '{}'")
+        .execute(pool)
+        .await;
 
     let _ = sqlx::query(
         r#"
@@ -266,16 +282,19 @@ async fn create_tables(pool: &DbPool) -> Result<(), sqlx::Error> {
             created_at TEXT NOT NULL,
             FOREIGN KEY (complaint_id) REFERENCES complaints(complaint_id)
         );
-        "#
-    ).execute(pool).await;
+        "#,
+    )
+    .execute(pool)
+    .await;
 
     Ok(())
 }
 
 async fn seed_default_users(pool: &DbPool) -> Result<(), sqlx::Error> {
-    let exists: Option<String> = sqlx::query_scalar("SELECT badge_id FROM users WHERE badge_id = 'INV-7809-DELHI'")
-        .fetch_optional(pool)
-        .await?;
+    let exists: Option<String> =
+        sqlx::query_scalar("SELECT badge_id FROM users WHERE badge_id = 'INV-7809-DELHI'")
+            .fetch_optional(pool)
+            .await?;
 
     if exists.is_none() {
         info!("Seeding default investigator: INV-7809-DELHI");

@@ -7,10 +7,7 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-};
+use crate::{database::DbPool, errors::AppError};
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct Job {
@@ -41,14 +38,15 @@ async fn get_job(
             error_message, created_at, updated_at
         FROM jobs
         WHERE job_id = $1
-        "#
+        "#,
     )
     .bind(&job_id)
     .fetch_optional(&pool)
     .await?
     .ok_or_else(|| AppError::NotFound(format!("Job {} not found", job_id)))?;
 
-    let result_val: Option<serde_json::Value> = job.result_json
+    let result_val: Option<serde_json::Value> = job
+        .result_json
         .as_ref()
         .and_then(|r| serde_json::from_str(r).ok());
 

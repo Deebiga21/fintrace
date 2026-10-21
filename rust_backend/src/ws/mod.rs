@@ -28,10 +28,7 @@ pub fn router() -> (Router, broadcast::Sender<String>) {
     (r, tx)
 }
 
-async fn ws_handler(
-    ws: WebSocketUpgrade,
-    State(state): State<Arc<WsState>>,
-) -> impl IntoResponse {
+async fn ws_handler(ws: WebSocketUpgrade, State(state): State<Arc<WsState>>) -> impl IntoResponse {
     ws.on_upgrade(|socket| handle_socket(socket, state))
 }
 
@@ -45,7 +42,11 @@ async fn handle_socket(mut socket: WebSocket, state: Arc<WsState>) {
         "message": "Connected to FinTrace Real-Time AML Event Stream",
         "timestamp": chrono::Utc::now().to_rfc3339()
     });
-    if socket.send(Message::Text(welcome.to_string())).await.is_err() {
+    if socket
+        .send(Message::Text(welcome.to_string()))
+        .await
+        .is_err()
+    {
         return;
     }
 

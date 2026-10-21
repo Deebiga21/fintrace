@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Briefcase, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { api } from '../services/api';
 
 export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onCaseCreated }) {
-  const [title, setTitle] = useState(initialData.title || (initialData.account_id ? `Investigation into Mule Account ${initialData.account_id}` : 'Suspicious Money Flow Investigation'));
-  const [priority, setPriority] = useState(initialData.priority || 'High');
+  const [title, setTitle] = useState('');
+  const [priority, setPriority] = useState('High');
   const [investigator, setInvestigator] = useState('Senior Investigator Vikramaditya');
-  const [primaryAccount, setPrimaryAccount] = useState(initialData.account_id || '');
-  const [summary, setSummary] = useState(initialData.summary || 'Flagged by GraphSAGE neural network for abnormal transaction velocity and rapid multi-hop fund dissemination.');
+  const [primaryAccount, setPrimaryAccount] = useState('');
+  const [summary, setSummary] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      const targetId = initialData.account_id || initialData.id || '';
+      setTitle(initialData.title || (targetId ? `Investigation into Mule Account ${targetId}` : 'Suspicious Money Flow Investigation'));
+      setPriority(initialData.priority || ((initialData.risk_score || 0) >= 0.75 ? 'Critical' : 'High'));
+      setPrimaryAccount(targetId);
+      setSummary(
+        initialData.summary ||
+        (targetId
+          ? `Account ${targetId} flagged with risk score ${initialData.risk_score ? (initialData.risk_score * 100).toFixed(1) + '%' : 'elevated'} (${initialData.risk_level || 'Suspect'}). Graph analysis detected abnormal velocity and pass-through patterns.`
+          : 'Flagged by GraphSAGE neural network for abnormal transaction velocity and rapid multi-hop fund dissemination.')
+      );
+      setError(null);
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 

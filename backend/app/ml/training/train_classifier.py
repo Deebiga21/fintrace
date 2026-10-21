@@ -21,6 +21,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+from typing import Tuple, Dict, Any, List, Optional
+
 from ..models.fraud_classifier import TabularFraudClassifier
 from ..data.preprocess import TransactionPreprocessor
 

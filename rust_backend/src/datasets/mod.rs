@@ -12,11 +12,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::path::Path as FilePath;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-    transactions::update_account_graph_metrics,
-};
+use crate::{database::DbPool, errors::AppError, transactions::update_account_graph_metrics};
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct DatasetRecord {
@@ -61,9 +57,7 @@ pub fn router(pool: DbPool) -> Router {
         .with_state(pool)
 }
 
-async fn list_datasets(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn list_datasets(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let datasets = sqlx::query_as::<_, DatasetRecord>(
         "SELECT dataset_id, name, filename, total_rows, valid_rows, invalid_rows, readiness_score, status, fingerprint, metadata_json, created_at FROM datasets ORDER BY created_at DESC"
     )
@@ -88,16 +82,19 @@ async fn get_dataset_validation(
     .await?
     .ok_or_else(|| AppError::NotFound(format!("Dataset {} not found", id)))?;
 
-    let report_val: serde_json::Value = ds.metadata_json
+    let report_val: serde_json::Value = ds
+        .metadata_json
         .as_ref()
         .and_then(|r| serde_json::from_str(r).ok())
-        .unwrap_or_else(|| json!({
-            "status": ds.status.unwrap_or_else(|| "ACTIVE".to_string()),
-            "readiness_score": ds.readiness_score.unwrap_or(10.0),
-            "row_count": ds.total_rows.unwrap_or(0),
-            "valid_rows": ds.valid_rows.unwrap_or(0),
-            "rejected_rows": ds.invalid_rows.unwrap_or(0)
-        }));
+        .unwrap_or_else(|| {
+            json!({
+                "status": ds.status.unwrap_or_else(|| "ACTIVE".to_string()),
+                "readiness_score": ds.readiness_score.unwrap_or(10.0),
+                "row_count": ds.total_rows.unwrap_or(0),
+                "valid_rows": ds.valid_rows.unwrap_or(0),
+                "rejected_rows": ds.invalid_rows.unwrap_or(0)
+            })
+        });
 
     Ok(Json(report_val))
 }
@@ -132,8 +129,13 @@ async fn validate_dataset(
     Json(payload): Json<ValidateDatasetRequest>,
 ) -> Result<impl IntoResponse, AppError> {
     let raw_csv = payload.csv_content.unwrap_or_default();
-    let name = payload.name.unwrap_or_else(|| "Uploaded Dataset".to_string());
-    let dataset_id = format!("DS-{}", uuid::Uuid::new_v4().to_string()[..8].to_uppercase());
+    let name = payload
+        .name
+        .unwrap_or_else(|| "Uploaded Dataset".to_string());
+    let dataset_id = format!(
+        "DS-{}",
+        uuid::Uuid::new_v4().to_string()[..8].to_uppercase()
+    );
     let now = Utc::now().to_rfc3339();
 
     let mut row_count = 0i64;
@@ -159,9 +161,17 @@ async fn validate_dataset(
         let headers = rdr.headers().map(|h| h.clone()).unwrap_or_default();
         let col_names: Vec<String> = headers.iter().map(|s| s.to_string()).collect();
 
-        let has_amount = col_names.iter().any(|c| c.to_lowercase().contains("amount") || c.to_lowercase().contains("amt"));
-        let has_time = col_names.iter().any(|c| c.to_lowercase().contains("time") || c.to_lowercase().contains("date"));
-        let has_label = col_names.iter().any(|c| c.to_lowercase().contains("fraud") || c.to_lowercase().contains("label") || c.to_lowercase().contains("suspicious"));
+        let has_amount = col_names
+            .iter()
+            .any(|c| c.to_lowercase().contains("amount") || c.to_lowercase().contains("amt"));
+        let has_time = col_names
+            .iter()
+            .any(|c| c.to_lowercase().contains("time") || c.to_lowercase().contains("date"));
+        let has_label = col_names.iter().any(|c| {
+            c.to_lowercase().contains("fraud")
+                || c.to_lowercase().contains("label")
+                || c.to_lowercase().contains("suspicious")
+        });
 
         if has_amount {
             score += 2.0;
@@ -197,7 +207,9 @@ async fn validate_dataset(
                         preview_rows.push(serde_json::Value::Object(row_map));
                     }
 
-                    let is_flagged = record.iter().any(|field| field == "1" || field.to_lowercase() == "true");
+                    let is_flagged = record
+                        .iter()
+                        .any(|field| field == "1" || field.to_lowercase() == "true");
                     if is_flagged {
                         detected_fraud_count += 1;
                     }
@@ -242,7 +254,7 @@ async fn validate_dataset(
             dataset_id, name, filename, total_rows, valid_rows, invalid_rows,
             readiness_score, status, fingerprint, metadata_json, created_at
         ) VALUES ($1, $2, 'upload.csv', $3, $4, $5, $6, 'VALIDATED', $7, $8, $9)
-        "#
+        "#,
     )
     .bind(&dataset_id)
     .bind(&name)
@@ -265,9 +277,14 @@ async fn import_dataset(
 ) -> Result<impl IntoResponse, AppError> {
     let now = Utc::now().to_rfc3339();
     let dataset_id = payload.dataset_id.unwrap_or_else(|| {
-        format!("DS-{}", uuid::Uuid::new_v4().to_string()[..8].to_uppercase())
+        format!(
+            "DS-{}",
+            uuid::Uuid::new_v4().to_string()[..8].to_uppercase()
+        )
     });
-    let name = payload.name.unwrap_or_else(|| "Imported Dataset".to_string());
+    let name = payload
+        .name
+        .unwrap_or_else(|| "Imported Dataset".to_string());
     let fingerprint = format!("SHA256:{:x}", 3160 * 31337);
 
     let _ = sqlx::query(
@@ -278,7 +295,7 @@ async fn import_dataset(
         ) VALUES ($1, $2, 'imported.csv', 3160, 3160, 0, 9.8, 'READY', $3, '{}', $4)
         ON CONFLICT(dataset_id) DO UPDATE SET
             status = 'READY'
-        "#
+        "#,
     )
     .bind(&dataset_id)
     .bind(&name)
@@ -287,7 +304,10 @@ async fn import_dataset(
     .execute(&pool)
     .await;
 
-    let details = format!("Imported dataset {} ({}) into active surveillance database", dataset_id, name);
+    let details = format!(
+        "Imported dataset {} ({}) into active surveillance database",
+        dataset_id, name
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)"
     )
@@ -312,9 +332,7 @@ async fn import_dataset(
     })))
 }
 
-async fn load_demo_dataset(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn load_demo_dataset(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let now = Utc::now().to_rfc3339();
 
     // Load sample_transactions.csv
@@ -332,9 +350,12 @@ async fn load_demo_dataset(
         }
     }
 
-    let csv_path = found_path.ok_or_else(|| AppError::NotFound("Synthetic sample transactions not found".to_string()))?;
+    let csv_path = found_path
+        .ok_or_else(|| AppError::NotFound("Synthetic sample transactions not found".to_string()))?;
     let file = File::open(csv_path).map_err(|e| AppError::Internal(e.to_string()))?;
-    let mut rdr = csv::ReaderBuilder::new().has_headers(true).from_reader(file);
+    let mut rdr = csv::ReaderBuilder::new()
+        .has_headers(true)
+        .from_reader(file);
 
     let mut loaded = 0;
     for result in rdr.records() {
@@ -345,11 +366,21 @@ async fn load_demo_dataset(
             let txn_id = rec.get(0).unwrap_or("").trim().to_string();
             let sender = rec.get(1).unwrap_or("").trim().to_string();
             let receiver = rec.get(2).unwrap_or("").trim().to_string();
-            let amount: f64 = rec.get(3).and_then(|a| a.trim().parse().ok()).unwrap_or(0.0);
-            let timestamp = rec.get(4).unwrap_or("2026-10-15 10:00:00").trim().to_string();
+            let amount: f64 = rec
+                .get(3)
+                .and_then(|a| a.trim().parse().ok())
+                .unwrap_or(0.0);
+            let timestamp = rec
+                .get(4)
+                .unwrap_or("2026-10-15 10:00:00")
+                .trim()
+                .to_string();
             let status = rec.get(5).unwrap_or("COMPLETED").trim().to_string();
             let txn_type = rec.get(6).unwrap_or("IMPS").trim().to_string();
-            let is_susp: bool = rec.get(7).map(|v| v.trim() == "1" || v.trim().eq_ignore_ascii_case("true")).unwrap_or(false);
+            let is_susp: bool = rec
+                .get(7)
+                .map(|v| v.trim() == "1" || v.trim().eq_ignore_ascii_case("true"))
+                .unwrap_or(false);
             let flag_reason = rec.get(8).map(|s| s.trim().to_string());
 
             let _ = sqlx::query("INSERT OR IGNORE INTO accounts (account_id, created_at) VALUES ($1, datetime('now'))")
@@ -381,8 +412,14 @@ async fn load_demo_dataset(
 
     let _ = update_account_graph_metrics(&pool).await;
 
-    let node_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts").fetch_one(&pool).await.unwrap_or(0);
-    let edge_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions").fetch_one(&pool).await.unwrap_or(0);
+    let node_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
+    let edge_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
 
     // Record audit log
     let _ = sqlx::query(
@@ -429,7 +466,11 @@ async fn get_ready_to_test_datasets() -> impl IntoResponse {
             for entry in entries.flatten() {
                 let path = entry.path();
                 if path.extension().and_then(|e| e.to_str()) == Some("csv") {
-                    let filename = path.file_name().and_then(|f| f.to_str()).unwrap_or("").to_string();
+                    let filename = path
+                        .file_name()
+                        .and_then(|f| f.to_str())
+                        .unwrap_or("")
+                        .to_string();
                     let metadata = entry.metadata().ok();
                     let file_size = metadata.map(|m| m.len()).unwrap_or(0);
 
@@ -437,21 +478,61 @@ async fn get_ready_to_test_datasets() -> impl IntoResponse {
                     let mut row_count = 0;
                     let mut has_labels = false;
                     if let Ok(file) = File::open(&path) {
-                        let mut rdr = csv::ReaderBuilder::new().has_headers(true).from_reader(file);
+                        let mut rdr = csv::ReaderBuilder::new()
+                            .has_headers(true)
+                            .from_reader(file);
                         if let Ok(headers) = rdr.headers() {
-                            has_labels = headers.iter().any(|h| h.to_lowercase().contains("fraud") || h.to_lowercase().contains("suspicious"));
+                            has_labels = headers.iter().any(|h| {
+                                h.to_lowercase().contains("fraud")
+                                    || h.to_lowercase().contains("suspicious")
+                            });
                         }
                         row_count = rdr.records().count();
                     }
 
                     let (title, tag, category, provenance) = match filename.as_str() {
-                        s if s.contains("smurfing") => ("Smurfing Aggregator Network", "Fan-In Mule Flow", "Aggregator Funneling", "Synthetic Investigation Scenario"),
-                        s if s.contains("circular") => ("Circular Layering Ring", "Cycle Topology", "Circular Laundering", "Synthetic Investigation Scenario"),
-                        s if s.contains("passthrough") => ("Rapid Pass-Through Drain", "High Turnover", "Fund Drain", "Synthetic Investigation Scenario"),
-                        s if s.contains("burst") => ("High-Frequency Burst", "Velocity Spike", "Burst Movement", "Synthetic Investigation Scenario"),
-                        s if s.contains("cbs") => ("CBS Statement Extract", "Statement Extract", "Core Banking Extract", "Bank Statement Extract"),
-                        s if s.contains("retail") => ("Clean Retail Baseline", "Legitimate Baseline", "Legitimate Retail", "Consumer Retail Benchmark"),
-                        _ => ("Investigation Dataset", "Custom Dataset", "Transaction Export", "Imported Dataset"),
+                        s if s.contains("smurfing") => (
+                            "Smurfing Aggregator Network",
+                            "Fan-In Mule Flow",
+                            "Aggregator Funneling",
+                            "Synthetic Investigation Scenario",
+                        ),
+                        s if s.contains("circular") => (
+                            "Circular Layering Ring",
+                            "Cycle Topology",
+                            "Circular Laundering",
+                            "Synthetic Investigation Scenario",
+                        ),
+                        s if s.contains("passthrough") => (
+                            "Rapid Pass-Through Drain",
+                            "High Turnover",
+                            "Fund Drain",
+                            "Synthetic Investigation Scenario",
+                        ),
+                        s if s.contains("burst") => (
+                            "High-Frequency Burst",
+                            "Velocity Spike",
+                            "Burst Movement",
+                            "Synthetic Investigation Scenario",
+                        ),
+                        s if s.contains("cbs") => (
+                            "CBS Statement Extract",
+                            "Statement Extract",
+                            "Core Banking Extract",
+                            "Bank Statement Extract",
+                        ),
+                        s if s.contains("retail") => (
+                            "Clean Retail Baseline",
+                            "Legitimate Baseline",
+                            "Legitimate Retail",
+                            "Consumer Retail Benchmark",
+                        ),
+                        _ => (
+                            "Investigation Dataset",
+                            "Custom Dataset",
+                            "Transaction Export",
+                            "Imported Dataset",
+                        ),
                     };
 
                     let ds_id = filename.trim_end_matches(".csv").to_string();
@@ -477,7 +558,10 @@ async fn get_ready_to_test_datasets() -> impl IntoResponse {
     }
 
     datasets.sort_by(|a, b| {
-        a["filename"].as_str().unwrap_or("").cmp(b["filename"].as_str().unwrap_or(""))
+        a["filename"]
+            .as_str()
+            .unwrap_or("")
+            .cmp(b["filename"].as_str().unwrap_or(""))
     });
 
     Json(json!({
@@ -510,23 +594,50 @@ async fn test_ingest_dataset(
         }
     }
 
-    let file_path = target_file.ok_or_else(|| AppError::NotFound(format!("Ready-to-test CSV '{}' not found", id)))?;
+    let file_path = target_file
+        .ok_or_else(|| AppError::NotFound(format!("Ready-to-test CSV '{}' not found", id)))?;
     let file = File::open(&file_path).map_err(|e| AppError::Internal(e.to_string()))?;
-    let mut rdr = csv::ReaderBuilder::new().has_headers(true).from_reader(file);
+    let mut rdr = csv::ReaderBuilder::new()
+        .has_headers(true)
+        .from_reader(file);
 
-    let headers_raw = rdr.headers().map_err(|e| AppError::BadRequest(e.to_string()))?.clone();
-    let col_map: HashMap<String, usize> = headers_raw.iter().enumerate().map(|(i, h)| (h.trim().to_lowercase(), i)).collect();
+    let headers_raw = rdr
+        .headers()
+        .map_err(|e| AppError::BadRequest(e.to_string()))?
+        .clone();
+    let col_map: HashMap<String, usize> = headers_raw
+        .iter()
+        .enumerate()
+        .map(|(i, h)| (h.trim().to_lowercase(), i))
+        .collect();
 
-    let s_idx = col_map.get("sender_account").or_else(|| col_map.get("sender")).copied();
-    let r_idx = col_map.get("receiver_account").or_else(|| col_map.get("receiver")).copied();
+    let s_idx = col_map
+        .get("sender_account")
+        .or_else(|| col_map.get("sender"))
+        .copied();
+    let r_idx = col_map
+        .get("receiver_account")
+        .or_else(|| col_map.get("receiver"))
+        .copied();
     let a_idx = col_map.get("amount").copied();
-    let t_idx = col_map.get("transaction_id").or_else(|| col_map.get("txnid")).copied();
+    let t_idx = col_map
+        .get("transaction_id")
+        .or_else(|| col_map.get("txnid"))
+        .copied();
     let tm_idx = col_map.get("timestamp").copied();
-    let tp_idx = col_map.get("transaction_type").or_else(|| col_map.get("type")).copied();
-    let susp_idx = col_map.get("is_suspicious").or_else(|| col_map.get("isfraud")).copied();
+    let tp_idx = col_map
+        .get("transaction_type")
+        .or_else(|| col_map.get("type"))
+        .copied();
+    let susp_idx = col_map
+        .get("is_suspicious")
+        .or_else(|| col_map.get("isfraud"))
+        .copied();
 
     if s_idx.is_none() || r_idx.is_none() || a_idx.is_none() {
-        return Err(AppError::BadRequest("Test CSV missing sender, receiver, or amount column".to_string()));
+        return Err(AppError::BadRequest(
+            "Test CSV missing sender, receiver, or amount column".to_string(),
+        ));
     }
 
     let mut valid_count = 0;
@@ -537,33 +648,69 @@ async fn test_ingest_dataset(
 
     for result in rdr.records() {
         if let Ok(rec) = result {
-            let sender = s_idx.and_then(|i| rec.get(i)).unwrap_or("").trim().to_string();
-            let receiver = r_idx.and_then(|i| rec.get(i)).unwrap_or("").trim().to_string();
-            let amount: f64 = a_idx.and_then(|i| rec.get(i)).and_then(|v| v.trim().parse().ok()).unwrap_or(0.0);
+            let sender = s_idx
+                .and_then(|i| rec.get(i))
+                .unwrap_or("")
+                .trim()
+                .to_string();
+            let receiver = r_idx
+                .and_then(|i| rec.get(i))
+                .unwrap_or("")
+                .trim()
+                .to_string();
+            let amount: f64 = a_idx
+                .and_then(|i| rec.get(i))
+                .and_then(|v| v.trim().parse().ok())
+                .unwrap_or(0.0);
 
             if sender.is_empty() || receiver.is_empty() || amount <= 0.0 {
                 skipped += 1;
                 continue;
             }
 
-            let txn_id = t_idx.and_then(|i| rec.get(i)).map(|s| s.trim().to_string()).filter(|s| !s.is_empty())
-                .unwrap_or_else(|| format!("TXN_{}", uuid::Uuid::new_v4().to_string().replace("-", "")[..12].to_uppercase()));
+            let txn_id = t_idx
+                .and_then(|i| rec.get(i))
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .unwrap_or_else(|| {
+                    format!(
+                        "TXN_{}",
+                        uuid::Uuid::new_v4().to_string().replace("-", "")[..12].to_uppercase()
+                    )
+                });
 
-            let timestamp = tm_idx.and_then(|i| rec.get(i)).map(|s| s.trim().to_string()).filter(|s| !s.is_empty())
+            let timestamp = tm_idx
+                .and_then(|i| rec.get(i))
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
                 .unwrap_or_else(|| Utc::now().to_rfc3339());
 
-            let txn_type = tp_idx.and_then(|i| rec.get(i)).map(|s| s.trim().to_uppercase()).filter(|s| !s.is_empty())
+            let txn_type = tp_idx
+                .and_then(|i| rec.get(i))
+                .map(|s| s.trim().to_uppercase())
+                .filter(|s| !s.is_empty())
                 .unwrap_or_else(|| "UPI".to_string());
 
-            let is_susp = susp_idx.and_then(|i| rec.get(i)).map(|v| v.trim() == "1" || v.trim().eq_ignore_ascii_case("true")).unwrap_or(false);
+            let is_susp = susp_idx
+                .and_then(|i| rec.get(i))
+                .map(|v| v.trim() == "1" || v.trim().eq_ignore_ascii_case("true"))
+                .unwrap_or(false);
 
             let s_res = sqlx::query("INSERT OR IGNORE INTO accounts (account_id, created_at) VALUES ($1, datetime('now'))")
                 .bind(&sender).execute(&mut *tx).await;
-            if let Ok(r) = s_res { if r.rows_affected() > 0 { new_accounts += 1; } }
+            if let Ok(r) = s_res {
+                if r.rows_affected() > 0 {
+                    new_accounts += 1;
+                }
+            }
 
             let r_res = sqlx::query("INSERT OR IGNORE INTO accounts (account_id, created_at) VALUES ($1, datetime('now'))")
                 .bind(&receiver).execute(&mut *tx).await;
-            if let Ok(r) = r_res { if r.rows_affected() > 0 { new_accounts += 1; } }
+            if let Ok(r) = r_res {
+                if r.rows_affected() > 0 {
+                    new_accounts += 1;
+                }
+            }
 
             let ins = sqlx::query(
                 r#"
@@ -594,8 +741,14 @@ async fn test_ingest_dataset(
 
     let _ = update_account_graph_metrics(&pool).await;
 
-    let node_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts").fetch_one(&pool).await.unwrap_or(0);
-    let edge_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions").fetch_one(&pool).await.unwrap_or(0);
+    let node_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
+    let edge_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
 
     Ok(Json(json!({
         "dataset_id": id,
@@ -613,8 +766,14 @@ async fn get_dataset_test_results(
     State(pool): State<DbPool>,
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
-    let node_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts").fetch_one(&pool).await.unwrap_or(0);
-    let edge_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions").fetch_one(&pool).await.unwrap_or(0);
+    let node_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
+    let edge_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
 
     Ok(Json(json!({
         "dataset_id": id,

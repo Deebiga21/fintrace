@@ -82,43 +82,62 @@ async fn list_complaints(
     let limit = params.limit.unwrap_or(100).min(500);
     let skip = params.skip.unwrap_or(0);
 
-    let mut sql = String::from(
-        "SELECT complaint_id, date_reported, complainant_name, description, reported_account_id, transaction_id, amount_lost, status, source, category, assigned_to, linked_case_id, correlation_data_json, created_at FROM complaints WHERE 1=1"
-    );
+    let mut conditions = Vec::new();
+    let mut bindings: Vec<String> = Vec::new();
 
     if let Some(ref s) = params.search {
-        let pattern = format!("%{}%", s.trim().to_lowercase());
-        sql.push_str(&format!(
-            " AND (LOWER(complaint_id) LIKE '{}' OR LOWER(complainant_name) LIKE '{}' OR LOWER(reported_account_id) LIKE '{}' OR LOWER(description) LIKE '{}')",
-            pattern, pattern, pattern, pattern
-        ));
+        let trimmed = s.trim();
+        if !trimmed.is_empty() {
+            let pattern = format!("%{}%", trimmed.to_lowercase());
+            conditions.push("(LOWER(complaint_id) LIKE ? OR LOWER(complainant_name) LIKE ? OR LOWER(reported_account_id) LIKE ? OR LOWER(description) LIKE ?)");
+            bindings.push(pattern.clone());
+            bindings.push(pattern.clone());
+            bindings.push(pattern.clone());
+            bindings.push(pattern);
+        }
     }
 
     if let Some(ref st) = params.status {
-        if st != "All" && st != "ALL" {
-            sql.push_str(&format!(" AND LOWER(status) = '{}'", st.trim().to_lowercase()));
+        let trimmed = st.trim();
+        if !trimmed.is_empty() && !trimmed.eq_ignore_ascii_case("all") {
+            conditions.push("LOWER(status) = LOWER(?)");
+            bindings.push(trimmed.to_string());
         }
     }
 
     if let Some(ref cat) = params.category {
-        if cat != "All" && cat != "ALL" {
-            sql.push_str(&format!(" AND LOWER(category) = '{}'", cat.trim().to_lowercase()));
+        let trimmed = cat.trim();
+        if !trimmed.is_empty() && !trimmed.eq_ignore_ascii_case("all") {
+            conditions.push("LOWER(category) = LOWER(?)");
+            bindings.push(trimmed.to_string());
         }
     }
 
-    sql.push_str(" ORDER BY date_reported DESC LIMIT $1 OFFSET $2");
+    let where_clause = if conditions.is_empty() {
+        String::new()
+    } else {
+        format!("WHERE {}", conditions.join(" AND "))
+    };
 
-    let complaints = sqlx::query_as::<_, Complaint>(&sql)
-        .bind(limit)
-        .bind(skip)
-        .fetch_all(&pool)
-        .await
-        .unwrap_or_default();
+    let sql = format!(
+        "SELECT complaint_id, date_reported, complainant_name, description, reported_account_id, transaction_id, amount_lost, status, source, category, assigned_to, linked_case_id, correlation_data_json, created_at FROM complaints {} ORDER BY date_reported DESC LIMIT ? OFFSET ?",
+        where_clause
+    );
 
-    let total: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints")
-        .fetch_one(&pool)
-        .await
-        .unwrap_or(0);
+    let count_sql = format!("SELECT COUNT(*) FROM complaints {}", where_clause);
+
+    let mut query = sqlx::query_as::<_, Complaint>(&sql);
+    let mut count_query = sqlx::query_scalar::<_, i64>(&count_sql);
+
+    for b in &bindings {
+        query = query.bind(b);
+        count_query = count_query.bind(b);
+    }
+
+    query = query.bind(limit).bind(skip);
+
+    let complaints = query.fetch_all(&pool).await?;
+    let total: i64 = count_query.fetch_one(&pool).await?;
 
     Ok(Json(json!({
         "total": total,
@@ -128,19 +147,33 @@ async fn list_complaints(
     })))
 }
 
-async fn get_complaints_summary(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn get_complaints_summary(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let total_complaints: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints")
-        .fetch_one(&pool).await.unwrap_or(0);
-    let total_lost: f64 = sqlx::query_scalar("SELECT COALESCE(SUM(amount_lost), 0.0) FROM complaints")
-        .fetch_one(&pool).await.unwrap_or(0.0);
-    let new_complaints: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints WHERE status = 'New' OR status = 'Received'")
-        .fetch_one(&pool).await.unwrap_or(0);
-    let correlated_complaints: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints WHERE status = 'Correlated'")
-        .fetch_one(&pool).await.unwrap_or(0);
-    let linked_complaints: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints WHERE status = 'Linked' OR linked_case_id IS NOT NULL")
-        .fetch_one(&pool).await.unwrap_or(0);
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
+    let total_lost: f64 =
+        sqlx::query_scalar("SELECT COALESCE(SUM(amount_lost), 0.0) FROM complaints")
+            .fetch_one(&pool)
+            .await
+            .unwrap_or(0.0);
+    let new_complaints: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM complaints WHERE status = 'New' OR status = 'Received'",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap_or(0);
+    let correlated_complaints: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM complaints WHERE status = 'Correlated'")
+            .fetch_one(&pool)
+            .await
+            .unwrap_or(0);
+    let linked_complaints: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM complaints WHERE status = 'Linked' OR linked_case_id IS NOT NULL",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap_or(0);
 
     Ok(Json(json!({
         "total_complaints": total_complaints,
@@ -173,7 +206,8 @@ async fn get_complaint_details(
     .await
     .unwrap_or(None);
 
-    let parsed_correlation: serde_json::Value = complaint.correlation_data_json
+    let parsed_correlation: serde_json::Value = complaint
+        .correlation_data_json
         .as_ref()
         .and_then(|s| serde_json::from_str(s).ok())
         .unwrap_or_else(|| json!({ "status": "NOT_RUN" }));
@@ -189,15 +223,48 @@ async fn create_complaint(
     State(pool): State<DbPool>,
     Json(payload): Json<CreateComplaintRequest>,
 ) -> Result<impl IntoResponse, AppError> {
-    let complaint_id = payload.complaint_id.unwrap_or_else(|| {
-        format!("CMP-2026-{}", uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_uppercase())
-    });
-    let now = Utc::now().to_rfc3339();
-    let category = payload.category.unwrap_or_else(|| "Cyber Fraud".to_string());
-    let source = payload.source.unwrap_or_else(|| "National Cyber Crime Reporting Portal (1930)".to_string());
-    let assigned_to = payload.assigned_to.unwrap_or_else(|| "Unassigned".to_string());
-    let status = payload.status.unwrap_or_else(|| "Received".to_string());
+    if payload.amount_lost <= 0.0
+        || payload.amount_lost.is_nan()
+        || payload.amount_lost.is_infinite()
+    {
+        return Err(AppError::BadRequest(
+            "Complaint amount_lost must be a valid positive number".to_string(),
+        ));
+    }
+
     let reported_acc = payload.reported_account_id.trim().to_uppercase();
+    if reported_acc.is_empty() {
+        return Err(AppError::BadRequest(
+            "reported_account_id must not be empty".to_string(),
+        ));
+    }
+
+    if payload.complainant_name.trim().is_empty() {
+        return Err(AppError::BadRequest(
+            "complainant_name must not be empty".to_string(),
+        ));
+    }
+
+    let complaint_id = payload
+        .complaint_id
+        .filter(|id| !id.trim().is_empty())
+        .unwrap_or_else(|| {
+            format!(
+                "CMP-2026-{}",
+                uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_uppercase()
+            )
+        });
+    let now = Utc::now().to_rfc3339();
+    let category = payload
+        .category
+        .unwrap_or_else(|| "Cyber Fraud".to_string());
+    let source = payload
+        .source
+        .unwrap_or_else(|| "National Cyber Crime Reporting Portal (1930)".to_string());
+    let assigned_to = payload
+        .assigned_to
+        .unwrap_or_else(|| "Unassigned".to_string());
+    let status = payload.status.unwrap_or_else(|| "Received".to_string());
 
     sqlx::query(
         r#"
@@ -206,7 +273,7 @@ async fn create_complaint(
             reported_account_id, transaction_id, amount_lost, status,
             source, category, assigned_to, linked_case_id, correlation_data_json, created_at
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NULL, '{}', $12)
-        "#
+        "#,
     )
     .bind(&complaint_id)
     .bind(&now)
@@ -224,8 +291,10 @@ async fn create_complaint(
     .await?;
 
     // Record audit event
-    let audit_desc = format!("Registered complaint {} for victim {} regarding INR {:.2} loss to account {}",
-        complaint_id, payload.complainant_name, payload.amount_lost, reported_acc);
+    let audit_desc = format!(
+        "Registered complaint {} for victim {} regarding INR {:.2} loss to account {}",
+        complaint_id, payload.complainant_name, payload.amount_lost, reported_acc
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, 'Investigator', 'COMPLAINT_REGISTERED', 'COMPLAINT', $2, $3)"
     )
@@ -288,8 +357,10 @@ async fn update_complaint_handler(
     }
 
     // Record audit event
-    let audit_desc = format!("Updated complaint {} status to {:?}, assigned to {:?}",
-        id, payload.status, payload.assigned_to);
+    let audit_desc = format!(
+        "Updated complaint {} status to {:?}, assigned to {:?}",
+        id, payload.status, payload.assigned_to
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, 'Investigator', 'COMPLAINT_UPDATED', 'COMPLAINT', $2, $3)"
     )
@@ -385,7 +456,9 @@ async fn correlate_complaint_handler(
         .unwrap_or(None);
 
         if let Some(acc) = cp_acc {
-            if acc.risk_level.as_deref().unwrap_or("").to_uppercase() == "HIGH" || acc.risk_score.unwrap_or(0.0) >= 0.75 {
+            if acc.risk_level.as_deref().unwrap_or("").to_uppercase() == "HIGH"
+                || acc.risk_score.unwrap_or(0.0) >= 0.75
+            {
                 connected_high_risk_mules.push(json!({
                     "account_id": acc.account_id,
                     "customer_name": acc.customer_name,
@@ -413,37 +486,56 @@ async fn correlate_complaint_handler(
 
     if direct_acc_matched {
         score += 35.0;
-        explanations.push(format!("Exact account match: {} exists in institution core banking records.", rep_acc));
+        explanations.push(format!(
+            "Exact account match: {} exists in institution core banking records.",
+            rep_acc
+        ));
     } else {
         explanations.push(format!("Reported account {} is unmapped in local ledger (potential cross-bank external recipient).", rep_acc));
     }
 
     if direct_txn_matched {
         score += 25.0;
-        explanations.push(format!("Exact transaction reference verified: {} exists in ledger.", complaint.transaction_id.as_deref().unwrap_or("")));
+        explanations.push(format!(
+            "Exact transaction reference verified: {} exists in ledger.",
+            complaint.transaction_id.as_deref().unwrap_or("")
+        ));
     }
 
     if !shared_complaints.is_empty() {
         let count = shared_complaints.len();
         let pts = (count as f64 * 10.0).min(20.0);
         score += pts;
-        explanations.push(format!("High recidivism: {} other independent cyber complaints report the same account {}.", count, rep_acc));
+        explanations.push(format!(
+            "High recidivism: {} other independent cyber complaints report the same account {}.",
+            count, rep_acc
+        ));
     }
 
     if !connected_high_risk_mules.is_empty() {
         score += 15.0;
-        explanations.push(format!("Network culpability: Account connects to {} high-risk mule entities within 1-2 hops.", connected_high_risk_mules.len()));
+        explanations.push(format!(
+            "Network culpability: Account connects to {} high-risk mule entities within 1-2 hops.",
+            connected_high_risk_mules.len()
+        ));
     }
 
     if !linked_cases.is_empty() {
         score += 10.0;
-        explanations.push(format!("Existing investigation link: Account is subject of {} active case(s).", linked_cases.len()));
+        explanations.push(format!(
+            "Existing investigation link: Account is subject of {} active case(s).",
+            linked_cases.len()
+        ));
     }
 
     if let Some(ref acc) = direct_acc_opt {
         if acc.risk_level.as_deref().unwrap_or("").to_uppercase() == "HIGH" {
             score += 15.0;
-            explanations.push(format!("GNN Model Alert: GraphSAGE scored account at {:.2} ({}) with high turnover.", acc.risk_score.unwrap_or(0.0), acc.risk_level.as_deref().unwrap_or("")));
+            explanations.push(format!(
+                "GNN Model Alert: GraphSAGE scored account at {:.2} ({}) with high turnover.",
+                acc.risk_score.unwrap_or(0.0),
+                acc.risk_level.as_deref().unwrap_or("")
+            ));
         }
     }
 
@@ -541,7 +633,8 @@ async fn get_complaint_correlations_handler(
     .await?
     .ok_or_else(|| AppError::NotFound(format!("Complaint {} not found", id)))?;
 
-    let parsed: serde_json::Value = complaint.correlation_data_json
+    let parsed: serde_json::Value = complaint
+        .correlation_data_json
         .as_ref()
         .and_then(|s| serde_json::from_str(s).ok())
         .unwrap_or_else(|| json!({ "status": "NOT_RUN" }));
@@ -590,7 +683,10 @@ async fn get_complaint_graph_handler(
     .await
     .unwrap_or(None);
 
-    let risk_lvl = acc_opt.as_ref().and_then(|a| a.risk_level.clone()).unwrap_or_else(|| "High".to_string());
+    let risk_lvl = acc_opt
+        .as_ref()
+        .and_then(|a| a.risk_level.clone())
+        .unwrap_or_else(|| "High".to_string());
     let risk_sc = acc_opt.as_ref().and_then(|a| a.risk_score).unwrap_or(0.85);
 
     elements.push(json!({
@@ -634,7 +730,11 @@ async fn get_complaint_graph_handler(
     added_nodes.insert(rep_acc.clone());
 
     for t in txns {
-        let other = if t.sender_account == rep_acc { t.receiver_account.clone() } else { t.sender_account.clone() };
+        let other = if t.sender_account == rep_acc {
+            t.receiver_account.clone()
+        } else {
+            t.sender_account.clone()
+        };
 
         if added_nodes.insert(other.clone()) {
             elements.push(json!({
@@ -750,8 +850,7 @@ async fn get_complaints_by_account(
     )
     .bind(&account_id)
     .fetch_all(&pool)
-    .await
-    .unwrap_or_default();
+    .await?;
 
     Ok(Json(complaints))
 }
@@ -772,15 +871,19 @@ async fn link_case_handler(
     .ok_or_else(|| AppError::NotFound(format!("Complaint {} not found", id)))?;
 
     // Update complaint record
-    sqlx::query("UPDATE complaints SET linked_case_id = $1, status = 'Linked' WHERE complaint_id = $2")
-        .bind(&payload.case_id)
-        .bind(&id)
-        .execute(&pool)
-        .await?;
+    sqlx::query(
+        "UPDATE complaints SET linked_case_id = $1, status = 'Linked' WHERE complaint_id = $2",
+    )
+    .bind(&payload.case_id)
+    .bind(&id)
+    .execute(&pool)
+    .await?;
 
     // Attach as evidence to case
-    let desc = format!("Linked Cybercrime Complaint {}: Complainant {} reported INR {:.2} loss to {}",
-        id, complaint.complainant_name, complaint.amount_lost, complaint.reported_account_id);
+    let desc = format!(
+        "Linked Cybercrime Complaint {}: Complainant {} reported INR {:.2} loss to {}",
+        id, complaint.complainant_name, complaint.amount_lost, complaint.reported_account_id
+    );
     let meta = json!({
         "complaint_id": id,
         "complainant": complaint.complainant_name,
@@ -801,7 +904,10 @@ async fn link_case_handler(
     .await?;
 
     // Record audit event
-    let audit_desc = format!("Linked complaint {} to investigation case {}", id, payload.case_id);
+    let audit_desc = format!(
+        "Linked complaint {} to investigation case {}",
+        id, payload.case_id
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, 'Investigator', 'COMPLAINT_LINKED_TO_CASE', 'CASE', $2, $3)"
     )
@@ -834,12 +940,23 @@ async fn create_case_from_complaint_handler(
     .await?
     .ok_or_else(|| AppError::NotFound(format!("Complaint {} not found", id)))?;
 
-    let case_id = format!("CASE-{}", uuid::Uuid::new_v4().to_string()[..8].to_uppercase());
-    let title = payload.title.unwrap_or_else(|| format!("Cyber Fraud Case: FIR {} on {}", id, complaint.reported_account_id));
+    let case_id = format!(
+        "CASE-{}",
+        uuid::Uuid::new_v4().to_string()[..8].to_uppercase()
+    );
+    let title = payload.title.unwrap_or_else(|| {
+        format!(
+            "Cyber Fraud Case: FIR {} on {}",
+            id, complaint.reported_account_id
+        )
+    });
     let priority = payload.priority.unwrap_or_else(|| "High".to_string());
     let summary = format!("Investigation originated from complaint {}: Complainant {} suffered INR {:.2} loss. Narrative: {}",
         id, complaint.complainant_name, complaint.amount_lost, complaint.description);
-    let findings = format!("Reported beneficiary account {} cross-correlated with banking transaction network.", complaint.reported_account_id);
+    let findings = format!(
+        "Reported beneficiary account {} cross-correlated with banking transaction network.",
+        complaint.reported_account_id
+    );
 
     sqlx::query(
         r#"
@@ -858,11 +975,13 @@ async fn create_case_from_complaint_handler(
     .await?;
 
     // Link complaint
-    sqlx::query("UPDATE complaints SET linked_case_id = $1, status = 'Linked' WHERE complaint_id = $2")
-        .bind(&case_id)
-        .bind(&id)
-        .execute(&pool)
-        .await?;
+    sqlx::query(
+        "UPDATE complaints SET linked_case_id = $1, status = 'Linked' WHERE complaint_id = $2",
+    )
+    .bind(&case_id)
+    .bind(&id)
+    .execute(&pool)
+    .await?;
 
     // Attach evidence
     let meta = json!({
@@ -885,7 +1004,10 @@ async fn create_case_from_complaint_handler(
     .await?;
 
     // Record audit event
-    let audit_desc = format!("Spawned new case {} directly from complaint {}", case_id, id);
+    let audit_desc = format!(
+        "Spawned new case {} directly from complaint {}",
+        case_id, id
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, 'Investigator', 'CASE_CREATED_FROM_COMPLAINT', 'CASE', $2, $3)"
     )
@@ -916,7 +1038,8 @@ async fn get_complaint_report_handler(
     .await?
     .ok_or_else(|| AppError::NotFound(format!("Complaint {} not found", id)))?;
 
-    let parsed_corr: serde_json::Value = complaint.correlation_data_json
+    let parsed_corr: serde_json::Value = complaint
+        .correlation_data_json
         .as_ref()
         .and_then(|s| serde_json::from_str(s).ok())
         .unwrap_or_else(|| json!({}));

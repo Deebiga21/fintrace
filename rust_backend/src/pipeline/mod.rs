@@ -12,11 +12,7 @@ use sqlx::FromRow;
 use std::sync::Arc;
 use std::time::Duration;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-    transactions::update_account_graph_metrics,
-};
+use crate::{database::DbPool, errors::AppError, transactions::update_account_graph_metrics};
 
 #[derive(Clone)]
 pub struct PipelineState {
@@ -78,7 +74,10 @@ async fn get_pipeline_status(
     let active_ds = if let Some(ref did) = params.dataset_id {
         all_datasets.iter().find(|d| &d.dataset_id == did)
     } else {
-        all_datasets.iter().find(|d| d.status.as_deref() == Some("ACTIVE")).or_else(|| all_datasets.first())
+        all_datasets
+            .iter()
+            .find(|d| d.status.as_deref() == Some("ACTIVE"))
+            .or_else(|| all_datasets.first())
     };
 
     // 2. Transactions metrics
@@ -87,15 +86,17 @@ async fn get_pipeline_status(
         .await
         .unwrap_or(0);
 
-    let suspicious_tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions WHERE is_suspicious = 1")
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
+    let suspicious_tx_count: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM transactions WHERE is_suspicious = 1")
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0);
 
-    let total_volume: f64 = sqlx::query_scalar("SELECT COALESCE(SUM(amount), 0.0) FROM transactions")
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0.0);
+    let total_volume: f64 =
+        sqlx::query_scalar("SELECT COALESCE(SUM(amount), 0.0) FROM transactions")
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0.0);
 
     // 3. Accounts metrics
     let acc_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
@@ -103,25 +104,30 @@ async fn get_pipeline_status(
         .await
         .unwrap_or(0);
 
-    let high_risk_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_level = 'High'")
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
+    let high_risk_count: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_level = 'High'")
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0);
 
-    let med_risk_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_level = 'Medium'")
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
+    let med_risk_count: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_level = 'Medium'")
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0);
 
-    let low_risk_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_level = 'Low' OR risk_level IS NULL")
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
+    let low_risk_count: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM accounts WHERE risk_level = 'Low' OR risk_level IS NULL",
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap_or(0);
 
-    let ground_truth_mules: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE is_ground_truth_mule = 1")
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
+    let ground_truth_mules: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE is_ground_truth_mule = 1")
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0);
 
     // 4. Model runs
     let latest_run: Option<(i64, String, String, f64, f64)> = sqlx::query_as(
@@ -152,10 +158,11 @@ async fn get_pipeline_status(
         .await
         .unwrap_or(0);
 
-    let total_loss_claimed: f64 = sqlx::query_scalar("SELECT COALESCE(SUM(amount_lost), 0.0) FROM complaints")
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0.0);
+    let total_loss_claimed: f64 =
+        sqlx::query_scalar("SELECT COALESCE(SUM(amount_lost), 0.0) FROM complaints")
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0.0);
 
     let audit_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM audit_logs")
         .fetch_one(pool)
@@ -163,19 +170,25 @@ async fn get_pipeline_status(
         .unwrap_or(0);
 
     // 6. Query Python ML microservice status (with fallback if offline)
-    let ml_res = state.client
+    let ml_res = state
+        .client
         .get(format!("{}/ml/status", state.ml_service_url))
         .send()
         .await;
 
     let ml_data = match ml_res {
-        Ok(resp) => resp.json::<serde_json::Value>().await.unwrap_or_else(|_| json!({})),
+        Ok(resp) => resp
+            .json::<serde_json::Value>()
+            .await
+            .unwrap_or_else(|_| json!({})),
         Err(_) => json!({}),
     };
 
     let gan_status = ml_data.get("latest_metrics").and_then(|m| m.get("gan"));
     let gnn_status = ml_data.get("latest_metrics").and_then(|m| m.get("gnn"));
-    let synthetic_quality = ml_data.get("latest_metrics").and_then(|m| m.get("synthetic_quality"));
+    let synthetic_quality = ml_data
+        .get("latest_metrics")
+        .and_then(|m| m.get("synthetic_quality"));
 
     // Synthesize Active Dataset Metadata
     let active_ds_json = if let Some(ds) = active_ds {
@@ -361,7 +374,7 @@ async fn get_pipeline_status(
                 "training_split_only": true,
                 "separate_synthetic_dataset": true,
                 "privacy_leakage": "0.0% (Zero Identifier Leakage)"
-            })
+            }),
         )
     } else {
         (
@@ -375,7 +388,7 @@ async fn get_pipeline_status(
                 "training_split_only": true,
                 "separate_synthetic_dataset": true,
                 "privacy_leakage": "0.0% (Zero Identifier Leakage)"
-            })
+            }),
         )
     };
 
@@ -405,9 +418,12 @@ async fn get_pipeline_status(
     } else {
         (
             0.9565,
-            gnn_task_a.and_then(|ta| ta.get("test_f1_score")).and_then(|v| v.as_f64()).unwrap_or(0.8571),
+            gnn_task_a
+                .and_then(|ta| ta.get("test_f1_score"))
+                .and_then(|v| v.as_f64())
+                .unwrap_or(0.8571),
             "GraphSAGE (PyG SAGEConv 2-Layer)".to_string(),
-            "Pre-trained".to_string()
+            "Pre-trained".to_string(),
         )
     };
 
@@ -592,17 +608,20 @@ async fn get_pipeline_history(
     .await
     .unwrap_or_default();
 
-    let history: Vec<serde_json::Value> = audits.into_iter().map(|(id, ts, user, action, t_type, t_id, details)| {
-        json!({
-            "event_id": id,
-            "timestamp": ts.unwrap_or_else(|| Utc::now().to_rfc3339()),
-            "actor": user.unwrap_or_else(|| "Investigator".to_string()),
-            "action": action,
-            "target_type": t_type.unwrap_or_else(|| "PIPELINE".to_string()),
-            "target_id": t_id.unwrap_or_else(|| "-".to_string()),
-            "details": details.unwrap_or_else(|| "".to_string())
+    let history: Vec<serde_json::Value> = audits
+        .into_iter()
+        .map(|(id, ts, user, action, t_type, t_id, details)| {
+            json!({
+                "event_id": id,
+                "timestamp": ts.unwrap_or_else(|| Utc::now().to_rfc3339()),
+                "actor": user.unwrap_or_else(|| "Investigator".to_string()),
+                "action": action,
+                "target_type": t_type.unwrap_or_else(|| "PIPELINE".to_string()),
+                "target_id": t_id.unwrap_or_else(|| "-".to_string()),
+                "details": details.unwrap_or_else(|| "".to_string())
+            })
         })
-    }).collect();
+        .collect();
 
     Ok(Json(json!({
         "total_events": history.len(),
@@ -621,60 +640,101 @@ async fn execute_pipeline_stage(
     let (stage_name, logs, metrics, message) = match stage_num {
         1 => {
             // Stage 1: Dataset Input
-            let ds_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM datasets").fetch_one(pool).await.unwrap_or(0);
-            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions").fetch_one(pool).await.unwrap_or(0);
-            let latest_name: String = sqlx::query_scalar("SELECT name FROM datasets ORDER BY created_at DESC LIMIT 1").fetch_optional(pool).await.unwrap_or(None).unwrap_or_else(|| "03_rapid_passthrough_drain.csv".to_string());
-            
+            let ds_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM datasets")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
+            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
+            let latest_name: String =
+                sqlx::query_scalar("SELECT name FROM datasets ORDER BY created_at DESC LIMIT 1")
+                    .fetch_optional(pool)
+                    .await
+                    .unwrap_or(None)
+                    .unwrap_or_else(|| "03_rapid_passthrough_drain.csv".to_string());
+
             let logs = vec![
                 format!("[{}] Reading dataset registries from relational provenance...", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Active statement extract verified: '{}'", Utc::now().format("%H:%M:%S"), latest_name),
                 format!("[{}] Schema verified: 7 mandatory canonical headers matched; {} records registered.", Utc::now().format("%H:%M:%S"), tx_count),
                 format!("[{}] File integrity checksum SHA-256 confirmed; ready for data hygiene sanitization.", Utc::now().format("%H:%M:%S"))
             ];
-            
-            ("Dataset Input".to_string(), logs, json!({"datasets": ds_count, "transactions": tx_count, "active_dataset": latest_name}), "Dataset input verification and canonical schema intake successful.".to_string())
-        },
+
+            (
+                "Dataset Input".to_string(),
+                logs,
+                json!({"datasets": ds_count, "transactions": tx_count, "active_dataset": latest_name}),
+                "Dataset input verification and canonical schema intake successful.".to_string(),
+            )
+        }
         2 => {
             // Stage 2: Data Validation and Cleaning
-            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions").fetch_one(pool).await.unwrap_or(0);
+            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
             let logs = vec![
                 format!("[{}] Running strict institutional data hygiene parser...", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Auditing mandatory fields: transaction_id, sender_id, receiver_id, amount, timestamp...", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Validated {} transaction amounts: 0 negative values, 0 floating-point corruptions.", Utc::now().format("%H:%M:%S"), tx_count),
                 format!("[{}] 0 malformed records quarantined; 100% data sanitization score achieved.", Utc::now().format("%H:%M:%S"))
             ];
-            ("Data Validation & Cleaning".to_string(), logs, json!({"valid_records": tx_count, "quarantined": 0, "quality_score": 100.0}), "All transactions passed data quality validation.".to_string())
-        },
+            (
+                "Data Validation & Cleaning".to_string(),
+                logs,
+                json!({"valid_records": tx_count, "quarantined": 0, "quality_score": 100.0}),
+                "All transactions passed data quality validation.".to_string(),
+            )
+        }
         3 => {
             // Stage 3: Database Storage & Provenance
-            let acc_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts").fetch_one(pool).await.unwrap_or(0);
-            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions").fetch_one(pool).await.unwrap_or(0);
+            let acc_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
+            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
             let logs = vec![
                 format!("[{}] Committing records to persistent relational tables: accounts, transactions, datasets...", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Foreign key constraints validated: {} accounts, {} transactions linked.", Utc::now().format("%H:%M:%S"), acc_count, tx_count),
                 format!("[{}] Relational indexing confirmed for instant graph traversal and velocity dissection.", Utc::now().format("%H:%M:%S"))
             ];
-            ("Database Storage & Provenance".to_string(), logs, json!({"accounts": acc_count, "transactions": tx_count}), "Relational storage synchronized with full referential integrity.".to_string())
-        },
+            (
+                "Database Storage & Provenance".to_string(),
+                logs,
+                json!({"accounts": acc_count, "transactions": tx_count}),
+                "Relational storage synchronized with full referential integrity.".to_string(),
+            )
+        }
         4 => {
             // Stage 4: Transaction Graph Construction
             update_account_graph_metrics(pool).await?;
-            let acc_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts").fetch_one(pool).await.unwrap_or(0);
-            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions").fetch_one(pool).await.unwrap_or(0);
-            
+            let acc_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
+            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
+
             let logs = vec![
                 format!("[{}] Initializing directed transaction graph builder...", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Reconstructing adjacency matrix: {} nodes, {} directed weighted edges...", Utc::now().format("%H:%M:%S"), acc_count, tx_count),
                 format!("[{}] Computed in-degree, out-degree, and turnover velocity ratios across all accounts.", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Graph topology reconstruction complete; network density 0.0008.", Utc::now().format("%H:%M:%S"))
             ];
-            
+
             let _ = sqlx::query(
                 "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES (datetime('now'), 'Pipeline Engine', 'GRAPH_RECONSTRUCTED', 'GRAPH', 'GRAPH-ALL', 'Refreshed node degrees and turnover ratios')"
             ).execute(pool).await;
 
             ("Transaction Graph Construction".to_string(), logs, json!({"nodes": acc_count, "edges": tx_count, "density": 0.0008}), "Transaction graph topology and node connectivity metrics successfully reconstructed.".to_string())
-        },
+        }
         5 => {
             // Stage 5: Feature Engineering & Temporal Leakage Guard
             let logs = vec![
@@ -682,8 +742,13 @@ async fn execute_pipeline_stage(
                 format!("[{}] Enforcing strict temporal boundary: Scalers fit strictly on historical training split.", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Zero forward-looking leakage confirmed; tensors formatted for PyTorch GraphSAGE inference.", Utc::now().format("%H:%M:%S"))
             ];
-            ("Feature Engineering & Leakage Guard".to_string(), logs, json!({"feature_dimensions": 10, "temporal_leakage": "0.0%"}), "Feature tensors normalized with strict temporal leakage prevention.".to_string())
-        },
+            (
+                "Feature Engineering & Leakage Guard".to_string(),
+                logs,
+                json!({"feature_dimensions": 10, "temporal_leakage": "0.0%"}),
+                "Feature tensors normalized with strict temporal leakage prevention.".to_string(),
+            )
+        }
         6 => {
             // Stage 6: Adversarial Training Ledger Verification
             let logs = vec![
@@ -692,8 +757,13 @@ async fn execute_pipeline_stage(
                 format!("[{}] Generator loss: 2.2434; Wasserstein divergence metric: 0.2363.", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Minority class augmentation verified; synthetic fidelity score: 81.46%.", Utc::now().format("%H:%M:%S"))
             ];
-            ("Adversarial Training Ledger".to_string(), logs, json!({"fidelity": 81.46, "samples": 500, "leakage": "0.0%"}), "Adversarial model verified for minority class balancing.".to_string())
-        },
+            (
+                "Adversarial Training Ledger".to_string(),
+                logs,
+                json!({"fidelity": 81.46, "samples": 500, "leakage": "0.0%"}),
+                "Adversarial model verified for minority class balancing.".to_string(),
+            )
+        }
         7 => {
             // Stage 7: GNN Training & Message Passing
             let _ = sqlx::query(
@@ -717,51 +787,105 @@ async fn execute_pipeline_stage(
             ];
 
             ("GraphSAGE Neural Inference".to_string(), logs, json!({"test_roc_auc": 0.9981, "f1_score": 0.8571, "latency_ms": 42}), "GraphSAGE model scoring executed successfully over 2-hop topological neighborhoods.".to_string())
-        },
+        }
         8 => {
             // Stage 8: Risk Classification and Alert Generation
-            let high_risk_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_score >= 0.75").fetch_one(pool).await.unwrap_or(0);
-            let med_risk_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_score >= 0.40 AND risk_score < 0.75").fetch_one(pool).await.unwrap_or(0);
-            
+            let high_risk_count: i64 =
+                sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_score >= 0.75")
+                    .fetch_one(pool)
+                    .await
+                    .unwrap_or(0);
+            let med_risk_count: i64 = sqlx::query_scalar(
+                "SELECT COUNT(*) FROM accounts WHERE risk_score >= 0.40 AND risk_score < 0.75",
+            )
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0);
+
             let logs = vec![
-                format!("[{}] Applying risk thresholds: High >= 75%, Medium >= 40%, Low < 40%...", Utc::now().format("%H:%M:%S")),
-                format!("[{}] Flagged {} High-Risk mule conduit accounts requiring debit freeze.", Utc::now().format("%H:%M:%S"), high_risk_count),
-                format!("[{}] Placed {} Medium-Risk accounts under automated monitoring.", Utc::now().format("%H:%M:%S"), med_risk_count),
-                format!("[{}] Generated 6 high-priority alerts in Command Center queue.", Utc::now().format("%H:%M:%S"))
+                format!(
+                    "[{}] Applying risk thresholds: High >= 75%, Medium >= 40%, Low < 40%...",
+                    Utc::now().format("%H:%M:%S")
+                ),
+                format!(
+                    "[{}] Flagged {} High-Risk mule conduit accounts requiring debit freeze.",
+                    Utc::now().format("%H:%M:%S"),
+                    high_risk_count
+                ),
+                format!(
+                    "[{}] Placed {} Medium-Risk accounts under automated monitoring.",
+                    Utc::now().format("%H:%M:%S"),
+                    med_risk_count
+                ),
+                format!(
+                    "[{}] Generated 6 high-priority alerts in Command Center queue.",
+                    Utc::now().format("%H:%M:%S")
+                ),
             ];
 
             let _ = sqlx::query(
                 "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES (datetime('now'), 'Pipeline Engine', 'ALERTS_GENERATED', 'ALERTS', 'ALERT-QUEUE', 'Evaluated risk thresholds and generated real-time alerts')"
             ).execute(pool).await;
 
-            ("Risk Classification & Alerts".to_string(), logs, json!({"high_risk": high_risk_count, "medium_risk": med_risk_count, "alerts_active": 6}), "Risk classification completed; high-priority alerts generated.".to_string())
-        },
+            (
+                "Risk Classification & Alerts".to_string(),
+                logs,
+                json!({"high_risk": high_risk_count, "medium_risk": med_risk_count, "alerts_active": 6}),
+                "Risk classification completed; high-priority alerts generated.".to_string(),
+            )
+        }
         9 => {
             // Stage 9: Money Trail Analysis
-            let trails_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM money_trails").fetch_one(pool).await.unwrap_or(0);
+            let trails_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM money_trails")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
             let logs = vec![
                 format!("[{}] Running multi-hop fund flow pathfinder backwards from cashout exits...", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Identified pass-through conduit accounts with transit velocity < 25 minutes.", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Calculated 98.7% turnover drain ratio from inward credits to outward dissemination.", Utc::now().format("%H:%M:%S")),
                 format!("[{}] {} money trail dissemination paths reconstructed and indexed.", Utc::now().format("%H:%M:%S"), trails_count)
             ];
-            ("Money Trail Analysis".to_string(), logs, json!({"velocity": "< 25 minutes", "drain_ratio": "98.7%", "trails": trails_count}), "Multi-hop money trail analysis reconstructed flow paths.".to_string())
-        },
+            (
+                "Money Trail Analysis".to_string(),
+                logs,
+                json!({"velocity": "< 25 minutes", "drain_ratio": "98.7%", "trails": trails_count}),
+                "Multi-hop money trail analysis reconstructed flow paths.".to_string(),
+            )
+        }
         10 => {
             // Stage 10: Cybercrime Complaint Correlation
-            let complaints_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints").fetch_one(pool).await.unwrap_or(0);
-            let total_loss: f64 = sqlx::query_scalar("SELECT COALESCE(SUM(amount_lost), 0.0) FROM complaints").fetch_one(pool).await.unwrap_or(0.0);
+            let complaints_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
+            let total_loss: f64 =
+                sqlx::query_scalar("SELECT COALESCE(SUM(amount_lost), 0.0) FROM complaints")
+                    .fetch_one(pool)
+                    .await
+                    .unwrap_or(0.0);
             let logs = vec![
                 format!("[{}] Cross-referencing 1930 National Cybercrime Portal reports and police FIRs...", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Matched {} complaints with flagged mule accounts (₹{} total loss).", Utc::now().format("%H:%M:%S"), complaints_count, total_loss as i64),
                 format!("[{}] Verified victim-to-mule liability chains for prosecution dockets.", Utc::now().format("%H:%M:%S"))
             ];
-            ("Complaint Cross-Correlation".to_string(), logs, json!({"complaints": complaints_count, "correlated_loss": total_loss}), "Cybercrime complaint correlation successfully matched victim losses.".to_string())
-        },
+            (
+                "Complaint Cross-Correlation".to_string(),
+                logs,
+                json!({"complaints": complaints_count, "correlated_loss": total_loss}),
+                "Cybercrime complaint correlation successfully matched victim losses.".to_string(),
+            )
+        }
         11 => {
             // Stage 11: Case Management & Evidentiary Locker
-            let case_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases").fetch_one(pool).await.unwrap_or(0);
-            let evidence_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM case_evidence").fetch_one(pool).await.unwrap_or(0);
+            let case_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
+            let evidence_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM case_evidence")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
             let logs = vec![
                 format!("[{}] Assembling legally admissible investigation dossiers...", Utc::now().format("%H:%M:%S")),
                 format!("[{}] Attached {} evidentiary records with cryptographic SHA-256 chain-of-custody hashes.", Utc::now().format("%H:%M:%S"), evidence_count),
@@ -771,23 +895,61 @@ async fn execute_pipeline_stage(
                 "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES (datetime('now'), 'Pipeline Engine', 'CASES_SYNCED', 'CASES', 'CASE-DOCKETS', 'Refreshed case evidence lockers and freeze recommendations')"
             ).execute(pool).await;
 
-            ("Case Management & Evidence".to_string(), logs, json!({"active_cases": case_count, "evidence_items": evidence_count}), "Investigation case dossiers compiled with cryptographic evidentiary chain.".to_string())
-        },
+            (
+                "Case Management & Evidence".to_string(),
+                logs,
+                json!({"active_cases": case_count, "evidence_items": evidence_count}),
+                "Investigation case dossiers compiled with cryptographic evidentiary chain."
+                    .to_string(),
+            )
+        }
         12 => {
             // Stage 12: Executive Command Dashboard
-            let acc_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts").fetch_one(pool).await.unwrap_or(0);
-            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions").fetch_one(pool).await.unwrap_or(0);
+            let acc_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
+            let tx_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
             let logs = vec![
-                format!("[{}] Synchronizing real-time telemetry across all 12 pipeline stages...", Utc::now().format("%H:%M:%S")),
-                format!("[{}] Executive Command Center synchronized: {} accounts, {} transactions.", Utc::now().format("%H:%M:%S"), acc_count, tx_count),
-                format!("[{}] Broadcast complete: 100% platform health score; zero unhandled errors.", Utc::now().format("%H:%M:%S")),
-                format!("[{}] [SUCCESS] End-to-end pipeline execution finished in real time!", Utc::now().format("%H:%M:%S"))
+                format!(
+                    "[{}] Synchronizing real-time telemetry across all 12 pipeline stages...",
+                    Utc::now().format("%H:%M:%S")
+                ),
+                format!(
+                    "[{}] Executive Command Center synchronized: {} accounts, {} transactions.",
+                    Utc::now().format("%H:%M:%S"),
+                    acc_count,
+                    tx_count
+                ),
+                format!(
+                    "[{}] Broadcast complete: 100% platform health score; zero unhandled errors.",
+                    Utc::now().format("%H:%M:%S")
+                ),
+                format!(
+                    "[{}] [SUCCESS] End-to-end pipeline execution finished in real time!",
+                    Utc::now().format("%H:%M:%S")
+                ),
             ];
-            ("Executive Command Dashboard".to_string(), logs, json!({"accounts": acc_count, "transactions": tx_count, "health_score": 100.0}), "Executive Command Dashboard synchronized with real-time intelligence.".to_string())
-        },
-        _ => {
-            ("Pipeline Stage".to_string(), vec![format!("[{}] Stage {} verified operational.", Utc::now().format("%H:%M:%S"), stage_num)], json!({}), format!("Stage {} refreshed.", stage_num))
+            (
+                "Executive Command Dashboard".to_string(),
+                logs,
+                json!({"accounts": acc_count, "transactions": tx_count, "health_score": 100.0}),
+                "Executive Command Dashboard synchronized with real-time intelligence.".to_string(),
+            )
         }
+        _ => (
+            "Pipeline Stage".to_string(),
+            vec![format!(
+                "[{}] Stage {} verified operational.",
+                Utc::now().format("%H:%M:%S"),
+                stage_num
+            )],
+            json!({}),
+            format!("Stage {} refreshed.", stage_num),
+        ),
     };
 
     let elapsed = start_instant.elapsed().as_millis();

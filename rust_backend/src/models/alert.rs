@@ -6,9 +6,9 @@ pub struct Alert {
     pub alert_id: String,
     pub target_type: String, // ACCOUNT, TRANSACTION
     pub target_id: String,
-    pub severity: String,    // Critical, High, Medium, Low
+    pub severity: String, // Critical, High, Medium, Low
     pub reason_code: String,
-    pub status: String,      // New, Investigating, Escalated, Resolved, Dismissed
+    pub status: String, // New, Investigating, Escalated, Resolved, Dismissed
     pub assigned_to: Option<String>,
     pub notes: Option<String>,
     pub created_at: String,

@@ -1,16 +1,8 @@
-use axum::{
-    extract::State,
-    response::IntoResponse,
-    routing::get,
-    Json, Router,
-};
+use axum::{extract::State, response::IntoResponse, routing::get, Json, Router};
 use chrono::Utc;
 use serde_json::json;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-};
+use crate::{database::DbPool, errors::AppError};
 
 pub fn router(pool: DbPool) -> Router {
     Router::new()
@@ -18,16 +10,14 @@ pub fn router(pool: DbPool) -> Router {
         .with_state(pool)
 }
 
-async fn get_dashboard_summary(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn get_dashboard_summary(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let total_accounts: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
         .fetch_one(&pool)
         .await
         .unwrap_or(0);
 
     let high_risk_accounts: i64 = sqlx::query_scalar(
-        "SELECT COUNT(*) FROM accounts WHERE risk_level = 'High' OR risk_score >= 0.70"
+        "SELECT COUNT(*) FROM accounts WHERE risk_level = 'High' OR risk_score >= 0.70",
     )
     .fetch_one(&pool)
     .await
@@ -41,7 +31,7 @@ async fn get_dashboard_summary(
     .unwrap_or(0);
 
     let low_risk_accounts: i64 = sqlx::query_scalar(
-        "SELECT COUNT(*) FROM accounts WHERE risk_level = 'Low' OR risk_score < 0.40"
+        "SELECT COUNT(*) FROM accounts WHERE risk_level = 'Low' OR risk_score < 0.40",
     )
     .fetch_one(&pool)
     .await
@@ -52,31 +42,30 @@ async fn get_dashboard_summary(
         .await
         .unwrap_or(0);
 
-    let total_volume: f64 = sqlx::query_scalar("SELECT COALESCE(SUM(amount), 0.0) FROM transactions")
-        .fetch_one(&pool)
-        .await
-        .unwrap_or(0.0);
+    let total_volume: f64 =
+        sqlx::query_scalar("SELECT COALESCE(SUM(amount), 0.0) FROM transactions")
+            .fetch_one(&pool)
+            .await
+            .unwrap_or(0.0);
 
-    let suspicious_txns: i64 = sqlx::query_scalar(
-        "SELECT COUNT(*) FROM transactions WHERE is_suspicious = 1"
-    )
-    .fetch_one(&pool)
-    .await
-    .unwrap_or(0);
+    let suspicious_txns: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM transactions WHERE is_suspicious = 1")
+            .fetch_one(&pool)
+            .await
+            .unwrap_or(0);
 
     let suspicious_volume: f64 = sqlx::query_scalar(
-        "SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE is_suspicious = 1"
+        "SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE is_suspicious = 1",
     )
     .fetch_one(&pool)
     .await
     .unwrap_or(0.0);
 
-    let active_cases: i64 = sqlx::query_scalar(
-        "SELECT COUNT(*) FROM cases WHERE status != 'Closed'"
-    )
-    .fetch_one(&pool)
-    .await
-    .unwrap_or(0);
+    let active_cases: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE status != 'Closed'")
+            .fetch_one(&pool)
+            .await
+            .unwrap_or(0);
 
     let total_complaints: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints")
         .fetch_one(&pool)
@@ -84,7 +73,7 @@ async fn get_dashboard_summary(
         .unwrap_or(0);
 
     let active_alerts: i64 = sqlx::query_scalar(
-        "SELECT COUNT(*) FROM alerts WHERE status NOT IN ('Dismissed', 'Resolved')"
+        "SELECT COUNT(*) FROM alerts WHERE status NOT IN ('Dismissed', 'Resolved')",
     )
     .fetch_one(&pool)
     .await
