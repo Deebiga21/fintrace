@@ -156,6 +156,14 @@ export default function DashboardPage({
             </button>
           )}
           <button
+            onClick={fetchDashboardData}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-850 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition"
+            title="Refresh Live Intelligence Metrics"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-electric-400' : ''}`} />
+            <span>Refresh</span>
+          </button>
+          <button
             onClick={() => setCurrentPage("upload")}
             className="px-3 py-1.5 rounded-lg bg-navy-850 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-medium transition"
           >

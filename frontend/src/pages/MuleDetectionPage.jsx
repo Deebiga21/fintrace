@@ -40,7 +40,7 @@ export default function MuleDetectionPage({
       if (riskFilter !== 'ALL') params.risk_level = riskFilter;
 
       const data = await api.getAccounts(params);
-      setAccounts(data);
+      setAccounts(Array.isArray(data) ? data : (data.accounts || []));
     } catch (err) {
       console.error(err);
     } finally {
@@ -284,6 +284,40 @@ export default function MuleDetectionPage({
                   <div className="text-[11px] text-slate-500">None in direct 1-hop radius</div>
                 )}
               </div>
+
+              {/* Traceable Supporting Evidence */}
+              {explanation.supporting_evidence && explanation.supporting_evidence.length > 0 && (
+                <div className="space-y-2">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase font-mono flex items-center justify-between">
+                    <span>UNDERLYING EVIDENCE & SIGNALS</span>
+                    <span className="text-[10px] text-electric-400 font-normal">
+                      {explanation.supporting_evidence.length} Indicators
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {explanation.supporting_evidence.map((ev, i) => (
+                      <div key={i} className="p-2.5 rounded bg-navy-950 border border-slate-800 space-y-1">
+                        <div className="flex items-center justify-between text-[10px]">
+                          <span className="font-bold text-electric-300 font-mono">{ev.signal_name}</span>
+                          <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold ${
+                            ev.severity === 'Critical' ? 'bg-rose-950 text-rose-300 border border-rose-500/40' :
+                            ev.severity === 'High' ? 'bg-amber-950 text-amber-300 border border-amber-500/40' :
+                            'bg-slate-800 text-slate-300'
+                          }`}>
+                            {ev.severity}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-300 leading-relaxed font-sans">{ev.description}</p>
+                        {ev.metrics && (
+                          <div className="text-[9px] text-slate-400 font-mono bg-slate-900/90 px-1.5 py-0.5 rounded border border-slate-800">
+                            {ev.metrics}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Investigation Notice */}
               <div className="p-2.5 rounded bg-navy-950 border border-slate-800 text-[10px] text-slate-400 flex items-start gap-2">

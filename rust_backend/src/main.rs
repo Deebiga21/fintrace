@@ -1,12 +1,8 @@
-use axum::{
-    http::Method,
-    response::IntoResponse,
-    routing::get,
-    Json, Router,
-};
+use axum::{http::Method, response::IntoResponse, routing::get, Json, Router};
 use fintrace_backend::{
     accounts, alerts, analytics, audit, auth, cases, complaints, config, dashboard, database,
-    datasets, demo, graph, ingestion, jobs, ml_client, models_api, money_trail, pipeline, surveillance, transactions, ws,
+    datasets, demo, graph, ingestion, jobs, ml_client, models_api, money_trail, pipeline,
+    surveillance, transactions, ws,
 };
 use serde_json::json;
 use std::net::SocketAddr;
@@ -53,7 +49,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .nest("/graph", graph::router(pool.clone()))
         .nest("/money-trail", money_trail::router(pool.clone()))
         .nest("/money-trails", money_trail::router(pool.clone()))
-        .nest("/investigations", money_trail::investigations_router(pool.clone()))
+        .nest(
+            "/investigations",
+            money_trail::investigations_router(pool.clone()),
+        )
         .nest("/complaints", complaints::router(pool.clone()))
         .nest("/cases", cases::router(pool.clone()))
         .nest("/evidence", cases::evidence_router(pool.clone()))
@@ -66,11 +65,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .nest("/jobs", jobs::router(pool.clone()))
         .nest("/datasets", datasets::router(pool.clone()))
         .nest("/ingestion", ingestion::router(pool.clone()))
-        .nest("/models", models_api::router(pool.clone(), cfg.ml_service_url.clone()))
+        .nest(
+            "/models",
+            models_api::router(pool.clone(), cfg.ml_service_url.clone()),
+        )
         .nest("/audit-logs", audit::router(pool.clone()))
-        .nest("/ml", ml_client::router(pool.clone(), cfg.ml_service_url.clone()))
-        .nest("/gnn", ml_client::legacy_gnn_router(pool.clone(), cfg.ml_service_url.clone()))
-        .nest("/pipeline", pipeline::router(pool.clone(), cfg.ml_service_url.clone()))
+        .nest(
+            "/ml",
+            ml_client::router(pool.clone(), cfg.ml_service_url.clone()),
+        )
+        .nest(
+            "/gnn",
+            ml_client::legacy_gnn_router(pool.clone(), cfg.ml_service_url.clone()),
+        )
+        .nest(
+            "/pipeline",
+            pipeline::router(pool.clone(), cfg.ml_service_url.clone()),
+        )
         .route("/health", get(health_handler));
 
     let app = Router::new()

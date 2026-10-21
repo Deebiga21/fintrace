@@ -45,78 +45,190 @@ pub fn patterns_router(pool: DbPool) -> Router {
         .with_state(pool)
 }
 
-async fn get_overview(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn get_overview(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
+    // 1. KPI Counts and Volumes
     let total_accounts: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
         .fetch_one(&pool)
-        .await
-        .unwrap_or(0);
-
-    let high_risk_accounts: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_level = 'High' OR risk_score >= 0.70")
-        .fetch_one(&pool)
-        .await
-        .unwrap_or(0);
+        .await?;
 
     let total_txns: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
         .fetch_one(&pool)
-        .await
-        .unwrap_or(0);
+        .await?;
 
-    let suspicious_txns: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions WHERE is_suspicious = 1")
-        .fetch_one(&pool)
-        .await
-        .unwrap_or(0);
+    let total_volume: f64 =
+        sqlx::query_scalar("SELECT COALESCE(SUM(amount), 0.0) FROM transactions")
+            .fetch_one(&pool)
+            .await?;
 
-    let total_volume: f64 = sqlx::query_scalar("SELECT COALESCE(SUM(amount), 0.0) FROM transactions")
-        .fetch_one(&pool)
-        .await
-        .unwrap_or(0.0);
+    let suspicious_txns: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM transactions WHERE is_suspicious = 1")
+            .fetch_one(&pool)
+            .await?;
 
-    let suspicious_volume: f64 = sqlx::query_scalar("SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE is_suspicious = 1")
-        .fetch_one(&pool)
-        .await
-        .unwrap_or(0.0);
+    let suspicious_volume: f64 = sqlx::query_scalar(
+        "SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE is_suspicious = 1",
+    )
+    .fetch_one(&pool)
+    .await?;
 
-    let active_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE status != 'Closed'")
+    // 2. Risk Scoring: Mutually exclusive & exhaustive classification
+    // Documented Rule: Quantitative risk_score takes precedence; falls back to stored risk_level if score is NULL.
+    // - High: risk_score >= 0.70 OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) IN ('HIGH', 'CRITICAL'))
+    // - Medium: (risk_score >= 0.40 AND risk_score < 0.70) OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) = 'MEDIUM')
+    // - Low: (risk_score < 0.40) OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) NOT IN ('HIGH', 'CRITICAL', 'MEDIUM'))
+    let (high_risk_accounts, medium_risk_accounts, low_risk_accounts): (i64, i64, i64) = sqlx::query_as(
+        r#"
+        SELECT
+            COALESCE(SUM(CASE WHEN (risk_score IS NOT NULL AND risk_score >= 0.70) OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) IN ('HIGH', 'CRITICAL')) THEN 1 ELSE 0 END), 0) AS high_count,
+            COALESCE(SUM(CASE WHEN (risk_score IS NOT NULL AND risk_score >= 0.40 AND risk_score < 0.70) OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) = 'MEDIUM') THEN 1 ELSE 0 END), 0) AS med_count,
+            COALESCE(SUM(CASE WHEN (risk_score IS NOT NULL AND risk_score < 0.40) OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) NOT IN ('HIGH', 'CRITICAL', 'MEDIUM')) THEN 1 ELSE 0 END), 0) AS low_count
+        FROM accounts
+        "#,
+    )
+    .fetch_one(&pool)
+    .await?;
+
+    let flagged_accounts = high_risk_accounts + medium_risk_accounts;
+
+    // 3. Alerts, Cases, and Complaints
+    let active_alerts: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM alerts WHERE status NOT IN ('Resolved', 'Dismissed', 'Closed')",
+    )
+    .fetch_one(&pool)
+    .await?;
+
+    let open_cases: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE status != 'Closed'")
         .fetch_one(&pool)
-        .await
-        .unwrap_or(0);
+        .await?;
+
+    let closed_cases: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE status = 'Closed'")
+            .fetch_one(&pool)
+            .await?;
 
     let total_complaints: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM complaints")
         .fetch_one(&pool)
-        .await
-        .unwrap_or(0);
+        .await?;
 
-    let low_risk_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_level = 'Low' OR risk_score < 0.40")
+    let total_complaint_amount: f64 =
+        sqlx::query_scalar("SELECT COALESCE(SUM(amount_lost), 0.0) FROM complaints")
+            .fetch_one(&pool)
+            .await?;
+
+    // 4. Risk distribution with safe percentages
+    let (low_pct, med_pct, high_pct) = if total_accounts > 0 {
+        (
+            format!(
+                "{:.1}%",
+                (low_risk_accounts as f64 / total_accounts as f64) * 100.0
+            ),
+            format!(
+                "{:.1}%",
+                (medium_risk_accounts as f64 / total_accounts as f64) * 100.0
+            ),
+            format!(
+                "{:.1}%",
+                (high_risk_accounts as f64 / total_accounts as f64) * 100.0
+            ),
+        )
+    } else {
+        ("0.0%".to_string(), "0.0%".to_string(), "0.0%".to_string())
+    };
+
+    let risk_distribution = json!([
+        { "name": "Low Risk", "value": low_risk_accounts, "percentage": low_pct, "color": "#10b981" },
+        { "name": "Medium Risk", "value": medium_risk_accounts, "percentage": med_pct, "color": "#f59e0b" },
+        { "name": "High Risk Mules", "value": high_risk_accounts, "percentage": high_pct, "color": "#ef4444" },
+    ]);
+
+    // 5. Dynamic Typology Breakdown (from persisted flags and heuristic graph rules)
+    let flag_rows: Vec<Option<String>> = sqlx::query_scalar(
+        "SELECT flags_json FROM accounts WHERE flags_json IS NOT NULL AND flags_json != '' AND flags_json != '[]'"
+    )
+    .fetch_all(&pool)
+    .await?;
+
+    let mut pattern_counts: std::collections::BTreeMap<String, i64> =
+        std::collections::BTreeMap::new();
+    for f_str in flag_rows.into_iter().flatten() {
+        if let Ok(flags) = serde_json::from_str::<Vec<String>>(&f_str) {
+            for f in flags {
+                *pattern_counts.entry(f).or_insert(0) += 1;
+            }
+        }
+    }
+
+    // Fallback heuristic detection if flags_json has not yet been populated by ML pipeline
+    if pattern_counts.is_empty() {
+        let smurfing_count: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM accounts WHERE in_degree >= 4 AND out_degree <= 2",
+        )
         .fetch_one(&pool)
         .await
         .unwrap_or(0);
 
-    let medium_risk_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts WHERE risk_level = 'Medium' OR (risk_score >= 0.40 AND risk_score < 0.70)")
+        let rapid_drain_count: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM accounts WHERE turnover_ratio >= 0.85 AND turnover_ratio <= 1.15 AND total_incoming > 5000.0"
+        )
         .fetch_one(&pool)
         .await
         .unwrap_or(0);
 
-    let audit_logs = sqlx::query_as::<_, AuditLog>(
-        "SELECT id, timestamp, user, action, target_type, target_id, details FROM audit_logs ORDER BY id DESC LIMIT 8"
+        let circular_count: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM accounts WHERE is_ground_truth_mule = 1 OR flags_json LIKE '%Circular%'"
+        )
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
+
+        if smurfing_count > 0 {
+            pattern_counts.insert("Fan-In Fan-Out Mule Flow".to_string(), smurfing_count);
+        }
+        if rapid_drain_count > 0 {
+            pattern_counts.insert("Rapid Fund Movement".to_string(), rapid_drain_count);
+        }
+        if circular_count > 0 {
+            pattern_counts.insert("Circular Money Transfer".to_string(), circular_count);
+        }
+    }
+
+    // Denominator documented: total_accounts (pattern prevalence across the account network)
+    let pattern_distribution: Vec<serde_json::Value> = pattern_counts
+        .iter()
+        .map(|(pattern, count)| {
+            let pct = if total_accounts > 0 {
+                format!("{:.1}%", (*count as f64 / total_accounts as f64) * 100.0)
+            } else {
+                "0.0%".to_string()
+            };
+            json!({
+                "pattern": pattern,
+                "count": count,
+                "percentage": pct
+            })
+        })
+        .collect();
+
+    // 6. Priority Action Table: Top 8 suspect accounts ordered deterministically
+    let top_accounts = sqlx::query_as::<_, crate::models::account::Account>(
+        r#"
+        SELECT account_id, customer_name, account_type, created_at, initial_balance, current_balance,
+               status, risk_score, risk_level, prediction_confidence, is_ground_truth_mule,
+               total_incoming, total_outgoing, in_degree, out_degree, unique_counterparties,
+               avg_txn_interval_hours, turnover_ratio, flags_json, embedding_json, notes
+        FROM accounts
+        ORDER BY COALESCE(risk_score, 0.0) DESC, COALESCE(total_incoming, 0.0) DESC, account_id ASC
+        LIMIT 8
+        "#
     )
     .fetch_all(&pool)
-    .await
-    .unwrap_or_default();
+    .await?;
 
-    // Query recent high risk suspicious accounts
-    let recent_accounts_raw = sqlx::query_as::<_, Account>(
-        "SELECT account_id, customer_name, account_type, created_at, initial_balance, current_balance, status, risk_score, risk_level, prediction_confidence, is_ground_truth_mule, total_incoming, total_outgoing, in_degree, out_degree, unique_counterparties, avg_txn_interval_hours, turnover_ratio, flags_json, embedding_json, notes FROM accounts WHERE risk_level = 'High' OR risk_score >= 0.70 ORDER BY risk_score DESC, total_incoming DESC LIMIT 8"
-    )
-    .fetch_all(&pool)
-    .await
-    .unwrap_or_default();
-
-    let recent_suspicious_accounts: Vec<serde_json::Value> = recent_accounts_raw
+    let recent_suspicious_accounts: Vec<serde_json::Value> = top_accounts
         .into_iter()
         .map(|acc| {
-            let flags: Vec<String> = acc.flags_json
+            let flags: Vec<String> = acc
+                .flags_json
                 .as_ref()
                 .and_then(|f| serde_json::from_str(f).ok())
                 .unwrap_or_default();
@@ -124,90 +236,86 @@ async fn get_overview(
                 "account_id": acc.account_id,
                 "customer_name": acc.customer_name.unwrap_or_else(|| acc.account_id.clone()),
                 "risk_score": acc.risk_score.unwrap_or(0.0),
-                "risk_level": acc.risk_level.unwrap_or_else(|| "High".to_string()),
+                "risk_level": acc.risk_level.unwrap_or_else(|| "Low".to_string()),
                 "total_incoming": acc.total_incoming.unwrap_or(0.0),
                 "total_outgoing": acc.total_outgoing.unwrap_or(0.0),
+                "turnover_ratio": acc.turnover_ratio.unwrap_or(0.0),
                 "flags": flags
             })
         })
         .collect();
 
+    // 7. Transaction Volume Timeline (Chronological day-by-day volume)
     #[derive(sqlx::FromRow)]
-    struct DayVol {
-        date: Option<String>,
-        vol: Option<f64>,
+    struct DailyVolumeRow {
+        day: String,
+        vol: f64,
     }
 
-    let daily_vols = sqlx::query_as::<_, DayVol>(
-        "SELECT substr(timestamp, 1, 10) as date, SUM(amount) as vol FROM transactions GROUP BY substr(timestamp, 1, 10) ORDER BY substr(timestamp, 1, 10) DESC LIMIT 10"
+    let volume_rows = sqlx::query_as::<_, DailyVolumeRow>(
+        r#"
+        SELECT substr(timestamp, 1, 10) as day, COALESCE(SUM(amount), 0.0) as vol
+        FROM transactions
+        WHERE timestamp IS NOT NULL AND timestamp != ''
+        GROUP BY day
+        ORDER BY day ASC
+        "#,
     )
     .fetch_all(&pool)
-    .await
-    .unwrap_or_default();
+    .await?;
 
-    let mut transaction_volume_by_day: Vec<serde_json::Value> = daily_vols
+    let transaction_volume_by_day: Vec<serde_json::Value> = volume_rows
         .into_iter()
-        .filter_map(|d| {
-            d.date.map(|date| {
-                json!({
-                    "date": date,
-                    "volume": d.vol.unwrap_or(0.0)
-                })
+        .map(|r| {
+            json!({
+                "date": r.day,
+                "volume": (r.vol * 100.0).round() / 100.0
             })
         })
         .collect();
-    transaction_volume_by_day.reverse();
 
-    let top_suspicious_patterns = json!({
-        "Circular Money Transfer": 25,
-        "Fan-In Fan-Out Mule Flow": 14,
-        "Rapid Fund Movement": 9,
-        "High Turnover Drain": 8,
-        "Aggregator Funneling": 7,
-        "High Frequency Burst": 7
+    // 8. Recent Audit Logs
+    let audit_logs = sqlx::query_as::<_, AuditLog>(
+        "SELECT id, timestamp, user, action, target_type, target_id, details FROM audit_logs ORDER BY id DESC LIMIT 8"
+    )
+    .fetch_all(&pool)
+    .await?;
+
+    // 9. Backward compatibility metrics object
+    let metrics = json!({
+        "total_accounts": total_accounts,
+        "high_risk_mules": high_risk_accounts,
+        "total_transactions": total_txns,
+        "suspicious_transactions": suspicious_txns,
+        "total_volume": total_volume,
+        "suspicious_volume": suspicious_volume,
+        "active_cases": open_cases,
+        "total_complaints": total_complaints,
+        "active_alerts": active_alerts
     });
 
-    let risk_distribution = json!([
-        { "name": "Low Risk", "value": low_risk_count, "color": "#10b981" },
-        { "name": "Medium Risk", "value": medium_risk_count, "color": "#f59e0b" },
-        { "name": "High Risk Mules", "value": high_risk_accounts, "color": "#ef4444" },
-    ]);
-
-    let pattern_distribution = json!([
-        { "pattern": "Smurfing Aggregator (Fan-In)", "count": 6, "percentage": "33%" },
-        { "pattern": "Rapid Pass-Through Drain (>90%)", "count": 4, "percentage": "22%" },
-        { "pattern": "Circular Layering Rings", "count": 5, "percentage": "28%" },
-        { "pattern": "High Volume Surge", "count": 3, "percentage": "17%" }
-    ]);
-
     Ok(Json(json!({
+        // Root-level fields for React Dashboard
         "total_accounts": total_accounts,
         "total_transactions": total_txns,
         "total_volume": total_volume,
-        "flagged_accounts": high_risk_accounts + medium_risk_count,
         "high_risk_accounts": high_risk_accounts,
-        "medium_risk_accounts": medium_risk_count,
-        "low_risk_accounts": low_risk_count,
-        "open_cases": active_cases,
-        "closed_cases": 0,
+        "medium_risk_accounts": medium_risk_accounts,
+        "low_risk_accounts": low_risk_accounts,
+        "flagged_accounts": flagged_accounts,
+        "active_alerts": active_alerts,
+        "open_cases": open_cases,
+        "closed_cases": closed_cases,
         "total_complaints": total_complaints,
-        "total_complaint_amount": 0.0,
-        "top_suspicious_patterns": top_suspicious_patterns,
+        "total_complaint_amount": total_complaint_amount,
+        "risk_distribution": risk_distribution,
+        "top_suspicious_patterns": pattern_counts,
+        "pattern_distribution": pattern_distribution,
         "recent_suspicious_accounts": recent_suspicious_accounts,
         "transaction_volume_by_day": transaction_volume_by_day,
-        "metrics": {
-            "total_accounts": total_accounts,
-            "high_risk_mules": high_risk_accounts,
-            "total_transactions": total_txns,
-            "suspicious_transactions": suspicious_txns,
-            "total_volume": total_volume,
-            "suspicious_volume": suspicious_volume,
-            "active_cases": active_cases,
-            "total_complaints": total_complaints,
-        },
-        "risk_distribution": risk_distribution,
-        "pattern_distribution": pattern_distribution,
         "recent_audit_logs": audit_logs,
+        // Backward compatibility
+        "metrics": metrics,
         "system_status": {
             "model_version": "GraphSAGE-v2.1",
             "gan_version": "CWGAN-GP-v1.4",
@@ -217,9 +325,7 @@ async fn get_overview(
     })))
 }
 
-async fn get_risk_distribution(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn get_risk_distribution(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     #[derive(sqlx::FromRow)]
     struct RiskDistRow {
         total: i64,
@@ -233,10 +339,10 @@ async fn get_risk_distribution(
         r#"
         SELECT
             COUNT(*) as total,
-            SUM(CASE WHEN risk_level = 'High' OR risk_score >= 0.70 THEN 1 ELSE 0 END) as high,
-            SUM(CASE WHEN risk_level = 'Medium' OR (risk_score >= 0.40 AND risk_score < 0.70) THEN 1 ELSE 0 END) as medium,
-            SUM(CASE WHEN risk_level = 'Low' OR risk_score < 0.40 THEN 1 ELSE 0 END) as low,
-            SUM(CASE WHEN risk_score IS NULL THEN 1 ELSE 0 END) as unscored
+            COALESCE(SUM(CASE WHEN (risk_score IS NOT NULL AND risk_score >= 0.70) OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) IN ('HIGH', 'CRITICAL')) THEN 1 ELSE 0 END), 0) as high,
+            COALESCE(SUM(CASE WHEN (risk_score IS NOT NULL AND risk_score >= 0.40 AND risk_score < 0.70) OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) = 'MEDIUM') THEN 1 ELSE 0 END), 0) as medium,
+            COALESCE(SUM(CASE WHEN (risk_score IS NOT NULL AND risk_score < 0.40) OR (risk_score IS NULL AND UPPER(COALESCE(risk_level, '')) NOT IN ('HIGH', 'CRITICAL', 'MEDIUM')) THEN 1 ELSE 0 END), 0) as low,
+            COALESCE(SUM(CASE WHEN risk_score IS NULL AND (risk_level IS NULL OR UPPER(risk_level) NOT IN ('HIGH', 'CRITICAL', 'MEDIUM', 'LOW')) THEN 1 ELSE 0 END), 0) as unscored
         FROM accounts
         "#
     )
@@ -270,12 +376,10 @@ async fn get_risk_distribution(
     })))
 }
 
-async fn get_fraud_patterns(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn get_fraud_patterns(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     // Query accounts with flags_json
     let rows: Vec<(String, Option<String>, Option<f64>)> = sqlx::query_as(
-        "SELECT account_id, flags_json, risk_score FROM accounts WHERE flags_json IS NOT NULL"
+        "SELECT account_id, flags_json, risk_score FROM accounts WHERE flags_json IS NOT NULL",
     )
     .fetch_all(&pool)
     .await?;
@@ -391,23 +495,8 @@ async fn get_fraud_patterns(
     })))
 }
 
-async fn scan_fraud_patterns(
-    State(pool): State<DbPool>,
-) -> Result<impl IntoResponse, AppError> {
+async fn scan_fraud_patterns(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let now = Utc::now().to_rfc3339();
-
-    // Log the scan execution to audit_logs
-    let _ = sqlx::query(
-        "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)"
-    )
-    .bind(&now)
-    .bind("Investigator")
-    .bind("PATTERN_SCAN_EXECUTED")
-    .bind("SYSTEM")
-    .bind("ALL_ACCOUNTS")
-    .bind("Executed modular heuristic pattern scan across 1948 accounts and 3160 transactions")
-    .execute(&pool)
-    .await;
 
     let total_accounts: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
         .fetch_one(&pool)
@@ -419,12 +508,51 @@ async fn scan_fraud_patterns(
         .await
         .unwrap_or(0);
 
+    let flag_rows: Vec<Option<String>> = sqlx::query_scalar(
+        "SELECT flags_json FROM accounts WHERE flags_json IS NOT NULL AND flags_json != '' AND flags_json != '[]'"
+    )
+    .fetch_all(&pool)
+    .await
+    .unwrap_or_default();
+
+    let mut pattern_count: usize = 0;
+    for f_str in flag_rows.into_iter().flatten() {
+        if let Ok(flags) = serde_json::from_str::<Vec<String>>(&f_str) {
+            pattern_count += flags.len();
+        }
+    }
+
+    let active_alerts: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM alerts WHERE status NOT IN ('Resolved', 'Dismissed', 'Closed')",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap_or(0);
+
+    let details = format!(
+        "Executed modular heuristic pattern scan across {} accounts and {} transactions. Identified {} pattern indicators.",
+        total_accounts, total_txns, pattern_count
+    );
+
+    // Log the scan execution to audit_logs
+    let _ = sqlx::query(
+        "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)"
+    )
+    .bind(&now)
+    .bind("Investigator")
+    .bind("PATTERN_SCAN_EXECUTED")
+    .bind("SYSTEM")
+    .bind("ALL_ACCOUNTS")
+    .bind(&details)
+    .execute(&pool)
+    .await;
+
     Ok(Json(json!({
         "status": "COMPLETED",
         "scanned_accounts": total_accounts,
         "scanned_transactions": total_txns,
-        "patterns_detected": 70,
-        "new_alerts_flagged": 4,
+        "patterns_detected": pattern_count,
+        "new_alerts_flagged": active_alerts,
         "duration_ms": 18,
         "timestamp": now,
         "message": "Heuristic fraud pattern scan completed successfully."
@@ -442,7 +570,27 @@ async fn get_transaction_velocity(
         _ => 10, // day / daily
     };
 
-    let mut query = format!(
+    let mut conditions = vec![
+        "timestamp IS NOT NULL".to_string(),
+        "timestamp != ''".to_string(),
+    ];
+    let mut bindings: Vec<String> = Vec::new();
+
+    if let Some(ref from_date) = params.from {
+        conditions.push("timestamp >= ?".to_string());
+        bindings.push(from_date.clone());
+    }
+    if let Some(ref to_date) = params.to {
+        conditions.push("timestamp <= ?".to_string());
+        bindings.push(to_date.clone());
+    }
+    if let Some(ref acc) = params.account_id {
+        conditions.push("(sender_account = ? OR receiver_account = ?)".to_string());
+        bindings.push(acc.clone());
+        bindings.push(acc.clone());
+    }
+
+    let query_str = format!(
         r#"
         SELECT
             substr(timestamp, 1, {}) as period,
@@ -452,22 +600,14 @@ async fn get_transaction_velocity(
             SUM(CASE WHEN is_suspicious = 1 THEN 1 ELSE 0 END) as suspicious_count,
             COALESCE(SUM(CASE WHEN is_suspicious = 1 THEN amount ELSE 0.0 END), 0.0) as suspicious_volume
         FROM transactions
-        WHERE timestamp IS NOT NULL AND timestamp != ''
+        WHERE {}
+        GROUP BY substr(timestamp, 1, {})
+        ORDER BY period ASC
         "#,
+        len,
+        conditions.join(" AND "),
         len
     );
-
-    if let Some(ref from_date) = params.from {
-        query.push_str(&format!(" AND timestamp >= '{}'", from_date));
-    }
-    if let Some(ref to_date) = params.to {
-        query.push_str(&format!(" AND timestamp <= '{}'", to_date));
-    }
-    if let Some(ref acc) = params.account_id {
-        query.push_str(&format!(" AND (sender_account = '{}' OR receiver_account = '{}')", acc, acc));
-    }
-
-    query.push_str(&format!(" GROUP BY substr(timestamp, 1, {}) ORDER BY period ASC", len));
 
     #[derive(sqlx::FromRow)]
     struct VelocityRow {
@@ -479,9 +619,11 @@ async fn get_transaction_velocity(
         suspicious_volume: f64,
     }
 
-    let rows = sqlx::query_as::<_, VelocityRow>(&query)
-        .fetch_all(&pool)
-        .await?;
+    let mut query = sqlx::query_as::<_, VelocityRow>(&query_str);
+    for b in bindings {
+        query = query.bind(b);
+    }
+    let rows = query.fetch_all(&pool).await?;
 
     let points: Vec<serde_json::Value> = rows
         .into_iter()

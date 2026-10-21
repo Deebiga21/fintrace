@@ -9,10 +9,7 @@ use reqwest::Client;
 use serde_json::json;
 use std::sync::Arc;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-};
+use crate::{database::DbPool, errors::AppError};
 
 #[derive(Clone)]
 pub struct ModelsState {
@@ -96,10 +93,11 @@ async fn get_registry() -> impl IntoResponse {
     }))
 }
 
-async fn score_gnn(
-    State(state): State<Arc<ModelsState>>,
-) -> Result<impl IntoResponse, AppError> {
-    let job_id = format!("JOB-GNN-{}", uuid::Uuid::new_v4().to_string()[..8].to_uppercase());
+async fn score_gnn(State(state): State<Arc<ModelsState>>) -> Result<impl IntoResponse, AppError> {
+    let job_id = format!(
+        "JOB-GNN-{}",
+        uuid::Uuid::new_v4().to_string()[..8].to_uppercase()
+    );
     let now = Utc::now().to_rfc3339();
 
     // 1. Create a background job entry in jobs table
@@ -109,7 +107,7 @@ async fn score_gnn(
             job_id, job_type, status, progress, result_json,
             error_message, created_at, updated_at
         ) VALUES ($1, 'GNN_SCORING', 'RUNNING', 10.0, NULL, NULL, $2, $2)
-        "#
+        "#,
     )
     .bind(&job_id)
     .bind(&now)
@@ -139,7 +137,7 @@ async fn score_gnn(
             result_json = $1,
             updated_at = $2
         WHERE job_id = $3
-        "#
+        "#,
     )
     .bind(&result_str)
     .bind(&complete_time)
@@ -148,7 +146,10 @@ async fn score_gnn(
     .await;
 
     // Log to audit log
-    let details = format!("Executed GNN inference job {} across 1948 transaction graph nodes", job_id);
+    let details = format!(
+        "Executed GNN inference job {} across 1948 transaction graph nodes",
+        job_id
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)"
     )
@@ -190,10 +191,11 @@ async fn get_gnn_status() -> impl IntoResponse {
     }))
 }
 
-async fn train_gnn(
-    State(state): State<Arc<ModelsState>>,
-) -> Result<impl IntoResponse, AppError> {
-    let job_id = format!("JOB-TRN-GNN-{}", uuid::Uuid::new_v4().to_string()[..8].to_uppercase());
+async fn train_gnn(State(state): State<Arc<ModelsState>>) -> Result<impl IntoResponse, AppError> {
+    let job_id = format!(
+        "JOB-TRN-GNN-{}",
+        uuid::Uuid::new_v4().to_string()[..8].to_uppercase()
+    );
     let now = Utc::now().to_rfc3339();
 
     let _ = sqlx::query(
@@ -202,7 +204,7 @@ async fn train_gnn(
             job_id, job_type, status, progress, result_json,
             error_message, created_at, updated_at
         ) VALUES ($1, 'GNN_TRAINING', 'COMPLETED', 100.0, $2, NULL, $3, $3)
-        "#
+        "#,
     )
     .bind(&job_id)
     .bind(json!({"loss": 0.182, "epochs": 50, "val_f1": 0.893}).to_string())
@@ -249,10 +251,11 @@ async fn get_gnn_evaluation() -> impl IntoResponse {
     }))
 }
 
-async fn train_gan(
-    State(state): State<Arc<ModelsState>>,
-) -> Result<impl IntoResponse, AppError> {
-    let job_id = format!("JOB-TRN-GAN-{}", uuid::Uuid::new_v4().to_string()[..8].to_uppercase());
+async fn train_gan(State(state): State<Arc<ModelsState>>) -> Result<impl IntoResponse, AppError> {
+    let job_id = format!(
+        "JOB-TRN-GAN-{}",
+        uuid::Uuid::new_v4().to_string()[..8].to_uppercase()
+    );
     let now = Utc::now().to_rfc3339();
 
     let _ = sqlx::query(
@@ -261,7 +264,7 @@ async fn train_gan(
             job_id, job_type, status, progress, result_json,
             error_message, created_at, updated_at
         ) VALUES ($1, 'GAN_TRAINING', 'COMPLETED', 100.0, $2, NULL, $3, $3)
-        "#
+        "#,
     )
     .bind(&job_id)
     .bind(json!({"g_loss": -0.042, "d_loss": 0.081, "wasserstein_dist": 0.042}).to_string())

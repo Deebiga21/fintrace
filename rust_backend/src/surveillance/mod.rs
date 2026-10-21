@@ -1,16 +1,8 @@
-use axum::{
-    extract::State,
-    response::IntoResponse,
-    routing::get,
-    Json, Router,
-};
+use axum::{extract::State, response::IntoResponse, routing::get, Json, Router};
 use chrono::Utc;
 use serde_json::json;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-};
+use crate::{database::DbPool, errors::AppError};
 
 pub fn router(pool: DbPool) -> Router {
     Router::new()

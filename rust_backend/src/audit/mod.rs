@@ -7,11 +7,7 @@ use axum::{
 use serde::Deserialize;
 use serde_json::json;
 
-use crate::{
-    database::DbPool,
-    errors::AppError,
-    models::audit::AuditLog,
-};
+use crate::{database::DbPool, errors::AppError, models::audit::AuditLog};
 
 #[derive(Debug, Deserialize)]
 pub struct AuditLogQuery {

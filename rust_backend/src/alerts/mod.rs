@@ -54,9 +54,7 @@ async fn list_alerts(
 
     query.push_str(" ORDER BY created_at DESC");
 
-    let alerts = sqlx::query_as::<_, Alert>(&query)
-        .fetch_all(&pool)
-        .await?;
+    let alerts = sqlx::query_as::<_, Alert>(&query).fetch_all(&pool).await?;
 
     Ok(Json(json!({
         "total": alerts.len(),
@@ -68,7 +66,10 @@ async fn create_alert(
     State(pool): State<DbPool>,
     Json(payload): Json<CreateAlertRequest>,
 ) -> Result<impl IntoResponse, AppError> {
-    let alert_id = format!("ALT-{}", uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_uppercase());
+    let alert_id = format!(
+        "ALT-{}",
+        uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_uppercase()
+    );
     let now = Utc::now().to_rfc3339();
 
     sqlx::query(
@@ -88,7 +89,10 @@ async fn create_alert(
     .await?;
 
     // Record in audit log
-    let details = format!("Created alert {} for {} {}", alert_id, payload.target_type, payload.target_id);
+    let details = format!(
+        "Created alert {} for {} {}",
+        alert_id, payload.target_type, payload.target_id
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)"
     )
@@ -125,16 +129,17 @@ async fn acknowledge_alert(
     .await?
     .ok_or_else(|| AppError::NotFound(format!("Alert {} not found", id)))?;
 
-    sqlx::query(
-        "UPDATE alerts SET status = 'Acknowledged', updated_at = $1 WHERE alert_id = $2"
-    )
-    .bind(&now)
-    .bind(&id)
-    .execute(&pool)
-    .await?;
+    sqlx::query("UPDATE alerts SET status = 'Acknowledged', updated_at = $1 WHERE alert_id = $2")
+        .bind(&now)
+        .bind(&id)
+        .execute(&pool)
+        .await?;
 
     // Record audit log
-    let details = format!("Acknowledged alert {} (previous status: {})", id, existing.status);
+    let details = format!(
+        "Acknowledged alert {} (previous status: {})",
+        id, existing.status
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)"
     )
@@ -191,7 +196,7 @@ async fn patch_alert(
             notes = $3,
             updated_at = $4
         WHERE alert_id = $5
-        "#
+        "#,
     )
     .bind(&status)
     .bind(&assigned)
@@ -202,7 +207,10 @@ async fn patch_alert(
     .await?;
 
     // Record audit log
-    let details = format!("Alert {} updated. Status: {} -> {}, Assigned: {:?}", id, existing.status, status, assigned);
+    let details = format!(
+        "Alert {} updated. Status: {} -> {}, Assigned: {:?}",
+        id, existing.status, status, assigned
+    );
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)"
     )
@@ -252,7 +260,7 @@ async fn update_alert(
             notes = $3,
             updated_at = $4
         WHERE alert_id = $5
-        "#
+        "#,
     )
     .bind(&status)
     .bind(&assigned)

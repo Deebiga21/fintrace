@@ -1,30 +1,30 @@
 {
-  "dataset_filename": "proposed_cleaned_transactions.csv",
-  "provenance": "Proposed Randomized Banking Statements (25 Accounts from CBS Finacle/BaNCS Extracts)",
-  "source_url": "Proposed_Data_Randomized_Final Archive",
-  "license": "Core Banking Transaction Extracts (Strictly Randomized & Anonymized for Research)",
-  "domain": "Indian Core Banking System (CBS) Statement of Accounts (INR 785.36 Crore)",
-  "domain_comparison": "Real Core Banking Statement of Accounts (SOAs) across 25 primary entities and 254,617 counterparties. Features high-velocity pass-through conduit behavior (turnover ratios 0.98 - 1.04), abrupt account closures, and regulatory total freeze ground truths (ACC_SOA_03).",
-  "total_transactions": 494262,
-  "total_accounts": 254617,
-  "unique_senders": 194851,
-  "unique_receivers": 84495,
+  "dataset_filename": "benchmark_transactions.csv",
+  "provenance": "FinTrace Synthetic & Multi-Typology Financial Investigation Benchmark",
+  "source_url": "FinTrace Internal Benchmark Generator",
+  "license": "Research & Regulatory Compliance Prototype (Lawful Internal Verification)",
+  "domain": "Indian Banking & UPI Multi-Typology Mule Network",
+  "domain_comparison": "Custom synthetic benchmark featuring smurfing rings, circular round-trip layering, and rapid pass-through conduit mules.",
+  "total_transactions": 1810,
+  "total_accounts": 217,
+  "unique_senders": 199,
+  "unique_receivers": 166,
   "financial_volume": {
-    "total_volume": 7853617492.11,
-    "min_amount": 0.02,
-    "mean_amount": 15889.58,
-    "median_amount": 2320.0,
-    "max_amount": 31558812.96,
-    "std_amount": 107185.76,
-    "p95_amount": 40373.16,
-    "p99_amount": 314390.01
+    "total_volume": 44963515.34,
+    "min_amount": 54.76,
+    "mean_amount": 24841.72,
+    "median_amount": 6259.74,
+    "max_amount": 514913.43,
+    "std_amount": 49914.82,
+    "p95_amount": 113712.55,
+    "p99_amount": 215962.78
   },
   "class_distribution": {
-    "0": 478683,
-    "1": 15579
+    "False": 1782,
+    "True": 28
   },
-  "class_imbalance_ratio": "30.73:1 (Normal:Fraud)",
+  "class_imbalance_ratio": "63.64:1 (Normal:Fraud)",
   "label_type": "transaction_and_mule_conduit_level",
   "is_synthetic": true,
-  "synthetic_disclaimer": "Statements are randomized for AML/PMLA mule detection research and benchmarking. Statutory verification is required before judicial submission."
+  "synthetic_disclaimer": "Labels reflect simulated financial typologies (smurfing, layering, circular loops, conduit mules) for pipeline and model benchmarking. They must not be claimed as real judicial evidence without statutory verification."
 }
