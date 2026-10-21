@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import CreateCaseModal from './components/CreateCaseModal';
@@ -19,13 +19,71 @@ import CaseDetailsPage from './pages/CaseDetailsPage';
 import AnalyticsReportsPage from './pages/AnalyticsReportsPage';
 import SettingsModelPage from './pages/SettingsModelPage';
 import SystemPipelinePage from './pages/SystemPipelinePage';
+import { wsService } from './services/websocket';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('landing');
+  // Support direct URL hash deep linking e.g. #case-details?id=CASE-2026-001 or #cases
+  const [currentPage, setCurrentPage] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash.startsWith('case-details')) return 'case-details';
+    if (hash.startsWith('cases')) return 'cases';
+    return hash ? hash.split('?')[0] : 'landing';
+  });
+
   const [selectedAccount, setSelectedAccount] = useState('ACC_SOA_03');
-  const [selectedCaseId, setSelectedCaseId] = useState(null);
+
+  const [selectedCaseId, setSelectedCaseId] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash.includes('id=')) {
+      const match = hash.match(/id=([^&]+)/);
+      if (match) return decodeURIComponent(match[1]);
+    }
+    return null;
+  });
+
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isLivePipelineOpen, setIsLivePipelineOpen] = useState(false);
+
+  // Subscribe to real-time WebSockets
+  useEffect(() => {
+    wsService.connect();
+    const unsubscribe = wsService.subscribe((msg) => {
+      if (msg && msg.event && msg.event.startsWith('case.')) {
+        console.log('[FinTrace App] Real-time case event received:', msg.event, msg.case_id);
+        setRefreshTrigger((prev) => prev + 1);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Sync window hash for direct bookmarking, reload, and browser back/forward
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash.startsWith('case-details')) {
+        setCurrentPage('case-details');
+        const match = hash.match(/id=([^&]+)/);
+        if (match) {
+          setSelectedCaseId(decodeURIComponent(match[1]));
+        }
+      } else if (hash.startsWith('cases')) {
+        setCurrentPage('cases');
+      } else if (hash) {
+        setCurrentPage(hash.split('?')[0]);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Sync window hash for direct bookmarking and reload
+  useEffect(() => {
+    if (currentPage === 'case-details' && selectedCaseId) {
+      window.location.hash = `#case-details?id=${encodeURIComponent(selectedCaseId)}`;
+    } else if (currentPage !== 'landing') {
+      window.location.hash = `#${currentPage}`;
+    }
+  }, [currentPage, selectedCaseId]);
 
   // Global Create Case Modal
   const [isCreateCaseOpen, setIsCreateCaseOpen] = useState(false);
@@ -37,8 +95,9 @@ export default function App() {
   };
 
   const handleCaseCreated = (newCase) => {
-    setSelectedCaseId(newCase.case_id);
-    setRefreshTrigger(prev => prev + 1);
+    const newId = newCase.case_id || newCase.case_number;
+    setSelectedCaseId(newId);
+    setRefreshTrigger((prev) => prev + 1);
     setCurrentPage('case-details');
   };
 
@@ -200,6 +259,7 @@ export default function App() {
               setCurrentPage={setCurrentPage}
               setSelectedCaseId={setSelectedCaseId}
               onOpenCreateCase={handleOpenCreateCase}
+              onAccountSelect={handleAccountSelect}
               refreshTrigger={refreshTrigger}
           onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
             />
@@ -208,6 +268,7 @@ export default function App() {
           {currentPage === 'case-details' && (
             <CaseDetailsPage
               caseId={selectedCaseId}
+              setSelectedCaseId={setSelectedCaseId}
               setCurrentPage={setCurrentPage}
               onAccountSelect={handleAccountSelect}
               refreshTrigger={refreshTrigger}

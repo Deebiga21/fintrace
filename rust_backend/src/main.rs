@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pool = database::init_db(&cfg.database_url).await?;
 
     // WebSocket router and broadcaster
-    let (ws_router, _ws_tx) = ws::router();
+    let (ws_router, ws_tx) = ws::router();
 
     // CORS configuration matching frontend Vite dev server
     let cors = CorsLayer::new()
@@ -54,8 +54,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             money_trail::investigations_router(pool.clone()),
         )
         .nest("/complaints", complaints::router(pool.clone()))
-        .nest("/cases", cases::router(pool.clone()))
-        .nest("/evidence", cases::evidence_router(pool.clone()))
+        .nest("/cases", cases::router_with_ws(pool.clone(), ws_tx.clone()))
+        .nest("/evidence", cases::evidence_router_with_ws(pool.clone(), ws_tx.clone()))
         .nest("/alerts", alerts::router(pool.clone()))
         .nest("/analytics", analytics::router(pool.clone()))
         .nest("/patterns", analytics::patterns_router(pool.clone()))

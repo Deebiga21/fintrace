@@ -287,35 +287,102 @@ async fn create_tables(pool: &DbPool) -> Result<(), sqlx::Error> {
     .execute(pool)
     .await;
 
+    // Safe schema additions for Cases and Evidentiary Locker (Phase 2)
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN case_number TEXT").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN created_by TEXT DEFAULT 'INV-7809-DELHI'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN source_type TEXT DEFAULT 'Manual'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN source_reference_id TEXT").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN closure_reason TEXT").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN version INTEGER DEFAULT 1").execute(pool).await;
+
+    // Backfill case_number and version for existing cases
+    let _ = sqlx::query("UPDATE cases SET case_number = case_id WHERE case_number IS NULL OR case_number = ''").execute(pool).await;
+    let _ = sqlx::query("UPDATE cases SET version = 1 WHERE version IS NULL").execute(pool).await;
+    let _ = sqlx::query("UPDATE cases SET created_by = assigned_investigator WHERE created_by IS NULL").execute(pool).await;
+    let _ = sqlx::query("UPDATE cases SET source_type = 'Manual' WHERE source_type IS NULL").execute(pool).await;
+
+    // Safe schema additions for Case Evidence
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN status TEXT DEFAULT 'Active'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN attached_by TEXT DEFAULT 'Investigator'").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN integrity_hash TEXT").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_path TEXT").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_name TEXT").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_size INTEGER DEFAULT 0").execute(pool).await;
+    let _ = sqlx::query("UPDATE case_evidence SET status = 'Active' WHERE status IS NULL OR status = ''").execute(pool).await;
+
+    // Create case_accounts and case_transactions junction tables
+    let _ = sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS case_accounts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            case_id TEXT NOT NULL,
+            account_id TEXT NOT NULL,
+            role TEXT DEFAULT 'Suspect Account',
+            notes TEXT,
+            linked_at TEXT NOT NULL,
+            linked_by TEXT DEFAULT 'Investigator',
+            UNIQUE(case_id, account_id),
+            FOREIGN KEY (case_id) REFERENCES cases(case_id)
+        );
+
+        CREATE TABLE IF NOT EXISTS case_transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            case_id TEXT NOT NULL,
+            transaction_id TEXT NOT NULL,
+            relevance TEXT DEFAULT 'Flagged Layering Transfer',
+            notes TEXT,
+            linked_at TEXT NOT NULL,
+            linked_by TEXT DEFAULT 'Investigator',
+            UNIQUE(case_id, transaction_id),
+            FOREIGN KEY (case_id) REFERENCES cases(case_id)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_case_accounts_case ON case_accounts(case_id);
+        CREATE INDEX IF NOT EXISTS idx_case_transactions_case ON case_transactions(case_id);
+        CREATE INDEX IF NOT EXISTS idx_case_evidence_case ON case_evidence(case_id);
+        "#,
+    )
+    .execute(pool)
+    .await;
+
     Ok(())
 }
 
 async fn seed_default_users(pool: &DbPool) -> Result<(), sqlx::Error> {
-    let exists: Option<String> =
-        sqlx::query_scalar("SELECT badge_id FROM users WHERE badge_id = 'INV-7809-DELHI'")
-            .fetch_optional(pool)
+    let investigators = [
+        ("INV-7809-DELHI", "Special Investigator Rajesh Verma", "r.verma@fiu-ind.gov.in", "Lead Financial Crime Specialist"),
+        ("INV-4412-MUMBAI", "Senior Investigator Vikramaditya", "vikramaditya@cbi-cyber.gov.in", "Cyber Fraud Directorate"),
+        ("INV-9021-BLR", "Specialist Anita Rao", "a.rao@fiu-ind.gov.in", "FIU Intelligence Directorate"),
+        ("INV-3108-HYD", "Forensic Analyst Arjun Mehta", "a.mehta@cert-in.org.in", "Graph Analytics Unit"),
+    ];
+
+    let salt = "fintrace_demo_salt_2026";
+    let default_hash = crate::auth::hash_password("admin123", salt);
+
+    for (badge_id, name, email, role) in investigators {
+        let exists: Option<String> =
+            sqlx::query_scalar("SELECT badge_id FROM users WHERE badge_id = $1")
+                .bind(badge_id)
+                .fetch_optional(pool)
+                .await?;
+
+        if exists.is_none() {
+            info!("Seeding investigator user: {} ({})", badge_id, name);
+            sqlx::query(
+                r#"
+                INSERT INTO users (id, badge_id, name, email, password_hash, role, created_at)
+                VALUES ($1, $2, $3, $4, $5, $6, datetime('now'))
+                "#,
+            )
+            .bind(uuid::Uuid::new_v4().to_string())
+            .bind(badge_id)
+            .bind(name)
+            .bind(email)
+            .bind(&default_hash)
+            .bind(role)
+            .execute(pool)
             .await?;
-
-    if exists.is_none() {
-        info!("Seeding default investigator: INV-7809-DELHI");
-        // Hash for demo password using Argon2
-        let salt = "fintrace_demo_salt_2026";
-        let default_hash = crate::auth::hash_password("admin123", salt);
-
-        sqlx::query(
-            r#"
-            INSERT INTO users (id, badge_id, name, email, password_hash, role, created_at)
-            VALUES ($1, $2, $3, $4, $5, $6, datetime('now'))
-            "#,
-        )
-        .bind(uuid::Uuid::new_v4().to_string())
-        .bind("INV-7809-DELHI")
-        .bind("Special Investigator Rajesh Verma")
-        .bind("r.verma@fiu-ind.gov.in")
-        .bind(default_hash)
-        .bind("Investigator")
-        .execute(pool)
-        .await?;
+        }
     }
 
     Ok(())

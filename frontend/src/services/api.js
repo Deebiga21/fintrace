@@ -149,29 +149,85 @@ export const api = {
   getComplaintsByAccount: (accountId) =>
     request(`/complaints/by-account/${accountId}`),
 
-  // Cases
+  // Cases & Investigation Management
   getCases: async (params = {}) => {
     const q = new URLSearchParams(params).toString();
     const res = await request(`/cases?${q}`);
     return Array.isArray(res) ? res : (res.cases || []);
   },
-  getCase: (id) => request(`/cases/${id}`),
+  getCasesSummary: () => request("/cases/summary"),
+  getInvestigators: async () => {
+    const res = await request("/cases/investigators").catch(() => ({ investigators: [] }));
+    return res.investigators || [];
+  },
+  getCase: (id) => request(`/cases/${encodeURIComponent(id)}`),
   createCase: (data) =>
     request("/cases", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   updateCase: (id, data) =>
-    request(`/cases/${id}`, {
+    request(`/cases/${encodeURIComponent(id)}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
+  updateCaseStatus: (id, status, closureReason, version) =>
+    request(`/cases/${encodeURIComponent(id)}/status`, {
+      method: "POST",
+      body: JSON.stringify({ status, closure_reason: closureReason, version }),
+    }),
+  updateCasePriority: (id, priority, version) =>
+    request(`/cases/${encodeURIComponent(id)}/priority`, {
+      method: "POST",
+      body: JSON.stringify({ priority, version }),
+    }),
+  updateCaseAssignee: (id, assignee, version) =>
+    request(`/cases/${encodeURIComponent(id)}/assignee`, {
+      method: "POST",
+      body: JSON.stringify({ assigned_investigator: assignee, version }),
+    }),
+  updateCaseFindings: (id, summary, findings, version) =>
+    request(`/cases/${encodeURIComponent(id)}/findings`, {
+      method: "POST",
+      body: JSON.stringify({ summary, findings, version }),
+    }),
+  linkCaseAccount: (id, accountId, role, notes) =>
+    request(`/cases/${encodeURIComponent(id)}/link-account`, {
+      method: "POST",
+      body: JSON.stringify({ account_id: accountId, role, notes }),
+    }),
+  unlinkCaseAccount: (id, accountId) =>
+    request(`/cases/${encodeURIComponent(id)}/unlink-account`, {
+      method: "POST",
+      body: JSON.stringify({ account_id: accountId }),
+    }),
+  linkCaseTransaction: (id, transactionId, relevance, notes) =>
+    request(`/cases/${encodeURIComponent(id)}/link-transaction`, {
+      method: "POST",
+      body: JSON.stringify({ transaction_id: transactionId, relevance, notes }),
+    }),
+  unlinkCaseTransaction: (id, transactionId) =>
+    request(`/cases/${encodeURIComponent(id)}/unlink-transaction`, {
+      method: "POST",
+      body: JSON.stringify({ transaction_id: transactionId }),
+    }),
+  linkCaseComplaint: (id, complaintId) =>
+    request(`/cases/${encodeURIComponent(id)}/link-complaint`, {
+      method: "POST",
+      body: JSON.stringify({ complaint_id: complaintId }),
+    }),
+  getCaseEvidence: (caseId) => request(`/cases/${encodeURIComponent(caseId)}/evidence`),
   addCaseEvidence: (caseId, data) =>
-    request(`/cases/${caseId}/evidence`, {
+    request(`/cases/${encodeURIComponent(caseId)}/evidence`, {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getCaseDossier: (caseId) => request(`/cases/${caseId}/dossier`),
+  removeCaseEvidence: (caseId, evidenceId) =>
+    request(`/cases/${encodeURIComponent(caseId)}/evidence/${evidenceId}`, {
+      method: "DELETE",
+    }),
+  getCaseAudit: (caseId) => request(`/cases/${encodeURIComponent(caseId)}/audit`),
+  getCaseDossier: (caseId) => request(`/cases/${encodeURIComponent(caseId)}/dossier`),
 
   // Ingestion Pipeline APIs
   uploadIngestionCsv: async (file) => {
