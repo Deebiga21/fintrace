@@ -10,7 +10,6 @@ async function request(endpoint, options = {}) {
     ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
     ...options.headers,
   };
-
   try {
     const res = await fetch(url, {
       ...options,
@@ -29,14 +28,6 @@ async function request(endpoint, options = {}) {
 }
 
 export const api = {
-  // Auth
-  login: (badge_id, password) =>
-    request("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ badge_id, password }),
-    }),
-  getMe: () => request("/auth/me"),
-
   // Analytics
   getOverview: () => request("/analytics/overview"),
   getAuditLogs: (limit = 50) => request(`/analytics/audit-logs?limit=${limit}`),
@@ -305,6 +296,13 @@ export const api = {
       body: JSON.stringify(data),
     }),
   getGNNMetrics: () => request("/ml/gnn/metrics"),
+  trainIsolationForest: (data = {}) =>
+    request("/ml/isolation-forest/train", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getIsolationForestMetrics: () => request("/ml/isolation-forest/metrics"),
+  getIsolationForestScores: (limit = 50) => request(`/ml/isolation-forest/scores?limit=${limit}`),
   predictAccount: (accountId) =>
     request("/ml/predict/account", {
       method: "POST",

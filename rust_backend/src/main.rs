@@ -1,12 +1,17 @@
-use axum::{http::Method, response::IntoResponse, routing::get, Json, Router};
+use axum::{
+    http::{HeaderValue, Method},
+    response::IntoResponse,
+    routing::get,
+    Json, Router,
+};
 use fintrace_backend::{
-    accounts, alerts, analytics, audit, auth, cases, complaints, config, dashboard, database,
-    datasets, demo, graph, ingestion, jobs, ml_client, models_api, money_trail, pipeline,
-    surveillance, transactions, ws,
+    accounts, alerts, analytics, audit, cases, complaints, config, dashboard, database, datasets,
+    demo, graph, ingestion, jobs, ml_client, models_api, money_trail, pipeline, surveillance,
+    transactions, ws,
 };
 use serde_json::json;
 use std::net::SocketAddr;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
@@ -29,8 +34,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (ws_router, ws_tx) = ws::router();
 
     // CORS configuration matching frontend Vite dev server
+    let allowed_origins: Vec<HeaderValue> = std::env::var("CORS_ALLOWED_ORIGINS")
+        .unwrap_or_else(|_| "http://localhost:5173,http://127.0.0.1:5173".to_string())
+        .split(',')
+        .map(str::trim)
+        .filter(|origin| !origin.is_empty())
+        .map(str::parse)
+        .collect::<Result<_, _>>()?;
     let cors = CorsLayer::new()
-        .allow_origin(Any)
+        .allow_origin(AllowOrigin::list(allowed_origins))
         .allow_methods([
             Method::GET,
             Method::POST,
@@ -43,7 +55,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Mount all modular routers under /api/v1
     let api_v1 = Router::new()
-        .nest("/auth", auth::router(pool.clone(), cfg.jwt_secret.clone()))
         .nest("/transactions", transactions::router(pool.clone()))
         .nest("/accounts", accounts::router(pool.clone()))
         .nest("/graph", graph::router(pool.clone()))
@@ -55,7 +66,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .nest("/complaints", complaints::router(pool.clone()))
         .nest("/cases", cases::router_with_ws(pool.clone(), ws_tx.clone()))
-        .nest("/evidence", cases::evidence_router_with_ws(pool.clone(), ws_tx.clone()))
+        .nest(
+            "/evidence",
+            cases::evidence_router_with_ws(pool.clone(), ws_tx.clone()),
+        )
         .nest("/alerts", alerts::router(pool.clone()))
         .nest("/analytics", analytics::router(pool.clone()))
         .nest("/patterns", analytics::patterns_router(pool.clone()))
@@ -108,7 +122,7 @@ async fn root_handler() -> impl IntoResponse {
         "status": "operational",
         "version": "1.0.0",
         "documentation": "/api/v1/docs",
-        "dataset": "25 Bank Statement of Accounts (SOA)",
+        "dataset": "Synthetic transaction benchmark",
         "ml_service": "Python PyTorch Microservice"
     }))
 }

@@ -44,6 +44,12 @@ pub fn router(pool: DbPool, ml_service_url: String) -> Router {
         .route("/classifier/metrics", get(get_classifier_metrics))
         .route("/gnn/train", post(train_gnn_ml))
         .route("/gnn/metrics", get(get_gnn_metrics))
+        .route("/isolation-forest/train", post(train_isolation_forest))
+        .route(
+            "/isolation-forest/metrics",
+            get(get_isolation_forest_metrics),
+        )
+        .route("/isolation-forest/scores", get(get_isolation_forest_scores))
         .route("/predict/account", post(predict_account))
         .route("/predict/transaction", post(predict_transaction))
         .route("/accounts/ranked", get(get_ranked_accounts))
@@ -226,6 +232,38 @@ async fn get_gnn_metrics(
     State(state): State<Arc<MLClientState>>,
 ) -> Result<impl IntoResponse, AppError> {
     let val = forward_get(&state, "/ml/gnn/metrics").await?;
+    Ok(Json(val))
+}
+
+async fn train_isolation_forest(
+    State(state): State<Arc<MLClientState>>,
+    Json(body): Json<serde_json::Value>,
+) -> Result<impl IntoResponse, AppError> {
+    let val = forward_post(&state, "/ml/isolation-forest/train", body).await?;
+    Ok(Json(val))
+}
+
+async fn get_isolation_forest_metrics(
+    State(state): State<Arc<MLClientState>>,
+) -> Result<impl IntoResponse, AppError> {
+    let val = forward_get(&state, "/ml/isolation-forest/metrics").await?;
+    Ok(Json(val))
+}
+
+async fn get_isolation_forest_scores(
+    State(state): State<Arc<MLClientState>>,
+    Query(params): Query<std::collections::HashMap<String, String>>,
+) -> Result<impl IntoResponse, AppError> {
+    let limit = params
+        .get("limit")
+        .and_then(|value| value.parse::<u16>().ok())
+        .unwrap_or(50)
+        .clamp(1, 500);
+    let val = forward_get(
+        &state,
+        &format!("/ml/isolation-forest/scores?limit={}", limit),
+    )
+    .await?;
     Ok(Json(val))
 }
 

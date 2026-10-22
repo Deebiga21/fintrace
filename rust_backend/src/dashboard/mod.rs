@@ -80,8 +80,8 @@ async fn get_dashboard_summary(State(pool): State<DbPool>) -> Result<impl IntoRe
     .unwrap_or(0);
 
     Ok(Json(json!({
-        "dataset_id": "dataset-soa-proposed",
-        "dataset_name": "Proposed Bank Statement of Accounts (SOA)",
+        "dataset_id": "dataset-synthetic-benchmark",
+        "dataset_name": "Multi-Typology Synthetic Benchmark",
         "currency": "INR",
         "accounts": {
             "total": total_accounts,

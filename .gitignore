@@ -58,3 +58,14 @@ rust_backend/uploads/*.csv
 # Large raw archive files
 *.zip
 backend/app/data/proposed_raw/
+
+# Local transaction data and generated, potentially identifying outputs
+backend/app/data/proposed_cleaned_transactions.csv
+backend/app/data/proposed_account_profiles.csv
+backend/app/ml/artifacts/proposed_data_cleaning_report.json
+backend/app/ml/artifacts/node_mapping.json
+backend/app/ml/artifacts/isolation_forest.joblib
+backend/app/ml/artifacts/isolation_forest_scores.csv
+backend/app/ml/artifacts/isolation_forest_metrics.json
+backend/app/ml/artifacts/*.joblib
+backend/app/ml/artifacts/*.pt

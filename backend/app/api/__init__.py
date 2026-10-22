@@ -6,7 +6,6 @@ from .money_trail import router as money_trail_router
 from .complaints import router as complaints_router
 from .cases import router as cases_router
 from .analytics import router as analytics_router
-from .auth import router as auth_router
 from .ml_router import router as ml_router
 
 __all__ = [
@@ -18,6 +17,5 @@ __all__ = [
     "complaints_router",
     "cases_router",
     "analytics_router",
-    "auth_router",
     "ml_router"
 ]

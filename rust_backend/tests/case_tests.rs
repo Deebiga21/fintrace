@@ -137,7 +137,6 @@ async fn setup_test_db() -> SqlitePool {
             badge_id TEXT UNIQUE NOT NULL,
             name TEXT NOT NULL,
             email TEXT,
-            password_hash TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'Investigator',
             created_at TEXT NOT NULL
         );
@@ -161,7 +160,7 @@ async fn setup_test_db() -> SqlitePool {
     ).execute(&pool).await.unwrap();
 
     sqlx::query(
-        "INSERT INTO users (id, badge_id, name, email, password_hash, role, created_at) VALUES ('usr-1', 'INV-7809-DELHI', 'Special Investigator Rajesh Verma', 'r.verma@fiu-ind.gov.in', 'hash', 'Investigator', datetime('now'))"
+        "INSERT INTO users (id, badge_id, name, email, role, created_at) VALUES ('usr-1', 'INV-7809-DELHI', 'Test Investigator', 'investigator@example.test', 'Investigator', datetime('now'))"
     ).execute(&pool).await.unwrap();
 
     pool
@@ -175,7 +174,7 @@ async fn test_case_creation_and_unique_case_number() {
     let payload = json!({
         "title": "Mule Ring Conduit Infiltration",
         "priority": "Critical",
-        "assigned_investigator": "Special Investigator Rajesh Verma",
+        "assigned_investigator": "Test Investigator",
         "primary_account_id": "ACC_MULE_TEST",
         "summary": "Rapid transfer of 45,000 INR from victim account to suspect conduit.",
         "source_type": "GNN Alert",
@@ -219,11 +218,13 @@ async fn test_case_creation_and_unique_case_number() {
     assert_eq!(count, 1);
 
     // Verify audit log exists
-    let audit_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM audit_logs WHERE target_id = $1 AND action = 'CASE_CREATED'")
-        .bind(case_id)
-        .fetch_one(&pool)
-        .await
-        .unwrap();
+    let audit_count: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM audit_logs WHERE target_id = $1 AND action = 'CASE_CREATED'",
+    )
+    .bind(case_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
     assert_eq!(audit_count, 1);
 
     // Verify initial evidence was recorded with SHA-256 hash
@@ -427,8 +428,14 @@ async fn test_export_dossier_json() {
 
     assert_eq!(dossier["case_id"], case_id);
     assert_eq!(dossier["title"], "Syndicate Prosecution Dossier Test");
-    assert!(dossier["integrity_seal"].as_str().unwrap().starts_with("SHA256:"));
-    assert!(dossier["legal_attestation"].as_str().unwrap().contains("OFFICIAL LAW ENFORCEMENT & FIU DOSSIER"));
+    assert!(dossier["integrity_seal"]
+        .as_str()
+        .unwrap()
+        .starts_with("SHA256:"));
+    assert!(dossier["legal_attestation"]
+        .as_str()
+        .unwrap()
+        .contains("OFFICIAL LAW ENFORCEMENT & FIU DOSSIER"));
     assert_eq!(dossier["primary_account"]["account_id"], "ACC_MULE_TEST");
     assert!(dossier["audit_history"].as_array().unwrap().len() >= 1);
 }

@@ -255,17 +255,17 @@ class MLInferenceService:
 
     def set_active_dataset(self, dataset_key: str):
         """
-        Switches FinTrace's active transaction dataset between 'paysim', 'benchmark', and 'proposed'.
+        Switches between the checked-in synthetic benchmark and PaySim data.
         """
         data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
-        if "proposed" in dataset_key.lower():
-            target_csv = os.path.join(data_dir, "proposed_cleaned_transactions.csv")
-        elif "paysim" in dataset_key.lower():
+        if dataset_key.lower() == "paysim":
             target_csv = os.path.join(data_dir, "paysim_transactions.csv")
-        else:
+        elif dataset_key.lower() == "benchmark":
             target_csv = os.path.join(data_dir, "benchmark_transactions.csv")
             if not os.path.exists(target_csv):
                 target_csv = os.path.join(data_dir, "sample_transactions.csv")
+        else:
+            raise ValueError("dataset_key must be 'benchmark' or 'paysim'")
 
         if not os.path.exists(target_csv):
             raise FileNotFoundError(f"Dataset file {target_csv} does not exist.")
@@ -288,9 +288,7 @@ class MLInferenceService:
 
         # Check active dataset info
         active_name = os.path.basename(self.data_csv)
-        if "proposed" in active_name.lower():
-            active_key = "proposed"
-        elif "paysim" in active_name.lower():
+        if "paysim" in active_name.lower():
             active_key = "paysim"
         else:
             active_key = "benchmark"
@@ -325,16 +323,6 @@ class MLInferenceService:
             "active_dataset": active_key,
             "active_dataset_filename": active_name,
             "available_datasets": [
-                {
-                    "key": "proposed",
-                    "name": "Proposed Bank Statements (25 SOAs)",
-                    "provenance": "Proposed_Data_Randomized_Final Archive (Core Banking Extracts)",
-                    "transactions": 494260,
-                    "accounts": 25,
-                    "fraud_count": 21,
-                    "domain": "Core Banking CBS Statements (₹785+ Crore)",
-                    "description": "Real-world randomized bank statement extracts with 494,260 transactions totaling ₹785+ Crore, containing pass-through conduits and frozen accounts."
-                },
                 {
                     "key": "paysim",
                     "name": "Kaggle PaySim1 (ealaxi/paysim1)",

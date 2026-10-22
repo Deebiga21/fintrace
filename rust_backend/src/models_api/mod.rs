@@ -51,7 +51,7 @@ async fn get_registry() -> impl IntoResponse {
                 "type": "TABULAR",
                 "version": "1.2.0",
                 "active": false,
-                "dataset_compatibility": ["v1.0-SOA-Randomized"],
+                "dataset_compatibility": ["v1.0-Synthetic-Benchmark"],
                 "metrics": {
                     "precision": 0.841,
                     "recall": 0.785,
@@ -66,7 +66,7 @@ async fn get_registry() -> impl IntoResponse {
                 "type": "GRAPH_NEURAL_NETWORK",
                 "version": "1.0.0",
                 "active": true,
-                "dataset_compatibility": ["v1.0-SOA-Randomized"],
+                "dataset_compatibility": ["v1.0-Synthetic-Benchmark"],
                 "metrics": {
                     "precision": 0.912,
                     "recall": 0.875,
@@ -82,7 +82,7 @@ async fn get_registry() -> impl IntoResponse {
                 "type": "GENERATIVE_ADVERSARIAL_NETWORK",
                 "version": "1.0.0",
                 "active": true,
-                "dataset_compatibility": ["v1.0-SOA-Randomized"],
+                "dataset_compatibility": ["v1.0-Synthetic-Benchmark"],
                 "metrics": {
                     "wasserstein_distance": 0.042,
                     "distribution_similarity": 0.941,
@@ -124,7 +124,7 @@ async fn score_gnn(State(state): State<Arc<ModelsState>>) -> Result<impl IntoRes
         "high_risk_flagged": 57,
         "medium_risk_flagged": 134,
         "model_version": "gnn_graphsage_v1.0",
-        "dataset_version": "v1.0-SOA-Randomized"
+        "dataset_version": "v1.0-Synthetic-Benchmark"
     });
     let result_str = serde_json::to_string(&result_data).unwrap_or_default();
     let complete_time = Utc::now().to_rfc3339();
@@ -227,7 +227,7 @@ async fn train_gnn(State(state): State<Arc<ModelsState>>) -> Result<impl IntoRes
 async fn get_gnn_evaluation() -> impl IntoResponse {
     Json(json!({
         "model": "GraphSAGE-MultiTask-v1.0",
-        "dataset_version": "v1.0-SOA-Randomized",
+        "dataset_version": "v1.0-Synthetic-Benchmark",
         "metrics": {
             "precision": 0.912,
             "recall": 0.875,

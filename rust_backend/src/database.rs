@@ -16,9 +16,10 @@ pub async fn init_db(database_url: &str) -> Result<DbPool, sqlx::Error> {
 
     // Create tables if not existing
     create_tables(&pool).await?;
-
-    // Seed default investigator user if not existing
-    seed_default_users(&pool).await?;
+    // Drop legacy password hashes from databases created by earlier versions.
+    let _ = sqlx::query("ALTER TABLE users DROP COLUMN password_hash")
+        .execute(&pool)
+        .await;
 
     Ok(pool)
 }
@@ -143,7 +144,6 @@ async fn create_tables(pool: &DbPool) -> Result<(), sqlx::Error> {
             badge_id TEXT UNIQUE NOT NULL,
             name TEXT NOT NULL,
             email TEXT,
-            password_hash TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'Investigator',
             created_at TEXT NOT NULL
         );
@@ -234,8 +234,6 @@ async fn create_tables(pool: &DbPool) -> Result<(), sqlx::Error> {
         CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts(status);
         CREATE INDEX IF NOT EXISTS idx_jobs_type ON jobs(job_type);
 
-        INSERT OR IGNORE INTO datasets (dataset_id, name, filename, total_rows, valid_rows, invalid_rows, readiness_score, status, fingerprint, metadata_json, created_at)
-        VALUES ('dataset-soa-proposed', 'Proposed Bank Statements of Account (25 CBS Extracts)', 'Proposed_Data_Randomized_Final-20261019T113144Z-1-001.zip', 494262, 3160, 0, 9.8, 'ACTIVE', 'SHA256:44168672:PROP_SOA', '{"provenance":"25 Core Banking Statements","mule_candidates":21,"currency":"INR"}', datetime('now'));
         "#,
     )
     .execute(pool)
@@ -288,27 +286,67 @@ async fn create_tables(pool: &DbPool) -> Result<(), sqlx::Error> {
     .await;
 
     // Safe schema additions for Cases and Evidentiary Locker (Phase 2)
-    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN case_number TEXT").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN created_by TEXT DEFAULT 'INV-7809-DELHI'").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN source_type TEXT DEFAULT 'Manual'").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN source_reference_id TEXT").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN closure_reason TEXT").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN version INTEGER DEFAULT 1").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN case_number TEXT")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN created_by TEXT DEFAULT 'INV-DEMO-LOCAL'")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN source_type TEXT DEFAULT 'Manual'")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN source_reference_id TEXT")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN closure_reason TEXT")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE cases ADD COLUMN version INTEGER DEFAULT 1")
+        .execute(pool)
+        .await;
 
     // Backfill case_number and version for existing cases
-    let _ = sqlx::query("UPDATE cases SET case_number = case_id WHERE case_number IS NULL OR case_number = ''").execute(pool).await;
-    let _ = sqlx::query("UPDATE cases SET version = 1 WHERE version IS NULL").execute(pool).await;
-    let _ = sqlx::query("UPDATE cases SET created_by = assigned_investigator WHERE created_by IS NULL").execute(pool).await;
-    let _ = sqlx::query("UPDATE cases SET source_type = 'Manual' WHERE source_type IS NULL").execute(pool).await;
+    let _ = sqlx::query(
+        "UPDATE cases SET case_number = case_id WHERE case_number IS NULL OR case_number = ''",
+    )
+    .execute(pool)
+    .await;
+    let _ = sqlx::query("UPDATE cases SET version = 1 WHERE version IS NULL")
+        .execute(pool)
+        .await;
+    let _ =
+        sqlx::query("UPDATE cases SET created_by = assigned_investigator WHERE created_by IS NULL")
+            .execute(pool)
+            .await;
+    let _ = sqlx::query("UPDATE cases SET source_type = 'Manual' WHERE source_type IS NULL")
+        .execute(pool)
+        .await;
 
     // Safe schema additions for Case Evidence
-    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN status TEXT DEFAULT 'Active'").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN attached_by TEXT DEFAULT 'Investigator'").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN integrity_hash TEXT").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_path TEXT").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_name TEXT").execute(pool).await;
-    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_size INTEGER DEFAULT 0").execute(pool).await;
-    let _ = sqlx::query("UPDATE case_evidence SET status = 'Active' WHERE status IS NULL OR status = ''").execute(pool).await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN status TEXT DEFAULT 'Active'")
+        .execute(pool)
+        .await;
+    let _ =
+        sqlx::query("ALTER TABLE case_evidence ADD COLUMN attached_by TEXT DEFAULT 'Investigator'")
+            .execute(pool)
+            .await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN integrity_hash TEXT")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_path TEXT")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_name TEXT")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("ALTER TABLE case_evidence ADD COLUMN file_size INTEGER DEFAULT 0")
+        .execute(pool)
+        .await;
+    let _ = sqlx::query(
+        "UPDATE case_evidence SET status = 'Active' WHERE status IS NULL OR status = ''",
+    )
+    .execute(pool)
+    .await;
 
     // Create case_accounts and case_transactions junction tables
     let _ = sqlx::query(
@@ -344,46 +382,6 @@ async fn create_tables(pool: &DbPool) -> Result<(), sqlx::Error> {
     )
     .execute(pool)
     .await;
-
-    Ok(())
-}
-
-async fn seed_default_users(pool: &DbPool) -> Result<(), sqlx::Error> {
-    let investigators = [
-        ("INV-7809-DELHI", "Special Investigator Rajesh Verma", "r.verma@fiu-ind.gov.in", "Lead Financial Crime Specialist"),
-        ("INV-4412-MUMBAI", "Senior Investigator Vikramaditya", "vikramaditya@cbi-cyber.gov.in", "Cyber Fraud Directorate"),
-        ("INV-9021-BLR", "Specialist Anita Rao", "a.rao@fiu-ind.gov.in", "FIU Intelligence Directorate"),
-        ("INV-3108-HYD", "Forensic Analyst Arjun Mehta", "a.mehta@cert-in.org.in", "Graph Analytics Unit"),
-    ];
-
-    let salt = "fintrace_demo_salt_2026";
-    let default_hash = crate::auth::hash_password("admin123", salt);
-
-    for (badge_id, name, email, role) in investigators {
-        let exists: Option<String> =
-            sqlx::query_scalar("SELECT badge_id FROM users WHERE badge_id = $1")
-                .bind(badge_id)
-                .fetch_optional(pool)
-                .await?;
-
-        if exists.is_none() {
-            info!("Seeding investigator user: {} ({})", badge_id, name);
-            sqlx::query(
-                r#"
-                INSERT INTO users (id, badge_id, name, email, password_hash, role, created_at)
-                VALUES ($1, $2, $3, $4, $5, $6, datetime('now'))
-                "#,
-            )
-            .bind(uuid::Uuid::new_v4().to_string())
-            .bind(badge_id)
-            .bind(name)
-            .bind(email)
-            .bind(&default_hash)
-            .bind(role)
-            .execute(pool)
-            .await?;
-        }
-    }
 
     Ok(())
 }

@@ -6,7 +6,6 @@ import LivePipelineExecutionModal from './components/LivePipelineExecutionModal'
 
 // Pages
 import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import UploadPage from './pages/UploadPage';
 import TransactionsPage from './pages/TransactionsPage';
@@ -30,7 +29,7 @@ export default function App() {
     return hash ? hash.split('?')[0] : 'landing';
   });
 
-  const [selectedAccount, setSelectedAccount] = useState('ACC_SOA_03');
+  const [selectedAccount, setSelectedAccount] = useState('DEMO_ACCOUNT_03');
 
   const [selectedCaseId, setSelectedCaseId] = useState(() => {
     const hash = window.location.hash.replace('#', '');
@@ -54,7 +53,7 @@ export default function App() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [currentPage]);
 
   // Sync window hash for direct bookmarking, reload, and browser back/forward
   useEffect(() => {
@@ -164,13 +163,6 @@ export default function App() {
             <LandingPage
               setCurrentPage={setCurrentPage}
               onAccountSelect={handleAccountSelect}
-            />
-          )}
-
-          {currentPage === 'login' && (
-            <LoginPage
-              setCurrentPage={setCurrentPage}
-              onLoginSuccess={(inv) => console.log('Authenticated:', inv)}
             />
           )}
 

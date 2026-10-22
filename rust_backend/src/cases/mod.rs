@@ -18,11 +18,10 @@ use crate::{
     models::{
         account::Account,
         case::{
-            AddEvidenceRequest, CaseAuditLog, CaseDossier, CaseEvidence,
-            CreateCaseRequest, InvestigationCase, LinkAccountRequest,
-            LinkComplaintRequest, LinkTransactionRequest, UpdateCaseAssigneeRequest,
-            UpdateCaseFindingsRequest, UpdateCasePriorityRequest, UpdateCaseRequest,
-            UpdateCaseStatusRequest,
+            AddEvidenceRequest, CaseAuditLog, CaseDossier, CaseEvidence, CreateCaseRequest,
+            InvestigationCase, LinkAccountRequest, LinkComplaintRequest, LinkTransactionRequest,
+            UpdateCaseAssigneeRequest, UpdateCaseFindingsRequest, UpdateCasePriorityRequest,
+            UpdateCaseRequest, UpdateCaseStatusRequest,
         },
         user::User,
     },
@@ -70,13 +69,7 @@ fn broadcast_case_event(
     let _ = ws_tx.send(payload.to_string());
 }
 
-async fn record_case_audit(
-    pool: &DbPool,
-    user: &str,
-    action: &str,
-    case_id: &str,
-    details: &str,
-) {
+async fn record_case_audit(pool: &DbPool, user: &str, action: &str, case_id: &str, details: &str) {
     let now = Utc::now().to_rfc3339();
     let _ = sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, 'CASE', $4, $5)"
@@ -100,13 +93,12 @@ async fn generate_unique_case_number(pool: &DbPool) -> String {
             })
             .collect();
         let candidate = format!("CASE-{}-{}", year, rand_chars);
-        let count: i64 = sqlx::query_scalar(
-            "SELECT COUNT(*) FROM cases WHERE case_number = $1 OR case_id = $1",
-        )
-        .bind(&candidate)
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
+        let count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM cases WHERE case_number = $1 OR case_id = $1")
+                .bind(&candidate)
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
         if count == 0 {
             return candidate;
         }
@@ -254,21 +246,19 @@ async fn list_cases(
         .await
         .unwrap_or(0);
 
-        let acc_count: i64 = sqlx::query_scalar(
-            "SELECT COUNT(*) FROM case_accounts WHERE case_id = $1"
-        )
-        .bind(&c.case_id)
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
+        let acc_count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM case_accounts WHERE case_id = $1")
+                .bind(&c.case_id)
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
 
-        let txn_count: i64 = sqlx::query_scalar(
-            "SELECT COUNT(*) FROM case_transactions WHERE case_id = $1"
-        )
-        .bind(&c.case_id)
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
+        let txn_count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM case_transactions WHERE case_id = $1")
+                .bind(&c.case_id)
+                .fetch_one(pool)
+                .await
+                .unwrap_or(0);
 
         enriched_cases.push(json!({
             "case_id": c.case_id,
@@ -345,7 +335,21 @@ async fn get_case(
     .unwrap_or_default();
 
     // Linked Accounts with details
-    let linked_accounts = sqlx::query_as::<_, (i64, String, Option<String>, Option<String>, String, Option<String>, Option<String>, Option<String>, Option<f64>, Option<f64>)>(
+    let linked_accounts = sqlx::query_as::<
+        _,
+        (
+            i64,
+            String,
+            Option<String>,
+            Option<String>,
+            String,
+            Option<String>,
+            Option<String>,
+            Option<String>,
+            Option<f64>,
+            Option<f64>,
+        ),
+    >(
         r#"
         SELECT ca.id, ca.account_id, ca.role, ca.notes, ca.linked_at, ca.linked_by,
                a.customer_name, a.risk_level, a.risk_score, a.current_balance
@@ -362,24 +366,40 @@ async fn get_case(
 
     let accounts_json: Vec<serde_json::Value> = linked_accounts
         .into_iter()
-        .map(|(id, acc_id, role, notes, linked_at, linked_by, cust_name, risk_lvl, risk_sc, bal)| {
-            json!({
-                "id": id,
-                "account_id": acc_id,
-                "role": role.unwrap_or_else(|| "Suspect Account".to_string()),
-                "notes": notes,
-                "linked_at": linked_at,
-                "linked_by": linked_by.unwrap_or_else(|| "Investigator".to_string()),
-                "customer_name": cust_name,
-                "risk_level": risk_lvl.unwrap_or_else(|| "Suspect".to_string()),
-                "risk_score": risk_sc.unwrap_or(0.0),
-                "current_balance": bal.unwrap_or(0.0)
-            })
-        })
+        .map(
+            |(id, acc_id, role, notes, linked_at, linked_by, cust_name, risk_lvl, risk_sc, bal)| {
+                json!({
+                    "id": id,
+                    "account_id": acc_id,
+                    "role": role.unwrap_or_else(|| "Suspect Account".to_string()),
+                    "notes": notes,
+                    "linked_at": linked_at,
+                    "linked_by": linked_by.unwrap_or_else(|| "Investigator".to_string()),
+                    "customer_name": cust_name,
+                    "risk_level": risk_lvl.unwrap_or_else(|| "Suspect".to_string()),
+                    "risk_score": risk_sc.unwrap_or(0.0),
+                    "current_balance": bal.unwrap_or(0.0)
+                })
+            },
+        )
         .collect();
 
     // Linked Transactions with details
-    let linked_txns = sqlx::query_as::<_, (i64, String, Option<String>, Option<String>, String, Option<String>, Option<String>, Option<String>, Option<f64>, Option<String>)>(
+    let linked_txns = sqlx::query_as::<
+        _,
+        (
+            i64,
+            String,
+            Option<String>,
+            Option<String>,
+            String,
+            Option<String>,
+            Option<String>,
+            Option<String>,
+            Option<f64>,
+            Option<String>,
+        ),
+    >(
         r#"
         SELECT ct.id, ct.transaction_id, ct.relevance, ct.notes, ct.linked_at, ct.linked_by,
                t.sender_account, t.receiver_account, t.amount, t.timestamp
@@ -396,24 +416,36 @@ async fn get_case(
 
     let txns_json: Vec<serde_json::Value> = linked_txns
         .into_iter()
-        .map(|(id, txn_id, relevance, notes, linked_at, linked_by, sender, receiver, amount, ts)| {
-            json!({
-                "id": id,
-                "transaction_id": txn_id,
-                "relevance": relevance.unwrap_or_else(|| "Flagged Transfer".to_string()),
-                "notes": notes,
-                "linked_at": linked_at,
-                "linked_by": linked_by.unwrap_or_else(|| "Investigator".to_string()),
-                "sender_account": sender,
-                "receiver_account": receiver,
-                "amount": amount.unwrap_or(0.0),
-                "timestamp": ts
-            })
-        })
+        .map(
+            |(id, txn_id, relevance, notes, linked_at, linked_by, sender, receiver, amount, ts)| {
+                json!({
+                    "id": id,
+                    "transaction_id": txn_id,
+                    "relevance": relevance.unwrap_or_else(|| "Flagged Transfer".to_string()),
+                    "notes": notes,
+                    "linked_at": linked_at,
+                    "linked_by": linked_by.unwrap_or_else(|| "Investigator".to_string()),
+                    "sender_account": sender,
+                    "receiver_account": receiver,
+                    "amount": amount.unwrap_or(0.0),
+                    "timestamp": ts
+                })
+            },
+        )
         .collect();
 
     // Correlated Complaints
-    let complaints = sqlx::query_as::<_, (String, Option<String>, String, Option<String>, f64, Option<String>)>(
+    let complaints = sqlx::query_as::<
+        _,
+        (
+            String,
+            Option<String>,
+            String,
+            Option<String>,
+            f64,
+            Option<String>,
+        ),
+    >(
         r#"
         SELECT complaint_id, date_reported, complainant_name, description, amount_lost, status
         FROM complaints
@@ -662,11 +694,12 @@ async fn create_case(
     // If case was spawned from a complaint, link complaint
     if let Some(ref ref_id) = payload.source_reference_id {
         if source_type.to_uppercase() == "COMPLAINT" || ref_id.starts_with("CMP-") {
-            let _ = sqlx::query("UPDATE complaints SET linked_case_id = $1 WHERE complaint_id = $2")
-                .bind(&case_id)
-                .bind(ref_id)
-                .execute(pool)
-                .await;
+            let _ =
+                sqlx::query("UPDATE complaints SET linked_case_id = $1 WHERE complaint_id = $2")
+                    .bind(&case_id)
+                    .bind(ref_id)
+                    .execute(pool)
+                    .await;
         }
     }
 
@@ -676,7 +709,10 @@ async fn create_case(
         created_by,
         "CASE_CREATED",
         &case_id,
-        &format!("Initiated investigation case {}: {}", case_id, payload.title),
+        &format!(
+            "Initiated investigation case {}: {}",
+            case_id, payload.title
+        ),
     )
     .await;
 
@@ -958,15 +994,13 @@ async fn update_case_priority(
     let new_version = existing.version.unwrap_or(1) + 1;
     let now = Utc::now().to_rfc3339();
 
-    sqlx::query(
-        "UPDATE cases SET priority = $1, version = $2, updated_at = $3 WHERE case_id = $4",
-    )
-    .bind(new_prio)
-    .bind(new_version)
-    .bind(&now)
-    .bind(&existing.case_id)
-    .execute(pool)
-    .await?;
+    sqlx::query("UPDATE cases SET priority = $1, version = $2, updated_at = $3 WHERE case_id = $4")
+        .bind(new_prio)
+        .bind(new_version)
+        .bind(&now)
+        .bind(&existing.case_id)
+        .execute(pool)
+        .await?;
 
     let actor = existing
         .assigned_investigator
@@ -1858,15 +1892,26 @@ async fn get_dossier(
         None
     };
 
-    let seal_material = format!("{}:{}:{}:{}", kase.case_id, kase.title, evidence.len(), Utc::now().to_rfc3339());
+    let seal_material = format!(
+        "{}:{}:{}:{}",
+        kase.case_id,
+        kase.title,
+        evidence.len(),
+        Utc::now().to_rfc3339()
+    );
     let seal_hash = compute_sha256(seal_material.as_bytes());
 
     record_case_audit(
         pool,
-        kase.assigned_investigator.as_deref().unwrap_or("Investigator"),
+        kase.assigned_investigator
+            .as_deref()
+            .unwrap_or("Investigator"),
         "DOSSIER_EXPORTED",
         &kase.case_id,
-        &format!("Generated formal legal case dossier (Seal: {})", &seal_hash[..12]),
+        &format!(
+            "Generated formal legal case dossier (Seal: {})",
+            &seal_hash[..12]
+        ),
     )
     .await;
 
@@ -1906,7 +1951,7 @@ async fn get_investigators(
 ) -> Result<impl IntoResponse, AppError> {
     let pool = &state.pool;
     let users = sqlx::query_as::<_, User>(
-        "SELECT id, badge_id, name, email, password_hash, role, created_at FROM users ORDER BY name ASC"
+        "SELECT id, badge_id, name, email, role, created_at FROM users ORDER BY name ASC",
     )
     .fetch_all(pool)
     .await

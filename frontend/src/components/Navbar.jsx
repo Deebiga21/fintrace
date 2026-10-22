@@ -74,8 +74,7 @@ export default function Navbar({
     cases: "Investigation Case Management",
     "case-details": "Case Dossier, Evidence & Audit Logs",
     "analytics-reports": "Intelligence Reports & Model Analytics",
-    "settings-model": "GraphSAGE Model Architecture & Settings",
-    login: "Investigator Authentication & Session Portal"
+    "settings-model": "GraphSAGE Model Architecture & Settings"
   };
 
   return (
@@ -142,8 +141,8 @@ export default function Navbar({
           <UserCheck className="w-4 h-4" />
         </div>
         <div className="hidden lg:block text-right">
-          <div className="text-xs font-semibold text-slate-200">Investigator Vikramaditya</div>
-          <div className="text-[10px] text-slate-400 font-mono">FIU-IND Anti-Mule Taskforce</div>
+          <div className="text-xs font-semibold text-slate-200">Investigator</div>
+          <div className="text-[10px] text-slate-400 font-mono">Financial Crime Investigation Workspace</div>
         </div>
       </div>
 

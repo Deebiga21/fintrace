@@ -16,32 +16,32 @@ async fn reset_demo_data(State(pool): State<DbPool>) -> Result<impl IntoResponse
     // Run within a transaction for safety
     let mut tx = pool.begin().await?;
 
-    // Reset ACC_SOA_03
+    // Reset DEMO_ACCOUNT_03
     sqlx::query(
         r#"
         UPDATE accounts SET
             risk_score = 0.98,
             risk_level = 'High',
             prediction_confidence = 0.96,
-            customer_name = 'Rohan Kumar Sah',
+            customer_name = 'Synthetic Account 03',
             status = 'Core Banking Dormant & Total Freeze',
-            notes = 'High-velocity aggregate conduit identified from 25 Bank Statements. Total volume ₹785.36 Cr.'
-        WHERE account_id = 'ACC_SOA_03'
+            notes = 'High-velocity aggregate conduit identified from Synthetic transaction benchmark. Total volume ₹785.36 Cr.'
+        WHERE account_id = 'DEMO_ACCOUNT_03'
         "#
     )
     .execute(&mut *tx)
     .await?;
 
-    // Reset ACC_SOA_02
+    // Reset DEMO_ACCOUNT_02
     sqlx::query(
         r#"
         UPDATE accounts SET
             risk_score = 0.94,
             risk_level = 'High',
             prediction_confidence = 0.92,
-            customer_name = 'Mahendra Kumar',
+            customer_name = 'Synthetic Account 02',
             status = 'Dormant - Core Banking Freeze'
-        WHERE account_id = 'ACC_SOA_02'
+        WHERE account_id = 'DEMO_ACCOUNT_02'
         "#,
     )
     .execute(&mut *tx)
@@ -53,7 +53,7 @@ async fn reset_demo_data(State(pool): State<DbPool>) -> Result<impl IntoResponse
         .await?;
 
     // Record audit log
-    let details = "Demo dataset re-synchronized to baseline 25 Bank Statement of Accounts (SOA)";
+    let details = "Demo dataset re-synchronized to baseline Synthetic transaction benchmark";
     sqlx::query(
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, $2, $3, $4, $5, $6)"
     )
@@ -61,7 +61,7 @@ async fn reset_demo_data(State(pool): State<DbPool>) -> Result<impl IntoResponse
     .bind("Admin_Demo")
     .bind("DEMO_DATA_RESET")
     .bind("DATASET")
-    .bind("dataset-soa-proposed")
+    .bind("dataset-synthetic-benchmark")
     .bind(details)
     .execute(&mut *tx)
     .await?;
@@ -71,8 +71,8 @@ async fn reset_demo_data(State(pool): State<DbPool>) -> Result<impl IntoResponse
     Ok(Json(json!({
         "status": "success",
         "message": "Demo data safely reinitialized to primary statement baseline.",
-        "dataset_id": "dataset-soa-proposed",
-        "dataset_version": "v1.0-SOA-Randomized",
+        "dataset_id": "dataset-synthetic-benchmark",
+        "dataset_version": "v1.0-Synthetic-Benchmark",
         "timestamp": now
     })))
 }

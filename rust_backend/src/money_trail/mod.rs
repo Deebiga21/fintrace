@@ -1071,9 +1071,9 @@ async fn get_trail_report_handler(
         "classification": "CONFIDENTIAL // LAW ENFORCEMENT & REGULATORY USE ONLY",
         "trail_id": trail_id,
         "target_account": saved.target_account,
-        "investigation_provenance": "Core Banking CBS Statement of Accounts (SOA)",
+        "investigation_provenance": "Synthetic transaction benchmark",
         "report_generated_at": Utc::now().to_rfc3339(),
-        "investigator": "Special Investigator Rajesh Verma (INV-7809-DELHI)",
+        "investigator": "Investigator (INV-DEMO-LOCAL)",
         "methodology": "Directed Graph Search with Multi-Task GraphSAGE Topological Feature Aggregation",
         "legal_disclaimer": "This document contains algorithmic forensic analysis. Candidate paths and transfer sums indicate observed financial relationship patterns and are not conclusive proof of guilt without independent corroborating evidence.",
         "trail_findings": report_data

@@ -169,7 +169,7 @@ export default function CaseDetailsPage({
       setCaseData(normalized);
       setStatus(normalized.status || 'New');
       setPriority(normalized.priority || 'High');
-      setAssignedInvestigator(normalized.assigned_investigator || 'Special Investigator Rajesh Verma');
+      setAssignedInvestigator(normalized.assigned_investigator || 'Investigator');
       setClosureReason(normalized.closure_reason || '');
       setCaseVersion(normalized.version || 1);
 
@@ -887,7 +887,7 @@ export default function CaseDetailsPage({
             </select>
           ) : (
             <div className="font-bold text-white bg-navy-950 px-3 py-2.5 rounded-lg border border-slate-700 text-xs truncate">
-              {assignedInvestigator || 'Special Investigator Rajesh Verma'}
+              {assignedInvestigator || 'Investigator'}
             </div>
           )}
           <div className="text-[11px] text-slate-400 font-sans">
@@ -1034,7 +1034,7 @@ export default function CaseDetailsPage({
                           required
                           value={linkAccId}
                           onChange={(e) => setLinkAccId(e.target.value)}
-                          placeholder="e.g. MULE_AGG_01 or ACC_SOA_03"
+                          placeholder="e.g. MULE_AGG_01 or DEMO_ACCOUNT_03"
                           className="w-full px-3 py-2 bg-navy-900 border border-slate-700 rounded text-white text-xs font-mono focus:border-electric-400"
                         />
                       </div>

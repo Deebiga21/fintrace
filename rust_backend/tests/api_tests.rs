@@ -1,42 +1,4 @@
-use fintrace_backend::{
-    auth::{create_jwt, hash_password, verify_jwt, verify_password},
-    database::init_db,
-    models::user::User,
-};
-
-#[tokio::test]
-async fn test_auth_argon2_and_jwt() {
-    let secret = "test-secret-key-12345678901234567890";
-    let password = "TestPassword@2026";
-    let hash = hash_password(password, "salt");
-
-    assert!(
-        verify_password(password, &hash),
-        "Argon2 password verification must succeed"
-    );
-    assert!(
-        !verify_password("WrongPassword", &hash),
-        "Argon2 wrong password must fail"
-    );
-
-    let user = User {
-        id: "usr-test-01".to_string(),
-        badge_id: "INV-TEST-01".to_string(),
-        name: "Test Investigator".to_string(),
-        email: Some("test@fiu-ind.gov.in".to_string()),
-        password_hash: hash,
-        role: "Investigator".to_string(),
-        created_at: "2026-10-19T00:00:00Z".to_string(),
-    };
-
-    let token = create_jwt(&user, secret).expect("JWT encoding must succeed");
-    assert!(!token.is_empty(), "Token must not be empty");
-
-    let claims = verify_jwt(&token, secret).expect("JWT decoding must succeed");
-    assert_eq!(claims.sub, "usr-test-01");
-    assert_eq!(claims.badge_id, "INV-TEST-01");
-    assert_eq!(claims.role, "Investigator");
-}
+use fintrace_backend::database::init_db;
 
 #[tokio::test]
 async fn test_database_and_transaction_flow() {
@@ -45,14 +7,7 @@ async fn test_database_and_transaction_flow() {
         .await
         .expect("Database initialization must succeed");
 
-    // 1. Verify default user seeded
-    let user_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM users")
-        .fetch_one(&pool)
-        .await
-        .expect("Users query");
-    assert!(user_count >= 1, "Default investigator must be seeded");
-
-    // 2. Insert test accounts
+    // 1. Insert test accounts
     sqlx::query(
         "INSERT INTO accounts (account_id, customer_name, risk_score, risk_level, status) VALUES ('ACC_VICTIM_01', 'Victim Alice', 0.1, 'Low', 'Active')"
     )

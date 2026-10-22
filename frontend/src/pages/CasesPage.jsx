@@ -481,7 +481,7 @@ export default function CasesPage({
                 <span>Escalate & Export JSON</span>
               </div>
               <p className="text-slate-300 text-[11px] leading-relaxed">
-                Escalate for statutory bank account freeze under PMLA/CrPC, or click <strong>"Export Dossier (JSON)"</strong> to produce a court-ready dossier.
+                Refer legal decisions to qualified counsel and authorized investigators. Export the case data as a working report for review.
               </p>
             </div>
           </div>

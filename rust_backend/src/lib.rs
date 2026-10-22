@@ -2,7 +2,6 @@ pub mod accounts;
 pub mod alerts;
 pub mod analytics;
 pub mod audit;
-pub mod auth;
 pub mod cases;
 pub mod complaints;
 pub mod config;

@@ -11,7 +11,6 @@ import {
   FileText,
   BarChart3,
   Cpu,
-  LogIn,
   Home,
   ShieldAlert,
   ChevronRight,
@@ -56,7 +55,6 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
       items: [
         { id: "analytics-reports", label: "Reports & Analytics", icon: BarChart3 },
         { id: "settings-model", label: "GNN Model & Settings", icon: Cpu },
-        { id: "login", label: "Investigator Login", icon: LogIn },
       ]
     }
   ];
@@ -149,7 +147,7 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
           <div>
             <div className="text-slate-200 font-medium">Session Active</div>
-            <div className="text-[10px] text-slate-500 font-mono">FIU-IND Node</div>
+            <div className="text-[10px] text-slate-500 font-mono">Investigation Workspace</div>
           </div>
         </div>
         <span className="text-[9px] bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded font-mono text-slate-300">

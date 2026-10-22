@@ -5,7 +5,7 @@ import { api } from '../services/api';
 export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onCaseCreated }) {
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState('High');
-  const [investigator, setInvestigator] = useState('Special Investigator Rajesh Verma');
+  const [investigator, setInvestigator] = useState('Investigator');
   const [investigatorsList, setInvestigatorsList] = useState([]);
   const [primaryAccount, setPrimaryAccount] = useState('');
   const [summary, setSummary] = useState('');

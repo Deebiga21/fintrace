@@ -31,6 +31,8 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
   const [synthQuality, setSynthQuality] = useState(null);
   const [classifierMetrics, setClassifierMetrics] = useState(null);
   const [gnnMetrics, setGnnMetrics] = useState(null);
+  const [isolationForestMetrics, setIsolationForestMetrics] = useState(null);
+  const [isolationForestScores, setIsolationForestScores] = useState([]);
   const [rankedAccounts, setRankedAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,6 +49,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
   const [gnnEpochs, setGnnEpochs] = useState(50);
   const [gnnLr, setGnnLr] = useState(0.008);
   const [isTrainingGNN, setIsTrainingGNN] = useState(false);
+  const [isTrainingIsolationForest, setIsTrainingIsolationForest] = useState(false);
 
   const [isBenchmarking, setIsBenchmarking] = useState(false);
   const [switchingDataset, setSwitchingDataset] = useState(false);
@@ -96,6 +99,15 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
         const gm = await api.getGANMetrics();
         setGanMetrics(gm);
       } catch (e) {}
+
+      try {
+        const im = await api.getIsolationForestMetrics();
+        setIsolationForestMetrics(im);
+      } catch (e) { setIsolationForestMetrics(null); }
+      try {
+        const scored = await api.getIsolationForestScores(50);
+        setIsolationForestScores(scored.rows || []);
+      } catch (e) { setIsolationForestScores([]); }
 
     } catch (err) {
       console.error(err);
@@ -171,6 +183,44 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
     }
   };
 
+  const handleTrainIsolationForest = async () => {
+    setIsTrainingIsolationForest(true);
+    setActionError(null);
+    try {
+      const queued = await api.trainIsolationForest({ contamination: 0.01 });
+      if (queued.status === 'ALREADY_RUNNING') {
+        setActionError(queued.message || 'Isolation Forest training is already running.');
+        return;
+      }
+      let completed = false;
+      for (let attempt = 0; attempt < 120; attempt += 1) {
+        await new Promise((resolve) => window.setTimeout(resolve, 1500));
+        try {
+          const metrics = await api.getIsolationForestMetrics();
+          setIsolationForestMetrics(metrics);
+          if (metrics.training_status === 'COMPLETED') {
+            const scored = await api.getIsolationForestScores(50);
+            setIsolationForestScores(scored.rows || []);
+            completed = true;
+            break;
+          }
+          if (metrics.training_status === 'FAILED') {
+            setActionError(metrics.error || 'Isolation Forest training failed. Check the ML service logs.');
+            completed = true;
+            break;
+          }
+        } catch (pollError) {
+          // Metrics are not available until the first successful training run.
+        }
+      }
+      if (!completed) setActionError('Isolation Forest training is still running. Use Sync Artifacts to refresh its status.');
+    } catch (err) {
+      setActionError(err.message || 'Failed to start Isolation Forest training.');
+    } finally {
+      setIsTrainingIsolationForest(false);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12 font-sans">
       {/* Header Banner */}
@@ -208,6 +258,43 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
           <span>{actionError}</span>
         </div>
       )}
+
+      <section className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-2xl bg-[#0E1424] border border-emerald-900/60">
+        <div>
+          <h2 className="text-sm font-bold text-white">Isolation Forest transaction baseline</h2>
+          <p className="text-xs text-slate-400 mt-1">Unsupervised temporal 80/20 split. Results are anomaly candidates, not confirmed fraud.</p>
+          {isolationForestMetrics?.metrics && (
+            <p className="text-xs text-emerald-300 mt-2">
+              {isolationForestMetrics.metrics.flagged_rows?.toLocaleString()} flagged of {isolationForestMetrics.metrics.holdout_rows?.toLocaleString()} holdout rows · {isolationForestMetrics.metrics.feature_count} features
+            </p>
+          )}
+        </div>
+        <button
+          onClick={handleTrainIsolationForest}
+          disabled={isTrainingIsolationForest}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-xs font-bold text-white transition"
+        >
+          <ShieldCheck className="w-4 h-4" />
+          <span>{isTrainingIsolationForest ? 'Training…' : 'Train baseline'}</span>
+        </button>
+        {isolationForestScores.length > 0 && (
+          <div className="basis-full overflow-x-auto border-t border-slate-800 pt-4">
+            <h3 className="text-xs font-bold text-slate-300 mb-2">Highest anomaly scores (up to 50)</h3>
+            <table className="w-full text-xs text-left">
+              <thead className="text-slate-500"><tr><th className="py-2">Record</th><th className="py-2">Account / counterparty</th><th className="py-2">Amount</th><th className="py-2">Risk percentile</th><th className="py-2">Flag</th></tr></thead>
+              <tbody>{isolationForestScores.slice(0, 10).map((row, index) => (
+                <tr key={row.record_id || row.transaction_id || index} className="border-t border-slate-800/70 text-slate-300">
+                  <td className="py-2 font-mono">{row.record_id || row.transaction_id || row.source_row || `row ${index + 1}`}</td>
+                  <td className="py-2 font-mono">{row.account_group_id || row.sender_account || row.receiver_account || '—'}</td>
+                  <td className="py-2">{row.amount ?? '—'}</td>
+                  <td className="py-2">{Number(row.iforest_risk_percentile || 0).toFixed(1)}%</td>
+                  <td className="py-2">{row.iforest_flag ? 'Anomaly candidate' : 'Review rank'}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       {/* Navigation Tabs */}
       <div className="flex border-b border-slate-800 space-x-2 text-xs font-mono">
@@ -274,52 +361,20 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                   <span>Select Active Fraud Investigation Dataset</span>
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Seamlessly train and test the Graph Neural Network and Adversarial Generator on real core banking statement extracts or institutional benchmark ledgers.
+                  Compare the graph models on the included synthetic benchmark or PaySim data.
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-mono text-slate-400">Active:</span>
                 <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                  {status?.active_dataset === 'proposed'
-                    ? 'Proposed Banking Statements (494k Txns)'
-                    : status?.active_dataset === 'paysim'
+                  {status?.active_dataset === 'paysim'
                     ? 'Kaggle PaySim1 (ealaxi/paysim1)'
                     : 'Multi-Typology Benchmark'}
                 </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Option 1: Proposed Dataset */}
-              <div
-                onClick={() => !switchingDataset && handleSelectDataset('proposed')}
-                className={`p-4 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
-                  status?.active_dataset === 'proposed'
-                    ? 'bg-emerald-500/10 border-emerald-500/50 shadow-lg shadow-emerald-950/20'
-                    : 'bg-black/30 border-slate-800 hover:border-slate-700 hover:bg-slate-900/40'
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-sm font-bold text-white flex items-center gap-1.5">
-                      <span>Proposed Bank Statements</span>
-                    </span>
-                    {status?.active_dataset === 'proposed' && (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500 text-white">ACTIVE</span>
-                    )}
-                  </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    25 Core Banking Statements (CBS Finacle/BaNCS). Real-world conduit accounts, frozen/dormant mules, and high turnover drains.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-slate-800/60 text-[10px] font-mono">
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">494,260 txns</span>
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">25 accounts</span>
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/40">₹785 Cr Volume</span>
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">CBS Finacle</span>
-                </div>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Option 2: PaySim */}
               <div
                 onClick={() => !switchingDataset && handleSelectDataset('paysim')}
@@ -607,7 +662,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
                 <div className="p-3.5 rounded-xl bg-black/40 border border-slate-800">
                   <span className="text-slate-500 block text-[10px]">NUMERICAL FIDELITY</span>
                   <div className="text-base font-bold text-white mt-1">

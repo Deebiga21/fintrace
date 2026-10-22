@@ -1058,7 +1058,7 @@ async fn get_complaint_report_handler(
         "assigned_to": complaint.assigned_to,
         "linked_case_id": complaint.linked_case_id,
         "report_generated_at": Utc::now().to_rfc3339(),
-        "investigating_authority": "Financial Intelligence Unit (FIU-IND) / State Cyber Police Cell",
+        "investigating_authority": "Relevant financial-crime authority",
         "legal_disclaimer": "This intelligence dossier correlates victim complaints against core banking records and GNN topological fraud predictions. Correlation scores indicate algorithmic relationship probabilities, not legal determination of guilt.",
         "correlation_evidence": parsed_corr
     })))

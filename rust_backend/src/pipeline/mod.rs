@@ -209,8 +209,8 @@ async fn get_pipeline_status(
         })
     } else {
         json!({
-            "dataset_id": "dataset-soa-proposed",
-            "name": "Proposed Bank Statements of Account (25 CBS Extracts)",
+            "dataset_id": "dataset-synthetic-benchmark",
+            "name": "Multi-Typology Synthetic Benchmark",
             "filename": "cbs_extracts.csv",
             "dataset_type": "Real CBS Statement Extracts",
             "total_rows": 494262,

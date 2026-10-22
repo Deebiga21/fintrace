@@ -198,7 +198,7 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
             <span>Automated Financial Crime Intelligence Lifecycle</span>
           </h2>
           <p className="text-xs text-slate-400 mt-0.5 max-w-2xl">
-            Watch real banking statements flow step-by-step through strict schema validation, 2-hop GraphSAGE graph inference, rapid pass-through velocity dissection, and judicial case dossiers.
+            Watch transaction files flow through schema validation, GraphSAGE graph analysis, anomaly review, and investigator case preparation.
           </p>
         </div>
 

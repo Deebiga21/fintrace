@@ -160,20 +160,8 @@ class DatasetInspector:
             json.dump(quality_report, f, indent=2)
 
         # 9. Produce dataset_summary.json
-        is_proposed = "proposed" in os.path.basename(self.data_path).lower()
         is_paysim = "paysim" in os.path.basename(self.data_path).lower() or "ps_" in os.path.basename(self.data_path).lower()
-        if is_proposed:
-            provenance = "Proposed Randomized Banking Statements (25 Accounts from CBS Finacle/BaNCS Extracts)"
-            license_info = "Core Banking Transaction Extracts (Strictly Randomized & Anonymized for Research)"
-            source_url = "Proposed_Data_Randomized_Final Archive"
-            domain_info = "Indian Core Banking System (CBS) Statement of Accounts (INR 785.36 Crore)"
-            domain_diff = (
-                "Real Core Banking Statement of Accounts (SOAs) across 25 primary entities and 254,617 counterparties. "
-                "Features high-velocity pass-through conduit behavior (turnover ratios 0.98 - 1.04), abrupt account closures, "
-                "and regulatory total freeze ground truths (ACC_SOA_03)."
-            )
-            disclaimer = "Statements are randomized for AML/PMLA mule detection research and benchmarking. Statutory verification is required before judicial submission."
-        elif is_paysim:
+        if is_paysim:
             provenance = "Kaggle PaySim1 Synthetic Financial Dataset for Fraud Detection (ealaxi/paysim1, Lopez-Rojas et al.)"
             license_info = "CC BY 4.0 International (Open Access Research Dataset)"
             source_url = "https://www.kaggle.com/datasets/ealaxi/paysim1"
@@ -186,12 +174,12 @@ class DatasetInspector:
             )
             disclaimer = "PaySim is a multi-agent simulation based on aggregated mobile money logs. Results demonstrate algorithmic capability but do not establish real-world judicial accuracy in bank environments."
         else:
-            provenance = "FinTrace Synthetic & Multi-Typology Financial Investigation Benchmark"
-            license_info = "Research & Regulatory Compliance Prototype (Lawful Internal Verification)"
-            source_url = "FinTrace Internal Benchmark Generator"
-            domain_info = "Indian Banking & UPI Multi-Typology Mule Network"
-            domain_diff = "Custom synthetic benchmark featuring smurfing rings, circular round-trip layering, and rapid pass-through conduit mules."
-            disclaimer = "Labels reflect simulated financial typologies (smurfing, layering, circular loops, conduit mules) for pipeline and model benchmarking. They must not be claimed as real judicial evidence without statutory verification."
+            provenance = "User-provided or local transaction dataset (provenance not verified)"
+            license_info = "Verify data license and sharing restrictions with the data provider"
+            source_url = None
+            domain_info = "Transaction dataset; domain and collection method not verified"
+            domain_diff = "Dataset-specific transaction behavior; inspect source documentation before drawing conclusions."
+            disclaimer = "This report describes schema and statistical properties only. It does not verify data provenance, labels, or real-world fraud findings."
 
         summary = {
             "dataset_filename": os.path.basename(self.data_path),

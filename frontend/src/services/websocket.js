@@ -42,6 +42,7 @@ class WebSocketService {
   }
 
   connect() {
+    if (typeof window === 'undefined' || !window.location) return;
     if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
       return;
     }

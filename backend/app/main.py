@@ -27,7 +27,6 @@ from .api import (
     complaints_router,
     cases_router,
     analytics_router,
-    auth_router,
     ml_router
 )
 
@@ -79,7 +78,6 @@ app.add_middleware(
 
 # Register routers
 prefix = settings.API_V1_STR
-app.include_router(auth_router, prefix=prefix)
 app.include_router(transactions_router, prefix=prefix)
 app.include_router(accounts_router, prefix=prefix)
 app.include_router(gnn_router, prefix=prefix)

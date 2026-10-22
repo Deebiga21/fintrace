@@ -355,7 +355,7 @@ async fn get_risk_distribution(State(pool): State<DbPool>) -> Result<impl IntoRe
     let low_pct = ((row.low as f64 / total) * 1000.0).round() / 10.0;
 
     Ok(Json(json!({
-        "dataset_id": "dataset-soa-proposed",
+        "dataset_id": "dataset-synthetic-benchmark",
         "model_version": "gnn_graphsage_v1.0",
         "total_accounts": row.total,
         "high_risk": row.high,
@@ -488,7 +488,7 @@ async fn get_fraud_patterns(State(pool): State<DbPool>) -> Result<impl IntoRespo
     ]);
 
     Ok(Json(json!({
-        "dataset_id": "dataset-soa-proposed",
+        "dataset_id": "dataset-synthetic-benchmark",
         "total_detections": total_detections,
         "patterns": patterns,
         "last_scanned_at": Utc::now().to_rfc3339()
@@ -642,7 +642,7 @@ async fn get_transaction_velocity(
         .collect();
 
     Ok(Json(json!({
-        "dataset_id": params.dataset_id.unwrap_or_else(|| "dataset-soa-proposed".to_string()),
+        "dataset_id": params.dataset_id.unwrap_or_else(|| "dataset-synthetic-benchmark".to_string()),
         "interval": interval,
         "account_id": params.account_id,
         "total_periods": points.len(),

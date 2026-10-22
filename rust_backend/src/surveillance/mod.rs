@@ -31,29 +31,23 @@ async fn get_surveillance_status(
         .await
         .unwrap_or(0);
 
-    let warnings = vec![
-        "High-velocity aggregator funneling observed on conduit node ACC_SOA_03 (₹785.36M aggregate)",
-        "Pass-through turnover ratio approaching 100% on dormant node ACC_SOA_02",
-        "Multi-hop circular transfer loop active across peer cluster ACC_SOA_48",
-    ];
-
     Ok(Json(json!({
-        "status": "Active Surveillance",
-        "live_mode": true,
-        "dataset_id": "dataset-soa-proposed",
-        "dataset_version": "v1.0-SOA-Randomized-25BankStatements",
+        "status": "Demo surveillance",
+        "live_mode": false,
+        "dataset_id": "dataset-synthetic-benchmark",
+        "dataset_version": "v1.0-Synthetic-Benchmark",
         "total_accounts": total_accounts,
         "total_transactions": total_transactions,
         "graph_nodes": graph_nodes,
         "graph_edges": graph_edges,
-        "last_scored_at": "2026-10-20T10:00:00Z",
+        "last_scored_at": null,
         "active_jobs": active_jobs,
         "pipeline_health": "Optimal",
         "active_models": [
             "GraphSAGE-MultiTask-v1.0",
             "CWGAN-GP-MinorityAugmenter-v1.0"
         ],
-        "warnings": warnings,
+        "warnings": [],
         "timestamp": Utc::now().to_rfc3339()
     })))
 }

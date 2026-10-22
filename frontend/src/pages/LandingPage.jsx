@@ -97,17 +97,17 @@ export default function LandingPage({
   const scenarios = {
     cbs_freeze: {
       id: 'cbs_freeze',
-      title: 'Core Banking Total Freeze (ACC_SOA_03 • Rohan Kumar Sah)',
-      targetAccount: 'ACC_SOA_03',
-      description: 'Ground truth banking statement conduit flagged in core banking as "Dormant & Total Freeze". Funneled ₹8.67 Cr across UPI and IMPS channels to 11,446 counterparties before statutory enforcement under PMLA.',
+      title: 'Illustrative rapid-transfer scenario (DEMO_ACCOUNT_03)',
+      targetAccount: 'DEMO_ACCOUNT_03',
+      description: 'Illustrative synthetic scenario: a dormant account receives and forwards funds rapidly. Use this example to explore the investigation workflow; it is not a real case or verified finding.',
       riskScore: 0.98,
       riskLevel: 'Critical',
-      pattern: 'Core Banking Total Freeze (PMLA Action)',
+      pattern: 'Synthetic rapid-transfer pattern',
       flowNodes: [
         { id: 'VICTIMS_11K', type: 'victim', label: '11,446 Counterparties', sub: 'Inflow: ₹8.67 Cr' },
-        { id: 'ACC_SOA_03', type: 'target', label: 'ACC_SOA_03 (Rohan Sah)', sub: 'Dormant Total Freeze' },
-        { id: 'ACC_SOA_02', type: 'layer', label: 'ACC_SOA_02 (Kabir Arora)', sub: 'Layering Hop 1' },
-        { id: 'FREEZE_EXIT', type: 'cashout', label: 'Statutory Freeze', sub: 'PMLA Section 12 Action' }
+        { id: 'DEMO_ACCOUNT_03', type: 'target', label: 'DEMO_ACCOUNT_03 (Synthetic Account 03)', sub: 'Dormant Total Freeze' },
+        { id: 'DEMO_ACCOUNT_02', type: 'layer', label: 'DEMO_ACCOUNT_02 (Synthetic Account 02)', sub: 'Layering Hop 1' },
+        { id: 'FREEZE_EXIT', type: 'cashout', label: 'Review point', sub: 'Illustrative only; no legal action taken' }
       ],
       metrics: {
         inflowHops: 11446,
@@ -118,17 +118,17 @@ export default function LandingPage({
     },
     rapid: {
       id: 'rapid',
-      title: 'High-Turnover Pass-Through Conduit (ACC_SOA_48 • Rachana Dhar)',
-      targetAccount: 'ACC_SOA_48',
-      description: 'High-turnover statement conduit with ₹55.09 Cr volume and 98.7% rapid drain ratio. Outflows dispersed across multi-tier accounts within minutes of deposit.',
+      title: 'High-Turnover Pass-Through Conduit (DEMO_ACCOUNT_48 • Synthetic Account 48)',
+      targetAccount: 'DEMO_ACCOUNT_48',
+      description: 'Illustrative synthetic example of a high-turnover account with rapidly dispersed outflows. Values shown are demonstration data, not verified findings.',
       riskScore: 0.92,
       riskLevel: 'High',
       pattern: 'Pass-Through Conduit (>98% Turnover Drain)',
       flowNodes: [
         { id: 'INFLOW_CORP', type: 'victim', label: 'Corporate Diversions', sub: 'Inflow: ₹55.09 Cr' },
-        { id: 'ACC_SOA_48', type: 'target', label: 'ACC_SOA_48 (Rachana Dhar)', sub: '98.7% Drain Ratio' },
-        { id: 'ACC_SOA_28', type: 'layer', label: 'ACC_SOA_28 (Chaaya Iyer)', sub: 'Layering Conduit' },
-        { id: 'ACC_SOA_06', type: 'cashout', label: 'ACC_SOA_06 (Jack Patil)', sub: 'Zero Residual Exit' }
+        { id: 'DEMO_ACCOUNT_48', type: 'target', label: 'DEMO_ACCOUNT_48 (Synthetic Account 48)', sub: '98.7% Drain Ratio' },
+        { id: 'DEMO_ACCOUNT_28', type: 'layer', label: 'DEMO_ACCOUNT_28 (Synthetic Account 28)', sub: 'Layering Conduit' },
+        { id: 'DEMO_ACCOUNT_06', type: 'cashout', label: 'DEMO_ACCOUNT_06 (Synthetic Account 06)', sub: 'Zero Residual Exit' }
       ],
       metrics: {
         inflowHops: 820,
@@ -139,16 +139,16 @@ export default function LandingPage({
     },
     closure: {
       id: 'closure',
-      title: 'Abrupt Account Closure Syndicate (ACC_SOA_02 • Kabir Arora)',
-      targetAccount: 'ACC_SOA_02',
-      description: 'Abruptly closed statement account that accumulated ₹10.91 Cr across 11,109 transactions and immediately transferred balances to offshore entities prior to shutdown.',
+      title: 'Abrupt Account Closure Syndicate (DEMO_ACCOUNT_02 • Synthetic Account 02)',
+      targetAccount: 'DEMO_ACCOUNT_02',
+      description: 'Illustrative synthetic example of an account with rapid fund movement before closure. It does not describe a verified account or finding.',
       riskScore: 0.95,
       riskLevel: 'Critical',
       pattern: 'Abrupt Account Closure + Layering Exit',
       flowNodes: [
         { id: 'MULTI_INFLOW', type: 'victim', label: '11,109 Transactions', sub: 'Inflow: ₹10.91 Cr' },
-        { id: 'ACC_SOA_02', type: 'target', label: 'ACC_SOA_02 (Kabir Arora)', sub: 'Primary Conduit (Closed)' },
-        { id: 'ACC_SOA_05', type: 'layer', label: 'ACC_SOA_05 (Aditya Sethi)', sub: 'Layering Conduit' },
+        { id: 'DEMO_ACCOUNT_02', type: 'target', label: 'DEMO_ACCOUNT_02 (Synthetic Account 02)', sub: 'Primary Conduit (Closed)' },
+        { id: 'DEMO_ACCOUNT_05', type: 'layer', label: 'DEMO_ACCOUNT_05 (Synthetic Account 05)', sub: 'Layering Conduit' },
         { id: 'OFFSHORE_EXIT', type: 'cashout', label: 'Offshore OTC Exit', sub: 'Cleared Pre-Closure' }
       ],
       metrics: {
@@ -314,12 +314,6 @@ export default function LandingPage({
           {/* Right Action CTAs */}
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setCurrentPage('login')}
-              className="text-xs font-semibold text-slate-300 hover:text-white transition hidden sm:inline-block px-3 py-1.5 rounded-lg hover:bg-slate-800/50"
-            >
-              Investigator Login
-            </button>
-            <button
               onClick={() => setCurrentPage('dashboard')}
               className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-electric-600 via-electric-500 to-cyan-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-xs shadow-glow-electric transition transform hover:scale-105 active:scale-95"
             >
@@ -354,7 +348,7 @@ export default function LandingPage({
 
             <div className="flex items-center gap-2 text-xs font-mono">
               <span className="px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-semibold text-[10px]">
-                FIU-IND COMPLIANT
+                SYNTHETIC DEMO • HUMAN REVIEW REQUIRED
               </span>
               <span className="px-2.5 py-1 rounded-full bg-electric-950/60 text-electric-300 border border-electric-500/30 font-semibold text-[10px]">
                 ZERO-HALLUCINATION
@@ -756,14 +750,14 @@ export default function LandingPage({
                       links: 5
                     }}
                     labels={[
-                      "ACC_SOA_03: Rohan Sah (Total Freeze)",
-                      "ACC_SOA_48: Rachana Dhar (₹55.09 Cr)",
-                      "ACC_SOA_02: Kabir Arora (Abrupt Closure)",
-                      "ACC_SOA_28: Chaaya Iyer (₹42.14 Cr)",
-                      "ACC_SOA_06: Jack Patil (100% Drain)",
-                      "25 CBS Statement Accounts (Proposed Dataset)",
+                      "DEMO_ACCOUNT_03: Synthetic demonstration account",
+                      "DEMO_ACCOUNT_48: Synthetic demonstration account",
+                      "DEMO_ACCOUNT_02: Synthetic demonstration account",
+                      "DEMO_ACCOUNT_28: Synthetic demonstration account",
+                      "DEMO_ACCOUNT_06: Synthetic demonstration account",
+                      "Synthetic benchmark account network",
                       "Cybercrime Portal (1930) Link",
-                      "Turnover Drain Ratio: 99.8%"
+                      "Illustrative turnover pattern"
                     ]}
                     textColor="#38BDF8"
                     speed={1.0}
@@ -839,7 +833,7 @@ export default function LandingPage({
             <div className="flex items-center gap-3">
               <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
               <span>
-                <strong>Regulatory Integrity & Evidentiary Standard:</strong> FinTrace AI strictly distinguishes heuristic pattern alerts from verified judicial evidence. Designed for FIU-IND compliance, STR generation, and cybercrime taskforces under the Prevention of Money Laundering Act (PMLA).
+                <strong>Regulatory Integrity & Evidentiary Standard:</strong> FinTrace AI strictly distinguishes heuristic pattern alerts from verified judicial evidence. Intended as a prototype workflow; outputs are investigative leads and require independent verification before any operational use.
               </span>
             </div>
             <button
@@ -876,9 +870,6 @@ export default function LandingPage({
               </button>
               <button onClick={() => setCurrentPage('cases')} className="hover:text-white transition">
                 Case Dossiers
-              </button>
-              <button onClick={() => setCurrentPage('login')} className="hover:text-white transition">
-                Investigator Login
               </button>
             </div>
           </footer>

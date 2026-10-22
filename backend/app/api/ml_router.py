@@ -9,6 +9,7 @@ import json
 import logging
 import threading
 from typing import Dict, Any, List, Optional
+import pandas as pd
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query, Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -19,6 +20,7 @@ from ..ml.training.generate_synthetic import SyntheticTransactionGenerator
 from ..ml.evaluation.validate_synthetic import SyntheticQualityValidator
 from ..ml.training.train_classifier import FraudClassifierBenchmark
 from ..ml.training.train_multitask import MultiTaskGNNTrainer
+from ..ml.training.isolation_forest import IsolationForestTrainer
 from ..ml.data.inspect_dataset import DatasetInspector
 
 logger = logging.getLogger("FinTrace.API.ML")
@@ -30,8 +32,10 @@ training_state = {
     "is_training_gan": False,
     "is_training_gnn": False,
     "is_benchmarking_classifier": False,
+    "is_training_isolation_forest": False,
     "last_gan_status": "IDLE",
     "last_gnn_status": "IDLE",
+    "last_isolation_forest_status": "IDLE",
     "last_error": None
 }
 
@@ -58,6 +62,9 @@ class GenerateSyntheticRequest(BaseModel):
 class TrainGNNRequest(BaseModel):
     epochs: Optional[int] = 50
     learning_rate: Optional[float] = 0.008
+
+class TrainIsolationForestRequest(BaseModel):
+    contamination: float = 0.01
 
 # ==========================================
 # 1. System Health, Status & Datasets
@@ -257,6 +264,61 @@ def get_gnn_metrics():
         with open(h_file, "r") as f:
             history = json.load(f)
     return {"metrics": metrics, "history": history}
+
+# ==========================================
+# 4. Unsupervised transaction anomaly baseline
+# ==========================================
+def _run_isolation_forest(contamination: float):
+    training_state["is_training_isolation_forest"] = True
+    training_state["last_isolation_forest_status"] = "TRAINING"
+    try:
+        trainer = IsolationForestTrainer(ml_service.artifacts_dir)
+        metrics = trainer.train(ml_service.data_csv, contamination=contamination)
+        training_state["last_isolation_forest_status"] = "COMPLETED"
+        training_state["last_error"] = None
+        logger.info("Isolation Forest training completed: %s", metrics)
+    except Exception as e:
+        training_state["last_isolation_forest_status"] = "FAILED"
+        training_state["last_error"] = str(e)
+        logger.exception("Isolation Forest training failed")
+    finally:
+        training_state["is_training_isolation_forest"] = False
+
+@router.post("/isolation-forest/train")
+def train_isolation_forest(req: TrainIsolationForestRequest, bg: BackgroundTasks):
+    if not 0.0001 <= req.contamination <= 0.5:
+        raise HTTPException(status_code=422, detail="contamination must be between 0.0001 and 0.5")
+    if training_state["is_training_isolation_forest"]:
+        return {"status": "ALREADY_RUNNING", "message": "Isolation Forest training is already active."}
+    training_state["is_training_isolation_forest"] = True
+    training_state["last_isolation_forest_status"] = "QUEUED"
+    bg.add_task(_run_isolation_forest, req.contamination)
+    return {"status": "QUEUED", "message": "Isolation Forest temporal training and holdout scoring started."}
+
+@router.get("/isolation-forest/metrics")
+def get_isolation_forest_metrics():
+    metrics_file = os.path.join(ml_service.artifacts_dir, "isolation_forest_metrics.json")
+    status = training_state["last_isolation_forest_status"]
+    if not os.path.exists(metrics_file) and status == "IDLE":
+        raise HTTPException(status_code=404, detail="Isolation Forest has not been trained yet.")
+    metrics = None
+    if os.path.exists(metrics_file):
+        with open(metrics_file, "r", encoding="utf-8") as f:
+            metrics = json.load(f)
+    return {
+        "metrics": metrics,
+        "training_status": status,
+        "error": training_state["last_error"] if status == "FAILED" else None,
+    }
+
+@router.get("/isolation-forest/scores")
+def get_isolation_forest_scores(limit: int = Query(50, ge=1, le=500)):
+    scores_file = os.path.join(ml_service.artifacts_dir, "isolation_forest_scores.csv")
+    if not os.path.exists(scores_file):
+        raise HTTPException(status_code=404, detail="Isolation Forest scores are not available yet.")
+    rows = pd.read_csv(scores_file, nrows=limit)
+    rows = rows.astype(object).where(pd.notna(rows), None)
+    return {"rows": rows.to_dict(orient="records"), "limit": limit}
 
 # ==========================================
 # 5. Prediction & Inference Endpoints
