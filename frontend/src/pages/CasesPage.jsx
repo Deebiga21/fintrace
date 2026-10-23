@@ -114,6 +114,7 @@ const SOURCE_ICONS = {
 export default function CasesPage({
   setCurrentPage,
   setSelectedCaseId,
+  selectedCaseId,
   onOpenCreateCase,
   onAccountSelect,
   refreshTrigger
@@ -774,12 +775,14 @@ export default function CasesPage({
             const prioStyle = PRIORITY_BADGES[c.priority] || PRIORITY_BADGES.Medium;
             const SourceIcon = SOURCE_ICONS[c.source_type] || Briefcase;
             const isCopied = copiedId === (c.case_number || c.case_id);
+            const isSelected = selectedCaseId === c.case_id || selectedCaseId === c.case_number;
 
             return (
               <div
                 key={c.case_id}
                 onClick={() => handleOpenCase(c.case_id)}
-                className="p-5 rounded-xl bg-navy-900 border border-slate-800 hover:border-electric-500/60 cursor-pointer transition flex flex-col justify-between space-y-4 shadow-sm group hover:shadow-glow-electric/10 hover:bg-navy-850/60"
+                aria-current={isSelected ? 'true' : undefined}
+                className={`p-5 rounded-xl bg-navy-900 border ${isSelected ? 'border-electric-400 ring-1 ring-electric-400/40' : 'border-slate-800'} hover:border-electric-500/60 cursor-pointer transition flex flex-col justify-between space-y-4 shadow-sm group hover:shadow-glow-electric/10 hover:bg-navy-850/60`}
               >
                 <div className="space-y-3.5">
                   {/* Top Badges & Case Identifier */}

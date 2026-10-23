@@ -561,6 +561,40 @@ async fn create_case(
         }
     }
 
+    // Reject initial evidence that cannot be resolved to a stored source record;
+    // otherwise a newly created dossier could contain a fabricated reference.
+    if let Some(items) = payload.initial_evidence.as_ref() {
+        for item in items {
+            let reference = item.reference_id.trim();
+            let evidence_type = item.evidence_type.trim().to_uppercase();
+            let table = match evidence_type.as_str() {
+                "ACCOUNT" => "accounts",
+                "TRANSACTION" => "transactions",
+                "COMPLAINT" => "complaints",
+                _ => return Err(AppError::BadRequest(format!(
+                    "Unsupported initial evidence type '{}'. Use ACCOUNT, TRANSACTION, or COMPLAINT.",
+                    item.evidence_type
+                ))),
+            };
+            let key = match evidence_type.as_str() {
+                "ACCOUNT" => "account_id",
+                "TRANSACTION" => "transaction_id",
+                _ => "complaint_id",
+            };
+            let query = format!("SELECT COUNT(*) FROM {} WHERE {} = $1", table, key);
+            let exists: i64 = sqlx::query_scalar(&query)
+                .bind(reference)
+                .fetch_one(pool)
+                .await?;
+            if reference.is_empty() || exists == 0 {
+                return Err(AppError::BadRequest(format!(
+                    "{} evidence reference '{}' was not found in the database.",
+                    evidence_type, reference
+                )));
+            }
+        }
+    }
+
     let case_number = generate_unique_case_number(pool).await;
     let case_id = case_number.clone();
     let now = Utc::now().to_rfc3339();

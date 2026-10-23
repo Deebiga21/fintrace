@@ -50,35 +50,23 @@ class IngestionService:
         new_accounts: Dict[str, Account] = {}
         new_transactions: List[Transaction] = []
 
-        def get_or_create_account(acc_id: str, is_mule_hint: Optional[bool] = None) -> Account:
-            # Detect synthetic mule ring roles from entity naming conventions
-            inferred_mule = None
-            if any(kw in acc_id.upper() for kw in ["MULE", "CIRC", "RAPID", "DISP", "CASHOUT", "OFFSHORE", "HEIST"]):
-                inferred_mule = True
-            elif any(kw in acc_id.upper() for kw in ["NORM", "VICTIM", "PAYROLL", "MERCHANT", "UTILITY"]):
-                inferred_mule = False
-
-            is_mule = is_mule_hint if is_mule_hint is not None else inferred_mule
-
+        def get_or_create_account(acc_id: str) -> Account:
             if acc_id in existing_account_ids:
-                existing = db.query(Account).filter(Account.account_id == acc_id).first()
-                if existing and existing.is_ground_truth_mule is None and is_mule is not None:
-                    existing.is_ground_truth_mule = is_mule
-                return existing
+                return db.query(Account).filter(Account.account_id == acc_id).first()
 
             if acc_id in new_accounts:
-                if is_mule is True:
-                    new_accounts[acc_id].is_ground_truth_mule = True
                 return new_accounts[acc_id]
             
             # Create synthetic account representation
             acc = Account(
                 account_id=acc_id,
                 customer_name=f"Entity {acc_id}",
-                account_type="Savings" if (inferred_mule is False and "MERCHANT" not in acc_id) else ("Merchant" if "MERCHANT" in acc_id or "PAYROLL" in acc_id else "Suspect_Conduit"),
+                account_type="Savings",
                 current_balance=25000.0,
                 initial_balance=25000.0,
-                is_ground_truth_mule=is_mule
+                # A transaction's label describes that row; it is not an
+                # account-level label. Keep account ground truth unknown.
+                is_ground_truth_mule=None
             )
             new_accounts[acc_id] = acc
             return acc
@@ -128,13 +116,9 @@ class IngestionService:
                 txn_type = str(row.get("transaction_type", "IMPS")).strip().upper()
                 desc = str(row.get("description", "")) if pd.notna(row.get("description")) else "Electronic Funds Transfer"
                 
-                is_mule_flag = None
-                if "is_ground_truth_mule" in row and pd.notna(row["is_ground_truth_mule"]):
-                    is_mule_flag = bool(row["is_ground_truth_mule"])
-
                 # Ensure sender and receiver exist
-                get_or_create_account(sender, is_mule_flag)
-                get_or_create_account(receiver, is_mule_flag)
+                get_or_create_account(sender)
+                get_or_create_account(receiver)
 
                 txn = Transaction(
                     transaction_id=txn_id,

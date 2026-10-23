@@ -250,6 +250,7 @@ export default function App() {
             <CasesPage
               setCurrentPage={setCurrentPage}
               setSelectedCaseId={setSelectedCaseId}
+              selectedCaseId={selectedCaseId}
               onOpenCreateCase={handleOpenCreateCase}
               onAccountSelect={handleAccountSelect}
               refreshTrigger={refreshTrigger}

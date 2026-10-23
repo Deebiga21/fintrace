@@ -97,17 +97,17 @@ export default function LandingPage({
   const scenarios = {
     cbs_freeze: {
       id: 'cbs_freeze',
-      title: 'Illustrative rapid-transfer scenario (DEMO_ACCOUNT_03)',
-      targetAccount: 'DEMO_ACCOUNT_03',
-      description: 'Illustrative synthetic scenario: a dormant account receives and forwards funds rapidly. Use this example to explore the investigation workflow; it is not a real case or verified finding.',
+      title: 'Illustrative smurfing aggregator scenario (MULE_AGG_01)',
+      targetAccount: 'MULE_AGG_01',
+      description: 'Illustrative synthetic scenario: an aggregation account receives multiple transfers and forwards consolidated funds. Use this example to explore the investigation workflow; it is not a real case or verified finding.',
       riskScore: 0.98,
       riskLevel: 'Critical',
       pattern: 'Synthetic rapid-transfer pattern',
       flowNodes: [
-        { id: 'VICTIMS_11K', type: 'victim', label: '11,446 Counterparties', sub: 'Inflow: ₹8.67 Cr' },
-        { id: 'DEMO_ACCOUNT_03', type: 'target', label: 'DEMO_ACCOUNT_03 (Synthetic Account 03)', sub: 'Dormant Total Freeze' },
-        { id: 'DEMO_ACCOUNT_02', type: 'layer', label: 'DEMO_ACCOUNT_02 (Synthetic Account 02)', sub: 'Layering Hop 1' },
-        { id: 'FREEZE_EXIT', type: 'cashout', label: 'Review point', sub: 'Illustrative only; no legal action taken' }
+        { id: 'VICTIMS', type: 'victim', label: 'Multiple victim accounts', sub: 'Smurfing inflows' },
+        { id: 'MULE_AGG_01', type: 'target', label: 'MULE_AGG_01', sub: 'Aggregation account' },
+        { id: 'MULE_LAYER_02', type: 'layer', label: 'MULE_LAYER_02', sub: 'Consolidated transfer' },
+        { id: 'REVIEW', type: 'cashout', label: 'Review point', sub: 'Illustrative only; no legal action taken' }
       ],
       metrics: {
         inflowHops: 11446,

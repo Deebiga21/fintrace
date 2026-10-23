@@ -17,7 +17,6 @@ from .config import settings
 from .database import engine, Base, SessionLocal
 from .models import Account, Transaction, Complaint, InvestigationCase, CaseEvidence, AuditLog, ModelRun
 from .services.ingestion_service import IngestionService
-from .services.gnn_service import GNNService
 from .api import (
     transactions_router,
     accounts_router,
@@ -39,7 +38,9 @@ async def lifespan(app: FastAPI):
     logger.info("Initializing FinTrace database tables...")
     Base.metadata.create_all(bind=engine)
 
-    # Check if DB has accounts; if not, seed sample data automatically
+    # Initialize the shared database with the bundled synthetic sample only when
+    # empty. Model training is an explicit operation from Model & Settings; a
+    # service restart must never start a training run as a side effect.
     db = SessionLocal()
     try:
         acc_count = db.query(Account).count()
@@ -48,12 +49,6 @@ async def lifespan(app: FastAPI):
             res = IngestionService.load_bundled_sample_data(db)
             logger.info(f"Sample data loaded: {res['valid_records']} transactions.")
             
-            # Initial train of GNN on baseline dataset
-            try:
-                train_res = GNNService.train_model(db, epochs=60, lr=0.01)
-                logger.info(f"Initial GraphSAGE model trained: F1={train_res['f1_score']}, Accuracy={train_res['accuracy']}")
-            except Exception as e:
-                logger.warning(f"Could not auto-train initial GNN: {e}")
     finally:
         db.close()
 

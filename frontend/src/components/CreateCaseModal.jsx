@@ -11,6 +11,7 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
   const [summary, setSummary] = useState('');
   const [sourceType, setSourceType] = useState('Manual');
   const [sourceRef, setSourceRef] = useState('');
+  const [isSampleDemo, setIsSampleDemo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -27,8 +28,8 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
         .catch(() => {});
 
       const targetId = initialData.account_id || initialData.id || '';
-      const initialSource = initialData.source_type || (initialData.complaint_id ? 'Complaint' : (targetId ? 'GNN Alert' : 'Manual'));
-      const initialSourceRef = initialData.complaint_id || initialData.alert_id || (targetId ? `GNN-RISK-${targetId}` : '');
+      const initialSource = initialData.source_type || (initialData.complaint_id ? 'Complaint' : (initialData.alert_id ? 'GNN Alert' : 'Manual'));
+      const initialSourceRef = initialData.complaint_id || initialData.alert_id || '';
 
       setTitle(
         initialData.title ||
@@ -51,10 +52,11 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
       setSummary(
         initialData.summary ||
         (targetId
-          ? `Account ${targetId} flagged with risk score ${initialData.risk_score ? (initialData.risk_score * 100).toFixed(1) + '%' : 'elevated'} (${initialData.risk_level || 'Suspect'}). Graph analysis detected abnormal velocity and pass-through patterns.`
-          : 'Flagged by GraphSAGE neural network for abnormal transaction velocity and rapid multi-hop fund dissemination.')
+          ? `Prototype review opened for account ${targetId}. Any displayed risk score is an unverified prioritization signal; inspect and attach the underlying records before documenting a finding.`
+          : 'Record the referral reason and source record IDs here. No model finding or confirmed fraud conclusion is added automatically.')
       );
 
+      setIsSampleDemo(false);
       setError(null);
     }
   }, [isOpen, initialData]);
@@ -78,8 +80,25 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
       initialEvidence.push({
         evidence_type: 'ACCOUNT',
         reference_id: primaryAccount.trim(),
-        description: `Primary subject account flagged with risk score ${initialData.risk_score ? (initialData.risk_score * 100).toFixed(1) + '%' : 'N/A'}`
+        description: isSampleDemo
+          ? 'Synthetic sample account attached for prototype demonstration; not a real-world allegation.'
+          : 'Primary subject account attached for investigator review; attachment alone does not indicate a model finding.'
       });
+    }
+
+    if (isSampleDemo) {
+      initialEvidence.push(
+        {
+          evidence_type: 'TRANSACTION',
+          reference_id: 'TXN_10167',
+          description: 'Bundled synthetic sample transfer: MULE_AGG_01 to MULE_LAYER_02, ₹340,000, 2026-10-12 22:15.'
+        },
+        {
+          evidence_type: 'TRANSACTION',
+          reference_id: 'TXN_10168',
+          description: 'Bundled synthetic sample transfer: MULE_LAYER_02 to CASHOUT_CRYPTO_09, ₹335,000, 2026-10-12 23:10.'
+        }
+      );
     }
 
     if (sourceRef.trim() && sourceType === 'Complaint') {
@@ -97,7 +116,9 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
         assigned_investigator: investigator,
         primary_account_id: primaryAccount.trim() || null,
         summary: summary.trim(),
-        findings: 'Preliminary graph analysis indicates potential conduit/mule account behavior across financial network.',
+        findings: isSampleDemo
+          ? 'DEMO ONLY — The bundled synthetic CSV contains TXN_10167 (MULE_AGG_01 → MULE_LAYER_02, ₹340,000) and TXN_10168 (MULE_LAYER_02 → CASHOUT_CRYPTO_09, ₹335,000). These are sample records for demonstrating the dossier workflow, not verified findings.'
+          : '',
         source_type: sourceType,
         source_reference_id: sourceRef.trim() || null,
         initial_evidence: initialEvidence
@@ -144,6 +165,27 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
               <span className="leading-snug">{error}</span>
             </div>
           )}
+
+          <div className="p-3 rounded-lg bg-sky-950/40 border border-sky-500/30 text-sky-100 space-y-2">
+            <p className="font-semibold">Want to see a complete example?</p>
+            <p className="text-[11px] leading-relaxed text-sky-100/80">
+              Load the bundled synthetic MULE_AGG_01 example. It adds two sample transfer records as evidence and labels the case as a demo.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setIsSampleDemo(true);
+                setTitle('Sample review: MULE_AGG_01 transfer chain');
+                setPrimaryAccount('MULE_AGG_01');
+                setSourceType('Manual');
+                setSourceRef('');
+                setSummary('PROTOTYPE DEMO — Synthetic sample data only. TXN_10161–TXN_10166 send a combined ₹347,060.42 into MULE_AGG_01; TXN_10167 sends ₹340,000 to MULE_LAYER_02, followed by TXN_10168 sending ₹335,000 to CASHOUT_CRYPTO_09. Verify these IDs in the transaction records. This is not a real allegation or a trained-model finding.');
+              }}
+              className="px-2.5 py-1.5 rounded border border-sky-400/40 text-sky-200 hover:bg-sky-900/60 font-semibold"
+            >
+              Load sample case details
+            </button>
+          </div>
 
           <div>
             <label className="block text-slate-300 font-semibold mb-1">Case Title *</label>
@@ -207,6 +249,7 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
                 placeholder="e.g. MULE_AGG_01"
                 className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-electric-400 font-mono text-xs"
               />
+              <p className="mt-1 text-[10px] text-slate-500">Use an exact account ID already present in the transaction records.</p>
             </div>
 
             <div>

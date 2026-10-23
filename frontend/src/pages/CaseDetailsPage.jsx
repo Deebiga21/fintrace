@@ -105,6 +105,8 @@ export default function CaseDetailsPage({
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [syncNotice, setSyncNotice] = useState(null);
+  const [lastSyncedAt, setLastSyncedAt] = useState(null);
+  const [backendOnline, setBackendOnline] = useState(false);
 
   // Ease of access state
   const [showChecklistGuide, setShowChecklistGuide] = useState(false);
@@ -167,6 +169,8 @@ export default function CaseDetailsPage({
       };
 
       setCaseData(normalized);
+      setLastSyncedAt(new Date());
+      setBackendOnline(true);
       setStatus(normalized.status || 'New');
       setPriority(normalized.priority || 'High');
       setAssignedInvestigator(normalized.assigned_investigator || 'Investigator');
@@ -187,7 +191,8 @@ export default function CaseDetailsPage({
       }
     } catch (err) {
       console.error('[FinTrace Dossier] Error loading case:', err);
-      setError(err.message || 'Failed to load case data.');
+      setBackendOnline(false);
+      if (!isSilent) setError(err.message || 'Failed to load case data.');
     } finally {
       if (!isSilent) setLoading(false);
     }
@@ -212,6 +217,16 @@ export default function CaseDetailsPage({
       if (!isSilent) setLoading(false);
     }
   }, [caseId, loadCaseData]);
+
+  // Refresh the selected case from the database as a fallback when websocket events are missed.
+  useEffect(() => {
+    const activeId = caseData?.case_id || caseId;
+    if (!activeId) return undefined;
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === 'visible') loadCaseData(activeId, true);
+    }, 10000);
+    return () => window.clearInterval(timer);
+  }, [caseData?.case_id, caseId, loadCaseData]);
 
   // Initial load
   useEffect(() => {
@@ -668,15 +683,18 @@ export default function CaseDetailsPage({
                 Initiated: <strong>{caseData.created_at ? new Date(caseData.created_at).toLocaleDateString() : 'Active'}</strong>
               </span>
 
-              <span className="flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/40">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Live Synced</span>
+              <span className={`flex items-center gap-1.5 text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${backendOnline ? 'text-emerald-300 bg-emerald-950/80 border-emerald-500/40' : 'text-rose-300 bg-rose-950/80 border-rose-500/40'}`} title={lastSyncedAt ? `Last database refresh: ${lastSyncedAt.toLocaleTimeString()}` : 'Waiting for database connection'}>
+                <span className={`w-2 h-2 rounded-full ${backendOnline ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
+                <span>{backendOnline ? `DB Live · ${lastSyncedAt?.toLocaleTimeString() || 'Connected'}` : 'Database Offline'}</span>
               </span>
             </div>
 
             <h1 className="text-xl font-black text-white tracking-wide mt-1.5">
               {caseData.title}
             </h1>
+            <p className="max-w-3xl text-xs text-slate-400 leading-relaxed mt-1">
+              This case file brings together its stage, priority, subject account, investigator, allegation summary, findings, linked records, and attached evidence references.
+            </p>
           </div>
         </div>
 
@@ -754,13 +772,13 @@ export default function CaseDetailsPage({
             <div className="p-3.5 rounded-lg bg-navy-950/80 border border-slate-800 space-y-1.5">
               <div className="font-bold text-amber-300">2. Chain of Custody Evidence</div>
               <p className="text-slate-300 text-[11px] leading-relaxed">
-                Attach suspect accounts, transfers, or FIR records in the Evidentiary Locker. FINTRACE automatically generates SHA-256 cryptographic hashes for judicial validity.
+                Attach existing account, transaction, or complaint records. SHA-256 hashes help detect later record changes; they do not verify source authenticity or legal admissibility.
               </p>
             </div>
             <div className="p-3.5 rounded-lg bg-navy-950/80 border border-slate-800 space-y-1.5">
-              <div className="font-bold text-emerald-300">3. Statutory Requisition / Freeze</div>
+              <div className="font-bold text-emerald-300">3. Investigator Review</div>
               <p className="text-slate-300 text-[11px] leading-relaxed">
-                When mule patterns are verified, transition stage to <strong>"Escalated to Enforcement"</strong>, save findings, and export the official judicial JSON dossier.
+                Verify every linked source record, save investigator notes, then export the case JSON dossier for review.
               </p>
             </div>
           </div>
@@ -834,7 +852,7 @@ export default function CaseDetailsPage({
           </label>
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs font-bold text-electric-300 bg-navy-950 px-3 py-2.5 rounded-lg border border-slate-700 flex-1 truncate">
-              {caseData.primary_account_id || 'Multi-Account Network'}
+              {caseData.primary_account_id || 'Not specified'}
             </span>
             {caseData.primary_account_id && (
               <div className="flex items-center gap-1 shrink-0">
@@ -864,7 +882,9 @@ export default function CaseDetailsPage({
             )}
           </div>
           <div className="text-[11px] text-slate-400 font-sans">
-            Core target entity under forensic inquiry.
+            {caseData.primary_account_id
+              ? 'Exact account ID from the shared transaction records.'
+              : 'No primary account is set. Link a real account record to identify the main subject.'}
           </div>
         </div>
 
@@ -896,10 +916,14 @@ export default function CaseDetailsPage({
         </div>
       </div>
 
-      {/* Case Dossier Body: Narrative & Tabbed Evidence Modules */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Narrative Findings (2 Cols) */}
-        <div className="lg:col-span-2 space-y-6">
+      <div className={`p-3.5 rounded-lg border text-xs leading-relaxed ${/synthetic|demo|sample/i.test(caseData.source_type || '') ? 'bg-amber-950/50 border-amber-500/40 text-amber-100' : 'bg-navy-900 border-slate-700 text-slate-300'}`}>
+        <strong>{/synthetic|demo|sample/i.test(caseData.source_type || '') ? 'Synthetic source:' : 'Source and evidence note:'}</strong>{' '}
+        {caseData.source_type ? `This case is marked as ${caseData.source_type}${caseData.source_reference_id ? ` (${caseData.source_reference_id})` : ''}.` : 'Case fields and linked records below are loaded from the application database.'} Verify source records before treating narrative or model signals as findings. Evidence hashes cover reference metadata, not the original source file or transaction contents, and do not establish authenticity or legal admissibility.
+      </div>
+
+      {/* Case Dossier Body: narrative first, linked records and evidence below */}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Section 1: Investigative Summary */}
           <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
@@ -930,10 +954,10 @@ export default function CaseDetailsPage({
                 <ShieldAlert className="w-4 h-4 text-electric-400" />
                 <span>DETAILED INVESTIGATION FINDINGS & MULE NETWORK NEXUS</span>
               </h2>
-              <span className="text-xs font-mono text-slate-400">Judicial Forensic Findings</span>
+              <span className="text-xs font-mono text-slate-400">Investigator Notes</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
-              Document observed multi-hop velocity patterns, supporting GNN anomaly scores, cross-bank layering, and statutory freeze recommendations.
+              Record observations and cite the source account, transaction, or alert IDs. Separate verified records from model signals and investigator hypotheses.
             </p>
             <textarea
               rows={9}
@@ -941,7 +965,7 @@ export default function CaseDetailsPage({
               onFocus={() => { isEditingFindingsRef.current = true; }}
               onBlur={() => { isEditingFindingsRef.current = false; }}
               onChange={(e) => setFindings(e.target.value)}
-              placeholder="Record forensic observations, multi-hop flow velocities, supporting GNN scores, timestamp correlations, and statutory freeze recommendations under PMLA / CrPC..."
+              placeholder="Example: TXN_10167 (₹340,000) moves MULE_AGG_01 → MULE_LAYER_02 at 2026-10-12 22:15. This is bundled synthetic demo data; verify the transaction record before describing it as a finding."
               className="w-full px-3.5 py-3 bg-navy-950 border border-slate-700 rounded-lg text-slate-100 text-sm focus:outline-none focus:border-electric-400 leading-relaxed resize-none font-sans placeholder:text-slate-500 shadow-inner"
             />
             <div className="flex justify-end pt-1">
@@ -956,8 +980,19 @@ export default function CaseDetailsPage({
             </div>
           </div>
 
+        </div>
+
+        {/* Linked records and evidence share a focused workspace row. */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+          <div className="xl:col-span-7">
           {/* Quick Tabbed Sub-Section for Accounts, Transactions, Complaints, Audit */}
           <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 space-y-4">
+            <div>
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono">CASE RECORDS</h2>
+              <p className="text-xs text-slate-400 leading-relaxed mt-1">
+                Browse the accounts and transfers linked to this case, related complaint records, or the case activity log. Counts show how many records are currently linked.
+              </p>
+            </div>
             <div className="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-2">
               <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
                 <button
@@ -1034,7 +1069,7 @@ export default function CaseDetailsPage({
                           required
                           value={linkAccId}
                           onChange={(e) => setLinkAccId(e.target.value)}
-                          placeholder="e.g. MULE_AGG_01 or DEMO_ACCOUNT_03"
+                          placeholder="e.g. MULE_AGG_01"
                           className="w-full px-3 py-2 bg-navy-900 border border-slate-700 rounded text-white text-xs font-mono focus:border-electric-400"
                         />
                       </div>
@@ -1206,6 +1241,10 @@ export default function CaseDetailsPage({
                         <div className="text-xs text-slate-300 truncate max-w-sm font-sans mt-0.5">
                           {txn.relevance || 'Flagged Transfer'}
                         </div>
+                        <div className="text-[11px] text-slate-400 font-mono mt-1">
+                          {txn.sender_account || 'Unknown sender'} → {txn.receiver_account || 'Unknown recipient'}
+                          {txn.timestamp ? ` · ${new Date(txn.timestamp).toLocaleString()}` : ''}
+                        </div>
                       </div>
 
                       <button
@@ -1334,10 +1373,10 @@ export default function CaseDetailsPage({
               </div>
             )}
           </div>
-        </div>
+          </div>
 
         {/* Right Column: Evidentiary Locker (1 Col) */}
-        <div className="p-5 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between space-y-4">
+        <div className="xl:col-span-5 p-5 rounded-xl bg-navy-900 border border-slate-800 flex flex-col justify-between space-y-4">
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
@@ -1345,7 +1384,10 @@ export default function CaseDetailsPage({
                   <Lock className="w-4 h-4 text-electric-400" />
                   <span>EVIDENTIARY LOCKER</span>
                 </h2>
-                <p className="text-xs text-slate-400 font-mono mt-0.5">Chain of custody & SHA-256 seal</p>
+                <p className="text-xs text-slate-400 font-mono mt-0.5">Evidence references & metadata integrity</p>
+                <p className="text-xs text-slate-400 leading-relaxed mt-2 max-w-md">
+                  Attach an existing account, transaction, or complaint ID to keep its reference and description with this case. This prototype stores a metadata hash; it does not copy or verify the original source.
+                </p>
               </div>
 
               <button
@@ -1361,7 +1403,7 @@ export default function CaseDetailsPage({
             <div className="p-3 rounded-lg bg-electric-950/40 border border-electric-500/30 text-xs text-slate-300 leading-relaxed font-sans flex items-start gap-2">
               <ShieldCheck className="w-4 h-4 text-electric-400 shrink-0 mt-0.5" />
               <span>
-                <strong>Cryptographic Sealing:</strong> Every attached record is stamped with a SHA-256 integrity hash for court-admissible chain of custody.
+                <strong>Metadata hash:</strong> SHA-256 covers the evidence reference, description, and timestamp. It does not hash the referenced transaction or file, prove authenticity, or establish court admissibility.
               </span>
             </div>
 
@@ -1406,7 +1448,7 @@ export default function CaseDetailsPage({
                     required
                     value={evRef}
                     onChange={(e) => setEvRef(e.target.value)}
-                    placeholder="e.g. MULE_AGG_01 or TXN_3_SZ..."
+                    placeholder="e.g. MULE_AGG_01 or TXN_10167"
                     className="w-full px-3 py-2 bg-navy-900 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-electric-400"
                   />
 
@@ -1529,7 +1571,7 @@ export default function CaseDetailsPage({
                       <span className="truncate max-w-[200px]" title={`SHA-256: ${ev.integrity_hash}`}>
                         SHA-256: {ev.integrity_hash.substring(0, 16)}...
                       </span>
-                      <span className="text-emerald-400 font-bold shrink-0">Sealed</span>
+                      <span className="text-emerald-400 font-bold shrink-0">Metadata hash</span>
                     </div>
                   )}
                 </div>
@@ -1537,21 +1579,24 @@ export default function CaseDetailsPage({
 
               {(!caseData.evidence_items || caseData.evidence_items.length === 0) && (
                 <div className="p-8 text-center text-slate-400 text-xs font-mono bg-navy-950/60 rounded-lg border border-slate-800/80">
-                  No evidence attached yet. Click "+ Attach" to secure accounts, transactions, or FIRs.
+                  No source records are attached yet. Use “Attach” and enter an account, transaction, or complaint ID that exists in the database.
                 </div>
               )}
             </div>
           </div>
 
           <div className="pt-3 border-t border-slate-800 text-xs text-slate-400 font-mono flex items-center justify-between">
-            <span>Seal: <strong>{caseData.case_id}-AUDIT</strong></span>
-            <span className="text-emerald-400 font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Cryptographically Sealed</span>
+            <span>Case record: <strong>{caseData.case_id}</strong></span>
+            <span className="font-bold flex items-center gap-1">
+              <span className={`w-1.5 h-1.5 rounded-full ${caseData.evidence_items?.some((item) => item.integrity_hash) ? 'bg-emerald-400' : 'bg-slate-500'}`} />
+              {caseData.evidence_items?.some((item) => item.integrity_hash)
+                ? 'Evidence metadata hashed'
+                : 'No evidence hash recorded'}
             </span>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

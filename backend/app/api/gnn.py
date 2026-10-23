@@ -1,4 +1,5 @@
 import json
+import os
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any
@@ -7,6 +8,8 @@ from ..database import get_db
 from ..schemas.gnn import GNNTrainRequest, GNNTrainResponse, GNNInferenceResponse
 from ..services.gnn_service import GNNService
 from ..models.model_run import ModelRun
+from ..models.account import Account
+from ..models.transaction import Transaction
 
 router = APIRouter(prefix="/gnn", tags=["Graph Neural Network"])
 
@@ -59,3 +62,22 @@ def list_model_runs(db: Session = Depends(get_db)):
             "notes": r.notes
         })
     return results
+
+@router.get("/status")
+def get_gnn_status(db: Session = Depends(get_db)):
+    latest = db.query(ModelRun).order_by(ModelRun.timestamp.desc()).first()
+    return {
+        "model_name": "GraphSAGE (account transaction graph)",
+        "checkpoint_available": os.path.isfile(GNNService.WEIGHTS_PATH),
+        "checkpoint_path": os.path.basename(GNNService.WEIGHTS_PATH),
+        "account_count": db.query(Account).count(),
+        "transaction_count": db.query(Transaction).count(),
+        "latest_run": None if latest is None else {
+            "run_id": latest.run_id,
+            "timestamp": latest.timestamp.isoformat() if latest.timestamp else None,
+            "architecture": latest.architecture,
+            "epochs": latest.epochs,
+            "f1_score": latest.f1_score,
+            "is_trained_on_ground_truth": latest.is_trained_on_ground_truth,
+        },
+    }

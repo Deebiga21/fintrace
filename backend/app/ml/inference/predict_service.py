@@ -124,15 +124,24 @@ class MLInferenceService:
         """
         Computes GNN mule risk probability, anomaly score, and topological evidence references.
         """
-        if account_id not in self.node_to_idx or self.gnn_model is None or self.graph_data is None:
-            # Fallback if account not yet in graph
+        if account_id not in self.node_to_idx or self.graph_data is None:
             return {
                 "account_id": account_id,
                 "model_status": "UNINDEXED_OR_COLD_ACCOUNT",
-                "mule_probability": 0.05,
-                "risk_tier": "LOW",
-                "anomaly_score": 0.0,
-                "explanation_summary": "Account does not have sufficient relational transaction history in the graph.",
+                "mule_probability": None,
+                "risk_tier": "UNAVAILABLE",
+                "anomaly_score": None,
+                "explanation_summary": "Account is not indexed in the active transaction graph; no risk score was produced.",
+                "evidence": {}
+            }
+        if self.gnn_model is None:
+            return {
+                "account_id": account_id,
+                "model_status": "CHECKPOINT_UNAVAILABLE",
+                "mule_probability": None,
+                "risk_tier": "UNAVAILABLE",
+                "anomaly_score": None,
+                "explanation_summary": "No compatible trained GraphSAGE checkpoint is loaded; no risk score was produced.",
                 "evidence": {}
             }
 
@@ -171,6 +180,7 @@ class MLInferenceService:
 
         return {
             "account_id": account_id,
+            "model_status": "READY",
             "mule_probability": mule_prob,
             "risk_score_100": int(mule_prob * 100),
             "risk_tier": risk_tier,
@@ -199,10 +209,11 @@ class MLInferenceService:
         df_single = pd.DataFrame([record])
         if self.preprocessor is None or self.classifier_model is None:
             return {
-                "transaction_id": record.get("transaction_id", "UNKNOWN"),
-                "fraud_probability": 0.05,
-                "risk_tier": "LOW",
-                "explanation": "Classifier not loaded."
+                "transaction_id": record.get("transaction_id"),
+                "fraud_probability": None,
+                "risk_tier": "UNAVAILABLE",
+                "model_status": "CHECKPOINT_UNAVAILABLE",
+                "explanation": "No compatible trained transaction classifier is loaded; no risk score was produced."
             }
 
         X = self.preprocessor.transform_inference(df_single)

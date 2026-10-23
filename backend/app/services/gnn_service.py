@@ -165,26 +165,26 @@ class GNNService:
             raise ValueError("Insufficient accounts to train GraphSAGE (at least 4 required).")
 
         accounts = db.query(Account).order_by(Account.account_id).all()
-        labels = []
-        mask_indices = []
+        labeled = [
+            (i, 1 if account.is_ground_truth_mule else 0)
+            for i, account in enumerate(accounts)
+            if account.is_ground_truth_mule is not None
+        ]
+        if len(labeled) < 4 or len({label for _, label in labeled}) < 2:
+            raise ValueError(
+                "GraphSAGE training requires at least four accounts with explicit account-level labels, including both classes. "
+                "Account names, heuristic flags, and existing risk scores are not treated as ground truth."
+            )
 
-        for i, acc in enumerate(accounts):
-            if acc.is_ground_truth_mule is not None:
-                labels.append(1 if acc.is_ground_truth_mule else 0)
-            elif any(kw in acc.account_id.upper() for kw in ["MULE", "CIRC", "RAPID", "DISP", "CASHOUT", "OFFSHORE", "HEIST"]):
-                labels.append(1)
-            else:
-                # Semi-supervised heuristic label for training demo if explicit GT not set
-                flags = json.loads(acc.flags_json) if acc.flags_json else []
-                is_suspicious = (len(flags) >= 2 or (acc.risk_score and acc.risk_score > 0.6))
-                labels.append(1 if is_suspicious else 0)
-            mask_indices.append(i)
-
+        mask_indices = np.array([i for i, _ in labeled])
+        labels = np.zeros(len(accounts), dtype=np.int64)
+        for i, label in labeled:
+            labels[i] = label
         y = torch.tensor(labels, dtype=torch.long)
         
         # Train / Validation split (70% train, 30% val)
         np.random.seed(42)
-        indices = np.array(mask_indices)
+        indices = mask_indices.copy()
         np.random.shuffle(indices)
         split = int(0.7 * len(indices))
         train_idx = indices[:split]
@@ -282,6 +282,19 @@ class GNNService:
         import time
         start_t = time.time()
 
+        # Do not turn random initial weights into operational account scores.
+        if not os.path.isfile(GNNService.WEIGHTS_PATH):
+            return {
+                "total_accounts_scored": 0,
+                "high_risk_count": 0,
+                "medium_risk_count": 0,
+                "low_risk_count": 0,
+                "execution_time_ms": round((time.time() - start_t) * 1000.0, 2),
+                "is_trained_model": False,
+                "status": "model_unavailable",
+                "message": "Train or load a compatible GraphSAGE checkpoint before scoring accounts."
+            }
+
         X, edge_index, account_ids, node_to_idx = GNNService.extract_graph_tensors(db)
         if len(account_ids) == 0:
             return {
@@ -295,13 +308,23 @@ class GNNService:
             }
 
         model = FinancialGraphSAGE(in_features=8, hidden_dim=32, embedding_dim=16, num_classes=2)
-        is_trained = False
-        if os.path.exists(GNNService.WEIGHTS_PATH):
-            try:
-                model.load_state_dict(torch.load(GNNService.WEIGHTS_PATH, map_location=torch.device('cpu')))
-                is_trained = True
-            except Exception:
-                is_trained = False
+        try:
+            model.load_state_dict(torch.load(
+                GNNService.WEIGHTS_PATH,
+                map_location=torch.device('cpu'),
+                weights_only=True
+            ))
+        except Exception as exc:
+            return {
+                "total_accounts_scored": 0,
+                "high_risk_count": 0,
+                "medium_risk_count": 0,
+                "low_risk_count": 0,
+                "execution_time_ms": round((time.time() - start_t) * 1000.0, 2),
+                "is_trained_model": False,
+                "status": "checkpoint_incompatible",
+                "message": f"GraphSAGE checkpoint could not be loaded: {exc}"
+            }
 
         model.eval()
         with torch.no_grad():
@@ -316,18 +339,7 @@ class GNNService:
         for i, acc in enumerate(accounts):
             raw_score = float(probs[i])
             
-            # Incorporate detected heuristic patterns into final risk score when model is untrained
-            flags = json.loads(acc.flags_json) if acc.flags_json else []
-            if not is_trained:
-                heuristic_boost = min(len(flags) * 0.22, 0.85)
-                # Weighted blend
-                score = min(max(raw_score * 0.3 + heuristic_boost, 0.02), 0.98)
-            else:
-                # GraphSAGE model probability reinforced with detected topological signals
-                heuristic_boost = min(len(flags) * 0.18, 0.55)
-                score = min(max(raw_score * 0.70 + heuristic_boost * 0.30, 0.02), 0.99)
-
-            score = round(score, 4)
+            score = round(raw_score, 4)
             acc.risk_score = score
             acc.prediction_confidence = round(float(abs(score - 0.5) * 2.0), 3)
 
@@ -355,7 +367,7 @@ class GNNService:
             "medium_risk_count": med_count,
             "low_risk_count": low_count,
             "execution_time_ms": exec_ms,
-            "is_trained_model": is_trained,
+            "is_trained_model": True,
             "status": "completed"
         }
 
