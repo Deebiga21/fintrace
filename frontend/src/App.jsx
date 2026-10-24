@@ -31,7 +31,7 @@ export default function App() {
     return hash ? hash.split('?')[0] : 'landing';
   });
 
-  const [selectedAccount, setSelectedAccount] = useState('DEMO_ACCOUNT_03');
+  const [selectedAccount, setSelectedAccount] = useState('MULE_AGG_01');
 
   const [selectedCaseId, setSelectedCaseId] = useState(() => {
     const hash = window.location.hash.replace('#', '');
