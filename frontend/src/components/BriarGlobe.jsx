@@ -97,7 +97,7 @@ const DEFAULT_HOVER = {
   reach: 20,
   glowSize: 130,
   glow: "#1FC8DB",
-  pill: "rgba(255, 245, 245, 0.95)",
+  pill: "rgba(21, 22, 29, 0.95)",
   lag: 4.5,
 }
 
@@ -1339,8 +1339,8 @@ export default function BriarGlobe({
                 backgroundColor: resolvedHover.pill,
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
-                border: "1px solid rgba(226, 180, 189, 0.6)",
-                boxShadow: "0 4px 20px -2px rgba(184, 107, 122, 0.25)",
+                border: "1px solid rgba(38, 40, 51, 0.8)",
+                boxShadow: "0 4px 20px -2px rgba(31, 200, 219, 0.35)",
                 color: textColor,
                 whiteSpace: "nowrap",
                 userSelect: "none",
@@ -1348,7 +1348,7 @@ export default function BriarGlobe({
               }}
             >
               <span className="flex items-center gap-1.5 font-mono text-xs">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block"></span>
+                <span className="w-2 h-2 rounded-full bg-fintech-accent animate-ping inline-block"></span>
                 {pillWord}
               </span>
             </div>

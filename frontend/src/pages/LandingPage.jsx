@@ -657,7 +657,7 @@ export default function LandingPage({
             </div>
             <div className="pt-4 border-t border-fintech-border/60 flex items-center justify-between text-xs font-mono text-fintech-muted">
               <span>Evasion Vulnerability</span>
-              <span className="text-rose-400 font-bold">High in Legacy AML</span>
+              <span className="text-fintech-loss font-bold">High in Legacy AML</span>
             </div>
           </div>
 
@@ -679,7 +679,7 @@ export default function LandingPage({
             </div>
             <div className="pt-4 border-t border-fintech-border/60 flex items-center justify-between text-xs font-mono text-fintech-muted">
               <span>Model Accuracy</span>
-              <span className="text-emerald-400 font-bold">&gt; 96.5% F1-Score</span>
+              <span className="text-fintech-gain font-bold">&gt; 96.5% F1-Score</span>
             </div>
           </div>
 
@@ -715,7 +715,7 @@ export default function LandingPage({
             </div>
             <div>
               <span className="text-[11px] font-mono text-fintech-muted uppercase block">Inference Speed</span>
-              <span className="text-lg sm:text-xl font-bold text-emerald-400 font-mono mt-0.5 block">&lt; 45ms</span>
+              <span className="text-lg sm:text-xl font-bold text-fintech-gain font-mono mt-0.5 block">&lt; 45ms</span>
             </div>
             <div>
               <span className="text-[11px] font-mono text-fintech-muted uppercase block">Ledger Scale</span>
@@ -850,11 +850,11 @@ export default function LandingPage({
                     <div className="flex-1 flex flex-col items-center text-center p-3 rounded-xl bg-fintech-card border border-fintech-border">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border mb-2 ${
                         node.type === 'victim'
-                          ? 'bg-fintech-surface text-emerald-400 border-emerald-500/40'
+                          ? 'bg-fintech-surface text-fintech-gain border-fintech-gain/40'
                           : node.type === 'target'
-                          ? 'bg-fintech-surface text-rose-400 border-rose-500/50 animate-pulse'
+                          ? 'bg-fintech-surface text-fintech-loss border-fintech-loss/50 animate-pulse'
                           : node.type === 'layer'
-                          ? 'bg-fintech-surface text-amber-400 border-amber-500/40'
+                          ? 'bg-fintech-surface text-fintech-accent border-fintech-accent/40'
                           : 'bg-fintech-surface text-fintech-text border-fintech-border'
                       }`}>
                         {i + 1}
