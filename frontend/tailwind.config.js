@@ -72,6 +72,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        serif: ['"Instrument Serif"', '"Playfair Display"', 'Georgia', 'serif'],
         mono: ['"JetBrains Mono"', '"SF Mono"', 'monospace'],
         display: ['Inter', 'sans-serif'],
       },

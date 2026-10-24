@@ -150,3 +150,33 @@ html {
   box-shadow: var(--hover-glow);
   transform: translateY(-1px);
 }
+
+/* Editorial Serif & Template Helpers */
+.font-serif-italic {
+  font-family: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+  font-style: italic;
+}
+
+.glass-pill {
+  background-color: rgba(21, 22, 29, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  transition: all 0.2s ease-in-out;
+}
+
+.light .glass-pill {
+  background-color: rgba(245, 247, 250, 0.85);
+  border-color: #E5E7EB;
+}
+
+.template-surface {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+}
+
+.glow-turquoise-hover:hover {
+  box-shadow: 0 0 30px -4px rgba(31, 200, 219, 0.35);
+  border-color: rgba(31, 200, 219, 0.5);
+}
