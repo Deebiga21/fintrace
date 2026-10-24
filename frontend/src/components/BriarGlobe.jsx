@@ -70,7 +70,7 @@ const DEFAULT_FONT = {
   lineHeight: 1.2,
 }
 
-const DEFAULT_TEXT_COLOR = "#3B82F6"
+const DEFAULT_TEXT_COLOR = "#4A4A4A"
 
 const DEFAULT_NETWORK = {
   nodes: 900,
@@ -79,8 +79,8 @@ const DEFAULT_NETWORK = {
 }
 
 const DEFAULT_LINES = {
-  color: "#93C5FD",
-  accent: "#3B82F6",
+  color: "#E2B4BD",
+  accent: "#B86B7A",
   thickness: 0.65,
   opacity: 5,
   depth: 8,
@@ -96,8 +96,8 @@ const DEFAULT_INTRO = {
 const DEFAULT_HOVER = {
   reach: 20,
   glowSize: 130,
-  glow: "#3B82F6",
-  pill: "rgba(31, 36, 46, 0.95)",
+  glow: "#E2B4BD",
+  pill: "rgba(255, 245, 245, 0.95)",
   lag: 4.5,
 }
 
@@ -1339,8 +1339,8 @@ export default function BriarGlobe({
                 backgroundColor: resolvedHover.pill,
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
-                border: "1px solid rgba(96, 165, 250, 0.4)",
-                boxShadow: "0 4px 20px -2px rgba(59, 130, 246, 0.35)",
+                border: "1px solid rgba(226, 180, 189, 0.6)",
+                boxShadow: "0 4px 20px -2px rgba(184, 107, 122, 0.25)",
                 color: textColor,
                 whiteSpace: "nowrap",
                 userSelect: "none",

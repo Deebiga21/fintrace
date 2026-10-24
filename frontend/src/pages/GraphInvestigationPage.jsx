@@ -116,11 +116,11 @@ export default function GraphInvestigationPage({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-wide flex items-center gap-2">
-            <Network className="w-5 h-5 text-[#3B82F6]" />
+          <h2 className="text-xl font-bold text-[#4A4A4A] tracking-wide flex items-center gap-2">
+            <Network className="w-5 h-5 text-[#B86B7A]" />
             <span>Step 5: Interactive Financial Transaction Graph Canvas</span>
           </h2>
-          <p className="text-xs text-[#93C5FD] mt-1">
+          <p className="text-xs text-[#6E6264] mt-1">
             Directed Cytoscape.js network representing entity nodes and fund transfers. Inspect neighborhoods, cycles, and layering.
           </p>
         </div>
@@ -131,7 +131,7 @@ export default function GraphInvestigationPage({
               onClick={() => setCycleHighlightActive(!cycleHighlightActive)}
               className={`px-3 py-1.5 rounded-none text-xs font-semibold flex items-center gap-1.5 transition ${
                 cycleHighlightActive
-                  ? 'bg-rose-600 text-white shadow-glow-danger'
+                  ? 'bg-rose-600 text-[#4A4A4A] shadow-glow-danger'
                   : 'bg-[#FF3B4E]/15/40 text-[#FF3B4E] border border-[#FF3B4E]/40 hover:bg-[#FF3B4E]/20/40'
               }`}
             >
@@ -143,9 +143,9 @@ export default function GraphInvestigationPage({
           <button
             onClick={fetchGraphData}
             title="Reload Full Graph"
-            className="p-2 bg-navy-850 hover:bg-[#252B37] text-[#93C5FD] rounded-none border border-[#333D50] transition"
+            className="p-2 bg-navy-850 hover:bg-[#FFFFFF] text-[#6E6264] rounded-none border border-[#E8C2BB] transition"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#3B82F6]' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#B86B7A]' : ''}`} />
           </button>
         </div>
       </div>
@@ -153,10 +153,10 @@ export default function GraphInvestigationPage({
       {/* Main Canvas and Inspection Side Drawer */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-[620px]">
         {/* Cytoscape Canvas (3 cols) */}
-        <div className="lg:col-span-3 rounded-none overflow-hidden border border-[#333D50] bg-[#1F242E] flex flex-col h-[620px]">
+        <div className="lg:col-span-3 rounded-none overflow-hidden border border-[#E8C2BB] bg-[#FFF5F5] flex flex-col h-[620px]">
           {loading && !graphData ? (
-            <div className="h-full flex flex-col items-center justify-center gap-3 text-[#93C5FD]">
-              <RefreshCw className="w-6 h-6 animate-spin text-[#3B82F6]" />
+            <div className="h-full flex flex-col items-center justify-center gap-3 text-[#6E6264]">
+              <RefreshCw className="w-6 h-6 animate-spin text-[#B86B7A]" />
               <span className="text-xs font-mono">Rendering Transaction Topology...</span>
             </div>
           ) : (
@@ -171,48 +171,48 @@ export default function GraphInvestigationPage({
         </div>
 
         {/* Inspection Side Drawer (1 col) */}
-        <div className="rounded-none bg-[#252B37]/75 backdrop-blur-2xl border border-[#333D50] p-5 flex flex-col justify-between space-y-4">
+        <div className="rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] p-5 flex flex-col justify-between space-y-4">
           {selectedNode ? (
             <div className="space-y-4 text-xs">
-              <div className="border-b border-[#333D50] pb-3">
+              <div className="border-b border-[#E8C2BB] pb-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-[#93C5FD] font-mono">SELECTED NODE</span>
+                  <span className="text-[10px] text-[#6E6264] font-mono">SELECTED NODE</span>
                   <RiskBadge level={selectedNode.risk_level} score={selectedNode.risk_score} size="sm" />
                 </div>
-                <div className="font-mono text-base font-bold text-white mt-1">{selectedNode.id}</div>
-                <div className="text-[11px] text-[#93C5FD]">{selectedNode.customer_name}</div>
+                <div className="font-mono text-base font-bold text-[#4A4A4A] mt-1">{selectedNode.id}</div>
+                <div className="text-[11px] text-[#6E6264]">{selectedNode.customer_name}</div>
               </div>
 
               <div className="space-y-2">
-                <div className="text-[11px] font-bold text-[#93C5FD] uppercase font-mono">ACCOUNT METRICS</div>
+                <div className="text-[11px] font-bold text-[#6E6264] uppercase font-mono">ACCOUNT METRICS</div>
                 <div className="space-y-1.5 font-mono text-[11px]">
-                  <div className="flex justify-between p-2 rounded bg-[#1F242E] border border-[#333D50]">
-                    <span className="text-[#93C5FD]">In-Degree:</span>
-                    <span className="text-white font-bold">{selectedNode.in_degree ?? selectedNode.inDegree ?? '-'}</span>
+                  <div className="flex justify-between p-2 rounded bg-[#FFF5F5] border border-[#E8C2BB]">
+                    <span className="text-[#6E6264]">In-Degree:</span>
+                    <span className="text-[#4A4A4A] font-bold">{selectedNode.in_degree ?? selectedNode.inDegree ?? '-'}</span>
                   </div>
-                  <div className="flex justify-between p-2 rounded bg-[#1F242E] border border-[#333D50]">
-                    <span className="text-[#93C5FD]">Out-Degree:</span>
-                    <span className="text-white font-bold">{selectedNode.out_degree ?? selectedNode.outDegree ?? '-'}</span>
+                  <div className="flex justify-between p-2 rounded bg-[#FFF5F5] border border-[#E8C2BB]">
+                    <span className="text-[#6E6264]">Out-Degree:</span>
+                    <span className="text-[#4A4A4A] font-bold">{selectedNode.out_degree ?? selectedNode.outDegree ?? '-'}</span>
                   </div>
-                  <div className="flex justify-between p-2 rounded bg-[#1F242E] border border-[#333D50]">
-                    <span className="text-[#93C5FD]">Turnover Ratio:</span>
-                    <span className="text-[#93C5FD] font-bold">
+                  <div className="flex justify-between p-2 rounded bg-[#FFF5F5] border border-[#E8C2BB]">
+                    <span className="text-[#6E6264]">Turnover Ratio:</span>
+                    <span className="text-[#6E6264] font-bold">
                       {typeof selectedNode.turnover_ratio === 'number' ? selectedNode.turnover_ratio.toFixed(2) : '-'}
                     </span>
                   </div>
-                  <div className="flex justify-between p-2 rounded bg-[#1F242E] border border-[#333D50]">
-                    <span className="text-[#93C5FD]">Total Outgoing:</span>
-                    <span className="text-[#F3F4F6]">
+                  <div className="flex justify-between p-2 rounded bg-[#FFF5F5] border border-[#E8C2BB]">
+                    <span className="text-[#6E6264]">Total Outgoing:</span>
+                    <span className="text-[#4A4A4A]">
                       ₹{typeof selectedNode.total_outgoing === 'number' ? selectedNode.total_outgoing.toLocaleString() : '-'}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-[#333D50]">
+              <div className="space-y-2 pt-2 border-t border-[#E8C2BB]">
                 <button
                   onClick={() => handleExpandEgo(selectedNode.id)}
-                  className="w-full py-2 bg-electric-600 hover:bg-[#3B82F6] text-white font-semibold rounded-none text-xs flex items-center justify-center gap-1.5 shadow-glow-electric transition"
+                  className="w-full py-2 bg-electric-600 hover:bg-[#B86B7A] text-white font-semibold rounded-none text-xs flex items-center justify-center gap-1.5 shadow-glow-rose transition"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>Expand 2-Hop Ego Graph</span>
@@ -222,9 +222,9 @@ export default function GraphInvestigationPage({
                     if (onAccountSelect) onAccountSelect(selectedNode.id);
                     setCurrentPage('money-trail');
                   }}
-                  className="w-full py-2 bg-navy-850 hover:bg-[#252B37] border border-[#333D50] text-[#F3F4F6] font-semibold rounded-none text-xs flex items-center justify-center gap-1.5 transition"
+                  className="w-full py-2 bg-navy-850 hover:bg-[#FFFFFF] border border-[#E8C2BB] text-[#4A4A4A] font-semibold rounded-none text-xs flex items-center justify-center gap-1.5 transition"
                 >
-                  <ArrowRight className="w-3.5 h-3.5 text-[#3B82F6]" />
+                  <ArrowRight className="w-3.5 h-3.5 text-[#B86B7A]" />
                   <span>Open Money Trail</span>
                 </button>
                 {onOpenCreateCase && (
@@ -243,45 +243,45 @@ export default function GraphInvestigationPage({
             </div>
           ) : selectedEdge ? (
             <div className="space-y-4 text-xs">
-              <div className="border-b border-[#333D50] pb-3">
-                <span className="text-[10px] text-[#93C5FD] font-mono">SELECTED TRANSACTION</span>
-                <div className="font-mono text-sm font-bold text-white mt-1 break-all">{selectedEdge.id}</div>
+              <div className="border-b border-[#E8C2BB] pb-3">
+                <span className="text-[10px] text-[#6E6264] font-mono">SELECTED TRANSACTION</span>
+                <div className="font-mono text-sm font-bold text-[#4A4A4A] mt-1 break-all">{selectedEdge.id}</div>
                 <div className="flex items-center gap-2 mt-2">
                   <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${
                     selectedEdge.is_suspicious
                       ? 'bg-[#FF3B4E]/15/80 text-[#FF3B4E] border border-[#FF3B4E]/50'
-                      : 'bg-[#93C5FD]/15/80 text-[#93C5FD] border border-[#93C5FD]/50'
+                      : 'bg-[#93C5FD]/15/80 text-[#6E6264] border border-[#93C5FD]/50'
                   }`}>
                     {selectedEdge.is_suspicious ? 'SUSPICIOUS' : 'STANDARD'}
                   </span>
-                  <span className="text-[11px] font-mono text-[#93C5FD]">{selectedEdge.transaction_type || 'TRANSFER'}</span>
+                  <span className="text-[11px] font-mono text-[#6E6264]">{selectedEdge.transaction_type || 'TRANSFER'}</span>
                 </div>
               </div>
 
               <div className="space-y-2 font-mono text-[11px]">
-                <div className="p-2.5 rounded bg-[#1F242E] border border-[#333D50] space-y-1">
-                  <div className="text-[10px] text-[#93C5FD]">TRANSFER VALUE</div>
-                  <div className="text-base font-bold text-[#93C5FD]">
+                <div className="p-2.5 rounded bg-[#FFF5F5] border border-[#E8C2BB] space-y-1">
+                  <div className="text-[10px] text-[#6E6264]">TRANSFER VALUE</div>
+                  <div className="text-base font-bold text-[#6E6264]">
                     ₹{typeof selectedEdge.amount === 'number' ? selectedEdge.amount.toLocaleString() : selectedEdge.amount}
                   </div>
                 </div>
-                <div className="p-2 rounded bg-[#1F242E] border border-[#333D50]">
-                  <div className="text-[10px] text-[#93C5FD]">SOURCE SENDER</div>
-                  <div className="text-white font-semibold truncate">{selectedEdge.source}</div>
+                <div className="p-2 rounded bg-[#FFF5F5] border border-[#E8C2BB]">
+                  <div className="text-[10px] text-[#6E6264]">SOURCE SENDER</div>
+                  <div className="text-[#4A4A4A] font-semibold truncate">{selectedEdge.source}</div>
                 </div>
-                <div className="p-2 rounded bg-[#1F242E] border border-[#333D50]">
-                  <div className="text-[10px] text-[#93C5FD]">TARGET RECEIVER</div>
-                  <div className="text-white font-semibold truncate">{selectedEdge.target}</div>
+                <div className="p-2 rounded bg-[#FFF5F5] border border-[#E8C2BB]">
+                  <div className="text-[10px] text-[#6E6264]">TARGET RECEIVER</div>
+                  <div className="text-[#4A4A4A] font-semibold truncate">{selectedEdge.target}</div>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-[#333D50]">
+              <div className="space-y-2 pt-2 border-t border-[#E8C2BB]">
                 <button
                   onClick={() => {
                     if (onAccountSelect) onAccountSelect(selectedEdge.source);
                     setCurrentPage('money-trail');
                   }}
-                  className="w-full py-2 bg-navy-850 hover:bg-[#252B37] border border-[#333D50] text-[#F3F4F6] font-semibold rounded-none text-xs"
+                  className="w-full py-2 bg-navy-850 hover:bg-[#FFFFFF] border border-[#E8C2BB] text-[#4A4A4A] font-semibold rounded-none text-xs"
                 >
                   Trace Sender Flow
                 </button>
@@ -290,16 +290,16 @@ export default function GraphInvestigationPage({
                     if (onAccountSelect) onAccountSelect(selectedEdge.target);
                     setCurrentPage('money-trail');
                   }}
-                  className="w-full py-2 bg-navy-850 hover:bg-[#252B37] border border-[#333D50] text-[#F3F4F6] font-semibold rounded-none text-xs"
+                  className="w-full py-2 bg-navy-850 hover:bg-[#FFFFFF] border border-[#E8C2BB] text-[#4A4A4A] font-semibold rounded-none text-xs"
                 >
                   Trace Receiver Flow
                 </button>
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-[#64748B] text-center space-y-2 p-6">
+            <div className="h-full flex flex-col items-center justify-center text-[#8A7D7F] text-center space-y-2 p-6">
               <Network className="w-10 h-10 text-slate-600" />
-              <div className="text-xs font-semibold text-[#93C5FD]">Interactive Canvas</div>
+              <div className="text-xs font-semibold text-[#6E6264]">Interactive Canvas</div>
               <p className="text-[11px]">Click any node or directed edge in the graph canvas to inspect balance, signals, and trace options.</p>
             </div>
           )}
@@ -308,13 +308,13 @@ export default function GraphInvestigationPage({
 
       {/* Circular Cycles Detection Summary */}
       {cycles.length > 0 && (
-        <div className="p-5 rounded-none bg-[#252B37]/75 backdrop-blur-2xl border border-[#FF3B4E]/40 shadow-sm space-y-3">
+        <div className="p-5 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#FF3B4E]/40 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-[#FF3B4E] tracking-wide uppercase font-mono flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-[#FF3B4E]" />
               <span>DETECTED CIRCULAR MONEY TRANSFER RINGS (DIRECTED CYCLES)</span>
             </h3>
-            <span className="text-[11px] text-[#93C5FD] font-mono">Layering Evasion Pattern</span>
+            <span className="text-[11px] text-[#6E6264] font-mono">Layering Evasion Pattern</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -326,8 +326,8 @@ export default function GraphInvestigationPage({
                 : "High Suspicion Loop";
 
               return (
-                <div key={idx} className="p-3.5 rounded-none bg-[#1F242E] border border-rose-900/40 hover:border-[#FF3B4E]/50 transition text-xs font-mono space-y-2">
-                  <div className="flex items-center justify-between text-[#93C5FD] text-[10px]">
+                <div key={idx} className="p-3.5 rounded-none bg-[#FFF5F5] border border-rose-900/40 hover:border-[#FF3B4E]/50 transition text-xs font-mono space-y-2">
+                  <div className="flex items-center justify-between text-[#6E6264] text-[10px]">
                     <span className="font-bold text-[#FF3B4E]">CYCLE #{idx + 1} ({cycleLength} ACCOUNTS)</span>
                     <span className="text-[#FF3B4E] font-semibold px-2 py-0.5 rounded bg-[#FF3B4E]/15/60 border border-rose-800/40">
                       {confidence}
@@ -341,7 +341,7 @@ export default function GraphInvestigationPage({
                             if (onAccountSelect) onAccountSelect(acc);
                             handleExpandEgo(acc);
                           }}
-                          className="px-2 py-0.5 rounded bg-[#252B37] hover:bg-slate-700 text-[#3B82F6] border border-[#333D50] text-[11px] font-semibold transition hover:scale-105"
+                          className="px-2 py-0.5 rounded bg-[#FFFFFF] hover:bg-slate-700 text-[#B86B7A] border border-[#E8C2BB] text-[11px] font-semibold transition hover:scale-105"
                           title={`Click to view ego network of ${acc}`}
                         >
                           {acc}

@@ -1,19 +1,19 @@
-/* DedSec signal layer configured strictly in user's color palette:
-   #1F242E, #3B82F6, #60A5FA, #93C5FD, #F3F4F6 */
+/* DedSec signal layer configured in User's 4-color Light Rose Palette:
+   #FFF5F5, #F7D6D0, #E2B4BD, #4A4A4A */
 :root {
-  --dedsec-black: #1F242E;
-  --dedsec-panel: rgba(31, 36, 46, .92);
-  --dedsec-cyan: #3B82F6;
-  --dedsec-cyan-soft: #60A5FA;
-  --dedsec-red: #EF4444;
-  --dedsec-lime: #93C5FD;
-  --dedsec-paper: #F3F4F6;
-  --dedsec-steel: #93C5FD;
+  --dedsec-black: #FFF5F5;
+  --dedsec-panel: rgba(255, 255, 255, .94);
+  --dedsec-cyan: #B86B7A;
+  --dedsec-cyan-soft: #E2B4BD;
+  --dedsec-red: #DC2626;
+  --dedsec-lime: #F7D6D0;
+  --dedsec-paper: #4A4A4A;
+  --dedsec-steel: #6E6264;
 }
 
 html, body { background: var(--dedsec-black) !important; }
 body { color: var(--dedsec-paper); }
-::selection { background: var(--dedsec-cyan); color: #F3F4F6; }
+::selection { background: var(--dedsec-cyan-soft); color: #4A4A4A; }
 
 .dedsec-app-shell {
   position: relative;
@@ -37,31 +37,31 @@ body { color: var(--dedsec-paper); }
   pointer-events: none;
   color: var(--dedsec-cyan);
   background:
-    radial-gradient(ellipse at 62% 43%, rgba(59, 130, 246, .14), transparent 50%),
-    radial-gradient(ellipse at 22% 82%, rgba(96, 165, 250, .10), transparent 44%),
-    #1F242E;
+    radial-gradient(ellipse at 62% 43%, rgba(226, 180, 189, .24), transparent 50%),
+    radial-gradient(ellipse at 22% 82%, rgba(247, 214, 208, .30), transparent 44%),
+    #FFF5F5;
 }
 .dedsec-backdrop::after {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: .24;
+  opacity: .32;
   background:
-    linear-gradient(rgba(147, 197, 253, .04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(147, 197, 253, .04) 1px, transparent 1px),
-    repeating-linear-gradient(0deg, rgba(243, 244, 246, .01) 0 1px, transparent 1px 3px);
+    linear-gradient(rgba(226, 180, 189, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(226, 180, 189, .08) 1px, transparent 1px),
+    repeating-linear-gradient(0deg, rgba(74, 74, 74, .015) 0 1px, transparent 1px 3px);
   background-size: 38px 38px, 38px 38px, auto;
 }
-.dedsec-network { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .22; }
+.dedsec-network { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .35; }
 .dedsec-network-lines path {
   fill: none;
-  stroke: rgba(96, 165, 250, .3);
+  stroke: rgba(226, 180, 189, .45);
   stroke-width: .8;
   vector-effect: non-scaling-stroke;
 }
 .dedsec-network-packets path {
   fill: none;
-  stroke: rgba(147, 197, 253, .85);
+  stroke: rgba(184, 107, 122, .75);
   stroke-width: 1.15;
   stroke-dasharray: 2 90;
   stroke-linecap: square;
@@ -71,9 +71,9 @@ body { color: var(--dedsec-paper); }
 .dedsec-network-packets path:nth-child(2) { animation-duration: 11s; animation-delay: -3.5s; }
 .dedsec-network-packets path:nth-child(3) { animation-duration: 13s; animation-delay: -8s; }
 .dedsec-network-nodes circle {
-  fill: #93C5FD;
-  opacity: .72;
-  filter: drop-shadow(0 0 5px rgba(59, 130, 246, .8));
+  fill: #E2B4BD;
+  opacity: .85;
+  filter: drop-shadow(0 0 5px rgba(184, 107, 122, .5));
   animation: dedsec-node-pulse 3.6s ease-in-out infinite;
   animation-delay: var(--node-delay, 0s);
 }
@@ -86,7 +86,7 @@ body { color: var(--dedsec-paper); }
   left: 57%;
   top: 50%;
   transform: translate(-50%, -50%);
-  opacity: .14;
+  opacity: .12;
   animation: dedsec-mark-breathe 7.5s ease-in-out infinite;
 }
 .dedsec-mark::before,
@@ -94,10 +94,10 @@ body { color: var(--dedsec-paper); }
   content: "";
   position: absolute;
   inset: 3%;
-  border: 1px solid rgba(96, 165, 250, .26);
+  border: 1px solid rgba(226, 180, 189, .35);
   transform: rotate(45deg);
 }
-.dedsec-mark::after { inset: 13%; transform: rotate(0); border-color: rgba(59, 130, 246, .2); }
+.dedsec-mark::after { inset: 13%; transform: rotate(0); border-color: rgba(184, 107, 122, .25); }
 .dedsec-mark-layer { position: absolute; inset: 12%; }
 .dedsec-mark-svg {
   width: 100%;
@@ -107,11 +107,11 @@ body { color: var(--dedsec-paper); }
   stroke-width: 3;
   stroke-linecap: square;
   stroke-linejoin: bevel;
-  filter: drop-shadow(0 0 15px rgba(59, 130, 246, .35));
+  filter: drop-shadow(0 0 15px rgba(226, 180, 189, .35));
 }
-.dedsec-skull { fill: rgba(59, 130, 246, .055); }
+.dedsec-skull { fill: rgba(226, 180, 189, .08); }
 .dedsec-eye { fill: currentColor; }
-.dedsec-mark-layer--base { color: rgba(147, 197, 253, .76); }
+.dedsec-mark-layer--base { color: rgba(184, 107, 122, .7); }
 .dedsec-mark-layer--cyan,
 .dedsec-mark-layer--red { opacity: 0; }
 .dedsec-mark-layer--cyan { color: var(--dedsec-cyan); clip-path: inset(20% 0 62% 0); animation: dedsec-slice-cyan 8.7s steps(1) infinite; }
@@ -123,66 +123,66 @@ body { color: var(--dedsec-paper); }
   width: 100%;
   text-align: center;
   font-family: "Share Tech Mono", monospace;
-  color: rgba(243, 244, 246, .45);
+  color: rgba(74, 74, 74, .6);
   letter-spacing: .46em;
   padding-left: .46em;
 }
-.dedsec-wordmark { top: 78%; font-size: clamp(20px, 2.3vw, 34px); font-weight: 700; color: #F3F4F6; }
-.dedsec-coordinates { top: calc(78% + 38px); color: rgba(96, 165, 250, .6); font-size: 9px; letter-spacing: .22em; padding-left: .22em; }
+.dedsec-wordmark { top: 78%; font-size: clamp(20px, 2.3vw, 34px); font-weight: 700; color: #4A4A4A; }
+.dedsec-coordinates { top: calc(78% + 38px); color: rgba(184, 107, 122, .75); font-size: 9px; letter-spacing: .22em; padding-left: .22em; }
 
 .dedsec-scan-band {
   position: absolute;
   left: 0; right: 0; top: -22%; height: 18%;
-  opacity: .72;
-  background: linear-gradient(180deg, transparent, rgba(59, 130, 246, .03), rgba(96, 165, 250, .07), transparent);
+  opacity: .6;
+  background: linear-gradient(180deg, transparent, rgba(226, 180, 189, .08), rgba(247, 214, 208, .15), transparent);
   animation: dedsec-scan-sweep 12s linear infinite;
 }
 .dedsec-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 55% 48%, transparent 35%, rgba(31, 36, 46, .55) 100%);
+  background: radial-gradient(ellipse at 55% 48%, transparent 45%, rgba(255, 245, 245, .8) 100%);
 }
 .dedsec-backdrop--glitch .dedsec-mark { animation: dedsec-glitch-burst .13s steps(1) 4; }
 .dedsec-backdrop--glitch .dedsec-mark-layer--cyan,
 .dedsec-backdrop--glitch .dedsec-mark-layer--red { opacity: .7; animation-duration: .13s; animation-iteration-count: 4; }
 
-/* Expose the mark through large background canvases with palette styling */
-.dedsec-app-shell > div > main { background-color: rgba(31, 36, 46, .72) !important; }
+/* Light Theme Containers */
+.dedsec-app-shell > div > main { background-color: rgba(255, 245, 245, .6) !important; }
 .dedsec-page--dashboard,
 .dedsec-page--pipeline,
-.dedsec-page--landing { background-color: rgba(31, 36, 46, .5) !important; }
-.dedsec-app-shell > div > main > * { background-color: rgba(31, 36, 46, .5) !important; }
-.dedsec-landing-shell > .dedsec-page--landing { background-color: rgba(31, 36, 46, .5) !important; }
-.dedsec-page--pipeline .hud-panel { background-color: rgba(37, 43, 55, .8) !important; }
+.dedsec-page--landing { background-color: rgba(255, 245, 245, .4) !important; }
+.dedsec-app-shell > div > main > * { background-color: rgba(255, 245, 245, .4) !important; }
+.dedsec-landing-shell > .dedsec-page--landing { background-color: rgba(255, 245, 245, .4) !important; }
+.dedsec-page--pipeline .hud-panel { background-color: #FFFFFF !important; }
 .dedsec-page-arrival { animation: dedsec-page-arrive .5s cubic-bezier(.2,.7,.2,1) both; }
 
 /* Tactile button highlights */
 .dedsec-app-shell button { transition: color .16s ease, border-color .16s ease, background-color .16s ease, box-shadow .16s ease; }
-.dedsec-app-shell button:hover { text-shadow: 0 0 8px rgba(59, 130, 246, .4); }
+.dedsec-app-shell button:hover { text-shadow: 0 0 8px rgba(226, 180, 189, .5); }
 .dedsec-app-shell button:focus-visible { outline: 2px solid var(--dedsec-cyan); outline-offset: 2px; }
 
-/* Re-map status utility colors into palette family */
-.dedsec-app-shell [class*="text-emerald-"] { color: #60A5FA !important; }
-.dedsec-app-shell [class*="bg-emerald-950"] { background-color: rgba(37, 43, 55, .86) !important; }
-.dedsec-app-shell [class*="bg-emerald-900"] { background-color: #1E3A5F !important; }
+/* Re-map status utility colors into rose palette family */
+.dedsec-app-shell [class*="text-emerald-"] { color: #B86B7A !important; }
+.dedsec-app-shell [class*="bg-emerald-950"] { background-color: rgba(253, 241, 240, .9) !important; }
+.dedsec-app-shell [class*="bg-emerald-900"] { background-color: #F7D6D0 !important; }
 .dedsec-app-shell [class*="bg-emerald-800"],
 .dedsec-app-shell [class*="bg-emerald-700"],
-.dedsec-app-shell [class*="bg-emerald-600"] { background-color: #2563EB !important; }
+.dedsec-app-shell [class*="bg-emerald-600"] { background-color: #E2B4BD !important; }
 .dedsec-app-shell [class*="bg-emerald-500"],
-.dedsec-app-shell [class*="bg-emerald-400"] { background-color: rgba(59, 130, 246, .82) !important; }
-.dedsec-app-shell [class*="border-emerald-"] { border-color: rgba(96, 165, 250, .42) !important; }
+.dedsec-app-shell [class*="bg-emerald-400"] { background-color: #B86B7A !important; }
+.dedsec-app-shell [class*="border-emerald-"] { border-color: rgba(226, 180, 189, .55) !important; }
 .dedsec-app-shell [class*="from-emerald-"] {
-  --tw-gradient-from: #2563EB var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(37 99 235 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-from: #E2B4BD var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(226 180 189 / 0) var(--tw-gradient-to-position);
 }
-.dedsec-app-shell [class*="via-emerald-"] { --tw-gradient-via: #3B82F6 var(--tw-gradient-via-position); }
-.dedsec-app-shell [class*="to-emerald-"] { --tw-gradient-to: #60A5FA var(--tw-gradient-to-position); }
-.dedsec-app-shell [class*="shadow-glow-emerald"] { box-shadow: 0 0 16px rgba(59, 130, 246, .4) !important; }
-.dedsec-app-shell [class*="hover:bg-emerald-"]:hover { background-color: #2563EB !important; }
+.dedsec-app-shell [class*="via-emerald-"] { --tw-gradient-via: #D89FA9 var(--tw-gradient-via-position); }
+.dedsec-app-shell [class*="to-emerald-"] { --tw-gradient-to: #B86B7A var(--tw-gradient-to-position); }
+.dedsec-app-shell [class*="shadow-glow-emerald"] { box-shadow: 0 0 16px rgba(226, 180, 189, .4) !important; }
+.dedsec-app-shell [class*="hover:bg-emerald-"]:hover { background-color: #C98694 !important; }
 
 @keyframes dedsec-data-flow { to { stroke-dashoffset: -184; } }
-@keyframes dedsec-node-pulse { 0%, 100% { opacity: .35; } 50% { opacity: .9; } }
-@keyframes dedsec-mark-breathe { 0%, 100% { opacity: .10; } 50% { opacity: .16; } }
+@keyframes dedsec-node-pulse { 0%, 100% { opacity: .45; } 50% { opacity: .95; } }
+@keyframes dedsec-mark-breathe { 0%, 100% { opacity: .08; } 50% { opacity: .14; } }
 @keyframes dedsec-slice-cyan {
   0%, 88%, 100% { opacity: 0; transform: translateX(0); }
   89% { opacity: .72; transform: translateX(-2.5%); }
@@ -209,6 +209,6 @@ body { color: var(--dedsec-paper); }
 }
 @media (max-width: 800px) {
   .dedsec-mark { left: 59%; min-width: 250px; opacity: .07; }
-  .dedsec-network { opacity: .12; }
-  .dedsec-app-shell > div > main { background-color: rgba(31, 36, 46, .82) !important; }
+  .dedsec-network { opacity: .15; }
+  .dedsec-app-shell > div > main { background-color: rgba(255, 245, 245, .8) !important; }
 }

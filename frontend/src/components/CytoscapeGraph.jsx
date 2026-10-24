@@ -79,12 +79,12 @@ export default function CytoscapeGraph({
             'font-size': '10px',
             'font-family': 'monospace',
             'font-weight': 600,
-            'color': '#F3F4F6',
+            'color': '#4A4A4A',
             'text-valign': 'bottom',
             'text-margin-y': 4,
-            'background-color': '#252B37',
+            'background-color': '#FFFFFF',
             'border-width': 2,
-            'border-color': 'rgba(147, 197, 253, 0.35)',
+            'border-color': 'rgba(232, 194, 187, 0.75)',
             'transition-property': 'background-color, border-color, width, height',
             'transition-duration': '0.2s'
           }
@@ -93,8 +93,8 @@ export default function CytoscapeGraph({
         {
           selector: 'node[risk_level = "Medium"], node[risk_level = "MEDIUM"]',
           style: {
-            'background-color': '#60A5FA',
-            'border-color': '#2563EB',
+            'background-color': '#F7D6D0',
+            'border-color': '#E2B4BD',
             'width': 34,
             'height': 34
           }
@@ -103,9 +103,10 @@ export default function CytoscapeGraph({
         {
           selector: 'node[risk_level = "High"], node[risk_level = "HIGH"]',
           style: {
-            'background-color': '#3B82F6',
-            'border-color': '#60A5FA',
+            'background-color': '#DC2626',
+            'border-color': '#B86B7A',
             'border-width': 3,
+            'color': '#DC2626',
             'width': 40,
             'height': 40
           }
@@ -114,8 +115,9 @@ export default function CytoscapeGraph({
         {
           selector: 'node[?is_root], node[?is_target]',
           style: {
-            'border-color': '#3B82F6',
+            'border-color': '#B86B7A',
             'border-width': 4,
+            'background-color': '#FFFFFF',
             'width': 46,
             'height': 46
           }
@@ -124,9 +126,9 @@ export default function CytoscapeGraph({
         {
           selector: 'node:selected',
           style: {
-            'border-color': '#3B82F6',
+            'border-color': '#B86B7A',
             'border-width': 4,
-            'background-color': '#252B37'
+            'background-color': '#FDF1F0'
           }
         },
         // Edge styling (directed arrow)
@@ -134,8 +136,8 @@ export default function CytoscapeGraph({
           selector: 'edge',
           style: {
             'width': 'mapData(weight, 1000, 500000, 1.5, 6)',
-            'line-color': 'rgba(147, 197, 253, 0.25)',
-            'target-arrow-color': 'rgba(147, 197, 253, 0.35)',
+            'line-color': 'rgba(232, 194, 187, 0.7)',
+            'target-arrow-color': 'rgba(184, 107, 122, 0.7)',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'arrow-scale': 1.2,
@@ -146,8 +148,8 @@ export default function CytoscapeGraph({
         {
           selector: 'edge[?is_suspicious]',
           style: {
-            'line-color': '#3B82F6',
-            'target-arrow-color': '#3B82F6',
+            'line-color': '#DC2626',
+            'target-arrow-color': '#DC2626',
             'width': 3.5,
             'line-style': 'dashed',
             'opacity': 0.95
@@ -157,8 +159,8 @@ export default function CytoscapeGraph({
         {
           selector: 'edge:selected',
           style: {
-            'line-color': '#3B82F6',
-            'target-arrow-color': '#3B82F6',
+            'line-color': '#B86B7A',
+            'target-arrow-color': '#B86B7A',
             'width': 4,
             'opacity': 1
           }
@@ -167,9 +169,9 @@ export default function CytoscapeGraph({
         {
           selector: '.cycle-highlight',
           style: {
-            'line-color': '#3B82F6',
-            'target-arrow-color': '#3B82F6',
-            'border-color': '#3B82F6',
+            'line-color': '#B86B7A',
+            'target-arrow-color': '#B86B7A',
+            'border-color': '#B86B7A',
             'width': 4,
             'line-style': 'solid'
           }
@@ -252,12 +254,12 @@ export default function CytoscapeGraph({
   const handleFit = () => cyRef.current?.fit(undefined, 50);
 
   return (
-    <div className="relative w-full h-full min-h-[500px] bg-navy-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col">
+    <div className="relative w-full h-full min-h-[500px] bg-[#FFF5F5] rounded-xl border border-[#E8C2BB] overflow-hidden flex flex-col">
       {/* Top Controls Toolbar */}
-      <div className="p-3 bg-navy-900/90 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs z-10">
+      <div className="p-3 bg-[#FFFFFF]/95 border-b border-[#E8C2BB] flex flex-wrap items-center justify-between gap-3 text-xs z-10">
         <div className="flex items-center gap-2">
-          <span className="text-slate-400 font-mono font-medium flex items-center gap-1.5">
-            <Filter className="w-3.5 h-3.5 text-electric-400" />
+          <span className="text-[#6E6264] font-mono font-medium flex items-center gap-1.5">
+            <Filter className="w-3.5 h-3.5 text-[#B86B7A]" />
             FILTER RISK:
           </span>
           {['ALL', 'HIGH', 'MEDIUM', 'LOW'].map((lvl) => (
@@ -266,8 +268,8 @@ export default function CytoscapeGraph({
               onClick={() => setRiskFilter(lvl)}
               className={`px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wider font-mono transition ${
                 riskFilter === lvl
-                  ? 'bg-electric-500/20 text-electric-300 border border-electric-500/50'
-                  : 'bg-navy-850 text-slate-400 hover:text-slate-200 border border-slate-800'
+                  ? 'bg-[#F7D6D0] text-[#4A4A4A] border border-[#E2B4BD]'
+                  : 'bg-[#FDF1F0] text-[#6E6264] hover:text-[#4A4A4A] border border-[#E8C2BB]'
               }`}
             >
               {lvl}
@@ -277,11 +279,11 @@ export default function CytoscapeGraph({
 
         {/* Layout Switcher */}
         <div className="flex items-center gap-2">
-          <span className="text-slate-400 font-mono text-[11px]">LAYOUT:</span>
+          <span className="text-[#6E6264] font-mono text-[11px]">LAYOUT:</span>
           <select
             value={layoutName}
             onChange={(e) => setLayoutName(e.target.value)}
-            className="bg-navy-850 border border-slate-700 text-slate-200 text-xs rounded px-2.5 py-1 focus:outline-none focus:border-electric-500 font-mono"
+            className="bg-[#FDF1F0] border border-[#E8C2BB] text-[#4A4A4A] text-xs rounded px-2.5 py-1 focus:outline-none focus:border-[#B86B7A] font-mono"
           >
             <option value="cose">Force-Directed (cose)</option>
             <option value="circle">Circular Ring</option>
@@ -292,24 +294,24 @@ export default function CytoscapeGraph({
         </div>
 
         {/* Zoom Controls */}
-        <div className="flex items-center gap-1 bg-navy-850 p-1 rounded-lg border border-slate-800">
+        <div className="flex items-center gap-1 bg-[#FDF1F0] p-1 rounded-lg border border-[#E8C2BB]">
           <button
             onClick={handleZoomIn}
-            className="p-1 hover:bg-slate-700 text-slate-300 rounded"
+            className="p-1 hover:bg-[#F7D6D0] text-[#6E6264] hover:text-[#4A4A4A] rounded"
             title="Zoom In"
           >
             <ZoomIn className="w-4 h-4" />
           </button>
           <button
             onClick={handleZoomOut}
-            className="p-1 hover:bg-slate-700 text-slate-300 rounded"
+            className="p-1 hover:bg-[#F7D6D0] text-[#6E6264] hover:text-[#4A4A4A] rounded"
             title="Zoom Out"
           >
             <ZoomOut className="w-4 h-4" />
           </button>
           <button
             onClick={handleFit}
-            className="p-1 hover:bg-slate-700 text-slate-300 rounded"
+            className="p-1 hover:bg-[#F7D6D0] text-[#6E6264] hover:text-[#4A4A4A] rounded"
             title="Fit Canvas"
           >
             <Maximize2 className="w-4 h-4" />
@@ -321,19 +323,19 @@ export default function CytoscapeGraph({
       <div ref={containerRef} className="flex-1 w-full h-full min-h-[460px] cursor-grab active:cursor-grabbing" />
 
       {/* Bottom Canvas Stats & Legend */}
-      <div className="p-2.5 bg-navy-900/90 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400 px-4">
+      <div className="p-2.5 bg-[#FFFFFF]/95 border-t border-[#E8C2BB] flex items-center justify-between text-[11px] font-mono text-[#6E6264] px-4">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> High Risk Mule
+            <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626]" /> High Risk Mule
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Medium Risk
+            <span className="w-2.5 h-2.5 rounded-full bg-[#B86B7A]" /> Medium Risk
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-slate-600" /> Low Risk Account
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E8C2BB]" /> Low Risk Account
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-4 border-t-2 border-dashed border-rose-500" /> Flagged Transfer
+            <span className="w-4 border-t-2 border-dashed border-[#DC2626]" /> Flagged Transfer
           </span>
         </div>
 

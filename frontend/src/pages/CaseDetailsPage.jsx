@@ -75,8 +75,8 @@ const STAGE_OPTIONS = [
 const PRIORITY_OPTIONS = [
   { value: 'Critical', label: 'Critical Priority (Immediate Action)', badge: 'bg-rose-600 text-white font-extrabold' },
   { value: 'High', label: 'High Priority (Expedited)', badge: 'bg-[#FF3B4E]/15 text-[#FF3B4E] border border-[#FF3B4E]/50' },
-  { value: 'Medium', label: 'Medium Priority (Standard)', badge: 'bg-[#93C5FD]/15 text-[#93C5FD] border border-[#93C5FD]/40' },
-  { value: 'Low', label: 'Low Priority (Routine)', badge: 'bg-[#252B37] text-[#93C5FD] border border-[#333D50]' }
+  { value: 'Medium', label: 'Medium Priority (Standard)', badge: 'bg-[#93C5FD]/15 text-[#6E6264] border border-[#93C5FD]/40' },
+  { value: 'Low', label: 'Low Priority (Routine)', badge: 'bg-[#FFFFFF] text-[#6E6264] border border-[#E8C2BB]' }
 ];
 
 export default function CaseDetailsPage({
@@ -602,8 +602,8 @@ export default function CaseDetailsPage({
 
   if (loading && !caseData) {
     return (
-      <div className="h-96 flex flex-col items-center justify-center gap-3 text-[#93C5FD]">
-        <RefreshCw className="w-8 h-8 animate-spin text-[#3B82F6]" />
+      <div className="h-96 flex flex-col items-center justify-center gap-3 text-[#6E6264]">
+        <RefreshCw className="w-8 h-8 animate-spin text-[#B86B7A]" />
         <span className="text-sm font-mono font-medium">Loading Case Dossier & Evidentiary Locker...</span>
       </div>
     );
@@ -611,15 +611,15 @@ export default function CaseDetailsPage({
 
   if (!caseData) {
     return (
-      <div className="p-16 text-center rounded-none bg-[#252B37]/70 backdrop-blur-2xl border border-[#333D50] text-[#93C5FD] space-y-4 max-w-xl mx-auto my-12">
-        <Briefcase className="w-12 h-12 text-[#64748B] mx-auto" />
-        <h3 className="text-lg font-bold text-white">No Investigation Cases in Docket</h3>
-        <p className="text-sm text-[#93C5FD]">
+      <div className="p-16 text-center rounded-none bg-[#FFFFFF]/70 backdrop-blur-2xl border border-[#E8C2BB] text-[#6E6264] space-y-4 max-w-xl mx-auto my-12">
+        <Briefcase className="w-12 h-12 text-[#8A7D7F] mx-auto" />
+        <h3 className="text-lg font-bold text-[#4A4A4A]">No Investigation Cases in Docket</h3>
+        <p className="text-sm text-[#6E6264]">
           Create an investigation case first from Mule Detection, Complaints, or Cases page.
         </p>
         <button
           onClick={() => setCurrentPage('cases')}
-          className="px-5 py-2.5 bg-electric-600 hover:bg-[#3B82F6] text-white font-bold rounded-none text-xs shadow-glow-electric transition"
+          className="px-5 py-2.5 bg-electric-600 hover:bg-[#B86B7A] text-white font-bold rounded-none text-xs shadow-glow-rose transition"
         >
           View Cases Docket
         </button>
@@ -630,11 +630,11 @@ export default function CaseDetailsPage({
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Top Header & Navigation Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#333D50]/80 pb-5">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E8C2BB]/80 pb-5">
         <div className="flex items-center gap-3.5">
           <button
             onClick={() => setCurrentPage('cases')}
-            className="p-2.5 rounded-none bg-[#252B37] hover:bg-[#252B37] text-[#93C5FD] hover:text-white border border-[#333D50] transition flex items-center gap-2 text-xs font-semibold"
+            className="p-2.5 rounded-none bg-[#FFFFFF] hover:bg-[#FFFFFF] text-[#6E6264] hover:text-[#4A4A4A] border border-[#E8C2BB] transition flex items-center gap-2 text-xs font-semibold"
             title="Return to Investigation Docket"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -644,19 +644,19 @@ export default function CaseDetailsPage({
           <div>
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Case Number Badge with Copy */}
-              <div className="flex items-center gap-1.5 font-mono text-sm font-bold text-[#3B82F6] bg-[#1F242E] px-3 py-1 rounded-md border border-[#3B82F6]">
+              <div className="flex items-center gap-1.5 font-mono text-sm font-bold text-[#B86B7A] bg-[#FFF5F5] px-3 py-1 rounded-md border border-[#E2B4BD]">
                 <span>{caseData.case_number || caseData.case_id}</span>
                 <button
                   onClick={() => handleCopyCaseId(caseData.case_number || caseData.case_id)}
-                  className="text-[#64748B] hover:text-white transition"
+                  className="text-[#8A7D7F] hover:text-[#4A4A4A] transition"
                   title="Copy Case Number"
                 >
-                  {copiedCaseNum ? <Check className="w-3.5 h-3.5 text-[#93C5FD]" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedCaseNum ? <Check className="w-3.5 h-3.5 text-[#6E6264]" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
 
               {caseData.version && (
-                <span className="text-xs font-mono font-bold text-[#93C5FD] bg-[#252B37] px-2 py-0.5 rounded border border-[#333D50]">
+                <span className="text-xs font-mono font-bold text-[#6E6264] bg-[#FFFFFF] px-2 py-0.5 rounded border border-[#E8C2BB]">
                   Version {caseData.version}
                 </span>
               )}
@@ -664,11 +664,11 @@ export default function CaseDetailsPage({
               {/* Case Quick Selector Dropdown */}
               {allCases.length > 1 && (
                 <div className="flex items-center gap-1.5 text-xs font-mono">
-                  <span className="text-[#93C5FD] font-bold">SWITCH:</span>
+                  <span className="text-[#6E6264] font-bold">SWITCH:</span>
                   <select
                     value={caseData.case_id}
                     onChange={(e) => handleSwitchCase(e.target.value)}
-                    className="px-2.5 py-1 bg-[#1F242E] border border-[#333D50] rounded text-[#3B82F6] text-xs font-mono font-semibold focus:outline-none focus:border-[#3B82F6]"
+                    className="px-2.5 py-1 bg-[#FFF5F5] border border-[#E8C2BB] rounded text-[#B86B7A] text-xs font-mono font-semibold focus:outline-none focus:border-[#E2B4BD]"
                   >
                     {allCases.map((c) => (
                       <option key={c.case_id} value={c.case_id}>
@@ -679,20 +679,20 @@ export default function CaseDetailsPage({
                 </div>
               )}
 
-              <span className="text-[#93C5FD] text-xs font-mono">
+              <span className="text-[#6E6264] text-xs font-mono">
                 Initiated: <strong>{caseData.created_at ? new Date(caseData.created_at).toLocaleDateString() : 'Active'}</strong>
               </span>
 
-              <span className={`flex items-center gap-1.5 text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${backendOnline ? 'text-[#93C5FD] bg-[#93C5FD]/15/80 border-[#93C5FD]/40' : 'text-[#FF3B4E] bg-[#FF3B4E]/15/80 border-[#FF3B4E]/40'}`} title={lastSyncedAt ? `Last database refresh: ${lastSyncedAt.toLocaleTimeString()}` : 'Waiting for database connection'}>
+              <span className={`flex items-center gap-1.5 text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${backendOnline ? 'text-[#6E6264] bg-[#93C5FD]/15/80 border-[#93C5FD]/40' : 'text-[#FF3B4E] bg-[#FF3B4E]/15/80 border-[#FF3B4E]/40'}`} title={lastSyncedAt ? `Last database refresh: ${lastSyncedAt.toLocaleTimeString()}` : 'Waiting for database connection'}>
                 <span className={`w-2 h-2 rounded-full ${backendOnline ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
                 <span>{backendOnline ? `DB Live · ${lastSyncedAt?.toLocaleTimeString() || 'Connected'}` : 'Database Offline'}</span>
               </span>
             </div>
 
-            <h1 className="text-xl font-black text-white tracking-wide mt-1.5">
+            <h1 className="text-xl font-black text-[#4A4A4A] tracking-wide mt-1.5">
               {caseData.title}
             </h1>
-            <p className="max-w-3xl text-xs text-[#93C5FD] leading-relaxed mt-1">
+            <p className="max-w-3xl text-xs text-[#6E6264] leading-relaxed mt-1">
               This case file brings together its stage, priority, subject account, investigator, allegation summary, findings, linked records, and attached evidence references.
             </p>
           </div>
@@ -702,8 +702,8 @@ export default function CaseDetailsPage({
         <div className="flex flex-wrap items-center gap-3">
           {/* Real-time synchronization notice pill */}
           {syncNotice && (
-            <div className="px-3 py-1.5 rounded-none bg-electric-950 border border-[#3B82F6] text-[#3B82F6] text-xs font-mono font-semibold flex items-center gap-1.5 animate-fadeIn">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#93C5FD]" />
+            <div className="px-3 py-1.5 rounded-none bg-electric-950 border border-[#E2B4BD] text-[#B86B7A] text-xs font-mono font-semibold flex items-center gap-1.5 animate-fadeIn">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#6E6264]" />
               <span>{syncNotice}</span>
             </div>
           )}
@@ -713,12 +713,12 @@ export default function CaseDetailsPage({
             onClick={() => setShowChecklistGuide(!showChecklistGuide)}
             className={`px-3.5 py-2.5 rounded-none border text-xs font-semibold flex items-center gap-2 transition ${
               showChecklistGuide
-                ? 'bg-amber-500/20 text-[#93C5FD] border-[#93C5FD]/60'
-                : 'bg-[#252B37] text-[#93C5FD] hover:text-white hover:bg-[#252B37] border-[#333D50]'
+                ? 'bg-amber-500/20 text-[#6E6264] border-[#93C5FD]/60'
+                : 'bg-[#FFFFFF] text-[#6E6264] hover:text-[#4A4A4A] hover:bg-[#FFFFFF] border-[#E8C2BB]'
             }`}
             title="Investigation Checklist & Protocols"
           >
-            <HelpCircle className="w-4 h-4 text-[#93C5FD]" />
+            <HelpCircle className="w-4 h-4 text-[#6E6264]" />
             <span>Checklist</span>
             {showChecklistGuide ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
@@ -726,10 +726,10 @@ export default function CaseDetailsPage({
           {/* Export Dossier JSON */}
           <button
             onClick={handleExportDossier}
-            className="px-4 py-2.5 bg-navy-850 hover:bg-[#252B37] text-[#F3F4F6] hover:text-white border border-[#333D50] rounded-none text-xs font-bold flex items-center gap-2 transition font-mono"
+            className="px-4 py-2.5 bg-navy-850 hover:bg-[#FFFFFF] text-[#4A4A4A] hover:text-[#4A4A4A] border border-[#E8C2BB] rounded-none text-xs font-bold flex items-center gap-2 transition font-mono"
             title="Download complete forensic JSON dossier"
           >
-            <Download className="w-4 h-4 text-[#3B82F6]" />
+            <Download className="w-4 h-4 text-[#B86B7A]" />
             <span>Export Dossier (JSON)</span>
           </button>
 
@@ -737,7 +737,7 @@ export default function CaseDetailsPage({
           <button
             onClick={handleSaveFindings}
             disabled={isSaving}
-            className="px-4 py-2.5 bg-electric-600 hover:bg-[#3B82F6] text-white font-bold rounded-none shadow-glow-electric text-xs flex items-center gap-2 transition disabled:opacity-50"
+            className="px-4 py-2.5 bg-electric-600 hover:bg-[#B86B7A] text-white font-bold rounded-none shadow-glow-rose text-xs flex items-center gap-2 transition disabled:opacity-50"
           >
             {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             <span>{isSaving ? 'Saving Changes...' : 'Save Findings'}</span>
@@ -747,15 +747,15 @@ export default function CaseDetailsPage({
 
       {/* Ease of Access: Investigation Checklist Banner */}
       {showChecklistGuide && (
-        <div className="p-5 rounded-none bg-gradient-to-r from-navy-900 via-navy-850 to-navy-900 border border-[#3B82F6] shadow-lg space-y-4 animate-fadeIn">
-          <div className="flex items-center justify-between border-b border-[#333D50] pb-3">
+        <div className="p-5 rounded-none bg-gradient-to-r from-navy-900 via-navy-850 to-navy-900 border border-[#E2B4BD] shadow-lg space-y-4 animate-fadeIn">
+          <div className="flex items-center justify-between border-b border-[#E8C2BB] pb-3">
             <div className="flex items-center gap-2 text-white font-bold text-sm tracking-wide">
-              <ShieldCheck className="w-5 h-5 text-[#93C5FD]" />
+              <ShieldCheck className="w-5 h-5 text-[#6E6264]" />
               <span>Investigator Standard Operating Checklist (PMLA / CrPC Forensic Standards)</span>
             </div>
             <button
               onClick={() => setShowChecklistGuide(false)}
-              className="text-xs text-[#93C5FD] hover:text-white font-mono flex items-center gap-1"
+              className="text-xs text-[#6E6264] hover:text-[#4A4A4A] font-mono flex items-center gap-1"
             >
               <X className="w-3.5 h-3.5" />
               <span>Dismiss</span>
@@ -763,21 +763,21 @@ export default function CaseDetailsPage({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-            <div className="p-3.5 rounded-none bg-[#1F242E]/80 border border-[#333D50] space-y-1.5">
-              <div className="font-bold text-[#3B82F6]">1. Forensic Fund Tracing</div>
-              <p className="text-[#93C5FD] text-[11px] leading-relaxed">
+            <div className="p-3.5 rounded-none bg-[#FFF5F5]/80 border border-[#E8C2BB] space-y-1.5">
+              <div className="font-bold text-[#B86B7A]">1. Forensic Fund Tracing</div>
+              <p className="text-[#6E6264] text-[11px] leading-relaxed">
                 Click <strong>"Trail"</strong> or <strong>"Graph"</strong> next to the primary subject account to trace the multi-hop fund flows and pinpoint aggregator mule nodes.
               </p>
             </div>
-            <div className="p-3.5 rounded-none bg-[#1F242E]/80 border border-[#333D50] space-y-1.5">
-              <div className="font-bold text-[#93C5FD]">2. Chain of Custody Evidence</div>
-              <p className="text-[#93C5FD] text-[11px] leading-relaxed">
+            <div className="p-3.5 rounded-none bg-[#FFF5F5]/80 border border-[#E8C2BB] space-y-1.5">
+              <div className="font-bold text-[#6E6264]">2. Chain of Custody Evidence</div>
+              <p className="text-[#6E6264] text-[11px] leading-relaxed">
                 Attach existing account, transaction, or complaint records. SHA-256 hashes help detect later record changes; they do not verify source authenticity or legal admissibility.
               </p>
             </div>
-            <div className="p-3.5 rounded-none bg-[#1F242E]/80 border border-[#333D50] space-y-1.5">
-              <div className="font-bold text-[#93C5FD]">3. Investigator Review</div>
-              <p className="text-[#93C5FD] text-[11px] leading-relaxed">
+            <div className="p-3.5 rounded-none bg-[#FFF5F5]/80 border border-[#E8C2BB] space-y-1.5">
+              <div className="font-bold text-[#6E6264]">3. Investigator Review</div>
+              <p className="text-[#6E6264] text-[11px] leading-relaxed">
                 Verify every linked source record, save investigator notes, then export the case JSON dossier for review.
               </p>
             </div>
@@ -787,8 +787,8 @@ export default function CaseDetailsPage({
 
       {/* Success Notification Banner */}
       {saveSuccess && (
-        <div className="p-3.5 rounded-none bg-[#93C5FD]/15/90 border border-[#93C5FD]/50 text-[#93C5FD] text-xs flex items-center gap-2.5 animate-fadeIn font-mono font-semibold">
-          <CheckCircle2 className="w-4 h-4 text-[#93C5FD] shrink-0" />
+        <div className="p-3.5 rounded-none bg-[#93C5FD]/15/90 border border-[#93C5FD]/50 text-[#6E6264] text-xs flex items-center gap-2.5 animate-fadeIn font-mono font-semibold">
+          <CheckCircle2 className="w-4 h-4 text-[#6E6264] shrink-0" />
           <span>{saveMessage || 'Case updated in secure database.'}</span>
         </div>
       )}
@@ -802,16 +802,16 @@ export default function CaseDetailsPage({
       )}
 
       {/* Case Metadata Controls Bar */}
-      <div className="p-5 rounded-none bg-[#252B37]/70 backdrop-blur-2xl border border-[#333D50] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="p-5 rounded-none bg-[#FFFFFF]/70 backdrop-blur-2xl border border-[#E8C2BB] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Stage / Status */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-mono font-bold text-[#93C5FD] uppercase tracking-wider">
+          <label className="block text-xs font-mono font-bold text-[#6E6264] uppercase tracking-wider">
             INVESTIGATION STAGE
           </label>
           <select
             value={status}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="w-full px-3 py-2.5 bg-[#1F242E] border border-[#333D50] rounded-none text-white font-bold text-xs focus:outline-none focus:border-[#3B82F6] transition"
+            className="w-full px-3 py-2.5 bg-[#FFF5F5] border border-[#E8C2BB] rounded-none text-white font-bold text-xs focus:outline-none focus:border-[#E2B4BD] transition"
           >
             {STAGE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -819,20 +819,20 @@ export default function CaseDetailsPage({
               </option>
             ))}
           </select>
-          <div className="text-[11px] text-[#93C5FD] font-sans leading-tight">
+          <div className="text-[11px] text-[#6E6264] font-sans leading-tight">
             {currentStageInfo.hint}
           </div>
         </div>
 
         {/* Priority Rating */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-mono font-bold text-[#93C5FD] uppercase tracking-wider">
+          <label className="block text-xs font-mono font-bold text-[#6E6264] uppercase tracking-wider">
             PRIORITY RATING
           </label>
           <select
             value={priority}
             onChange={(e) => handlePriorityChange(e.target.value)}
-            className="w-full px-3 py-2.5 bg-[#1F242E] border border-[#333D50] rounded-none text-white font-bold text-xs focus:outline-none focus:border-[#3B82F6] transition"
+            className="w-full px-3 py-2.5 bg-[#FFF5F5] border border-[#E8C2BB] rounded-none text-white font-bold text-xs focus:outline-none focus:border-[#E2B4BD] transition"
           >
             {PRIORITY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -840,18 +840,18 @@ export default function CaseDetailsPage({
               </option>
             ))}
           </select>
-          <div className="text-[11px] text-[#93C5FD] font-sans">
+          <div className="text-[11px] text-[#6E6264] font-sans">
             Directly governs case queue priority and alert routing velocity.
           </div>
         </div>
 
         {/* Primary Subject Account */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-mono font-bold text-[#93C5FD] uppercase tracking-wider">
+          <label className="block text-xs font-mono font-bold text-[#6E6264] uppercase tracking-wider">
             PRIMARY SUBJECT ACCOUNT
           </label>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold text-[#3B82F6] bg-[#1F242E] px-3 py-2.5 rounded-none border border-[#333D50] flex-1 truncate">
+            <span className="font-mono text-xs font-bold text-[#B86B7A] bg-[#FFF5F5] px-3 py-2.5 rounded-none border border-[#E8C2BB] flex-1 truncate">
               {caseData.primary_account_id || 'Not specified'}
             </span>
             {caseData.primary_account_id && (
@@ -861,10 +861,10 @@ export default function CaseDetailsPage({
                     if (onAccountSelect) onAccountSelect(caseData.primary_account_id);
                     setCurrentPage('money-trail');
                   }}
-                  className="px-2.5 py-2.5 bg-navy-850 hover:bg-slate-700 text-[#F3F4F6] border border-[#333D50] rounded-none text-xs font-mono font-bold flex items-center gap-1 transition"
+                  className="px-2.5 py-2.5 bg-navy-850 hover:bg-slate-700 text-[#4A4A4A] border border-[#E8C2BB] rounded-none text-xs font-mono font-bold flex items-center gap-1 transition"
                   title="Trace fund flows in Money Trail"
                 >
-                  <GitCommit className="w-3.5 h-3.5 text-[#93C5FD]" />
+                  <GitCommit className="w-3.5 h-3.5 text-[#6E6264]" />
                   <span>Trail</span>
                 </button>
                 <button
@@ -872,16 +872,16 @@ export default function CaseDetailsPage({
                     if (onAccountSelect) onAccountSelect(caseData.primary_account_id);
                     setCurrentPage('graph');
                   }}
-                  className="px-2.5 py-2.5 bg-navy-850 hover:bg-slate-700 text-[#F3F4F6] border border-[#333D50] rounded-none text-xs font-mono font-bold flex items-center gap-1 transition"
+                  className="px-2.5 py-2.5 bg-navy-850 hover:bg-slate-700 text-[#4A4A4A] border border-[#E8C2BB] rounded-none text-xs font-mono font-bold flex items-center gap-1 transition"
                   title="Inspect in Graph Canvas"
                 >
-                  <Network className="w-3.5 h-3.5 text-[#3B82F6]" />
+                  <Network className="w-3.5 h-3.5 text-[#B86B7A]" />
                   <span>Graph</span>
                 </button>
               </div>
             )}
           </div>
-          <div className="text-[11px] text-[#93C5FD] font-sans">
+          <div className="text-[11px] text-[#6E6264] font-sans">
             {caseData.primary_account_id
               ? 'Exact account ID from the shared transaction records.'
               : 'No primary account is set. Link a real account record to identify the main subject.'}
@@ -890,14 +890,14 @@ export default function CaseDetailsPage({
 
         {/* Assigned Investigator */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-mono font-bold text-[#93C5FD] uppercase tracking-wider">
+          <label className="block text-xs font-mono font-bold text-[#6E6264] uppercase tracking-wider">
             ASSIGNED INVESTIGATOR
           </label>
           {investigatorsList.length > 0 ? (
             <select
               value={assignedInvestigator}
               onChange={(e) => handleAssigneeChange(e.target.value)}
-              className="w-full px-3 py-2.5 bg-[#1F242E] border border-[#333D50] rounded-none text-white font-bold text-xs focus:outline-none focus:border-[#3B82F6] transition"
+              className="w-full px-3 py-2.5 bg-[#FFF5F5] border border-[#E8C2BB] rounded-none text-white font-bold text-xs focus:outline-none focus:border-[#E2B4BD] transition"
             >
               {investigatorsList.map((inv) => (
                 <option key={inv.id || inv.badge_id} value={inv.name}>
@@ -906,17 +906,17 @@ export default function CaseDetailsPage({
               ))}
             </select>
           ) : (
-            <div className="font-bold text-white bg-[#1F242E] px-3 py-2.5 rounded-none border border-[#333D50] text-xs truncate">
+            <div className="font-bold text-[#4A4A4A] bg-[#FFF5F5] px-3 py-2.5 rounded-none border border-[#E8C2BB] text-xs truncate">
               {assignedInvestigator || 'Investigator'}
             </div>
           )}
-          <div className="text-[11px] text-[#93C5FD] font-sans">
+          <div className="text-[11px] text-[#6E6264] font-sans">
             Lead forensic officer responsible for statutory filings.
           </div>
         </div>
       </div>
 
-      <div className={`p-3.5 rounded-none border text-xs leading-relaxed ${/synthetic|demo|sample/i.test(caseData.source_type || '') ? 'bg-[#93C5FD]/15/50 border-[#93C5FD]/40 text-amber-100' : 'bg-[#252B37] border-[#333D50] text-[#93C5FD]'}`}>
+      <div className={`p-3.5 rounded-none border text-xs leading-relaxed ${/synthetic|demo|sample/i.test(caseData.source_type || '') ? 'bg-[#93C5FD]/15/50 border-[#93C5FD]/40 text-amber-100' : 'bg-[#FFFFFF] border-[#E8C2BB] text-[#6E6264]'}`}>
         <strong>{/synthetic|demo|sample/i.test(caseData.source_type || '') ? 'Synthetic source:' : 'Source and evidence note:'}</strong>{' '}
         {caseData.source_type ? `This case is marked as ${caseData.source_type}${caseData.source_reference_id ? ` (${caseData.source_reference_id})` : ''}.` : 'Case fields and linked records below are loaded from the application database.'} Verify source records before treating narrative or model signals as findings. Evidence hashes cover reference metadata, not the original source file or transaction contents, and do not establish authenticity or legal admissibility.
       </div>
@@ -925,15 +925,15 @@ export default function CaseDetailsPage({
       <div className="space-y-6">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Section 1: Investigative Summary */}
-          <div className="p-5 rounded-none bg-[#252B37]/70 backdrop-blur-2xl border border-[#333D50] space-y-3">
+          <div className="p-5 rounded-none bg-[#FFFFFF]/70 backdrop-blur-2xl border border-[#E8C2BB] space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#3B82F6]" />
+              <h2 className="text-sm font-bold text-[#4A4A4A] uppercase tracking-wider font-mono flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#B86B7A]" />
                 <span>INVESTIGATIVE SUMMARY & ALLEGATION PREMISE</span>
               </h2>
-              <span className="text-xs font-mono text-[#93C5FD]">Persistent Editable Record</span>
+              <span className="text-xs font-mono text-[#6E6264]">Persistent Editable Record</span>
             </div>
-            <p className="text-xs text-[#93C5FD] leading-relaxed font-sans">
+            <p className="text-xs text-[#6E6264] leading-relaxed font-sans">
               Enter the core allegation premise, initial complainant statement, originating police FIR details, or trigger alerts.
             </p>
             <textarea
@@ -943,20 +943,20 @@ export default function CaseDetailsPage({
               onBlur={() => { isEditingSummaryRef.current = false; }}
               onChange={(e) => setSummary(e.target.value)}
               placeholder="Record the official allegation premise, victim FIR origins, and primary suspicion nexus..."
-              className="w-full px-3.5 py-3 bg-[#1F242E] border border-[#333D50] rounded-none text-slate-100 text-sm focus:outline-none focus:border-[#3B82F6] leading-relaxed resize-none font-sans placeholder:text-[#64748B] shadow-inner"
+              className="w-full px-3.5 py-3 bg-[#FFF5F5] border border-[#E8C2BB] rounded-none text-slate-100 text-sm focus:outline-none focus:border-[#E2B4BD] leading-relaxed resize-none font-sans placeholder:text-[#8A7D7F] shadow-inner"
             />
           </div>
 
           {/* Section 2: Detailed Findings */}
-          <div className="p-5 rounded-none bg-[#252B37]/70 backdrop-blur-2xl border border-[#333D50] space-y-3">
+          <div className="p-5 rounded-none bg-[#FFFFFF]/70 backdrop-blur-2xl border border-[#E8C2BB] space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-[#3B82F6]" />
+              <h2 className="text-sm font-bold text-[#4A4A4A] uppercase tracking-wider font-mono flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-[#B86B7A]" />
                 <span>DETAILED INVESTIGATION FINDINGS & MULE NETWORK NEXUS</span>
               </h2>
-              <span className="text-xs font-mono text-[#93C5FD]">Investigator Notes</span>
+              <span className="text-xs font-mono text-[#6E6264]">Investigator Notes</span>
             </div>
-            <p className="text-xs text-[#93C5FD] leading-relaxed font-sans">
+            <p className="text-xs text-[#6E6264] leading-relaxed font-sans">
               Record observations and cite the source account, transaction, or alert IDs. Separate verified records from model signals and investigator hypotheses.
             </p>
             <textarea
@@ -966,13 +966,13 @@ export default function CaseDetailsPage({
               onBlur={() => { isEditingFindingsRef.current = false; }}
               onChange={(e) => setFindings(e.target.value)}
               placeholder="Example: TXN_10167 (₹340,000) moves MULE_AGG_01 → MULE_LAYER_02 at 2026-10-12 22:15. This is bundled synthetic demo data; verify the transaction record before describing it as a finding."
-              className="w-full px-3.5 py-3 bg-[#1F242E] border border-[#333D50] rounded-none text-slate-100 text-sm focus:outline-none focus:border-[#3B82F6] leading-relaxed resize-none font-sans placeholder:text-[#64748B] shadow-inner"
+              className="w-full px-3.5 py-3 bg-[#FFF5F5] border border-[#E8C2BB] rounded-none text-slate-100 text-sm focus:outline-none focus:border-[#E2B4BD] leading-relaxed resize-none font-sans placeholder:text-[#8A7D7F] shadow-inner"
             />
             <div className="flex justify-end pt-1">
               <button
                 onClick={handleSaveFindings}
                 disabled={isSaving}
-                className="px-4 py-2 bg-electric-600 hover:bg-[#3B82F6] text-white font-bold rounded-none text-xs flex items-center gap-2 shadow-sm transition disabled:opacity-50"
+                className="px-4 py-2 bg-electric-600 hover:bg-[#B86B7A] text-white font-bold rounded-none text-xs flex items-center gap-2 shadow-sm transition disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>Save Narrative Changes</span>
@@ -986,21 +986,21 @@ export default function CaseDetailsPage({
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
           <div className="xl:col-span-7">
           {/* Quick Tabbed Sub-Section for Accounts, Transactions, Complaints, Audit */}
-          <div className="p-5 rounded-none bg-[#252B37]/70 backdrop-blur-2xl border border-[#333D50] space-y-4">
+          <div className="p-5 rounded-none bg-[#FFFFFF]/70 backdrop-blur-2xl border border-[#E8C2BB] space-y-4">
             <div>
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono">CASE RECORDS</h2>
-              <p className="text-xs text-[#93C5FD] leading-relaxed mt-1">
+              <h2 className="text-sm font-bold text-[#4A4A4A] uppercase tracking-wider font-mono">CASE RECORDS</h2>
+              <p className="text-xs text-[#6E6264] leading-relaxed mt-1">
                 Browse the accounts and transfers linked to this case, related complaint records, or the case activity log. Counts show how many records are currently linked.
               </p>
             </div>
-            <div className="flex flex-wrap items-center justify-between border-b border-[#333D50] pb-3 gap-2">
+            <div className="flex flex-wrap items-center justify-between border-b border-[#E8C2BB] pb-3 gap-2">
               <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
                 <button
                   onClick={() => setActiveTab('accounts')}
                   className={`px-3 py-2 rounded-none font-bold transition flex items-center gap-1.5 ${
                     activeTab === 'accounts'
-                      ? 'bg-[#3B82F6]/25 text-[#3B82F6] border border-[#3B82F6] shadow-sm'
-                      : 'bg-[#1F242E] text-[#93C5FD] hover:text-white border border-[#333D50]'
+                      ? 'bg-[#B86B7A]/25 text-[#B86B7A] border border-[#E2B4BD] shadow-sm'
+                      : 'bg-[#FFF5F5] text-[#6E6264] hover:text-[#4A4A4A] border border-[#E8C2BB]'
                   }`}
                 >
                   <Users className="w-3.5 h-3.5" />
@@ -1011,8 +1011,8 @@ export default function CaseDetailsPage({
                   onClick={() => setActiveTab('transactions')}
                   className={`px-3 py-2 rounded-none font-bold transition flex items-center gap-1.5 ${
                     activeTab === 'transactions'
-                      ? 'bg-[#3B82F6]/25 text-[#3B82F6] border border-[#3B82F6] shadow-sm'
-                      : 'bg-[#1F242E] text-[#93C5FD] hover:text-white border border-[#333D50]'
+                      ? 'bg-[#B86B7A]/25 text-[#B86B7A] border border-[#E2B4BD] shadow-sm'
+                      : 'bg-[#FFF5F5] text-[#6E6264] hover:text-[#4A4A4A] border border-[#E8C2BB]'
                   }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
@@ -1023,8 +1023,8 @@ export default function CaseDetailsPage({
                   onClick={() => setActiveTab('complaints')}
                   className={`px-3 py-2 rounded-none font-bold transition flex items-center gap-1.5 ${
                     activeTab === 'complaints'
-                      ? 'bg-[#3B82F6]/25 text-[#3B82F6] border border-[#3B82F6] shadow-sm'
-                      : 'bg-[#1F242E] text-[#93C5FD] hover:text-white border border-[#333D50]'
+                      ? 'bg-[#B86B7A]/25 text-[#B86B7A] border border-[#E2B4BD] shadow-sm'
+                      : 'bg-[#FFF5F5] text-[#6E6264] hover:text-[#4A4A4A] border border-[#E8C2BB]'
                   }`}
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
@@ -1035,8 +1035,8 @@ export default function CaseDetailsPage({
                   onClick={() => setActiveTab('audit')}
                   className={`px-3 py-2 rounded-none font-bold transition flex items-center gap-1.5 ${
                     activeTab === 'audit'
-                      ? 'bg-[#3B82F6]/25 text-[#3B82F6] border border-[#3B82F6] shadow-sm'
-                      : 'bg-[#1F242E] text-[#93C5FD] hover:text-white border border-[#333D50]'
+                      ? 'bg-[#B86B7A]/25 text-[#B86B7A] border border-[#E2B4BD] shadow-sm'
+                      : 'bg-[#FFF5F5] text-[#6E6264] hover:text-[#4A4A4A] border border-[#E8C2BB]'
                   }`}
                 >
                   <History className="w-3.5 h-3.5" />
@@ -1049,10 +1049,10 @@ export default function CaseDetailsPage({
             {activeTab === 'accounts' && (
               <div className="space-y-3 font-mono text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#93C5FD] text-xs font-bold">Syndicate Counterparties & Subject Nodes</span>
+                  <span className="text-[#6E6264] text-xs font-bold">Syndicate Counterparties & Subject Nodes</span>
                   <button
                     onClick={() => setShowLinkAccount(!showLinkAccount)}
-                    className="px-3 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#3B82F6] border border-[#333D50] rounded-none text-xs font-bold flex items-center gap-1.5 transition"
+                    className="px-3 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#B86B7A] border border-[#E8C2BB] rounded-none text-xs font-bold flex items-center gap-1.5 transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Link Account</span>
@@ -1060,27 +1060,27 @@ export default function CaseDetailsPage({
                 </div>
 
                 {showLinkAccount && (
-                  <form onSubmit={handleLinkAccountSubmit} className="p-3.5 bg-[#1F242E] border border-[#333D50] rounded-none space-y-3 animate-fadeIn">
+                  <form onSubmit={handleLinkAccountSubmit} className="p-3.5 bg-[#FFF5F5] border border-[#E8C2BB] rounded-none space-y-3 animate-fadeIn">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       <div>
-                        <label className="block text-[11px] text-[#93C5FD] font-bold mb-1">ACCOUNT IDENTIFIER *</label>
+                        <label className="block text-[11px] text-[#6E6264] font-bold mb-1">ACCOUNT IDENTIFIER *</label>
                         <input
                           type="text"
                           required
                           value={linkAccId}
                           onChange={(e) => setLinkAccId(e.target.value)}
                           placeholder="e.g. MULE_AGG_01"
-                          className="w-full px-3 py-2 bg-[#252B37] border border-[#333D50] rounded text-white text-xs font-mono focus:border-[#3B82F6]"
+                          className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E8C2BB] rounded text-white text-xs font-mono focus:border-[#E2B4BD]"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] text-[#93C5FD] font-bold mb-1">ROLE / CLASSIFICATION</label>
+                        <label className="block text-[11px] text-[#6E6264] font-bold mb-1">ROLE / CLASSIFICATION</label>
                         <input
                           type="text"
                           value={linkAccRole}
                           onChange={(e) => setLinkAccRole(e.target.value)}
                           placeholder="e.g. Conduit Mule, Aggregator Hub"
-                          className="w-full px-3 py-2 bg-[#252B37] border border-[#333D50] rounded text-white text-xs focus:border-[#3B82F6]"
+                          className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E8C2BB] rounded text-white text-xs focus:border-[#E2B4BD]"
                         />
                       </div>
                     </div>
@@ -1088,13 +1088,13 @@ export default function CaseDetailsPage({
                       <button
                         type="button"
                         onClick={() => setShowLinkAccount(false)}
-                        className="px-3 py-1.5 text-[#93C5FD] hover:text-white text-xs"
+                        className="px-3 py-1.5 text-[#6E6264] hover:text-[#4A4A4A] text-xs"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="px-4 py-1.5 bg-electric-600 hover:bg-[#3B82F6] text-white rounded text-xs font-bold shadow-sm"
+                        className="px-4 py-1.5 bg-electric-600 hover:bg-[#B86B7A] text-white rounded text-xs font-bold shadow-sm"
                       >
                         Confirm Link
                       </button>
@@ -1106,12 +1106,12 @@ export default function CaseDetailsPage({
                   {(caseData.linked_accounts || []).map((acc) => (
                     <div
                       key={acc.account_id}
-                      className="p-3 rounded-none bg-[#1F242E] border border-[#333D50] flex items-center justify-between gap-3 hover:border-[#333D50] transition"
+                      className="p-3 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] flex items-center justify-between gap-3 hover:border-[#E8C2BB] transition"
                     >
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-white text-sm">{acc.account_id}</span>
-                          <span className="px-2 py-0.5 rounded text-xs bg-[#252B37] text-[#F3F4F6] border border-[#333D50] font-semibold">
+                          <span className="font-bold text-[#4A4A4A] text-sm">{acc.account_id}</span>
+                          <span className="px-2 py-0.5 rounded text-xs bg-[#FFFFFF] text-[#4A4A4A] border border-[#E8C2BB] font-semibold">
                             {acc.role}
                           </span>
                           {acc.risk_score > 0 && (
@@ -1120,7 +1120,7 @@ export default function CaseDetailsPage({
                             </span>
                           )}
                         </div>
-                        <div className="text-xs text-[#93C5FD] font-sans mt-0.5">
+                        <div className="text-xs text-[#6E6264] font-sans mt-0.5">
                           {acc.customer_name || 'Verified Subject'}
                         </div>
                       </div>
@@ -1131,10 +1131,10 @@ export default function CaseDetailsPage({
                             if (onAccountSelect) onAccountSelect(acc.account_id);
                             setCurrentPage('money-trail');
                           }}
-                          className="px-2.5 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#F3F4F6] rounded text-xs font-semibold flex items-center gap-1 border border-[#333D50]"
+                          className="px-2.5 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#4A4A4A] rounded text-xs font-semibold flex items-center gap-1 border border-[#E8C2BB]"
                           title="Trace account fund flow"
                         >
-                          <GitCommit className="w-3.5 h-3.5 text-[#93C5FD]" />
+                          <GitCommit className="w-3.5 h-3.5 text-[#6E6264]" />
                           <span>Trail</span>
                         </button>
                         <button
@@ -1142,15 +1142,15 @@ export default function CaseDetailsPage({
                             if (onAccountSelect) onAccountSelect(acc.account_id);
                             setCurrentPage('graph');
                           }}
-                          className="px-2.5 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#F3F4F6] rounded text-xs font-semibold flex items-center gap-1 border border-[#333D50]"
+                          className="px-2.5 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#4A4A4A] rounded text-xs font-semibold flex items-center gap-1 border border-[#E8C2BB]"
                           title="Inspect account in graph"
                         >
-                          <Network className="w-3.5 h-3.5 text-[#3B82F6]" />
+                          <Network className="w-3.5 h-3.5 text-[#B86B7A]" />
                           <span>Graph</span>
                         </button>
                         <button
                           onClick={() => handleUnlinkAccount(acc.account_id)}
-                          className="p-1.5 text-[#64748B] hover:text-[#FF3B4E] rounded transition"
+                          className="p-1.5 text-[#8A7D7F] hover:text-[#FF3B4E] rounded transition"
                           title="Unlink account"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1160,7 +1160,7 @@ export default function CaseDetailsPage({
                   ))}
 
                   {(!caseData.linked_accounts || caseData.linked_accounts.length === 0) && (
-                    <div className="p-6 text-center text-[#93C5FD] text-xs font-mono bg-[#1F242E]/60 rounded-none border border-[#333D50]/80">
+                    <div className="p-6 text-center text-[#6E6264] text-xs font-mono bg-[#FFF5F5]/60 rounded-none border border-[#E8C2BB]/80">
                       No secondary accounts linked yet. Click "Link Account" above to associate suspect nodes.
                     </div>
                   )}
@@ -1172,10 +1172,10 @@ export default function CaseDetailsPage({
             {activeTab === 'transactions' && (
               <div className="space-y-3 font-mono text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#93C5FD] text-xs font-bold">Flagged Transfer References</span>
+                  <span className="text-[#6E6264] text-xs font-bold">Flagged Transfer References</span>
                   <button
                     onClick={() => setShowLinkTxn(!showLinkTxn)}
-                    className="px-3 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#3B82F6] border border-[#333D50] rounded-none text-xs font-bold flex items-center gap-1.5 transition"
+                    className="px-3 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#B86B7A] border border-[#E8C2BB] rounded-none text-xs font-bold flex items-center gap-1.5 transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Link Transfer</span>
@@ -1183,27 +1183,27 @@ export default function CaseDetailsPage({
                 </div>
 
                 {showLinkTxn && (
-                  <form onSubmit={handleLinkTxnSubmit} className="p-3.5 bg-[#1F242E] border border-[#333D50] rounded-none space-y-3 animate-fadeIn">
+                  <form onSubmit={handleLinkTxnSubmit} className="p-3.5 bg-[#FFF5F5] border border-[#E8C2BB] rounded-none space-y-3 animate-fadeIn">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       <div>
-                        <label className="block text-[11px] text-[#93C5FD] font-bold mb-1">TRANSACTION IDENTIFIER *</label>
+                        <label className="block text-[11px] text-[#6E6264] font-bold mb-1">TRANSACTION IDENTIFIER *</label>
                         <input
                           type="text"
                           required
                           value={linkTxnId}
                           onChange={(e) => setLinkTxnId(e.target.value)}
                           placeholder="e.g. TXN_3_SZ..."
-                          className="w-full px-3 py-2 bg-[#252B37] border border-[#333D50] rounded text-white text-xs font-mono focus:border-[#3B82F6]"
+                          className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E8C2BB] rounded text-white text-xs font-mono focus:border-[#E2B4BD]"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] text-[#93C5FD] font-bold mb-1">RELEVANCE / NOTE</label>
+                        <label className="block text-[11px] text-[#6E6264] font-bold mb-1">RELEVANCE / NOTE</label>
                         <input
                           type="text"
                           value={linkTxnRelevance}
                           onChange={(e) => setLinkTxnRelevance(e.target.value)}
                           placeholder="e.g. Rapid Layering Hop, Cash Out"
-                          className="w-full px-3 py-2 bg-[#252B37] border border-[#333D50] rounded text-white text-xs focus:border-[#3B82F6]"
+                          className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E8C2BB] rounded text-white text-xs focus:border-[#E2B4BD]"
                         />
                       </div>
                     </div>
@@ -1211,13 +1211,13 @@ export default function CaseDetailsPage({
                       <button
                         type="button"
                         onClick={() => setShowLinkTxn(false)}
-                        className="px-3 py-1.5 text-[#93C5FD] hover:text-white text-xs"
+                        className="px-3 py-1.5 text-[#6E6264] hover:text-[#4A4A4A] text-xs"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="px-4 py-1.5 bg-electric-600 hover:bg-[#3B82F6] text-white rounded text-xs font-bold shadow-sm"
+                        className="px-4 py-1.5 bg-electric-600 hover:bg-[#B86B7A] text-white rounded text-xs font-bold shadow-sm"
                       >
                         Confirm Link
                       </button>
@@ -1229,19 +1229,19 @@ export default function CaseDetailsPage({
                   {(caseData.linked_transactions || []).map((txn) => (
                     <div
                       key={txn.transaction_id}
-                      className="p-3 rounded-none bg-[#1F242E] border border-[#333D50] flex items-center justify-between gap-3 hover:border-[#333D50] transition"
+                      className="p-3 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] flex items-center justify-between gap-3 hover:border-[#E8C2BB] transition"
                     >
                       <div>
                         <div className="flex items-center gap-2.5">
-                          <span className="font-bold text-white text-sm">{txn.transaction_id}</span>
-                          <span className="text-xs text-[#93C5FD] font-bold bg-[#93C5FD]/15/60 px-2 py-0.5 rounded border border-[#93C5FD]/40">
+                          <span className="font-bold text-[#4A4A4A] text-sm">{txn.transaction_id}</span>
+                          <span className="text-xs text-[#6E6264] font-bold bg-[#93C5FD]/15/60 px-2 py-0.5 rounded border border-[#93C5FD]/40">
                             INR {Number(txn.amount || 0).toLocaleString()}
                           </span>
                         </div>
-                        <div className="text-xs text-[#93C5FD] truncate max-w-sm font-sans mt-0.5">
+                        <div className="text-xs text-[#6E6264] truncate max-w-sm font-sans mt-0.5">
                           {txn.relevance || 'Flagged Transfer'}
                         </div>
-                        <div className="text-[11px] text-[#93C5FD] font-mono mt-1">
+                        <div className="text-[11px] text-[#6E6264] font-mono mt-1">
                           {txn.sender_account || 'Unknown sender'} → {txn.receiver_account || 'Unknown recipient'}
                           {txn.timestamp ? ` · ${new Date(txn.timestamp).toLocaleString()}` : ''}
                         </div>
@@ -1249,7 +1249,7 @@ export default function CaseDetailsPage({
 
                       <button
                         onClick={() => handleUnlinkTxn(txn.transaction_id)}
-                        className="p-1.5 text-[#64748B] hover:text-[#FF3B4E] rounded transition"
+                        className="p-1.5 text-[#8A7D7F] hover:text-[#FF3B4E] rounded transition"
                         title="Unlink transaction"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1258,7 +1258,7 @@ export default function CaseDetailsPage({
                   ))}
 
                   {(!caseData.linked_transactions || caseData.linked_transactions.length === 0) && (
-                    <div className="p-6 text-center text-[#93C5FD] text-xs font-mono bg-[#1F242E]/60 rounded-none border border-[#333D50]/80">
+                    <div className="p-6 text-center text-[#6E6264] text-xs font-mono bg-[#FFF5F5]/60 rounded-none border border-[#E8C2BB]/80">
                       No transactions linked yet. Click "Link Transfer" above to document specific fund movements.
                     </div>
                   )}
@@ -1270,10 +1270,10 @@ export default function CaseDetailsPage({
             {activeTab === 'complaints' && (
               <div className="space-y-3 font-mono text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#93C5FD] text-xs font-bold">1930 Cybercrime Portal Reports & Police FIRs</span>
+                  <span className="text-[#6E6264] text-xs font-bold">1930 Cybercrime Portal Reports & Police FIRs</span>
                   <button
                     onClick={() => setShowLinkComplaint(!showLinkComplaint)}
-                    className="px-3 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#3B82F6] border border-[#333D50] rounded-none text-xs font-bold flex items-center gap-1.5 transition"
+                    className="px-3 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#B86B7A] border border-[#E8C2BB] rounded-none text-xs font-bold flex items-center gap-1.5 transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Link FIR</span>
@@ -1281,29 +1281,29 @@ export default function CaseDetailsPage({
                 </div>
 
                 {showLinkComplaint && (
-                  <form onSubmit={handleLinkComplaintSubmit} className="p-3.5 bg-[#1F242E] border border-[#333D50] rounded-none space-y-3 animate-fadeIn">
+                  <form onSubmit={handleLinkComplaintSubmit} className="p-3.5 bg-[#FFF5F5] border border-[#E8C2BB] rounded-none space-y-3 animate-fadeIn">
                     <div>
-                      <label className="block text-[11px] text-[#93C5FD] font-bold mb-1">FIR / COMPLAINT IDENTIFIER *</label>
+                      <label className="block text-[11px] text-[#6E6264] font-bold mb-1">FIR / COMPLAINT IDENTIFIER *</label>
                       <input
                         type="text"
                         required
                         value={linkComplaintId}
                         onChange={(e) => setLinkComplaintId(e.target.value)}
                         placeholder="e.g. CMP-2026-8812"
-                        className="w-full px-3 py-2 bg-[#252B37] border border-[#333D50] rounded text-white text-xs font-mono focus:border-[#3B82F6]"
+                        className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E8C2BB] rounded text-white text-xs font-mono focus:border-[#E2B4BD]"
                       />
                     </div>
                     <div className="flex justify-end gap-2 pt-1">
                       <button
                         type="button"
                         onClick={() => setShowLinkComplaint(false)}
-                        className="px-3 py-1.5 text-[#93C5FD] hover:text-white text-xs"
+                        className="px-3 py-1.5 text-[#6E6264] hover:text-[#4A4A4A] text-xs"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="px-4 py-1.5 bg-electric-600 hover:bg-[#3B82F6] text-white rounded text-xs font-bold shadow-sm"
+                        className="px-4 py-1.5 bg-electric-600 hover:bg-[#B86B7A] text-white rounded text-xs font-bold shadow-sm"
                       >
                         Confirm Link
                       </button>
@@ -1315,16 +1315,16 @@ export default function CaseDetailsPage({
                   {(caseData.correlated_complaints || []).map((cmp) => (
                     <div
                       key={cmp.complaint_id}
-                      className="p-3 rounded-none bg-[#1F242E] border border-[#333D50] flex items-center justify-between gap-3 hover:border-[#333D50] transition"
+                      className="p-3 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] flex items-center justify-between gap-3 hover:border-[#E8C2BB] transition"
                     >
                       <div>
                         <div className="flex items-center gap-2.5">
-                          <span className="font-bold text-white text-sm">{cmp.complaint_id}</span>
+                          <span className="font-bold text-[#4A4A4A] text-sm">{cmp.complaint_id}</span>
                           <span className="text-xs text-[#FF3B4E] font-bold bg-[#FF3B4E]/15/60 px-2 py-0.5 rounded border border-[#FF3B4E]/40">
                             Loss: INR {Number(cmp.amount_lost || 0).toLocaleString()}
                           </span>
                         </div>
-                        <div className="text-xs text-[#93C5FD] font-sans mt-0.5">
+                        <div className="text-xs text-[#6E6264] font-sans mt-0.5">
                           Complainant: <strong>{cmp.complainant_name}</strong>
                         </div>
                       </div>
@@ -1336,7 +1336,7 @@ export default function CaseDetailsPage({
                   ))}
 
                   {(!caseData.correlated_complaints || caseData.correlated_complaints.length === 0) && (
-                    <div className="p-6 text-center text-[#93C5FD] text-xs font-mono bg-[#1F242E]/60 rounded-none border border-[#333D50]/80">
+                    <div className="p-6 text-center text-[#6E6264] text-xs font-mono bg-[#FFF5F5]/60 rounded-none border border-[#E8C2BB]/80">
                       No cybercrime complaints linked yet. Click "Link FIR" above to cross-reference victim statements.
                     </div>
                   )}
@@ -1350,23 +1350,23 @@ export default function CaseDetailsPage({
                 {(caseData.audit_logs || []).map((aud) => (
                   <div
                     key={aud.id}
-                    className="p-3 rounded-none bg-[#1F242E] border border-[#333D50] text-xs space-y-1.5"
+                    className="p-3 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] text-xs space-y-1.5"
                   >
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-[#3B82F6] font-bold bg-[#252B37] px-2 py-0.5 rounded border border-[#333D50]">
+                      <span className="text-[#B86B7A] font-bold bg-[#FFFFFF] px-2 py-0.5 rounded border border-[#E8C2BB]">
                         {aud.action}
                       </span>
-                      <span className="text-[#93C5FD]">
+                      <span className="text-[#6E6264]">
                         {aud.timestamp ? new Date(aud.timestamp).toLocaleString() : 'Recorded'}
                       </span>
                     </div>
-                    <div className="text-[#F3F4F6] font-sans leading-relaxed text-xs">{aud.details}</div>
-                    <div className="text-[11px] text-[#93C5FD]">Recorded by: <strong>{aud.user || 'System'}</strong></div>
+                    <div className="text-[#4A4A4A] font-sans leading-relaxed text-xs">{aud.details}</div>
+                    <div className="text-[11px] text-[#6E6264]">Recorded by: <strong>{aud.user || 'System'}</strong></div>
                   </div>
                 ))}
 
                 {(!caseData.audit_logs || caseData.audit_logs.length === 0) && (
-                  <div className="p-6 text-center text-[#93C5FD] text-xs font-mono bg-[#1F242E]/60 rounded-none border border-[#333D50]/80">
+                  <div className="p-6 text-center text-[#6E6264] text-xs font-mono bg-[#FFF5F5]/60 rounded-none border border-[#E8C2BB]/80">
                     No explicit audit logs recorded yet for this case.
                   </div>
                 )}
@@ -1376,23 +1376,23 @@ export default function CaseDetailsPage({
           </div>
 
         {/* Right Column: Evidentiary Locker (1 Col) */}
-        <div className="xl:col-span-5 p-5 rounded-none bg-[#252B37]/70 backdrop-blur-2xl border border-[#333D50] flex flex-col justify-between space-y-4">
+        <div className="xl:col-span-5 p-5 rounded-none bg-[#FFFFFF]/70 backdrop-blur-2xl border border-[#E8C2BB] flex flex-col justify-between space-y-4">
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-[#333D50] pb-3">
+            <div className="flex items-center justify-between border-b border-[#E8C2BB] pb-3">
               <div>
-                <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-[#3B82F6]" />
+                <h2 className="text-sm font-bold text-[#4A4A4A] uppercase tracking-wider font-mono flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-[#B86B7A]" />
                   <span>EVIDENTIARY LOCKER</span>
                 </h2>
-                <p className="text-xs text-[#93C5FD] font-mono mt-0.5">Evidence references & metadata integrity</p>
-                <p className="text-xs text-[#93C5FD] leading-relaxed mt-2 max-w-md">
+                <p className="text-xs text-[#6E6264] font-mono mt-0.5">Evidence references & metadata integrity</p>
+                <p className="text-xs text-[#6E6264] leading-relaxed mt-2 max-w-md">
                   Attach an existing account, transaction, or complaint ID to keep its reference and description with this case. This prototype stores a metadata hash; it does not copy or verify the original source.
                 </p>
               </div>
 
               <button
                 onClick={() => setShowAddEvidence(!showAddEvidence)}
-                className="px-3 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#3B82F6] border border-[#333D50] rounded-none text-xs font-bold flex items-center gap-1.5 transition font-mono"
+                className="px-3 py-1.5 bg-navy-850 hover:bg-slate-700 text-[#B86B7A] border border-[#E8C2BB] rounded-none text-xs font-bold flex items-center gap-1.5 transition font-mono"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Attach</span>
@@ -1400,8 +1400,8 @@ export default function CaseDetailsPage({
             </div>
 
             {/* Ease of Access: Evidence Protocol Banner */}
-            <div className="p-3 rounded-none bg-electric-950/40 border border-[#3B82F6] text-xs text-[#93C5FD] leading-relaxed font-sans flex items-start gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#3B82F6] shrink-0 mt-0.5" />
+            <div className="p-3 rounded-none bg-electric-950/40 border border-[#E2B4BD] text-xs text-[#6E6264] leading-relaxed font-sans flex items-start gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#B86B7A] shrink-0 mt-0.5" />
               <span>
                 <strong>Metadata hash:</strong> SHA-256 covers the evidence reference, description, and timestamp. It does not hash the referenced transaction or file, prove authenticity, or establish court admissibility.
               </span>
@@ -1409,13 +1409,13 @@ export default function CaseDetailsPage({
 
             {/* Add Evidence Drawer */}
             {showAddEvidence && (
-              <form onSubmit={handleAddEvidence} className="p-4 rounded-none bg-[#1F242E]/80 backdrop-blur-md border border-[#333D50] space-y-3.5 text-xs animate-fadeIn font-mono">
+              <form onSubmit={handleAddEvidence} className="p-4 rounded-none bg-[#FFF5F5]/80 backdrop-blur-md border border-[#E8C2BB] space-y-3.5 text-xs animate-fadeIn font-mono">
                 <div>
-                  <label className="block text-[#93C5FD] text-xs font-bold mb-1.5 font-mono">EVIDENCE TYPE *</label>
+                  <label className="block text-[#6E6264] text-xs font-bold mb-1.5 font-mono">EVIDENCE TYPE *</label>
                   <select
                     value={evType}
                     onChange={(e) => setEvType(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#252B37] border border-[#333D50] rounded-none text-white text-xs font-mono focus:border-[#3B82F6]"
+                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E8C2BB] rounded-none text-white text-xs font-mono focus:border-[#E2B4BD]"
                   >
                     <option value="ACCOUNT">Bank Account Subject</option>
                     <option value="TRANSACTION">Transaction Reference</option>
@@ -1428,7 +1428,7 @@ export default function CaseDetailsPage({
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-[#93C5FD] text-xs font-bold font-mono">REFERENCE IDENTIFIER *</label>
+                    <label className="text-[#6E6264] text-xs font-bold font-mono">REFERENCE IDENTIFIER *</label>
                     {caseData.primary_account_id && (
                       <button
                         type="button"
@@ -1436,7 +1436,7 @@ export default function CaseDetailsPage({
                           setEvRef(caseData.primary_account_id);
                           setEvType('ACCOUNT');
                         }}
-                        className="text-[11px] text-[#3B82F6] hover:text-[#3B82F6] font-mono underline"
+                        className="text-[11px] text-[#B86B7A] hover:text-[#B86B7A] font-mono underline"
                         title="Quick-fill primary subject account"
                       >
                         + Insert Primary Subject
@@ -1449,13 +1449,13 @@ export default function CaseDetailsPage({
                     value={evRef}
                     onChange={(e) => setEvRef(e.target.value)}
                     placeholder="e.g. MULE_AGG_01 or TXN_10167"
-                    className="w-full px-3 py-2 bg-[#252B37] border border-[#333D50] rounded-none text-white font-mono text-xs focus:outline-none focus:border-[#3B82F6]"
+                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E8C2BB] rounded-none text-white font-mono text-xs focus:outline-none focus:border-[#E2B4BD]"
                   />
 
                   {/* Ease of Access: Quick-Pick Chips from Linked Entities */}
                   {((caseData.linked_accounts?.length || 0) > 0 || (caseData.linked_transactions?.length || 0) > 0) && (
-                    <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-1.5 border-t border-[#333D50]">
-                      <span className="text-[10px] text-[#93C5FD]">Quick-Pick:</span>
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-1.5 border-t border-[#E8C2BB]">
+                      <span className="text-[10px] text-[#6E6264]">Quick-Pick:</span>
                       {(caseData.linked_accounts || []).slice(0, 3).map((a) => (
                         <button
                           key={a.account_id}
@@ -1464,7 +1464,7 @@ export default function CaseDetailsPage({
                             setEvRef(a.account_id);
                             setEvType('ACCOUNT');
                           }}
-                          className="px-1.5 py-0.5 bg-[#252B37] hover:bg-slate-700 text-[#93C5FD] rounded text-[10px] font-mono"
+                          className="px-1.5 py-0.5 bg-[#FFFFFF] hover:bg-slate-700 text-[#6E6264] rounded text-[10px] font-mono"
                         >
                           {a.account_id}
                         </button>
@@ -1477,7 +1477,7 @@ export default function CaseDetailsPage({
                             setEvRef(t.transaction_id);
                             setEvType('TRANSACTION');
                           }}
-                          className="px-1.5 py-0.5 bg-[#252B37] hover:bg-slate-700 text-[#93C5FD] rounded text-[10px] font-mono truncate max-w-[100px]"
+                          className="px-1.5 py-0.5 bg-[#FFFFFF] hover:bg-slate-700 text-[#6E6264] rounded text-[10px] font-mono truncate max-w-[100px]"
                         >
                           {t.transaction_id}
                         </button>
@@ -1487,13 +1487,13 @@ export default function CaseDetailsPage({
                 </div>
 
                 <div>
-                  <label className="block text-[#93C5FD] text-xs font-bold mb-1.5 font-mono">DESCRIPTION & FORENSIC SIGNIFICANCE</label>
+                  <label className="block text-[#6E6264] text-xs font-bold mb-1.5 font-mono">DESCRIPTION & FORENSIC SIGNIFICANCE</label>
                   <textarea
                     rows={2}
                     value={evDesc}
                     onChange={(e) => setEvDesc(e.target.value)}
                     placeholder="Explain why this item is crucial to the investigation..."
-                    className="w-full px-3 py-2 bg-[#252B37] border border-[#333D50] rounded-none text-white text-xs focus:outline-none focus:border-[#3B82F6] font-sans"
+                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E8C2BB] rounded-none text-white text-xs focus:outline-none focus:border-[#E2B4BD] font-sans"
                   />
                 </div>
 
@@ -1501,14 +1501,14 @@ export default function CaseDetailsPage({
                   <button
                     type="button"
                     onClick={() => setShowAddEvidence(false)}
-                    className="px-3 py-1.5 text-[#93C5FD] hover:text-white text-xs"
+                    className="px-3 py-1.5 text-[#6E6264] hover:text-[#4A4A4A] text-xs"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isAddingEv}
-                    className="px-4 py-1.5 bg-electric-600 hover:bg-[#3B82F6] disabled:opacity-50 text-white rounded-none text-xs font-bold flex items-center gap-1.5 shadow-sm"
+                    className="px-4 py-1.5 bg-electric-600 hover:bg-[#B86B7A] disabled:opacity-50 text-white rounded-none text-xs font-bold flex items-center gap-1.5 shadow-sm"
                   >
                     {isAddingEv ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
                     <span>{isAddingEv ? 'Securing Hash...' : 'Add to Locker'}</span>
@@ -1522,19 +1522,19 @@ export default function CaseDetailsPage({
               {(caseData.evidence_items || []).map((ev) => (
                 <div
                   key={ev.id}
-                  className="p-3.5 rounded-none bg-[#1F242E] border border-[#333D50] text-xs space-y-2 hover:border-[#333D50] transition group"
+                  className="p-3.5 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] text-xs space-y-2 hover:border-[#E8C2BB] transition group"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-[#3B82F6] bg-electric-950/80 px-2 py-0.5 rounded border border-[#3B82F6]">
+                    <span className="font-mono text-xs font-bold text-[#B86B7A] bg-electric-950/80 px-2 py-0.5 rounded border border-[#E2B4BD]">
                       {ev.evidence_type}
                     </span>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-[#93C5FD] font-mono">
+                      <span className="text-xs text-[#6E6264] font-mono">
                         {ev.created_at ? new Date(ev.created_at).toLocaleDateString() : 'Logged'}
                       </span>
                       <button
                         onClick={() => handleRemoveEvidence(ev.id, ev.reference_id)}
-                        className="opacity-0 group-hover:opacity-100 p-1 text-[#64748B] hover:text-[#FF3B4E] transition"
+                        className="opacity-0 group-hover:opacity-100 p-1 text-[#8A7D7F] hover:text-[#FF3B4E] transition"
                         title="Remove evidence"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1554,7 +1554,7 @@ export default function CaseDetailsPage({
                           if (onAccountSelect) onAccountSelect(ev.reference_id);
                           setCurrentPage('money-trail');
                         }}
-                        className="px-2 py-0.5 bg-navy-850 hover:bg-slate-700 text-[#F3F4F6] border border-[#333D50] rounded text-[10px] font-mono shrink-0"
+                        className="px-2 py-0.5 bg-navy-850 hover:bg-slate-700 text-[#4A4A4A] border border-[#E8C2BB] rounded text-[10px] font-mono shrink-0"
                         title="Trace this account"
                       >
                         Trace
@@ -1562,30 +1562,30 @@ export default function CaseDetailsPage({
                     )}
                   </div>
 
-                  <p className="text-xs text-[#F3F4F6] leading-relaxed font-sans">
+                  <p className="text-xs text-[#4A4A4A] leading-relaxed font-sans">
                     {ev.description}
                   </p>
 
                   {ev.integrity_hash && (
-                    <div className="text-[11px] font-mono text-[#93C5FD] truncate pt-1.5 border-t border-[#333D50] flex items-center justify-between">
+                    <div className="text-[11px] font-mono text-[#6E6264] truncate pt-1.5 border-t border-[#E8C2BB] flex items-center justify-between">
                       <span className="truncate max-w-[200px]" title={`SHA-256: ${ev.integrity_hash}`}>
                         SHA-256: {ev.integrity_hash.substring(0, 16)}...
                       </span>
-                      <span className="text-[#93C5FD] font-bold shrink-0">Metadata hash</span>
+                      <span className="text-[#6E6264] font-bold shrink-0">Metadata hash</span>
                     </div>
                   )}
                 </div>
               ))}
 
               {(!caseData.evidence_items || caseData.evidence_items.length === 0) && (
-                <div className="p-8 text-center text-[#93C5FD] text-xs font-mono bg-[#1F242E]/60 rounded-none border border-[#333D50]/80">
+                <div className="p-8 text-center text-[#6E6264] text-xs font-mono bg-[#FFF5F5]/60 rounded-none border border-[#E8C2BB]/80">
                   No source records are attached yet. Use “Attach” and enter an account, transaction, or complaint ID that exists in the database.
                 </div>
               )}
             </div>
           </div>
 
-          <div className="pt-3 border-t border-[#333D50] text-xs text-[#93C5FD] font-mono flex items-center justify-between">
+          <div className="pt-3 border-t border-[#E8C2BB] text-xs text-[#6E6264] font-mono flex items-center justify-between">
             <span>Case record: <strong>{caseData.case_id}</strong></span>
             <span className="font-bold flex items-center gap-1">
               <span className={`w-1.5 h-1.5 rounded-full ${caseData.evidence_items?.some((item) => item.integrity_hash) ? 'bg-emerald-400' : 'bg-slate-500'}`} />

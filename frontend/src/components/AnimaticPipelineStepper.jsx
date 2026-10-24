@@ -29,10 +29,10 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
       title: "Data Intake & Canonical Normalization",
       subtitle: "Schema Hygiene & Deduplication",
       icon: UploadCloud,
-      color: "from-blue-500 to-[#60A5FA]",
-      accentBorder: "border-[#3B82F6]/50",
+      color: "from-blue-500 to-[#E2B4BD]",
+      accentBorder: "border-[#E2B4BD]/50",
       badgeText: `${(stats.totalTransactions || 3218).toLocaleString()} Transactions`,
-      badgeColor: "bg-[#1F242E] text-[#93C5FD] border-[#3B82F6]/40",
+      badgeColor: "bg-[#FFF5F5] text-[#6E6264] border-[#E2B4BD]/40",
       desc: "Ingests raw core banking statements (CBS) and CSV ledgers. Sanitizes floating-point amounts, normalizes timestamps, enforces SHA-256 data integrity, and quarantines malformed records.",
       inputLabel: "Raw Bank SOAs & Transaction CSVs",
       outputLabel: "Clean Canonical Ingestion Entities",
@@ -50,10 +50,10 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
       title: "Directed Graph Topology Mapping",
       subtitle: "Account Nodes & Relational Edges",
       icon: Network,
-      color: "from-[#3B82F6] to-electric-400",
-      accentBorder: "border-[#3B82F6]/50",
+      color: "from-[#B86B7A] to-[#E2B4BD]",
+      accentBorder: "border-[#E2B4BD]/50",
       badgeText: `${(stats.totalAccounts || 1985).toLocaleString()} Graph Nodes`,
-      badgeColor: "bg-electric-950 text-electric-300 border-[#3B82F6]/40",
+      badgeColor: "bg-electric-950 text-electric-300 border-[#E2B4BD]/40",
       desc: "Constructs a directed, weighted transaction network graph. Nodes represent financial accounts; weighted edges represent fund transfers with timestamped sequence tensors and flow velocity.",
       inputLabel: "Sanitized Transaction Ledger",
       outputLabel: "Directed Graph Topology (Adjacency Matrix)",
@@ -71,10 +71,10 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
       title: "GraphSAGE 2-Hop Neural Scoring",
       subtitle: "Deep Topological Aggregation",
       icon: Cpu,
-      color: "from-[#3B82F6] to-[#2563EB]",
-      accentBorder: "border-[#3B82F6]",
+      color: "from-[#B86B7A] to-[#2563EB]",
+      accentBorder: "border-[#E2B4BD]",
       badgeText: "99.8% ROC-AUC • 45ms",
-      badgeColor: "bg-[#1E3A5F] text-[#3B82F6] border-[#3B82F6]",
+      badgeColor: "bg-[#F7D6D0] text-[#B86B7A] border-[#E2B4BD]",
       desc: "PyTorch Geometric 2-layer GraphSAGE aggregator passes messages across 1-hop and 2-hop counterparty neighborhoods, deriving 16-dimensional latent embeddings to classify mule syndicates.",
       inputLabel: "10-Feature Structural Tensors",
       outputLabel: "Account Mule Probabilities [0.0 - 1.0]",
@@ -113,10 +113,10 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
       title: "Cybercrime FIR & 1930 Correlation",
       subtitle: "Victim Cross-Reference",
       icon: FileWarning,
-      color: "from-[#3B82F6] to-[#2563EB]",
-      accentBorder: "border-[#3B82F6]",
+      color: "from-[#B86B7A] to-[#2563EB]",
+      accentBorder: "border-[#E2B4BD]",
       badgeText: "₹34.5L Victim Loss Linked",
-      badgeColor: "bg-[#1E3A5F] text-[#3B82F6] border-[#3B82F6]",
+      badgeColor: "bg-[#F7D6D0] text-[#B86B7A] border-[#E2B4BD]",
       desc: "Cross-references police FIRs and National Cybercrime Reporting Portal (1930) tickets with suspect bank accounts, establishing concrete victim-to-mule liability chains.",
       inputLabel: "1930 Cybercrime Complaints",
       outputLabel: "Correlated Financial Crime Incidents",
@@ -137,7 +137,7 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
       color: "from-emerald-500 to-teal-400",
       accentBorder: "border-[#93C5FD]/50",
       badgeText: `${stats.openCases || 8} Active Legal Cases`,
-      badgeColor: "bg-emerald-950 text-[#93C5FD] border-[#93C5FD]/40",
+      badgeColor: "bg-emerald-950 text-[#6E6264] border-[#93C5FD]/40",
       desc: "Compiles admissible court dossiers containing transaction ledgers, GraphSAGE topological proofs, FIR linkages, and automated Core Banking debit freeze recommendations.",
       inputLabel: "Correlated Evidence & Trails",
       outputLabel: "Cryptographically Signed Case Dossier",
@@ -178,26 +178,26 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
   const CurrentIcon = current.icon;
 
   return (
-    <div className="rounded-none bg-gradient-to-b from-[#252B37] to-[#1F242E] border border-[#333D50] p-5 sm:p-6 shadow-xl relative overflow-hidden space-y-5">
+    <div className="rounded-none bg-gradient-to-b from-[#252B37] to-[#1F242E] border border-[#E8C2BB] p-5 sm:p-6 shadow-xl relative overflow-hidden space-y-5">
       {/* Background ambient glow matching current step */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#3B82F6]/10 rounded-full blur-[120px] pointer-events-none transition-all duration-700"></div>
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#B86B7A]/10 rounded-full blur-[120px] pointer-events-none transition-all duration-700"></div>
 
       {/* Header with Title and Player Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#333D50]/80 pb-4 relative z-10">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E8C2BB]/80 pb-4 relative z-10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold font-mono bg-electric-950 text-electric-300 border border-[#3B82F6]/40 flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-[#60A5FA] animate-spin" />
+            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold font-mono bg-electric-950 text-electric-300 border border-[#E2B4BD]/40 flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-[#B86B7A] animate-spin" />
               <span>ANIMATIC PIPELINE FLOW</span>
             </span>
-            <span className="text-[10px] font-mono text-[#93C5FD] bg-[#252B37] px-2 py-0.5 rounded border border-[#333D50]">
+            <span className="text-[10px] font-mono text-[#6E6264] bg-[#FFFFFF] px-2 py-0.5 rounded border border-[#E8C2BB]">
               STEP {activeStep + 1} OF {steps.length}
             </span>
           </div>
-          <h2 className="text-base sm:text-lg font-bold text-white tracking-wide mt-1 flex items-center gap-2">
+          <h2 className="text-base sm:text-lg font-bold text-[#4A4A4A] tracking-wide mt-1 flex items-center gap-2">
             <span>Automated Financial Crime Intelligence Lifecycle</span>
           </h2>
-          <p className="text-xs text-[#93C5FD] mt-0.5 max-w-2xl">
+          <p className="text-xs text-[#6E6264] mt-0.5 max-w-2xl">
             Watch transaction files flow through schema validation, GraphSAGE graph analysis, anomaly review, and investigator case preparation.
           </p>
         </div>
@@ -208,35 +208,35 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
             onClick={() => setIsPlaying(!isPlaying)}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition ${
               isPlaying
-                ? 'bg-electric-600/30 text-electric-300 border border-[#3B82F6]/40 hover:bg-electric-600/50'
-                : 'bg-[#252B37] text-[#93C5FD] hover:text-white border border-[#333D50]'
+                ? 'bg-electric-600/30 text-electric-300 border border-[#E2B4BD]/40 hover:bg-electric-600/50'
+                : 'bg-[#FFFFFF] text-[#6E6264] hover:text-[#4A4A4A] border border-[#E8C2BB]'
             }`}
             title={isPlaying ? "Pause auto-advancing flow" : "Play auto-advancing flow"}
           >
             {isPlaying ? (
               <>
-                <Pause className="w-3.5 h-3.5 text-[#60A5FA]" />
+                <Pause className="w-3.5 h-3.5 text-[#B86B7A]" />
                 <span>Pause</span>
               </>
             ) : (
               <>
-                <Play className="w-3.5 h-3.5 text-[#93C5FD] fill-emerald-400" />
+                <Play className="w-3.5 h-3.5 text-[#6E6264] fill-emerald-400" />
                 <span>Auto-Play</span>
               </>
             )}
           </button>
 
-          <div className="flex items-center gap-1 bg-[#1F242E] p-1 rounded-lg border border-[#333D50]">
+          <div className="flex items-center gap-1 bg-[#FFF5F5] p-1 rounded-lg border border-[#E8C2BB]">
             <button
               onClick={() => setActiveStep((prev) => (prev > 0 ? prev - 1 : steps.length - 1))}
-              className="p-1 rounded hover:bg-[#252B37] text-[#93C5FD] hover:text-white transition"
+              className="p-1 rounded hover:bg-[#FFFFFF] text-[#6E6264] hover:text-[#4A4A4A] transition"
               title="Previous Step"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setActiveStep((prev) => (prev + 1) % steps.length)}
-              className="p-1 rounded hover:bg-[#252B37] text-[#93C5FD] hover:text-white transition"
+              className="p-1 rounded hover:bg-[#FFFFFF] text-[#6E6264] hover:text-[#4A4A4A] transition"
               title="Next Step"
             >
               <ChevronRight className="w-4 h-4" />
@@ -247,9 +247,9 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
 
       {/* Progress Track with animated light beam */}
       <div className="relative z-10 space-y-2">
-        <div className="h-1.5 w-full bg-[#252B37] rounded-full overflow-hidden border border-[#333D50]/80 relative">
+        <div className="h-1.5 w-full bg-[#FFFFFF] rounded-full overflow-hidden border border-[#E8C2BB]/80 relative">
           <div
-            className="h-full bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#60A5FA] transition-all duration-500 rounded-full relative"
+            className="h-full bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#E2B4BD] transition-all duration-500 rounded-full relative"
             style={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
           >
             <div className="absolute right-0 top-0 bottom-0 w-4 bg-white/70 blur-xs animate-pulse"></div>
@@ -270,21 +270,21 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
                 }}
                 className={`py-1.5 px-1 sm:px-2 rounded-lg text-left transition flex items-center justify-between border ${
                   isActive
-                    ? 'bg-[#3B82F6]/20 border-electric-400 text-white shadow-glow-marigold'
+                    ? 'bg-[#B86B7A]/20 border-electric-400 text-white shadow-glow-rose'
                     : isCompleted
-                    ? 'bg-[#1F242E]/80 border-[#333D50] text-[#93C5FD] hover:text-[#F3F4F6]'
-                    : 'bg-[#1F242E]/40 border-slate-850 text-[#93C5FD] hover:text-[#93C5FD]'
+                    ? 'bg-[#FFF5F5]/80 border-[#E8C2BB] text-[#6E6264] hover:text-[#4A4A4A]'
+                    : 'bg-[#FFF5F5]/40 border-slate-850 text-[#6E6264] hover:text-[#6E6264]'
                 }`}
               >
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    isActive ? 'bg-[#60A5FA] animate-ping' : isCompleted ? 'bg-emerald-400' : 'bg-slate-600'
+                    isActive ? 'bg-[#E2B4BD] animate-ping' : isCompleted ? 'bg-emerald-400' : 'bg-slate-600'
                   }`} />
                   <span className="font-mono text-[10px] font-bold truncate">
                     {st.num} <span className="hidden md:inline">{st.id.toUpperCase()}</span>
                   </span>
                 </div>
-                {isCompleted && <CheckCircle2 className="w-3 h-3 text-[#93C5FD] shrink-0 hidden sm:block" />}
+                {isCompleted && <CheckCircle2 className="w-3 h-3 text-[#6E6264] shrink-0 hidden sm:block" />}
               </button>
             );
           })}
@@ -292,7 +292,7 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
       </div>
 
       {/* Active Step Spotlight Card - Animatic Showcase */}
-      <div className={`p-5 sm:p-6 rounded-none bg-[#252B37]/90 border transition-all duration-300 ${current.accentBorder} shadow-2xl relative z-10`}>
+      <div className={`p-5 sm:p-6 rounded-none bg-[#FFFFFF]/90 border transition-all duration-300 ${current.accentBorder} shadow-2xl relative z-10`}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
           {/* Left: Step Information & Overview */}
@@ -303,33 +303,33 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-[#3B82F6]">
+                  <span className="font-mono text-xs font-bold text-[#B86B7A]">
                     STAGE {current.num}
                   </span>
                   <span className="text-slate-600">•</span>
-                  <span className="text-xs text-[#93C5FD] font-mono">{current.subtitle}</span>
+                  <span className="text-xs text-[#6E6264] font-mono">{current.subtitle}</span>
                 </div>
-                <h3 className="text-lg sm:text-xl font-black text-white leading-tight">
+                <h3 className="text-lg sm:text-xl font-black text-[#4A4A4A] leading-tight">
                   {current.title}
                 </h3>
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm text-[#93C5FD] leading-relaxed font-sans">
+            <p className="text-xs sm:text-sm text-[#6E6264] leading-relaxed font-sans">
               {current.desc}
             </p>
 
             {/* Input -> Output flow pills */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-              <div className="p-2.5 rounded-none bg-[#1F242E] border border-[#333D50]">
-                <span className="text-[10px] text-[#93C5FD] block">DATA INTAKE:</span>
-                <span className="text-[#F3F4F6] font-medium truncate block mt-0.5">
+              <div className="p-2.5 rounded-none bg-[#FFF5F5] border border-[#E8C2BB]">
+                <span className="text-[10px] text-[#6E6264] block">DATA INTAKE:</span>
+                <span className="text-[#4A4A4A] font-medium truncate block mt-0.5">
                   {current.inputLabel}
                 </span>
               </div>
-              <div className="p-2.5 rounded-none bg-[#1F242E] border border-[#333D50]">
-                <span className="text-[10px] text-[#60A5FA] block">COMPUTED ARTIFACT:</span>
-                <span className="text-[#93C5FD] font-medium truncate block mt-0.5">
+              <div className="p-2.5 rounded-none bg-[#FFF5F5] border border-[#E8C2BB]">
+                <span className="text-[10px] text-[#B86B7A] block">COMPUTED ARTIFACT:</span>
+                <span className="text-[#6E6264] font-medium truncate block mt-0.5">
                   {current.outputLabel}
                 </span>
               </div>
@@ -341,7 +341,7 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
                 onClick={() => {
                   if (setCurrentPage) setCurrentPage(current.targetPage);
                 }}
-                className="px-5 py-2.5 rounded-none bg-gradient-to-r from-electric-600 to-[#3B82F6] hover:from-electric-500 hover:to-[#60A5FA] text-white font-bold text-xs shadow-glow-marigold transition transform hover:scale-105 active:scale-95 flex items-center gap-2"
+                className="px-5 py-2.5 rounded-none bg-gradient-to-r from-[#B86B7A] to-[#3B82F6] hover:from-electric-500 hover:to-[#E2B4BD] text-white font-bold text-xs shadow-glow-rose transition transform hover:scale-105 active:scale-95 flex items-center gap-2"
               >
                 <span>{current.cta}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -351,16 +351,16 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
                 onClick={() => {
                   if (setCurrentPage) setCurrentPage("pipeline");
                 }}
-                className="px-4 py-2.5 rounded-none bg-[#1F242E] hover:bg-[#252B37] text-[#93C5FD] border border-[#333D50] text-xs font-mono transition flex items-center gap-1.5"
+                className="px-4 py-2.5 rounded-none bg-[#FFF5F5] hover:bg-[#FFFFFF] text-[#6E6264] border border-[#E8C2BB] text-xs font-mono transition flex items-center gap-1.5"
               >
-                <Layers className="w-3.5 h-3.5 text-[#3B82F6]" />
+                <Layers className="w-3.5 h-3.5 text-[#B86B7A]" />
                 <span>View Full 12-Stage Pipeline</span>
               </button>
 
               {onOpenLivePipeline && (
                 <button
                   onClick={onOpenLivePipeline}
-                  className="px-4 py-2.5 rounded-none bg-gradient-to-r from-emerald-600 via-teal-500 to-[#3B82F6] hover:from-emerald-500 hover:to-[#60A5FA] text-white font-bold text-xs shadow-glow-emerald transition transform hover:scale-105 active:scale-95 flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-none bg-gradient-to-r from-emerald-600 via-teal-500 to-[#3B82F6] hover:from-emerald-500 hover:to-[#E2B4BD] text-white font-bold text-xs shadow-glow-emerald transition transform hover:scale-105 active:scale-95 flex items-center gap-1.5"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-white" />
                   <span>Execute Pipeline Live</span>
@@ -370,11 +370,11 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
           </div>
 
           {/* Right: Live Telemetry & Computed Values */}
-          <div className="lg:col-span-5 p-5 rounded-none bg-[#1F242E]/90 border border-[#333D50]/90 space-y-4 font-mono">
-            <div className="flex items-center justify-between border-b border-[#333D50] pb-2.5">
+          <div className="lg:col-span-5 p-5 rounded-none bg-[#FFF5F5]/90 border border-[#E8C2BB]/90 space-y-4 font-mono">
+            <div className="flex items-center justify-between border-b border-[#E8C2BB] pb-2.5">
               <div className="flex items-center gap-2">
-                <Activity className="w-3.5 h-3.5 text-[#93C5FD] animate-pulse" />
-                <span className="text-[11px] font-bold text-[#93C5FD]">STAGE TELEMETRY</span>
+                <Activity className="w-3.5 h-3.5 text-[#6E6264] animate-pulse" />
+                <span className="text-[11px] font-bold text-[#6E6264]">STAGE TELEMETRY</span>
               </div>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${current.badgeColor}`}>
                 {current.badgeText}
@@ -382,23 +382,23 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
             </div>
 
             <div className="space-y-2.5 text-xs">
-              <div className="flex items-center justify-between p-2 rounded-lg bg-[#252B37] border border-[#333D50]">
-                <span className="text-[10px] text-[#93C5FD]">{current.liveTelemetry.metric1.label}</span>
-                <span className="font-bold text-white text-xs">{current.liveTelemetry.metric1.val}</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-[#FFFFFF] border border-[#E8C2BB]">
+                <span className="text-[10px] text-[#6E6264]">{current.liveTelemetry.metric1.label}</span>
+                <span className="font-bold text-[#4A4A4A] text-xs">{current.liveTelemetry.metric1.val}</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-[#252B37] border border-[#333D50]">
-                <span className="text-[10px] text-[#93C5FD]">{current.liveTelemetry.metric2.label}</span>
-                <span className="font-bold text-[#60A5FA] text-xs">{current.liveTelemetry.metric2.val}</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-[#FFFFFF] border border-[#E8C2BB]">
+                <span className="text-[10px] text-[#6E6264]">{current.liveTelemetry.metric2.label}</span>
+                <span className="font-bold text-[#B86B7A] text-xs">{current.liveTelemetry.metric2.val}</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-[#252B37] border border-[#333D50]">
-                <span className="text-[10px] text-[#93C5FD]">{current.liveTelemetry.metric3.label}</span>
-                <span className="font-bold text-[#93C5FD] text-xs">{current.liveTelemetry.metric3.val}</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-[#FFFFFF] border border-[#E8C2BB]">
+                <span className="text-[10px] text-[#6E6264]">{current.liveTelemetry.metric3.label}</span>
+                <span className="font-bold text-[#6E6264] text-xs">{current.liveTelemetry.metric3.val}</span>
               </div>
             </div>
 
-            <div className="pt-2 text-[10px] text-[#93C5FD] border-t border-[#333D50] flex items-center justify-between">
+            <div className="pt-2 text-[10px] text-[#6E6264] border-t border-[#E8C2BB] flex items-center justify-between">
               <span>ENGINE: PyTorch + PyG + Axum Tokio</span>
-              <span className="text-[#93C5FD] font-semibold flex items-center gap-1">
+              <span className="text-[#6E6264] font-semibold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                 LIVE
               </span>
@@ -410,7 +410,7 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
 
       {/* Horizontal Carousel Scroller for All 6 Cards */}
       <div className="space-y-2 pt-1">
-        <div className="flex items-center justify-between text-xs font-mono text-[#93C5FD] px-1">
+        <div className="flex items-center justify-between text-xs font-mono text-[#6E6264] px-1">
           <span>STEP-BY-STEP FLOW STRIP</span>
           <span className="text-[10px]">Click any step below to spotlight</span>
         </div>
@@ -432,31 +432,31 @@ export default function AnimaticPipelineStepper({ setCurrentPage, onAccountSelec
                 }}
                 className={`min-w-[220px] sm:min-w-[240px] p-3.5 rounded-none border transition-all cursor-pointer flex flex-col justify-between space-y-2 shrink-0 ${
                   isSelected
-                    ? 'bg-[#252B37] border-electric-400 shadow-glow-marigold scale-[1.02]'
-                    : 'bg-[#1F242E]/70 border-slate-850 hover:border-[#333D50] opacity-75 hover:opacity-100'
+                    ? 'bg-[#FFFFFF] border-electric-400 shadow-glow-rose scale-[1.02]'
+                    : 'bg-[#FFF5F5]/70 border-slate-850 hover:border-[#E8C2BB] opacity-75 hover:opacity-100'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] font-bold text-[#3B82F6]">
+                  <span className="font-mono text-[10px] font-bold text-[#B86B7A]">
                     STAGE {st.num}
                   </span>
-                  <div className={`p-1.5 rounded-lg ${isSelected ? 'bg-[#3B82F6]/20 text-[#93C5FD]' : 'bg-[#252B37] text-[#93C5FD]'}`}>
+                  <div className={`p-1.5 rounded-lg ${isSelected ? 'bg-[#B86B7A]/20 text-[#6E6264]' : 'bg-[#FFFFFF] text-[#6E6264]'}`}>
                     <Icon className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-white line-clamp-1">
+                  <h4 className="text-xs font-bold text-[#4A4A4A] line-clamp-1">
                     {st.title}
                   </h4>
-                  <p className="text-[10px] text-[#93C5FD] line-clamp-2 mt-0.5 font-sans">
+                  <p className="text-[10px] text-[#6E6264] line-clamp-2 mt-0.5 font-sans">
                     {st.subtitle}
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-[#333D50]/80 flex items-center justify-between text-[10px] font-mono">
-                  <span className="text-[#93C5FD] truncate max-w-[120px]">{st.badgeText}</span>
-                  <span className="text-[#3B82F6] font-bold">&rarr;</span>
+                <div className="pt-2 border-t border-[#E8C2BB]/80 flex items-center justify-between text-[10px] font-mono">
+                  <span className="text-[#6E6264] truncate max-w-[120px]">{st.badgeText}</span>
+                  <span className="text-[#B86B7A] font-bold">&rarr;</span>
                 </div>
               </div>
             );

@@ -91,12 +91,12 @@ export default function DashboardPage({
   ];
 
   return (
-    <div className="dedsec-page--dashboard dedsec-page-arrival bg-transparent text-[#F3F4F6] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6">
+    <div className="dedsec-page--dashboard dedsec-page-arrival bg-transparent text-[#4A4A4A] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6">
       {/* Top Telemetry / Status Strip */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b border-[#333D50]">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b border-[#E8C2BB]">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 bg-[#3B82F6] rotate-45 shrink-0" />
-          <span className="font-['Krona_One',sans-serif] text-base sm:text-lg text-white tracking-widest uppercase">
+          <div className="w-2.5 h-2.5 bg-[#B86B7A] rotate-45 shrink-0" />
+          <span className="font-['Krona_One',sans-serif] text-base sm:text-lg text-[#4A4A4A] tracking-widest uppercase">
             SENTINEL_AI // CYBERPUNK HUD
           </span>
           <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase ml-2">
@@ -106,15 +106,15 @@ export default function DashboardPage({
 
         <div className="flex items-center gap-4 text-xs font-['Share_Tech_Mono',monospace]">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#3B82F6] animate-pulse" />
-            <span className="text-[#3B82F6] tracking-wider uppercase font-bold">MONITORING</span>
+            <span className="w-2 h-2 rounded-full bg-[#B86B7A] animate-pulse" />
+            <span className="text-[#B86B7A] tracking-wider uppercase font-bold">MONITORING</span>
           </div>
-          <span className="text-[#64748B]">|</span>
-          <span className="text-[#93C5FD] tracking-widest">UTC 12:15:21</span>
-          <span className="text-[#64748B]">|</span>
+          <span className="text-[#8A7D7F]">|</span>
+          <span className="text-[#6E6264] tracking-widest">UTC 12:15:21</span>
+          <span className="text-[#8A7D7F]">|</span>
           <button
             onClick={() => onOpenLivePipeline && onOpenLivePipeline()}
-            className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1E3A5F] border border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6] hover:text-[#171B23] transition-all font-['Rajdhani',sans-serif] text-xs font-bold uppercase tracking-wider"
+            className="flex items-center gap-1.5 px-2.5 py-1 bg-[#F7D6D0] border border-[#E2B4BD] text-[#B86B7A] hover:bg-[#B86B7A] hover:text-[#171B23] transition-all font-['Rajdhani',sans-serif] text-xs font-bold uppercase tracking-wider"
           >
             <span className="w-1.5 h-1.5 bg-current rotate-45" />
             RUN PIPELINE
@@ -126,18 +126,18 @@ export default function DashboardPage({
         {/* ROW 1: 4 KPI WIDGETS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* KPI 1 */}
-          <div className="relative bg-[#252B37] h-24 p-3 flex flex-col justify-between border border-[#333D50]">
+          <div className="relative bg-[#FFFFFF] h-24 p-3 flex flex-col justify-between border border-[#E8C2BB]">
             <div className="w-1.5 h-1.5 bg-[#64748B] rotate-45 absolute top-2 right-2" />
             <div className="flex items-center gap-1.5">
-              <span className="font-['Rajdhani',sans-serif] text-[12px] font-bold uppercase tracking-widest text-[#93C5FD] flex items-center gap-1">
-                <span className="text-[#3B82F6]">◇</span> ANOMALIES TODAY
+              <span className="font-['Rajdhani',sans-serif] text-[12px] font-bold uppercase tracking-widest text-[#6E6264] flex items-center gap-1">
+                <span className="text-[#B86B7A]">◇</span> ANOMALIES TODAY
               </span>
             </div>
             <div className="flex items-baseline justify-between">
-              <span className="font-['Share_Tech_Mono',monospace] text-[32px] leading-none text-white tracking-tight tabular-nums">
+              <span className="font-['Share_Tech_Mono',monospace] text-[32px] leading-none text-[#4A4A4A] tracking-tight tabular-nums">
                 {totalAnomalies}
               </span>
-              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#60A5FA] uppercase tracking-widest">
+              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#B86B7A] uppercase tracking-widest">
                 STATUS: ELEVATED
               </span>
             </div>
@@ -148,18 +148,18 @@ export default function DashboardPage({
                   style={{ width: '65%' }}
                 />
                 <div
-                  className="absolute -top-[5px] w-3 h-3 bg-[#171B23] rotate-45 border-[1.5px] border-[#3B82F6]"
+                  className="absolute -top-[5px] w-3 h-3 bg-[#FFF5F5] rotate-45 border-[1.5px] border-[#E2B4BD]"
                   style={{ left: 'calc(65% - 6px)' }}
                 />
               </div>
-              <div className="flex justify-between items-center mt-1.5 font-['Share_Tech_Mono',monospace] text-[11px] text-[#93C5FD]">
+              <div className="flex justify-between items-center mt-1.5 font-['Share_Tech_Mono',monospace] text-[11px] text-[#6E6264]">
                 <span>+3 vs yesterday · 98.2% analyzed</span>
               </div>
             </div>
           </div>
 
           {/* KPI 2 */}
-          <div className="relative bg-[#252B37] h-24 p-3 flex flex-col justify-between border border-[#333D50]">
+          <div className="relative bg-[#FFFFFF] h-24 p-3 flex flex-col justify-between border border-[#E8C2BB]">
             <div className="w-1.5 h-1.5 bg-[#FF3B4E] rotate-45 absolute top-2 right-2 animate-ping" />
             <div className="w-1.5 h-1.5 bg-[#FF3B4E] rotate-45 absolute top-2 right-2" />
             <div className="flex items-center gap-1.5">
@@ -182,7 +182,7 @@ export default function DashboardPage({
                   style={{ width: '82%' }}
                 />
                 <div
-                  className="absolute -top-[5px] w-3 h-3 bg-[#171B23] rotate-45 border-[1.5px] border-[#FF3B4E]"
+                  className="absolute -top-[5px] w-3 h-3 bg-[#FFF5F5] rotate-45 border-[1.5px] border-[#FF3B4E]"
                   style={{ left: 'calc(82% - 6px)' }}
                 />
               </div>
@@ -193,18 +193,18 @@ export default function DashboardPage({
           </div>
 
           {/* KPI 3 */}
-          <div className="relative bg-[#252B37] h-24 p-3 flex flex-col justify-between border border-[#333D50]">
+          <div className="relative bg-[#FFFFFF] h-24 p-3 flex flex-col justify-between border border-[#E8C2BB]">
             <div className="w-1.5 h-1.5 bg-[#64748B] rotate-45 absolute top-2 right-2" />
             <div className="flex items-center gap-1.5">
-              <span className="font-['Rajdhani',sans-serif] text-[12px] font-bold uppercase tracking-widest text-[#93C5FD] flex items-center gap-1">
-                <span className="text-[#3B82F6]">◇</span> MEAN DETECT TIME
+              <span className="font-['Rajdhani',sans-serif] text-[12px] font-bold uppercase tracking-widest text-[#6E6264] flex items-center gap-1">
+                <span className="text-[#B86B7A]">◇</span> MEAN DETECT TIME
               </span>
             </div>
             <div className="flex items-baseline justify-between">
-              <span className="font-['Share_Tech_Mono',monospace] text-[32px] leading-none text-white tracking-tight tabular-nums">
+              <span className="font-['Share_Tech_Mono',monospace] text-[32px] leading-none text-[#4A4A4A] tracking-tight tabular-nums">
                 3m 20s
               </span>
-              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#93C5FD] uppercase tracking-widest">
+              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#6E6264] uppercase tracking-widest">
                 STABLE
               </span>
             </div>
@@ -215,29 +215,29 @@ export default function DashboardPage({
                   style={{ width: '44%' }}
                 />
                 <div
-                  className="absolute -top-[5px] w-3 h-3 bg-[#171B23] rotate-45 border-[1.5px] border-[#3B82F6]"
+                  className="absolute -top-[5px] w-3 h-3 bg-[#FFF5F5] rotate-45 border-[1.5px] border-[#E2B4BD]"
                   style={{ left: 'calc(44% - 6px)' }}
                 />
               </div>
-              <div className="flex justify-between items-center mt-1.5 font-['Share_Tech_Mono',monospace] text-[11px] text-[#93C5FD]">
+              <div className="flex justify-between items-center mt-1.5 font-['Share_Tech_Mono',monospace] text-[11px] text-[#6E6264]">
                 <span>-42s vs 7-day average · optimal</span>
               </div>
             </div>
           </div>
 
           {/* KPI 4 */}
-          <div className="relative bg-[#252B37] h-24 p-3 flex flex-col justify-between border border-[#333D50]">
+          <div className="relative bg-[#FFFFFF] h-24 p-3 flex flex-col justify-between border border-[#E8C2BB]">
             <div className="w-1.5 h-1.5 bg-[#64748B] rotate-45 absolute top-2 right-2" />
             <div className="flex items-center gap-1.5">
-              <span className="font-['Rajdhani',sans-serif] text-[12px] font-bold uppercase tracking-widest text-[#93C5FD] flex items-center gap-1">
-                <span className="text-[#3B82F6]">◇</span> EVENTS / SEC
+              <span className="font-['Rajdhani',sans-serif] text-[12px] font-bold uppercase tracking-widest text-[#6E6264] flex items-center gap-1">
+                <span className="text-[#B86B7A]">◇</span> EVENTS / SEC
               </span>
             </div>
             <div className="flex items-baseline justify-between">
-              <span className="font-['Share_Tech_Mono',monospace] text-[32px] leading-none text-white tracking-tight tabular-nums">
+              <span className="font-['Share_Tech_Mono',monospace] text-[32px] leading-none text-[#4A4A4A] tracking-tight tabular-nums">
                 1,240
               </span>
-              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#3B82F6] uppercase tracking-widest">
+              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#B86B7A] uppercase tracking-widest">
                 SYNCED
               </span>
             </div>
@@ -248,11 +248,11 @@ export default function DashboardPage({
                   style={{ width: '78%' }}
                 />
                 <div
-                  className="absolute -top-[5px] w-3 h-3 bg-[#171B23] rotate-45 border-[1.5px] border-[#3B82F6]"
+                  className="absolute -top-[5px] w-3 h-3 bg-[#FFF5F5] rotate-45 border-[1.5px] border-[#E2B4BD]"
                   style={{ left: 'calc(78% - 6px)' }}
                 />
               </div>
-              <div className="flex justify-between items-center mt-1.5 font-['Share_Tech_Mono',monospace] text-[11px] text-[#93C5FD]">
+              <div className="flex justify-between items-center mt-1.5 font-['Share_Tech_Mono',monospace] text-[11px] text-[#6E6264]">
                 <span>Ingress 14.8 MB/s · 0 drop</span>
               </div>
             </div>
@@ -262,14 +262,14 @@ export default function DashboardPage({
         {/* ROW 2: HERO TOPOLOGY MAP (8 COLS) + LIVE ANOMALIES FEED (4 COLS) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Hero Network Topology Map (8 cols) */}
-          <div className="lg:col-span-8 h-[440px] bg-[#252B37] relative flex flex-col overflow-hidden border border-[#333D50]">
+          <div className="lg:col-span-8 h-[440px] bg-[#FFFFFF] relative flex flex-col overflow-hidden border border-[#E8C2BB]">
             {/* Panel Header Bar */}
-            <div className="h-10 px-3 bg-[#171B23]/70 flex items-center justify-between z-20 shrink-0 border-b border-[#333D50]">
+            <div className="h-10 px-3 bg-[#FFF5F5]/70 flex items-center justify-between z-20 shrink-0 border-b border-[#E8C2BB]">
               <div className="flex items-center gap-2">
                 <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
                   NETWORK TOPOLOGY · LIVE GRAPH
                 </span>
-                <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#93C5FD] hidden sm:inline">
+                <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#6E6264] hidden sm:inline">
                   VIEWPORT: SUB-NET_04 // SECTOR_D
                 </span>
               </div>
@@ -277,21 +277,21 @@ export default function DashboardPage({
                 <button
                   type="button"
                   onClick={() => setZoomLevel((z) => Math.min(z + 0.2, 1.8))}
-                  className="bg-[#171B23] hover:bg-[#1E3A5F] text-white hover:text-[#3B82F6] font-['Rajdhani',sans-serif] text-[14px] font-bold px-2 py-0.5 uppercase tracking-wider transition-all border border-[#64748B]"
+                  className="bg-[#FFF5F5] hover:bg-[#F7D6D0] text-white hover:text-[#B86B7A] font-['Rajdhani',sans-serif] text-[14px] font-bold px-2 py-0.5 uppercase tracking-wider transition-all border border-[#E8C2BB]"
                 >
                   ZOOM +
                 </button>
                 <button
                   type="button"
                   onClick={() => setZoomLevel((z) => Math.max(z - 0.2, 0.6))}
-                  className="bg-[#171B23] hover:bg-[#1E3A5F] text-white hover:text-[#3B82F6] font-['Rajdhani',sans-serif] text-[14px] font-bold px-2 py-0.5 uppercase tracking-wider transition-all border border-[#64748B]"
+                  className="bg-[#FFF5F5] hover:bg-[#F7D6D0] text-white hover:text-[#B86B7A] font-['Rajdhani',sans-serif] text-[14px] font-bold px-2 py-0.5 uppercase tracking-wider transition-all border border-[#E8C2BB]"
                 >
                   ZOOM -
                 </button>
                 <button
                   type="button"
                   onClick={() => setZoomLevel(1)}
-                  className="bg-[#171B23] hover:bg-[#1E3A5F] text-white hover:text-[#3B82F6] font-['Rajdhani',sans-serif] text-[14px] font-bold px-2 py-0.5 uppercase tracking-wider transition-all border border-[#64748B]"
+                  className="bg-[#FFF5F5] hover:bg-[#F7D6D0] text-white hover:text-[#B86B7A] font-['Rajdhani',sans-serif] text-[14px] font-bold px-2 py-0.5 uppercase tracking-wider transition-all border border-[#E8C2BB]"
                 >
                   RESET
                 </button>
@@ -463,15 +463,15 @@ export default function DashboardPage({
 
               {/* Bottom Canvas Controls & State Overlay */}
               <div className="absolute bottom-3 left-3 z-20 flex items-center gap-3">
-                <label className="flex items-center gap-2 cursor-pointer bg-[#171B23]/90 px-2.5 py-1 border border-[#333D50]">
+                <label className="flex items-center gap-2 cursor-pointer bg-[#FFF5F5]/90 px-2.5 py-1 border border-[#E8C2BB]">
                   <input
                     type="checkbox"
                     checked={groupBySubnet}
                     onChange={(e) => setGroupBySubnet(e.target.checked)}
                     className="hidden"
                   />
-                  <div className="w-3.5 h-3.5 bg-[#171B23] flex items-center justify-center border-[1.5px] border-[#3B82F6]">
-                    {groupBySubnet && <div className="w-1.5 h-1.5 bg-[#3B82F6]" />}
+                  <div className="w-3.5 h-3.5 bg-[#FFF5F5] flex items-center justify-center border-[1.5px] border-[#E2B4BD]">
+                    {groupBySubnet && <div className="w-1.5 h-1.5 bg-[#B86B7A]" />}
                   </div>
                   <span className="font-['Rajdhani',sans-serif] text-[11px] font-bold text-white tracking-widest uppercase">
                     GROUP BY SUBNET
@@ -480,32 +480,32 @@ export default function DashboardPage({
                 <button
                   type="button"
                   onClick={() => setCurrentPage && setCurrentPage('graph')}
-                  className="bg-[#171B23] hover:bg-[#1E3A5F] text-[#93C5FD] hover:text-white font-['Rajdhani',sans-serif] text-[11px] font-bold px-2.5 py-1 uppercase tracking-widest transition-all border border-[#333D50]"
+                  className="bg-[#FFF5F5] hover:bg-[#F7D6D0] text-[#6E6264] hover:text-[#4A4A4A] font-['Rajdhani',sans-serif] text-[11px] font-bold px-2.5 py-1 uppercase tracking-widest transition-all border border-[#E8C2BB]"
                 >
                   VIEW AS GRAPH EXPLORER
                 </button>
               </div>
 
               <div className="absolute bottom-3 right-3 z-20 hidden md:block">
-                <div className="bg-[#171B23]/90 px-3 py-1 font-['Share_Tech_Mono',monospace] text-[9px] text-[#93C5FD] tracking-wider border border-[#333D50]">
-                  Active Nodes: <span className="text-white">128</span> | Subnets: <span className="text-white">4</span> | Latency: <span className="text-[#3B82F6]">4.2ms</span> | Encryption: <span className="text-[#93C5FD]">AES-GCM-256</span>
+                <div className="bg-[#FFF5F5]/90 px-3 py-1 font-['Share_Tech_Mono',monospace] text-[9px] text-[#6E6264] tracking-wider border border-[#E8C2BB]">
+                  Active Nodes: <span className="text-white">128</span> | Subnets: <span className="text-white">4</span> | Latency: <span className="text-[#B86B7A]">4.2ms</span> | Encryption: <span className="text-[#6E6264]">AES-GCM-256</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Live Anomalies Feed (4 cols) */}
-          <div className="lg:col-span-4 h-[440px] bg-[#252B37] flex flex-col border border-[#333D50]">
+          <div className="lg:col-span-4 h-[440px] bg-[#FFFFFF] flex flex-col border border-[#E8C2BB]">
             {/* Feed Header */}
-            <div className="h-10 px-3 bg-[#171B23]/70 flex items-center justify-between shrink-0 border-b border-[#333D50]">
+            <div className="h-10 px-3 bg-[#FFF5F5]/70 flex items-center justify-between shrink-0 border-b border-[#E8C2BB]">
               <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
                 LIVE ANOMALIES FEED
               </span>
               <button
                 type="button"
                 onClick={() => setIsPaused(!isPaused)}
-                className={`font-['Share_Tech_Mono',monospace] text-[11px] px-2 py-0.5 tracking-wider transition-all border border-[#64748B] ${
-                  isPaused ? 'bg-[#93C5FD] text-[#171B23] font-bold' : 'bg-[#171B23] hover:bg-[#1E3A5F] text-[#93C5FD] hover:text-[#3B82F6]'
+                className={`font-['Share_Tech_Mono',monospace] text-[11px] px-2 py-0.5 tracking-wider transition-all border border-[#E8C2BB] ${
+                  isPaused ? 'bg-[#93C5FD] text-[#171B23] font-bold' : 'bg-[#FFF5F5] hover:bg-[#F7D6D0] text-[#6E6264] hover:text-[#B86B7A]'
                 }`}
               >
                 {isPaused ? '[▶ RESUME FEED]' : '[|| PAUSE FEED]'}
@@ -522,8 +522,8 @@ export default function DashboardPage({
                   }}
                   className={`p-3 relative transition-all cursor-pointer ${
                     item.active
-                      ? 'bg-[#1E3A5F] border-l-2 border-[#3B82F6]'
-                      : 'bg-[#252B37] hover:bg-[#1E3A5F]/40'
+                      ? 'bg-[#F7D6D0] border-l-2 border-[#E2B4BD]'
+                      : 'bg-[#FFFFFF] hover:bg-[#F7D6D0]/40'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -541,26 +541,26 @@ export default function DashboardPage({
                         {item.type}
                       </span>
                     </div>
-                    <span className="font-['Share_Tech_Mono',monospace] text-[11px] text-[#93C5FD] shrink-0">
+                    <span className="font-['Share_Tech_Mono',monospace] text-[11px] text-[#6E6264] shrink-0">
                       {item.time}
                     </span>
                   </div>
-                  <div className="font-['Share_Tech_Mono',monospace] text-[11px] text-[#93C5FD] truncate">
+                  <div className="font-['Share_Tech_Mono',monospace] text-[11px] text-[#6E6264] truncate">
                     {item.details}
                   </div>
                   {item.active && (
-                    <div className="absolute top-0 right-0 w-2 h-2 bg-[#3B82F6]" />
+                    <div className="absolute top-0 right-0 w-2 h-2 bg-[#B86B7A]" />
                   )}
                 </div>
               ))}
             </div>
 
             {/* Feed Status Footer */}
-            <div className="h-7 px-3 bg-[#171B23]/90 flex items-center justify-between shrink-0 border-t border-[#333D50]">
-              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#3B82F6] uppercase flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-[#3B82F6] rounded-full animate-pulse" /> STREAM CONNECTED [TCP://WSS]
+            <div className="h-7 px-3 bg-[#FFF5F5]/90 flex items-center justify-between shrink-0 border-t border-[#E8C2BB]">
+              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#B86B7A] uppercase flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-[#B86B7A] rounded-full animate-pulse" /> STREAM CONNECTED [TCP://WSS]
               </span>
-              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#93C5FD]">
+              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#6E6264]">
                 BUFFER: 5/250
               </span>
             </div>
@@ -568,19 +568,19 @@ export default function DashboardPage({
         </div>
 
         {/* ROW 3: ANOMALY SCORE TIMELINE (12 COLS, 210PX HEIGHT) */}
-        <div className="w-full h-[220px] bg-[#252B37] relative flex flex-col justify-between p-3 border border-[#333D50]">
+        <div className="w-full h-[220px] bg-[#FFFFFF] relative flex flex-col justify-between p-3 border border-[#E8C2BB]">
           {/* Timeline Header */}
           <div className="flex items-center justify-between mb-2 z-20">
             <div className="flex items-center gap-2">
               <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
                 ANOMALY SCORE · LAST {activeRange}
               </span>
-              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#93C5FD] hidden sm:inline">
+              <span className="font-['Share_Tech_Mono',monospace] text-[9px] text-[#6E6264] hidden sm:inline">
                 ALGORITHM: VAE-LSTM-ENSEMBLE_V3
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex items-center bg-[#171B23] border border-[#333D50]">
+              <div className="flex items-center bg-[#FFF5F5] border border-[#E8C2BB]">
                 {['1H', '24H', '7D'].map((range) => (
                   <button
                     key={range}
@@ -589,14 +589,14 @@ export default function DashboardPage({
                     className={`font-['Rajdhani',sans-serif] text-[11px] px-2.5 py-1 uppercase font-bold transition-all ${
                       activeRange === range
                         ? 'bg-[#FFFFFF] text-[#171B23]'
-                        : 'text-[#93C5FD] hover:text-white'
+                        : 'text-[#6E6264] hover:text-[#4A4A4A]'
                     }`}
                   >
                     {range === '24H' && activeRange === '24H' ? '24H (ACTIVE)' : range}
                   </button>
                 ))}
               </div>
-              <div className="font-['Share_Tech_Mono',monospace] text-[11px] px-2 py-1 bg-[#171B23] text-[#93C5FD] border border-[#93C5FD] flex items-center gap-1 font-bold">
+              <div className="font-['Share_Tech_Mono',monospace] text-[11px] px-2 py-1 bg-[#FFF5F5] text-[#6E6264] border border-[#93C5FD] flex items-center gap-1 font-bold">
                 THRESHOLD: 70
               </div>
             </div>
@@ -679,11 +679,11 @@ export default function DashboardPage({
           </div>
 
           {/* X-Axis Timestamps */}
-          <div className="w-full flex justify-between items-center pt-2 font-['Share_Tech_Mono',monospace] text-[11px] text-[#93C5FD] border-t border-[#333D50]">
+          <div className="w-full flex justify-between items-center pt-2 font-['Share_Tech_Mono',monospace] text-[11px] text-[#6E6264] border-t border-[#E8C2BB]">
             <span>00:00</span>
             <span>04:00</span>
             <span>08:00</span>
-            <span className="text-white font-bold">12:00</span>
+            <span className="text-[#4A4A4A] font-bold">12:00</span>
             <span>16:00</span>
             <span>20:00</span>
             <span>24:00</span>
