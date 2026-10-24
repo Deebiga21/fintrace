@@ -63,6 +63,56 @@ html {
   box-shadow: 0 0 16px rgba(34, 211, 230, 0.85);
 }
 
+/* Watch Dogs HUD Signature Meter & Panel Classes */
+.meter {
+  height: 5px;
+  background: #2A2D30;
+  position: relative;
+}
+.meter > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #0E7C86, #22D3E6);
+}
+.meter::after {
+  content: "";
+  position: absolute;
+  right: -7px;
+  top: -4px;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid #22D3E6;
+  background: #000000;
+  transform: rotate(45deg);
+}
+
+.hud-panel {
+  position: relative;
+  padding: 24px;
+  border: 0;
+  background: #05080A;
+}
+.hud-panel::before,
+.hud-panel::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #22D3E6;
+}
+.hud-panel::before {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.hud-panel::after {
+  bottom: 0;
+  right: 0;
+  border-left: 0;
+  border-top: 0;
+}
+
 /* Tactical Panel & Surface Classes */
 .glass-panel {
   background: rgba(5, 8, 10, 0.88);
