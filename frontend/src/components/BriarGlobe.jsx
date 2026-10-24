@@ -70,7 +70,7 @@ const DEFAULT_FONT = {
   lineHeight: 1.2,
 }
 
-const DEFAULT_TEXT_COLOR = "#4A4A4A"
+const DEFAULT_TEXT_COLOR = "#1FC8DB"
 
 const DEFAULT_NETWORK = {
   nodes: 900,
@@ -79,8 +79,8 @@ const DEFAULT_NETWORK = {
 }
 
 const DEFAULT_LINES = {
-  color: "#E2B4BD",
-  accent: "#B86B7A",
+  color: "#1FC8DB",
+  accent: "#FFD23F",
   thickness: 0.65,
   opacity: 5,
   depth: 8,
@@ -96,7 +96,7 @@ const DEFAULT_INTRO = {
 const DEFAULT_HOVER = {
   reach: 20,
   glowSize: 130,
-  glow: "#E2B4BD",
+  glow: "#1FC8DB",
   pill: "rgba(255, 245, 245, 0.95)",
   lag: 4.5,
 }

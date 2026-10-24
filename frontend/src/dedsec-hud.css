@@ -1,17 +1,17 @@
 /* DedSec signal layer configured in User's 4-color Light Rose Palette:
    #FFF5F5, #F7D6D0, #E2B4BD, #4A4A4A */
 :root {
-  --dedsec-black: #FFF5F5;
-  --dedsec-panel: rgba(255, 255, 255, .94);
-  --dedsec-cyan: #B86B7A;
-  --dedsec-cyan-soft: #E2B4BD;
-  --dedsec-red: #DC2626;
-  --dedsec-lime: #F7D6D0;
-  --dedsec-paper: #4A4A4A;
-  --dedsec-steel: #6E6264;
+  --dedsec-black: var(--bg-app);
+  --dedsec-panel: var(--bg-surface);
+  --dedsec-cyan: var(--primary);
+  --dedsec-cyan-soft: var(--primary);
+  --dedsec-red: var(--status-loss);
+  --dedsec-lime: var(--accent);
+  --dedsec-paper: var(--text-primary);
+  --dedsec-steel: var(--text-muted);
 }
 
-html, body { background: var(--dedsec-black) !important; }
+/* html, body managed by index.css */
 body { color: var(--dedsec-paper); }
 ::selection { background: var(--dedsec-cyan-soft); color: #4A4A4A; }
 
@@ -140,7 +140,7 @@ body { color: var(--dedsec-paper); }
 .dedsec-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 55% 48%, transparent 45%, rgba(255, 245, 245, .8) 100%);
+  background: radial-gradient(ellipse at 55% 48%, transparent 45%, var(--bg-app) 100%);
 }
 .dedsec-backdrop--glitch .dedsec-mark { animation: dedsec-glitch-burst .13s steps(1) 4; }
 .dedsec-backdrop--glitch .dedsec-mark-layer--cyan,

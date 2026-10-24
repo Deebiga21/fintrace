@@ -110,7 +110,7 @@ export default function App() {
   // Standalone Full-Screen Landing Showcase (Integrated Dashboard-First Experience)
   if (currentPage === 'landing') {
     return (
-      <div className="dedsec-app-shell dedsec-landing-shell relative bg-[#FFF5F5]">
+      <div className="dedsec-app-shell dedsec-landing-shell relative bg-fintech-bg text-fintech-text">
         <SiteBackground />
         <DedsecBackground />
         <LandingPage
@@ -137,7 +137,7 @@ export default function App() {
   }
 
   return (
-    <div className="dedsec-app-shell flex h-screen bg-[#FFF5F5] text-slate-100 overflow-hidden font-sans relative">
+    <div className="dedsec-app-shell flex h-screen bg-fintech-bg text-fintech-text overflow-hidden font-sans relative">
       <SiteBackground />
       <DedsecBackground />
       {/* Consistent Navigation Sidebar */}
@@ -165,7 +165,7 @@ export default function App() {
         />
 
         {/* Scrollable Page Body */}
-        <main className="flex-1 overflow-y-auto p-6 bg-transparent bg-grid-pattern relative z-10">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-transparent relative z-10">
           {currentPage === 'landing' && (
             <LandingPage
               setCurrentPage={setCurrentPage}

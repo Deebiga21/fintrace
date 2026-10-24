@@ -1,18 +1,20 @@
 import React from 'react';
 import DitherReveal from './DitherReveal';
+import { useTheme } from '../context/ThemeContext';
 
 export default function SiteBackground() {
+  const { isDark } = useTheme();
+
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
-      style={{ background: '#FFF5F5' }}
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none transition-colors duration-200"
+      style={{ background: 'var(--bg-app)' }}
       aria-hidden="true"
     >
       {/* 
         Rotated Dither Reveal Canvas:
-        Angles the Creation of Adam hand diagonally from bottom-left ('left down corner') 
-        towards the top-right ('right up corner').
-        Uses 150vw / 150vh with -24deg rotation centered to fill viewport without clipping.
+        Angles the Creation of Adam hand diagonally from bottom-left
+        towards the top-right.
       */}
       <div
         className="absolute w-[150vw] h-[150vh] -top-[25vh] -left-[25vw] flex items-center justify-center pointer-events-none select-none"
@@ -32,18 +34,20 @@ export default function SiteBackground() {
           waveDensity={22}
           fit="cover"
           style={{
-            opacity: 0.12,
-            mixBlendMode: 'multiply',
-            filter: 'contrast(120%) brightness(100%)',
+            opacity: isDark ? 0.22 : 0.08,
+            mixBlendMode: isDark ? 'screen' : 'multiply',
+            filter: isDark ? 'contrast(125%) brightness(108%)' : 'contrast(115%) brightness(100%)',
           }}
         />
       </div>
 
-      {/* Radial Vignette ensuring smooth #FFF5F5 palette border containment */}
+      {/* Radial Vignette ensuring smooth background border containment */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 245, 245, 0) 0%, rgba(255, 245, 245, 0.4) 60%, #FFF5F5 95%)',
+          background: isDark
+            ? 'radial-gradient(ellipse at 50% 50%, rgba(11, 11, 15, 0) 0%, rgba(11, 11, 15, 0.5) 60%, var(--bg-app) 95%)'
+            : 'radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(245, 247, 250, 0.4) 60%, var(--bg-app) 95%)',
         }}
       />
     </div>

@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
 import BriarGlobe from '../components/BriarGlobe';
+import ThemeToggle from '../components/ThemeToggle';
 import AnimaticPipelineStepper from '../components/AnimaticPipelineStepper';
 import AnimatedContent from '../components/AnimatedContent';
 
@@ -235,8 +236,8 @@ export default function LandingPage({
             <BriarGlobe
               background="transparent"
               lines={{
-                color: "#E2B4BD",
-                accent: "#B86B7A",
+                color: "#1FC8DB",
+                accent: "#FFD23F",
                 thickness: 0.85,
                 opacity: 5.8,
                 depth: 8.5
@@ -244,8 +245,8 @@ export default function LandingPage({
               hover={{
                 reach: 24,
                 glowSize: 140,
-                glow: "#E2B4BD",
-                pill: "rgba(255, 245, 245, 0.95)",
+                glow: "#1FC8DB",
+                pill: "var(--bg-surface)",
                 lag: 4.5
               }}
               network={{
@@ -263,7 +264,7 @@ export default function LandingPage({
                 "High Risk Mule Flagged",
                 "Layering Cycle Detected"
               ]}
-              textColor="#4A4A4A"
+              textColor="var(--text-primary)"
               speed={1.2}
               direction={1}
               motion={{ style: "both", amount: 6, pace: 5 }}
@@ -278,7 +279,7 @@ export default function LandingPage({
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at 50% 30%, rgba(255, 245, 245, 0.45) 0%, rgba(255, 245, 245, 0.75) 55%, #FFF5F5 95%)'
+            background: 'radial-gradient(ellipse at 50% 30%, transparent 0%, var(--bg-app) 85%)'
           }}
         />
       </div>
@@ -289,7 +290,7 @@ export default function LandingPage({
       {/* Pure Black Ambient */}
 
       {/* 2. Top Navigation Bar */}
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#FFF5F5]/80 border-b border-icesilver/10 px-6 lg:px-12 py-3.5">
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-fintech-card/90 border-b border-fintech-border px-6 lg:px-12 py-3.5 transition-colors">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Logo */}
           <div
@@ -329,9 +330,10 @@ export default function LandingPage({
 
           {/* Right Action CTAs */}
           <div className="flex items-center gap-3">
+            <ThemeToggle size="sm" showLabel={false} />
             <button
               onClick={() => setCurrentPage('dashboard')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-marigold-500 to-marigold-400 hover:from-marigold-400 hover:to-marigold-300 text-white font-bold text-xs shadow-glow-rose transition transform hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full btn-accent font-bold text-xs shadow-sm transition transform hover:scale-105 active:scale-95"
             >
               <span>Open Full Dashboard</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -395,7 +397,7 @@ export default function LandingPage({
             <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
               <button
                 onClick={() => setCurrentPage('dashboard')}
-                className="flex items-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-marigold-500 to-marigold-400 hover:from-marigold-400 hover:to-marigold-300 text-white font-bold text-sm shadow-glow-rose transition transform hover:scale-105 active:scale-95"
+                className="flex items-center gap-2 px-7 py-3 rounded-full btn-accent font-bold text-sm shadow-sm transition transform hover:scale-105 active:scale-95"
               >
                 <span>Open Full Dashboard</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -775,7 +777,7 @@ export default function LandingPage({
                       "Cybercrime Portal (1930) Link",
                       "Illustrative turnover pattern"
                     ]}
-                    textColor="#4A4A4A"
+                    textColor="var(--text-primary)"
                     speed={1.0}
                     direction={1}
                     motion={{ style: "both", amount: 6, pace: 5 }}
