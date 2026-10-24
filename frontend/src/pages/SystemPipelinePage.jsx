@@ -112,7 +112,7 @@ export default function SystemPipelinePage({
   const progressPercent = Math.round((completedStages / 12) * 100);
 
   return (
-    <div className="relative min-h-screen w-full bg-[#000000] text-[#E2E2E2] font-['Titillium_Web',sans-serif] p-4 sm:p-8 select-none -m-6 overflow-hidden">
+    <div className="dedsec-page--pipeline dedsec-page-arrival relative min-h-screen w-full bg-transparent text-[#E2E2E2] font-['Titillium_Web',sans-serif] p-4 sm:p-8 select-none -m-6 overflow-hidden">
       
       {/* 1. Low-Poly Vector Mesh Background (4% opacity) */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.04] z-0" xmlns="http://www.w3.org/2000/svg">

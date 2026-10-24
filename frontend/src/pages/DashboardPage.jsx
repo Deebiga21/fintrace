@@ -91,7 +91,7 @@ export default function DashboardPage({
   ];
 
   return (
-    <div className="bg-[#050505] text-[#e2e2e2] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6">
+    <div className="dedsec-page--dashboard dedsec-page-arrival bg-transparent text-[#e2e2e2] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6">
       {/* Top Telemetry / Status Strip */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b border-[#1B1F22]">
         <div className="flex items-center gap-3">

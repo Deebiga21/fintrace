@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Network,
   Share2,
@@ -12,7 +12,6 @@ import {
   Activity,
   ChevronRight,
   Shield,
-  Video,
   Layers,
   ExternalLink,
   ArrowUpRight,
@@ -65,27 +64,6 @@ export default function LandingPage({
 }) {
   // Typology Analyzer State
   const [activeScenario, setActiveScenario] = useState('cbs_freeze');
-
-  // Video ref for background 3D model animation
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    const v = videoRef.current;
-    if (v) {
-      v.defaultMuted = true;
-      v.muted = true;
-      const tryPlay = () => {
-        v.play().catch(() => {});
-      };
-      tryPlay();
-      window.addEventListener('pointerdown', tryPlay, { once: true });
-      window.addEventListener('scroll', tryPlay, { once: true });
-      return () => {
-        window.removeEventListener('pointerdown', tryPlay);
-        window.removeEventListener('scroll', tryPlay);
-      };
-    }
-  }, []);
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
@@ -248,24 +226,7 @@ export default function LandingPage({
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#000000] text-icesilver selection:bg-electric-500 selection:text-white relative overflow-x-hidden font-sans">
-      
-      {/* 1. Full-Screen 3D Model Background (The Creation of Adam 3D Render) */}
-      <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0 select-none">
-        <video
-          ref={videoRef}
-          src="/the_creation_of_adam-recording.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          className="w-full h-full object-cover opacity-35 filter contrast-110 saturate-125 transform scale-105 pointer-events-none select-none"
-        />
-        {/* Soft Vignette Overlay ensuring text readability while 3D model animation is visible in the background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#000000]/85 via-[#000000]/65 to-[#000000]/85 pointer-events-none"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#000000_85%)] pointer-events-none"></div>
-      </div>
+    <div className="dedsec-page--landing dedsec-page-arrival min-h-screen w-full bg-transparent text-icesilver selection:bg-electric-500 selection:text-white relative overflow-x-hidden font-sans">
 
       {/* Ambient Blue & Cyan Glows */}
       {/* Pure Black Ambient */}

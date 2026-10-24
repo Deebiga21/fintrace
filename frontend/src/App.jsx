@@ -3,6 +3,8 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import CreateCaseModal from './components/CreateCaseModal';
 import LivePipelineExecutionModal from './components/LivePipelineExecutionModal';
+import DedsecBackground from './components/DedsecBackground';
+import SiteBackground from './components/SiteBackground';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -108,7 +110,9 @@ export default function App() {
   // Standalone Full-Screen Landing Showcase (Integrated Dashboard-First Experience)
   if (currentPage === 'landing') {
     return (
-      <>
+      <div className="dedsec-app-shell dedsec-landing-shell relative bg-[#000000]">
+        <SiteBackground />
+        <DedsecBackground />
         <LandingPage
           setCurrentPage={setCurrentPage}
           onAccountSelect={handleAccountSelect}
@@ -128,12 +132,14 @@ export default function App() {
         setCurrentPage={setCurrentPage}
         setRefreshTrigger={setRefreshTrigger}
         />
-      </>
+      </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-[#000000] text-slate-100 overflow-hidden font-sans">
+    <div className="dedsec-app-shell flex h-screen bg-[#000000] text-slate-100 overflow-hidden font-sans relative">
+      <SiteBackground />
+      <DedsecBackground />
       {/* Consistent Navigation Sidebar */}
       <Sidebar
         currentPage={currentPage}
@@ -143,7 +149,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <div className="dedsec-app-content flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top Navbar */}
         <Navbar
           currentPage={currentPage}
@@ -159,7 +165,7 @@ export default function App() {
         />
 
         {/* Scrollable Page Body */}
-        <main className="flex-1 overflow-y-auto p-6 bg-[#000000] bg-grid-pattern">
+        <main className="flex-1 overflow-y-auto p-6 bg-transparent bg-grid-pattern relative z-10">
           {currentPage === 'landing' && (
             <LandingPage
               setCurrentPage={setCurrentPage}

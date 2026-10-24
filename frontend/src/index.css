@@ -147,7 +147,7 @@ html {
 
 /* Tactical Mesh / Grid Background Pattern */
 .bg-grid-pattern {
-  background-color: #000000 !important;
+  background-color: transparent !important;
   background-size: 30px 30px;
   background-image: 
     linear-gradient(to right, rgba(90, 95, 100, 0.06) 1px, transparent 1px),

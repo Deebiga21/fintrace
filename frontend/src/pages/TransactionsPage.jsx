@@ -47,7 +47,7 @@ export default function TransactionsPage({
   const totalFilteredVolume = transactions.reduce((acc, t) => acc + (t.amount || 0), 0);
 
   return (
-    <div className="bg-[#050505] text-[#e2e2e2] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6 space-y-6">
+    <div className="bg-transparent text-[#e2e2e2] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6 space-y-6">
       {/* Top HUD Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#1B1F22]">
         <div className="flex items-center gap-3">

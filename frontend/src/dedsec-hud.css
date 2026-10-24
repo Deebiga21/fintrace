@@ -1,0 +1,214 @@
+/* DedSec signal layer. Palette stays rooted in Watch Dogs 2: black, cyan,
+   warm white, threat red, with a restrained lime signal for caution states. */
+:root {
+  --dedsec-black: #000000;
+  --dedsec-panel: rgba(5, 8, 10, .82);
+  --dedsec-cyan: #22d3e6;
+  --dedsec-cyan-soft: #6ceeff;
+  --dedsec-red: #ff3b4e;
+  --dedsec-lime: #d6e85a;
+  --dedsec-paper: #e8f1ef;
+  --dedsec-steel: #7d898c;
+}
+
+html, body { background: var(--dedsec-black); }
+body { color: var(--dedsec-paper); }
+::selection { background: var(--dedsec-cyan); color: var(--dedsec-black); }
+
+.dedsec-app-shell {
+  position: relative;
+  isolation: isolate;
+  background: var(--dedsec-black) !important;
+}
+.dedsec-landing-shell { min-height: 100vh; overflow: clip; }
+.dedsec-app-shell > .dedsec-app-content {
+  position: relative;
+  z-index: 2;
+}
+.dedsec-app-shell > .dedsec-backdrop { z-index: 0; }
+.dedsec-app-shell > aside { position: relative; z-index: 3; }
+.dedsec-landing-shell > .dedsec-page--landing { position: relative; z-index: 2; }
+
+.dedsec-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--dedsec-cyan);
+  background:
+    radial-gradient(ellipse at 62% 43%, rgba(9, 45, 51, .32), transparent 48%),
+    radial-gradient(ellipse at 22% 82%, rgba(16, 26, 30, .38), transparent 44%),
+    #030607;
+}
+.dedsec-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .28;
+  background:
+    linear-gradient(rgba(70, 120, 125, .055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(70, 120, 125, .055) 1px, transparent 1px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+  background-size: 38px 38px, 38px 38px, auto;
+}
+.dedsec-network { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .2; }
+.dedsec-network-lines path {
+  fill: none;
+  stroke: rgba(34, 211, 230, .28);
+  stroke-width: .8;
+  vector-effect: non-scaling-stroke;
+}
+.dedsec-network-packets path {
+  fill: none;
+  stroke: rgba(108, 238, 255, .8);
+  stroke-width: 1.15;
+  stroke-dasharray: 2 90;
+  stroke-linecap: square;
+  vector-effect: non-scaling-stroke;
+  animation: dedsec-data-flow 8s linear infinite;
+}
+.dedsec-network-packets path:nth-child(2) { animation-duration: 11s; animation-delay: -3.5s; }
+.dedsec-network-packets path:nth-child(3) { animation-duration: 13s; animation-delay: -8s; }
+.dedsec-network-nodes circle {
+  fill: var(--dedsec-cyan-soft);
+  opacity: .72;
+  filter: drop-shadow(0 0 4px rgba(34, 211, 230, .8));
+  animation: dedsec-node-pulse 3.6s ease-in-out infinite;
+  animation-delay: var(--node-delay, 0s);
+}
+
+.dedsec-mark {
+  position: absolute;
+  width: min(53vmin, 650px);
+  min-width: 300px;
+  aspect-ratio: 1;
+  left: 57%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: .16;
+  animation: dedsec-mark-breathe 7.5s ease-in-out infinite;
+}
+.dedsec-mark::before,
+.dedsec-mark::after {
+  content: "";
+  position: absolute;
+  inset: 3%;
+  border: 1px solid rgba(34, 211, 230, .24);
+  transform: rotate(45deg);
+}
+.dedsec-mark::after { inset: 13%; transform: rotate(0); border-color: rgba(255, 59, 78, .16); }
+.dedsec-mark-layer { position: absolute; inset: 12%; }
+.dedsec-mark-svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
+  filter: drop-shadow(0 0 15px rgba(34, 211, 230, .28));
+}
+.dedsec-skull { fill: rgba(34, 211, 230, .055); }
+.dedsec-eye { fill: currentColor; }
+.dedsec-mark-layer--base { color: rgba(108, 238, 255, .76); }
+.dedsec-mark-layer--cyan,
+.dedsec-mark-layer--red { opacity: 0; }
+.dedsec-mark-layer--cyan { color: var(--dedsec-cyan); clip-path: inset(20% 0 62% 0); animation: dedsec-slice-cyan 8.7s steps(1) infinite; }
+.dedsec-mark-layer--red { color: var(--dedsec-red); clip-path: inset(58% 0 25% 0); animation: dedsec-slice-red 10.4s steps(1) infinite 2.7s; }
+.dedsec-wordmark,
+.dedsec-coordinates {
+  position: absolute;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-family: "Share Tech Mono", monospace;
+  color: rgba(232, 241, 239, .4);
+  letter-spacing: .46em;
+  padding-left: .46em;
+}
+.dedsec-wordmark { top: 78%; font-size: clamp(20px, 2.3vw, 34px); font-weight: 700; }
+.dedsec-coordinates { top: calc(78% + 38px); color: rgba(34, 211, 230, .48); font-size: 9px; letter-spacing: .22em; padding-left: .22em; }
+
+.dedsec-scan-band {
+  position: absolute;
+  left: 0; right: 0; top: -22%; height: 18%;
+  opacity: .72;
+  background: linear-gradient(180deg, transparent, rgba(34, 211, 230, .035), rgba(34, 211, 230, .075), transparent);
+  animation: dedsec-scan-sweep 12s linear infinite;
+}
+.dedsec-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 55% 48%, transparent 35%, rgba(0, 0, 0, .52) 100%);
+}
+.dedsec-backdrop--glitch .dedsec-mark { animation: dedsec-glitch-burst .13s steps(1) 4; }
+.dedsec-backdrop--glitch .dedsec-mark-layer--cyan,
+.dedsec-backdrop--glitch .dedsec-mark-layer--red { opacity: .7; animation-duration: .13s; animation-iteration-count: 4; }
+
+/* Expose the mark through the large background canvases without weakening text contrast. */
+.dedsec-app-shell > div > main { background-color: rgba(0, 0, 0, .66) !important; }
+.dedsec-page--dashboard,
+.dedsec-page--pipeline,
+.dedsec-page--landing { background-color: rgba(3, 6, 7, .46) !important; }
+.dedsec-app-shell > div > main > * { background-color: rgba(3, 6, 7, .46) !important; }
+.dedsec-landing-shell > .dedsec-page--landing { background-color: rgba(3, 6, 7, .46) !important; }
+.dedsec-page--pipeline .hud-panel { background-color: rgba(5, 8, 10, .69) !important; }
+.dedsec-page-arrival { animation: dedsec-page-arrive .5s cubic-bezier(.2,.7,.2,1) both; }
+
+/* Tiny signal flicker on hover keeps controls tactile without making every card jump. */
+.dedsec-app-shell button { transition: color .16s ease, border-color .16s ease, background-color .16s ease, box-shadow .16s ease; }
+.dedsec-app-shell button:hover { text-shadow: 0 0 8px rgba(34, 211, 230, .34); }
+.dedsec-app-shell button:focus-visible { outline: 2px solid var(--dedsec-cyan); outline-offset: 2px; }
+
+/* Re-map leftover success-green utilities into the same cyan/teal signal family. */
+.dedsec-app-shell [class*="text-emerald-"] { color: var(--dedsec-cyan) !important; }
+.dedsec-app-shell [class*="bg-emerald-950"] { background-color: rgba(11, 46, 51, .86) !important; }
+.dedsec-app-shell [class*="bg-emerald-900"] { background-color: #00363c !important; }
+.dedsec-app-shell [class*="bg-emerald-800"],
+.dedsec-app-shell [class*="bg-emerald-700"],
+.dedsec-app-shell [class*="bg-emerald-600"] { background-color: #0e7c86 !important; }
+.dedsec-app-shell [class*="bg-emerald-500"],
+.dedsec-app-shell [class*="bg-emerald-400"] { background-color: rgba(34, 211, 230, .82) !important; }
+.dedsec-app-shell [class*="border-emerald-"] { border-color: rgba(34, 211, 230, .42) !important; }
+.dedsec-app-shell [class*="from-emerald-"] {
+  --tw-gradient-from: #0e7c86 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(14 124 134 / 0) var(--tw-gradient-to-position);
+}
+.dedsec-app-shell [class*="via-emerald-"] { --tw-gradient-via: #22d3e6 var(--tw-gradient-via-position); }
+.dedsec-app-shell [class*="to-emerald-"] { --tw-gradient-to: #22d3e6 var(--tw-gradient-to-position); }
+.dedsec-app-shell [class*="shadow-glow-emerald"] { box-shadow: 0 0 16px rgba(34, 211, 230, .38) !important; }
+.dedsec-app-shell [class*="hover:bg-emerald-"]:hover { background-color: #0e7c86 !important; }
+
+@keyframes dedsec-data-flow { to { stroke-dashoffset: -184; } }
+@keyframes dedsec-node-pulse { 0%, 100% { opacity: .35; } 50% { opacity: .9; } }
+@keyframes dedsec-mark-breathe { 0%, 100% { opacity: .12; } 50% { opacity: .19; } }
+@keyframes dedsec-slice-cyan {
+  0%, 88%, 100% { opacity: 0; transform: translateX(0); }
+  89% { opacity: .72; transform: translateX(-2.5%); }
+  92% { opacity: .72; transform: translateX(1.8%); }
+  94% { opacity: 0; }
+}
+@keyframes dedsec-slice-red {
+  0%, 91%, 100% { opacity: 0; transform: translateX(0); }
+  92% { opacity: .66; transform: translateX(2%); }
+  95% { opacity: .66; transform: translateX(-1.5%); }
+  97% { opacity: 0; }
+}
+@keyframes dedsec-glitch-burst {
+  0%, 100% { transform: translate(-50%, -50%); }
+  30% { transform: translate(calc(-50% - 8px), -50%); }
+  60% { transform: translate(calc(-50% + 7px), -50%); }
+}
+@keyframes dedsec-scan-sweep { to { top: 112%; } }
+@keyframes dedsec-page-arrive { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .dedsec-backdrop *, .dedsec-backdrop::after { animation: none !important; }
+  .dedsec-mark-layer--cyan, .dedsec-mark-layer--red { display: none; }
+}
+@media (max-width: 800px) {
+  .dedsec-mark { left: 59%; min-width: 250px; opacity: .07; }
+  .dedsec-network { opacity: .12; }
+  .dedsec-app-shell > div > main { background-color: rgba(0, 0, 0, .78) !important; }
+}
