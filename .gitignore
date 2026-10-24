@@ -45,6 +45,11 @@ Thumbs.db
 *.swp
 *.swo
 
+*.log
+*.log*
+*.err.log
+*.out.log
+
 # Environment variables
 .env
 .env.local

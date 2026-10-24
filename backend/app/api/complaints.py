@@ -10,7 +10,8 @@ from ..schemas.complaint import ComplaintCreate, ComplaintOut
 
 router = APIRouter(prefix="/complaints", tags=["Complaints"])
 
-@router.get("/", response_model=List[ComplaintOut])
+@router.get("", response_model=List[ComplaintOut])
+@router.get("/", response_model=List[ComplaintOut], include_in_schema=False)
 def list_complaints(
     account_id: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
@@ -31,6 +32,22 @@ def list_complaints(
             (Complaint.reported_account_id.ilike(f"%{search}%"))
         )
     return query.order_by(Complaint.date_reported.desc()).limit(limit).all()
+
+@router.get("/summary")
+@router.get("/summary/", include_in_schema=False)
+def get_complaints_summary(db: Session = Depends(get_db)):
+    total = db.query(Complaint).count()
+    amts = db.query(Complaint.amount_lost).all()
+    total_amt = sum(a[0] for a in amts if a[0]) if amts else 0.0
+    return {
+        "total_complaints": total,
+        "total_amount_lost": round(total_amt, 2),
+        "status_breakdown": {
+            "New": db.query(Complaint).filter(Complaint.status == "New").count(),
+            "Investigating": db.query(Complaint).filter(Complaint.status == "Investigating").count(),
+            "Resolved": db.query(Complaint).filter(Complaint.status == "Resolved").count()
+        }
+    }
 
 @router.post("/", response_model=ComplaintOut)
 def create_complaint(data: ComplaintCreate, db: Session = Depends(get_db)):

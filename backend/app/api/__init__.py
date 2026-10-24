@@ -7,6 +7,7 @@ from .complaints import router as complaints_router
 from .cases import router as cases_router
 from .analytics import router as analytics_router
 from .ml_router import router as ml_router
+from .pipeline import router as pipeline_router
 
 __all__ = [
     "transactions_router",
@@ -17,5 +18,6 @@ __all__ = [
     "complaints_router",
     "cases_router",
     "analytics_router",
-    "ml_router"
+    "ml_router",
+    "pipeline_router"
 ]

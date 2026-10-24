@@ -36,7 +36,7 @@ export const api = {
   getTransactions: async (params = {}) => {
     const q = new URLSearchParams(params).toString();
     const res = await request(`/transactions?${q}`);
-    return Array.isArray(res) ? res : (res.transactions || []);
+    return Array.isArray(res) ? res : (res?.transactions || []);
   },
   uploadTransactionsCsv: async (file) => {
     const formData = new FormData();
@@ -58,7 +58,7 @@ export const api = {
   getAccounts: async (params = {}) => {
     const q = new URLSearchParams(params).toString();
     const res = await request(`/accounts?${q}`);
-    return Array.isArray(res) ? res : (res.accounts || []);
+    return Array.isArray(res) ? res : (res?.accounts || []);
   },
   getAccount: (id) => request(`/accounts/${id}`),
   getAccountExplanation: (id) => request(`/accounts/${id}/explanation`),
@@ -104,7 +104,7 @@ export const api = {
   getComplaints: async (params = {}) => {
     const q = new URLSearchParams(params).toString();
     const res = await request(`/complaints?${q}`);
-    return Array.isArray(res) ? res : (res.complaints || []);
+    return Array.isArray(res) ? res : (res?.complaints || []);
   },
   getComplaintsSummary: () => request("/complaints/summary"),
   getComplaint: (id) => request(`/complaints/${id}`),
@@ -144,7 +144,7 @@ export const api = {
   getCases: async (params = {}) => {
     const q = new URLSearchParams(params).toString();
     const res = await request(`/cases?${q}`);
-    return Array.isArray(res) ? res : (res.cases || []);
+    return Array.isArray(res) ? res : (res?.cases || []);
   },
   getCasesSummary: () => request("/cases/summary"),
   getInvestigators: async () => {

@@ -33,7 +33,8 @@ def load_sample_dataset(db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to load sample data: {str(e)}")
 
-@router.get("/", response_model=List[TransactionOut])
+@router.get("", response_model=List[TransactionOut])
+@router.get("/", response_model=List[TransactionOut], include_in_schema=False)
 def list_transactions(
     account_id: Optional[str] = Query(None),
     min_amount: Optional[float] = Query(None),

@@ -41,7 +41,8 @@ def serialize_account(acc: Account) -> dict:
         "notes": acc.notes
     }
 
-@router.get("/", response_model=List[AccountOut])
+@router.get("", response_model=List[AccountOut])
+@router.get("/", response_model=List[AccountOut], include_in_schema=False)
 def list_accounts(
     risk_level: Optional[str] = Query(None),
     min_risk_score: Optional[float] = Query(None),
