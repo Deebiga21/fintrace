@@ -5,7 +5,7 @@ export default function SiteBackground() {
   return (
     <div
       className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
-      style={{ background: '#000000' }}
+      style={{ background: '#1F242E' }}
       aria-hidden="true"
     >
       {/* 
@@ -32,18 +32,18 @@ export default function SiteBackground() {
           waveDensity={22}
           fit="cover"
           style={{
-            opacity: 0.38,
+            opacity: 0.35,
             mixBlendMode: 'screen',
             filter: 'contrast(125%) brightness(108%)',
           }}
         />
       </div>
 
-      {/* Cybernetic Radial Vignette ensuring pure #000000 border containment for HUD panels */}
+      {/* Radial Vignette ensuring smooth #1F242E palette border containment */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.45) 60%, #000000 95%)',
+          background: 'radial-gradient(ellipse at 50% 50%, rgba(31, 36, 46, 0) 0%, rgba(31, 36, 46, 0.5) 60%, #1F242E 95%)',
         }}
       />
     </div>

@@ -110,7 +110,7 @@ export default function App() {
   // Standalone Full-Screen Landing Showcase (Integrated Dashboard-First Experience)
   if (currentPage === 'landing') {
     return (
-      <div className="dedsec-app-shell dedsec-landing-shell relative bg-[#000000]">
+      <div className="dedsec-app-shell dedsec-landing-shell relative bg-[#1F242E]">
         <SiteBackground />
         <DedsecBackground />
         <LandingPage
@@ -137,7 +137,7 @@ export default function App() {
   }
 
   return (
-    <div className="dedsec-app-shell flex h-screen bg-[#000000] text-slate-100 overflow-hidden font-sans relative">
+    <div className="dedsec-app-shell flex h-screen bg-[#1F242E] text-slate-100 overflow-hidden font-sans relative">
       <SiteBackground />
       <DedsecBackground />
       {/* Consistent Navigation Sidebar */}

@@ -98,28 +98,28 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
   };
 
   return (
-    <aside className="w-64 bg-[#05080A] border-r border-[#1B1F22] flex flex-col h-screen select-none shrink-0 z-20 font-['Titillium_Web',sans-serif]">
+    <aside className="w-64 bg-[#252B37] border-r border-[#333D50] flex flex-col h-screen select-none shrink-0 z-20 font-['Titillium_Web',sans-serif]">
       {/* Brand Header */}
-      <div className="p-3.5 border-b border-[#1B1F22] flex items-center gap-3 bg-[#000000]">
-        <div className="w-8 h-8 bg-[#0B2E33] border border-[#22D3E6] rotate-45 flex items-center justify-center shrink-0">
-          <Layers className="w-4 h-4 text-[#22D3E6] -rotate-45" />
+      <div className="p-3.5 border-b border-[#333D50] flex items-center gap-3 bg-[#1F242E]">
+        <div className="w-8 h-8 bg-[#1E3A5F] border border-[#3B82F6] rotate-45 flex items-center justify-center shrink-0">
+          <Layers className="w-4 h-4 text-[#3B82F6] -rotate-45" />
         </div>
         <div>
           <div className="flex items-center gap-1.5">
             <span className="font-['Krona_One',sans-serif] text-sm text-white tracking-widest uppercase">
               FINTRACE
             </span>
-            <span className="text-[10px] bg-[#FFFFFF] text-[#050505] font-['Rajdhani',sans-serif] font-bold px-1.5 py-0.2 tracking-wider uppercase">
+            <span className="text-[10px] bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] font-bold px-1.5 py-0.2 tracking-wider uppercase">
               HUD
             </span>
           </div>
-          <p className="text-[10px] text-[#9AA0A6] font-['Share_Tech_Mono',monospace]">AI INVESTIGATION</p>
+          <p className="text-[10px] text-[#93C5FD] font-['Share_Tech_Mono',monospace]">AI INVESTIGATION</p>
         </div>
       </div>
 
       {/* Dropdown Menus Area */}
       <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-2.5">
-        <div className="px-2 pb-1 text-[10px] font-['Share_Tech_Mono',monospace] text-[#5A5F64] tracking-widest uppercase border-b border-[#1B1F22]">
+        <div className="px-2 pb-1 text-[10px] font-['Share_Tech_Mono',monospace] text-[#64748B] tracking-widest uppercase border-b border-[#333D50]">
           DIRECTORY // SYSTEM_FS
         </div>
 
@@ -128,46 +128,46 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
           const hasActiveItem = section.items.some(item => item.id === currentPage);
 
           return (
-            <div key={section.id} className="border border-[#1B1F22] bg-[#05080A] overflow-hidden">
+            <div key={section.id} className="border border-[#333D50] bg-[#252B37] overflow-hidden">
               {/* Dropdown Header Trigger */}
               <button
                 type="button"
                 onClick={() => toggleSection(section.id)}
                 className={`w-full flex items-center justify-between p-2 text-left transition-all ${
-                  hasActiveItem ? 'bg-[#0B2E33]/60' : 'hover:bg-[#12161A]'
+                  hasActiveItem ? 'bg-[#1E3A5F]/60' : 'hover:bg-[#2D3545]'
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
                   {/* Diamond Icon */}
                   <div className={`w-3.5 h-3.5 rotate-45 flex items-center justify-center shrink-0 transition-colors ${
-                    hasActiveItem ? 'bg-[#22D3E6] border border-[#22D3E6]' : 'bg-[#050505] border border-[#5A5F64]'
+                    hasActiveItem ? 'bg-[#3B82F6] border border-[#3B82F6]' : 'bg-[#171B23] border border-[#64748B]'
                   }`}>
-                    {hasActiveItem && <div className="w-1 h-1 bg-[#050505]" />}
+                    {hasActiveItem && <div className="w-1 h-1 bg-[#171B23]" />}
                   </div>
 
                   {/* White Tag Placard */}
                   <span className={`font-['Rajdhani',sans-serif] text-[12px] font-bold uppercase tracking-wider px-2 py-0.5 truncate transition ${
                     hasActiveItem
-                      ? 'bg-[#FFFFFF] text-[#050505]'
-                      : 'bg-[#12161A] text-[#bbc9cb] group-hover:text-white'
+                      ? 'bg-[#FFFFFF] text-[#171B23]'
+                      : 'bg-[#2D3545] text-[#93C5FD] group-hover:text-white'
                   }`}>
                     {section.title}
                   </span>
                 </div>
 
                 {/* Chevron Dropdown Indicator */}
-                <div className="text-[#9AA0A6] shrink-0 pl-1">
+                <div className="text-[#93C5FD] shrink-0 pl-1">
                   {isOpen ? (
-                    <ChevronDown className="w-3.5 h-3.5 text-[#22D3E6]" />
+                    <ChevronDown className="w-3.5 h-3.5 text-[#3B82F6]" />
                   ) : (
-                    <ChevronRight className="w-3.5 h-3.5 text-[#5A5F64]" />
+                    <ChevronRight className="w-3.5 h-3.5 text-[#64748B]" />
                   )}
                 </div>
               </button>
 
               {/* Collapsible Dropdown Menu Content */}
               {isOpen && (
-                <div className="py-1 px-1.5 space-y-0.5 border-t border-[#1B1F22] bg-[#000000]">
+                <div className="py-1 px-1.5 space-y-0.5 border-t border-[#333D50] bg-[#1F242E]">
                   {section.items.map((item) => {
                     const Icon = item.icon;
                     const isActive = currentPage === item.id;
@@ -178,22 +178,22 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
                         onClick={() => setCurrentPage(item.id)}
                         className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold transition-all ${
                           isActive
-                            ? 'bg-[#0B2E33] text-white border-l-2 border-[#22D3E6]'
-                            : 'text-[#9AA0A6] hover:text-[#22D3E6] hover:bg-[#05080A]'
+                            ? 'bg-[#1E3A5F] text-white border-l-2 border-[#3B82F6]'
+                            : 'text-[#93C5FD] hover:text-[#3B82F6] hover:bg-[#252B37]'
                         }`}
                       >
                         <div className="flex items-center gap-2 truncate">
-                          <span className="text-[#5A5F64] font-['Share_Tech_Mono',monospace] text-[11px]">↳</span>
-                          <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#22D3E6]' : 'text-[#5A5F64]'}`} />
+                          <span className="text-[#64748B] font-['Share_Tech_Mono',monospace] text-[11px]">↳</span>
+                          <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#3B82F6]' : 'text-[#64748B]'}`} />
                           <span className="truncate tracking-wide text-[11px]">{item.label}</span>
                         </div>
                         {item.badge && (
-                          <span className="text-[9px] bg-[#050505] text-[#22D3E6] border border-[#22D3E6]/40 px-1 font-['Share_Tech_Mono',monospace]">
+                          <span className="text-[9px] bg-[#171B23] text-[#3B82F6] border border-[#3B82F6]/40 px-1 font-['Share_Tech_Mono',monospace]">
                             {item.badge}
                           </span>
                         )}
                         {isActive && !item.badge && (
-                          <div className="w-1.5 h-1.5 bg-[#22D3E6] rotate-45 shrink-0" />
+                          <div className="w-1.5 h-1.5 bg-[#3B82F6] rotate-45 shrink-0" />
                         )}
                       </button>
                     );
@@ -207,22 +207,22 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
 
       {/* Selected Account Target Quick Context */}
       {selectedAccount && (
-        <div className="p-2.5 mx-2.5 mb-2 bg-[#000000] border border-[#1B1F22] text-xs">
-          <div className="flex items-center justify-between text-[9px] text-[#9AA0A6] mb-1 font-['Share_Tech_Mono',monospace]">
+        <div className="p-2.5 mx-2.5 mb-2 bg-[#1F242E] border border-[#333D50] text-xs">
+          <div className="flex items-center justify-between text-[9px] text-[#93C5FD] mb-1 font-['Share_Tech_Mono',monospace]">
             <span>TARGET_NODE</span>
-            <span className="text-[#22D3E6] font-bold">FOCUSED</span>
+            <span className="text-[#3B82F6] font-bold">FOCUSED</span>
           </div>
           <div className="font-['Share_Tech_Mono',monospace] font-bold text-white truncate text-xs">{selectedAccount}</div>
           <div className="flex gap-1.5 mt-2">
             <button
               onClick={() => setCurrentPage("graph")}
-              className="flex-1 bg-[#05080A] hover:bg-[#0B2E33] text-[10px] py-0.5 text-[#22D3E6] hover:text-white transition font-['Rajdhani',sans-serif] font-bold uppercase tracking-wider border border-[#1B1F22]"
+              className="flex-1 bg-[#252B37] hover:bg-[#1E3A5F] text-[10px] py-0.5 text-[#3B82F6] hover:text-white transition font-['Rajdhani',sans-serif] font-bold uppercase tracking-wider border border-[#333D50]"
             >
               Graph
             </button>
             <button
               onClick={() => setCurrentPage("money-trail")}
-              className="flex-1 bg-[#05080A] hover:bg-[#0B2E33] text-[10px] py-0.5 text-[#22D3E6] hover:text-white transition font-['Rajdhani',sans-serif] font-bold uppercase tracking-wider border border-[#1B1F22]"
+              className="flex-1 bg-[#252B37] hover:bg-[#1E3A5F] text-[10px] py-0.5 text-[#3B82F6] hover:text-white transition font-['Rajdhani',sans-serif] font-bold uppercase tracking-wider border border-[#333D50]"
             >
               Trail
             </button>
@@ -231,17 +231,17 @@ export default function Sidebar({ currentPage, setCurrentPage, selectedAccount, 
       )}
 
       {/* Security Clearance Footer */}
-      <div className="p-2.5 border-t border-[#1B1F22] bg-[#000000] text-[10px] text-[#9AA0A6] flex items-center justify-between font-['Share_Tech_Mono',monospace]">
+      <div className="p-2.5 border-t border-[#333D50] bg-[#1F242E] text-[10px] text-[#93C5FD] flex items-center justify-between font-['Share_Tech_Mono',monospace]">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-[#22D3E6] animate-pulse"></div>
+          <div className="w-2 h-2 rounded-full bg-[#3B82F6] animate-pulse"></div>
           <div>
             <div className="text-white text-[10px] font-bold">KERNEL LIVE</div>
-            <div className="text-[9px] text-[#5A5F64]">WSS: CONNECTED</div>
+            <div className="text-[9px] text-[#64748B]">WSS: CONNECTED</div>
           </div>
         </div>
         <button
           onClick={() => setCurrentPage('legal-privacy')}
-          className="text-[9px] bg-[#05080A] hover:bg-[#0B2E33] border border-[#1B1F22] hover:border-[#22D3E6] px-1.5 py-0.5 text-[#22D3E6] font-bold uppercase transition"
+          className="text-[9px] bg-[#252B37] hover:bg-[#1E3A5F] border border-[#333D50] hover:border-[#3B82F6] px-1.5 py-0.5 text-[#3B82F6] font-bold uppercase transition"
           title="View Legal Policies, Privacy & Copyrights"
         >
           LEGAL / PMLA

@@ -76,49 +76,49 @@ export default function MuleDetectionPage({
   };
 
   return (
-    <div className="bg-[#050505] text-[#e2e2e2] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6 space-y-6">
+    <div className="bg-[#171B23] text-[#F3F4F6] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6 space-y-6">
       {/* Top HUD Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#1B1F22]">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#333D50]">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 bg-[#22D3E6] rotate-45 shrink-0" />
+          <div className="w-2.5 h-2.5 bg-[#3B82F6] rotate-45 shrink-0" />
           <span className="font-['Krona_One',sans-serif] text-base sm:text-lg text-white tracking-widest uppercase">
             INTELLIGENCE // MULE_DETECTION
           </span>
-          <span className="bg-[#FFFFFF] text-[#050505] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase ml-2">
+          <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase ml-2">
             GRAPHSAGE SCORING
           </span>
         </div>
 
-        <div className="flex items-center gap-3 font-['Share_Tech_Mono',monospace] text-xs text-[#9AA0A6]">
-          <span className="text-[#22D3E6] font-bold">2-HOP MESSAGE PASSING</span>
+        <div className="flex items-center gap-3 font-['Share_Tech_Mono',monospace] text-xs text-[#93C5FD]">
+          <span className="text-[#3B82F6] font-bold">2-HOP MESSAGE PASSING</span>
           <span>|</span>
           <span>THRESHOLDS: HIGH ≥ 75% · MED ≥ 40%</span>
         </div>
       </div>
 
       {/* Filter & Command Strip */}
-      <div className="p-3 bg-[#05080A] border border-[#1B1F22] flex flex-wrap items-center justify-between gap-4 text-xs">
+      <div className="p-3 bg-[#252B37] border border-[#333D50] flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="relative flex-1 min-w-[260px] flex items-center">
-          <span className="text-[#22D3E6] font-['Share_Tech_Mono',monospace] text-sm mr-2 font-bold">&gt;</span>
+          <span className="text-[#3B82F6] font-['Share_Tech_Mono',monospace] text-sm mr-2 font-bold">&gt;</span>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="search account ID, customer, hash..."
-            className="w-full bg-transparent border-b border-[#5A5F64] text-xs text-white placeholder-[#5A5F64] font-['Share_Tech_Mono',monospace] focus:outline-none focus:border-[#22D3E6] pb-1"
+            className="w-full bg-transparent border-b border-[#64748B] text-xs text-white placeholder-[#64748B] font-['Share_Tech_Mono',monospace] focus:outline-none focus:border-[#3B82F6] pb-1"
           />
         </div>
 
         <div className="flex items-center gap-1.5 font-['Rajdhani',sans-serif] text-xs">
-          <span className="text-[#9AA0A6] uppercase tracking-wider font-bold mr-1">RISK FILTER:</span>
+          <span className="text-[#93C5FD] uppercase tracking-wider font-bold mr-1">RISK FILTER:</span>
           {['ALL', 'HIGH', 'MEDIUM', 'LOW'].map((lvl) => (
             <button
               key={lvl}
               onClick={() => setRiskFilter(lvl)}
               className={`px-3 py-1 uppercase font-bold tracking-wider transition border ${
                 riskFilter === lvl
-                  ? 'bg-[#FFFFFF] text-[#050505] border-[#FFFFFF]'
-                  : 'bg-[#000000] text-[#bbc9cb] hover:text-[#22D3E6] border-[#1B1F22] hover:border-[#22D3E6]'
+                  ? 'bg-[#FFFFFF] text-[#171B23] border-[#FFFFFF]'
+                  : 'bg-[#1F242E] text-[#93C5FD] hover:text-[#3B82F6] border-[#333D50] hover:border-[#3B82F6]'
               }`}
             >
               {lvl}
@@ -130,13 +130,13 @@ export default function MuleDetectionPage({
       {/* Main Grid: Accounts Table + Detail Inspection Drawer */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Accounts Table (8 cols) */}
-        <div className="lg:col-span-8 bg-[#05080A] border border-[#1B1F22] flex flex-col overflow-hidden">
+        <div className="lg:col-span-8 bg-[#252B37] border border-[#333D50] flex flex-col overflow-hidden">
           {/* Table Header Bar */}
-          <div className="h-10 px-3 bg-[#000000] flex items-center justify-between shrink-0 border-b border-[#1B1F22]">
-            <span className="bg-[#FFFFFF] text-[#050505] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
+          <div className="h-10 px-3 bg-[#1F242E] flex items-center justify-between shrink-0 border-b border-[#333D50]">
+            <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
               ACCOUNT LEDGER ({accounts.length})
             </span>
-            <span className="font-['Share_Tech_Mono',monospace] text-[10px] text-[#9AA0A6]">
+            <span className="font-['Share_Tech_Mono',monospace] text-[10px] text-[#93C5FD]">
               SORT: RISK_SCORE_DESC
             </span>
           </div>
@@ -144,7 +144,7 @@ export default function MuleDetectionPage({
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left text-xs font-['Share_Tech_Mono',monospace]">
               <thead>
-                <tr className="bg-[#000000] border-b border-[#1B1F22] text-[#9AA0A6] text-[10px]">
+                <tr className="bg-[#1F242E] border-b border-[#333D50] text-[#93C5FD] text-[10px]">
                   <th className="py-2.5 px-3 uppercase tracking-wider">ACCOUNT ID</th>
                   <th className="py-2.5 px-3 uppercase tracking-wider">SEVERITY</th>
                   <th className="py-2.5 px-3 uppercase tracking-wider">SCORE</th>
@@ -153,7 +153,7 @@ export default function MuleDetectionPage({
                   <th className="py-2.5 px-3 uppercase tracking-wider text-right">ACTION</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1B1F22]">
+              <tbody className="divide-y divide-[#333D50]">
                 {accounts.map((acc) => {
                   const isSelected = selectedAccount === acc.account_id;
                   const isCritical = acc.risk_level === 'High' || acc.risk_level === 'HIGH';
@@ -165,18 +165,18 @@ export default function MuleDetectionPage({
                       onClick={() => handleSelectAccount(acc.account_id)}
                       className={`cursor-pointer transition ${
                         isSelected
-                          ? 'bg-[#0B2E33] border-l-2 border-[#22D3E6]'
-                          : 'hover:bg-[#0E1215]'
+                          ? 'bg-[#1E3A5F] border-l-2 border-[#3B82F6]'
+                          : 'hover:bg-[#252B37]'
                       }`}
                     >
                       <td className="py-2.5 px-3">
                         <div className="font-bold text-white flex items-center gap-1.5">
-                          <span className={isCritical ? 'text-[#FF3B4E]' : isSuspicious ? 'text-[#D6E85A]' : 'text-[#22D3E6]'}>
+                          <span className={isCritical ? 'text-[#FF3B4E]' : isSuspicious ? 'text-[#93C5FD]' : 'text-[#3B82F6]'}>
                             {isCritical ? '◆' : isSuspicious ? '◇' : '○'}
                           </span>
                           {acc.account_id}
                         </div>
-                        <div className="text-[10px] text-[#9AA0A6] font-['Titillium_Web',sans-serif]">{acc.customer_name}</div>
+                        <div className="text-[10px] text-[#93C5FD] font-['Titillium_Web',sans-serif]">{acc.customer_name}</div>
                       </td>
                       <td className="py-2.5 px-3">
                         <RiskBadge level={acc.risk_level} score={acc.risk_score} showScore={false} size="sm" />
@@ -184,10 +184,10 @@ export default function MuleDetectionPage({
                       <td className="py-2.5 px-3 font-bold text-white tabular-nums">
                         {(acc.risk_score * 100).toFixed(0)}%
                       </td>
-                      <td className="py-2.5 px-3 text-[#9AA0A6] tabular-nums">
+                      <td className="py-2.5 px-3 text-[#93C5FD] tabular-nums">
                         {acc.confidence ? `${(acc.confidence * 100).toFixed(0)}%` : '88%'}
                       </td>
-                      <td className="py-2.5 px-3 text-[#9AA0A6] tabular-nums">
+                      <td className="py-2.5 px-3 text-[#93C5FD] tabular-nums">
                         {acc.turnover_ratio ? `${(acc.turnover_ratio * 100).toFixed(0)}%` : '94%'}
                       </td>
                       <td className="py-2.5 px-3 text-right">
@@ -197,7 +197,7 @@ export default function MuleDetectionPage({
                             e.stopPropagation();
                             handleSelectAccount(acc.account_id);
                           }}
-                          className="px-2 py-0.5 bg-[#000000] hover:bg-[#0B2E33] border border-[#5A5F64] hover:border-[#22D3E6] text-[#bbc9cb] hover:text-[#22D3E6] font-['Rajdhani',sans-serif] font-bold text-xs uppercase tracking-wider"
+                          className="px-2 py-0.5 bg-[#1F242E] hover:bg-[#1E3A5F] border border-[#64748B] hover:border-[#3B82F6] text-[#93C5FD] hover:text-[#3B82F6] font-['Rajdhani',sans-serif] font-bold text-xs uppercase tracking-wider"
                         >
                           EXAMINE
                         </button>
@@ -211,40 +211,40 @@ export default function MuleDetectionPage({
         </div>
 
         {/* Risk Explanation Drawer (4 cols) */}
-        <div className="lg:col-span-4 bg-[#05080A] border border-[#1B1F22] flex flex-col h-full">
+        <div className="lg:col-span-4 bg-[#252B37] border border-[#333D50] flex flex-col h-full">
           {/* Drawer Header */}
-          <div className="h-10 px-3 bg-[#000000] flex items-center justify-between shrink-0 border-b border-[#1B1F22]">
-            <span className="bg-[#FFFFFF] text-[#050505] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
+          <div className="h-10 px-3 bg-[#1F242E] flex items-center justify-between shrink-0 border-b border-[#333D50]">
+            <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
               NODE DOSSIER
             </span>
-            <span className="font-['Share_Tech_Mono',monospace] text-[10px] text-[#22D3E6]">
+            <span className="font-['Share_Tech_Mono',monospace] text-[10px] text-[#3B82F6]">
               {selectedAccount || 'SELECT NODE'}
             </span>
           </div>
 
           <div className="p-4 space-y-4 flex-1 overflow-y-auto font-['Share_Tech_Mono',monospace]">
             {loadingExplanation ? (
-              <div className="h-48 flex flex-col items-center justify-center text-[#9AA0A6] text-xs gap-2">
-                <div className="w-5 h-5 border-2 border-[#22D3E6] border-t-transparent animate-spin" />
+              <div className="h-48 flex flex-col items-center justify-center text-[#93C5FD] text-xs gap-2">
+                <div className="w-5 h-5 border-2 border-[#3B82F6] border-t-transparent animate-spin" />
                 <span>COMPUTING GNN GRAPH EXPLANATION...</span>
               </div>
             ) : explanation ? (
               <div className="space-y-4 text-xs">
                 {/* Node Identity Card */}
-                <div className="p-3 bg-[#000000] border border-[#1B1F22] space-y-2">
+                <div className="p-3 bg-[#1F242E] border border-[#333D50] space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-white text-sm">{explanation.account_id}</span>
                     <RiskBadge level={explanation.risk_level} score={explanation.risk_score} size="sm" />
                   </div>
-                  <div className="text-[11px] text-[#9AA0A6] font-['Titillium_Web',sans-serif]">
+                  <div className="text-[11px] text-[#93C5FD] font-['Titillium_Web',sans-serif]">
                     Customer: <span className="text-white font-semibold">{explanation.customer_name || 'Classified Entity'}</span>
                   </div>
                 </div>
 
                 {/* Behavioral Reasons */}
                 <div className="space-y-2">
-                  <div className="font-['Rajdhani',sans-serif] text-xs font-bold text-[#bbc9cb] uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="text-[#22D3E6]">◇</span> CONTRIBUTING ANOMALY SIGNALS
+                  <div className="font-['Rajdhani',sans-serif] text-xs font-bold text-[#93C5FD] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="text-[#3B82F6]">◇</span> CONTRIBUTING ANOMALY SIGNALS
                   </div>
                   <div className="space-y-1.5">
                     {(explanation.reasons || explanation.top_reasons || [
@@ -252,7 +252,7 @@ export default function MuleDetectionPage({
                       'High fan-out structuring to mule subnets',
                       'Circular transaction loop detected'
                     ]).map((reason, idx) => (
-                      <div key={idx} className="p-2 bg-[#000000] border border-[#1B1F22] text-[11px] text-[#bbc9cb] flex items-start gap-2">
+                      <div key={idx} className="p-2 bg-[#1F242E] border border-[#333D50] text-[11px] text-[#93C5FD] flex items-start gap-2">
                         <span className="text-[#FF3B4E] font-bold">▸</span>
                         <span>{reason}</span>
                       </div>
@@ -264,7 +264,7 @@ export default function MuleDetectionPage({
                 <div className="pt-2 flex flex-col gap-2 font-['Rajdhani',sans-serif]">
                   <button
                     onClick={() => setCurrentPage('graph')}
-                    className="w-full py-2 bg-[#000000] hover:bg-[#0B2E33] border border-[#22D3E6] text-[#22D3E6] hover:text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+                    className="w-full py-2 bg-[#1F242E] hover:bg-[#1E3A5F] border border-[#3B82F6] text-[#3B82F6] hover:text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
                   >
                     <Network className="w-4 h-4" />
                     <span>EXPLORE TOPOLOGY GRAPH</span>
@@ -272,15 +272,15 @@ export default function MuleDetectionPage({
 
                   <button
                     onClick={() => setCurrentPage('money-trail')}
-                    className="w-full py-2 bg-[#000000] hover:bg-[#0B2E33] border border-[#5A5F64] hover:border-[#22D3E6] text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+                    className="w-full py-2 bg-[#1F242E] hover:bg-[#1E3A5F] border border-[#64748B] hover:border-[#3B82F6] text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
                   >
-                    <Share2 className="w-4 h-4 text-[#22D3E6]" />
+                    <Share2 className="w-4 h-4 text-[#3B82F6]" />
                     <span>TRACE MONEY TRAIL</span>
                   </button>
 
                   <button
                     onClick={() => onOpenCreateCase && onOpenCreateCase({ account_id: explanation.account_id, risk_score: explanation.risk_score })}
-                    className="w-full py-2 bg-[#FFFFFF] hover:bg-[#22D3E6] text-[#050505] font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+                    className="w-full py-2 bg-[#FFFFFF] hover:bg-[#3B82F6] text-[#171B23] font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
                   >
                     <Briefcase className="w-4 h-4 text-current" />
                     <span>OPEN INVESTIGATION CASE</span>
@@ -288,8 +288,8 @@ export default function MuleDetectionPage({
                 </div>
               </div>
             ) : (
-              <div className="h-48 flex flex-col items-center justify-center text-[#5A5F64] text-xs text-center gap-2">
-                <Info className="w-6 h-6 text-[#5A5F64]" />
+              <div className="h-48 flex flex-col items-center justify-center text-[#64748B] text-xs text-center gap-2">
+                <Info className="w-6 h-6 text-[#64748B]" />
                 <span>SELECT AN ACCOUNT TO INSPECT GNN TOPOLOGY & BEHAVIORAL FACTORS</span>
               </div>
             )}

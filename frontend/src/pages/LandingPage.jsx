@@ -232,7 +232,7 @@ export default function LandingPage({
       {/* Pure Black Ambient */}
 
       {/* 2. Top Navigation Bar */}
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#000000]/80 border-b border-icesilver/10 px-6 lg:px-12 py-3.5">
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#1F242E]/80 border-b border-icesilver/10 px-6 lg:px-12 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Logo */}
           <div
@@ -288,7 +288,7 @@ export default function LandingPage({
         
         {/* Telemetry Status Bar */}
         <AnimatedContent trigger="mount" distance={25} duration={0.7} ease="power3.out">
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-[#05080A]/90 border border-icesilver/10 text-xs shadow-lg backdrop-blur-md">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-[#252B37]/90 border border-icesilver/10 text-xs shadow-lg backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -326,7 +326,7 @@ export default function LandingPage({
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
               Intelligent Fraud Detection.{' '}
-              <span className="bg-gradient-to-r from-cyan-400 via-electric-400 to-blue-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#60A5FA] via-electric-400 to-blue-500 bg-clip-text text-transparent">
                 Clearer Financial Insights.
               </span>
             </h1>
@@ -365,19 +365,19 @@ export default function LandingPage({
 
             {/* Live Micro Metric Chips */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-icesilver/10 text-xs font-mono max-w-2xl mx-auto">
-              <div className="p-3 rounded-xl bg-[#05080A]/90 border border-icesilver/10">
+              <div className="p-3 rounded-xl bg-[#252B37]/90 border border-icesilver/10">
                 <span className="text-[10px] text-icesilver-500 block uppercase">MONITORED NODES</span>
                 <span className="text-base font-bold text-white">1,985 Accounts</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#05080A]/90 border border-icesilver/10">
+              <div className="p-3 rounded-xl bg-[#252B37]/90 border border-icesilver/10">
                 <span className="text-[10px] text-icesilver-500 block uppercase">FLAGGED MULES</span>
                 <span className="text-base font-bold text-rose-400">29 High Risk</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#05080A]/90 border border-icesilver/10">
+              <div className="p-3 rounded-xl bg-[#252B37]/90 border border-icesilver/10">
                 <span className="text-[10px] text-icesilver-500 block uppercase">LATENCY</span>
                 <span className="text-base font-bold text-emerald-400">&lt; 45ms Neural Inference</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#05080A]/90 border border-icesilver/10">
+              <div className="p-3 rounded-xl bg-[#252B37]/90 border border-icesilver/10">
                 <span className="text-[10px] text-icesilver-500 block uppercase">ROC-AUC</span>
                 <span className="text-base font-bold text-marigold">0.9981 Genuine</span>
               </div>
@@ -406,7 +406,7 @@ export default function LandingPage({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCurrentPage('dashboard')}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-electric-600 to-cyan-500 hover:from-marigold-400 hover:to-marigold-300 text-white font-bold text-xs shadow-glow-marigold transition transform hover:scale-105 active:scale-95"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-electric-600 to-[#3B82F6] hover:from-marigold-400 hover:to-marigold-300 text-white font-bold text-xs shadow-glow-marigold transition transform hover:scale-105 active:scale-95"
                 >
                   <span>Enter Full Command Center</span>
                   <ArrowUpRight className="w-4 h-4" />
@@ -415,9 +415,9 @@ export default function LandingPage({
             </div>
 
             {/* Interactive Stepper inside Clean Console Frame */}
-            <div className="rounded-3xl border-2 border-icesilver/10/90 bg-[#000000] shadow-[0_25px_70px_-15px_rgba(2,132,199,0.22)] overflow-hidden">
+            <div className="rounded-3xl border-2 border-icesilver/10/90 bg-[#1F242E] shadow-[0_25px_70px_-15px_rgba(2,132,199,0.22)] overflow-hidden">
               {/* Console Window Chrome Header */}
-              <div className="px-5 py-3.5 bg-[#05080A] border-b border-icesilver/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+              <div className="px-5 py-3.5 bg-[#252B37] border-b border-icesilver/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
                     <span className="w-3 h-3 rounded-full bg-rose-500/80"></span>
@@ -440,7 +440,7 @@ export default function LandingPage({
               </div>
 
               {/* EMBEDDED ANIMATIC PIPELINE STEPPER */}
-              <div className="p-3 sm:p-5 bg-[#080E1B]/95 backdrop-blur-xl">
+              <div className="p-3 sm:p-5 bg-[#171B23]/95 backdrop-blur-xl">
                 <AnimaticPipelineStepper
                   setCurrentPage={setCurrentPage}
                   onAccountSelect={onAccountSelect}
@@ -458,7 +458,7 @@ export default function LandingPage({
 
         {/* 5. Interactive Financial Crime Typology Analyzer */}
         <AnimatedContent distance={40} threshold={0.1} duration={0.8} ease="power3.out">
-          <section id="simulator" className="scroll-mt-24 space-y-6 rounded-3xl bg-[#05080A]/90 border border-icesilver/10 p-6 md:p-8 backdrop-blur-md">
+          <section id="simulator" className="scroll-mt-24 space-y-6 rounded-3xl bg-[#252B37]/90 border border-icesilver/10 p-6 md:p-8 backdrop-blur-md">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-icesilver/10 pb-4">
               <div>
                 <div className="flex items-center gap-2">
@@ -536,7 +536,7 @@ export default function LandingPage({
 
                 <button
                   onClick={() => handleLaunchScenario(currentScenario.targetAccount)}
-                  className="w-full py-2.5 bg-gradient-to-r from-electric-600 to-cyan-600 hover:from-electric-500 hover:to-cyan-500 text-white font-bold text-xs rounded-xl shadow-glow-marigold transition flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-gradient-to-r from-electric-600 to-[#3B82F6] hover:from-electric-500 hover:to-[#3B82F6] text-white font-bold text-xs rounded-xl shadow-glow-marigold transition flex items-center justify-center gap-2"
                 >
                   <Share2 className="w-4 h-4" />
                   <span>Trace {currentScenario.targetAccount} Money Trail Live</span>
@@ -553,7 +553,7 @@ export default function LandingPage({
                 <div className="flex items-center justify-between gap-2 pt-2 font-mono">
                   {currentScenario.flowNodes.map((node, i) => (
                     <React.Fragment key={node.id}>
-                      <div className="flex-1 flex flex-col items-center text-center p-3 rounded-xl bg-[#05080A] border border-icesilver/10">
+                      <div className="flex-1 flex flex-col items-center text-center p-3 rounded-xl bg-[#252B37] border border-icesilver/10">
                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border mb-2 ${
                           node.type === 'victim'
                             ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40'
@@ -561,7 +561,7 @@ export default function LandingPage({
                             ? 'bg-rose-950 text-rose-200 border-rose-500 shadow-glow-danger animate-pulse'
                             : node.type === 'layer'
                             ? 'bg-amber-950/70 text-amber-300 border-amber-500/40'
-                            : 'bg-[#05080A] text-[#22D3E6] border-[#22D3E6]'
+                            : 'bg-[#252B37] text-[#3B82F6] border-[#3B82F6]'
                         }`}>
                           {i + 1}
                         </div>
@@ -585,7 +585,7 @@ export default function LandingPage({
 
         {/* 6. GraphSAGE vs Traditional XGBoost Battle Arena */}
         <AnimatedContent distance={40} threshold={0.1} duration={0.8} ease="power3.out">
-          <section id="battle-arena" className="scroll-mt-24 p-6 md:p-8 rounded-3xl bg-[#05080A]/90 border border-icesilver/10 space-y-6 backdrop-blur-md">
+          <section id="battle-arena" className="scroll-mt-24 p-6 md:p-8 rounded-3xl bg-[#252B37]/90 border border-icesilver/10 space-y-6 backdrop-blur-md">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-icesilver/10 pb-4">
               <div>
                 <div className="flex items-center gap-2">
@@ -665,9 +665,9 @@ export default function LandingPage({
               </button>
             </div>
 
-            <div className="relative h-[480px] lg:h-[520px] rounded-3xl bg-gradient-to-br from-[#05080A] via-[#080E1B] to-[#05070E] border-2 border-icesilver/10 shadow-[0_25px_60px_-15px_rgba(2,132,199,0.2)] overflow-hidden group">
+            <div className="relative h-[480px] lg:h-[520px] rounded-3xl bg-gradient-to-br from-[#252B37] via-[#171B23] to-[#05070E] border-2 border-icesilver/10 shadow-[0_25px_60px_-15px_rgba(2,132,199,0.2)] overflow-hidden group">
               {/* Box Top Toolbar */}
-              <div className="absolute top-0 left-0 right-0 z-30 px-5 py-3.5 border-b border-icesilver/10 bg-[#000000]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
+              <div className="absolute top-0 left-0 right-0 z-30 px-5 py-3.5 border-b border-icesilver/10 bg-[#1F242E]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
@@ -690,7 +690,7 @@ export default function LandingPage({
                   <BriarGlobe
                     background="transparent"
                     lines={{
-                      color: "#38BDF8",
+                      color: "#60A5FA",
                       accent: "#F43F5E",
                       thickness: 0.7,
                       opacity: 6,
@@ -718,7 +718,7 @@ export default function LandingPage({
                       "Cybercrime Portal (1930) Link",
                       "Illustrative turnover pattern"
                     ]}
-                    textColor="#38BDF8"
+                    textColor="#60A5FA"
                     speed={1.0}
                     direction={1}
                     motion={{ style: "both", amount: 6, pace: 5 }}
@@ -729,7 +729,7 @@ export default function LandingPage({
               </div>
 
               {/* Box Footer Status Bar */}
-              <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-icesilver-400 pointer-events-none bg-[#000000]/90 px-3.5 py-1.5 rounded-xl border border-icesilver/10 backdrop-blur-md">
+              <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-icesilver-400 pointer-events-none bg-[#1F242E]/90 px-3.5 py-1.5 rounded-xl border border-icesilver/10 backdrop-blur-md">
                 <span className="text-emerald-400 flex items-center gap-1 font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                   Interactive 3D Network: Drag to Rotate • Real-Time Physics
@@ -742,7 +742,7 @@ export default function LandingPage({
 
         {/* 8. Quick Module Navigation Bar */}
         <AnimatedContent distance={40} threshold={0.1} duration={0.8} ease="power3.out">
-          <section id="pipeline" className="scroll-mt-24 p-6 rounded-3xl bg-gradient-to-r from-[#05080A] to-[#000000] border border-icesilver/10 space-y-4 shadow-xl">
+          <section id="pipeline" className="scroll-mt-24 p-6 rounded-3xl bg-gradient-to-r from-[#252B37] to-[#1F242E] border border-icesilver/10 space-y-4 shadow-xl">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <span className="text-xs font-mono text-marigold font-bold uppercase tracking-wider">DIRECT MODULE ACCESS</span>
@@ -788,7 +788,7 @@ export default function LandingPage({
 
         {/* 9. Institutional Trust & Compliance Notice */}
         <AnimatedContent distance={30} threshold={0.1} duration={0.7} ease="power3.out">
-          <section className="p-5 rounded-2xl bg-[#05080A]/90 border border-icesilver/10 text-xs text-icesilver-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <section className="p-5 rounded-2xl bg-[#252B37]/90 border border-icesilver/10 text-xs text-icesilver-400 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
               <span>
@@ -810,7 +810,7 @@ export default function LandingPage({
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-0.5">
                 <span className="w-1 h-4 bg-electric-500 rounded-full transform -skew-x-12"></span>
-                <span className="w-1 h-4 bg-cyan-400 rounded-full transform -skew-x-12"></span>
+                <span className="w-1 h-4 bg-[#60A5FA] rounded-full transform -skew-x-12"></span>
               </div>
               <span className="font-bold text-white text-sm">FinTrace AI</span>
               <span className="text-slate-600">|</span>

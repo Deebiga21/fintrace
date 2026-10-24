@@ -79,12 +79,12 @@ export default function CytoscapeGraph({
             'font-size': '10px',
             'font-family': 'monospace',
             'font-weight': 600,
-            'color': '#E2E2E2',
+            'color': '#F3F4F6',
             'text-valign': 'bottom',
             'text-margin-y': 4,
-            'background-color': '#05080A',
+            'background-color': '#252B37',
             'border-width': 2,
-            'border-color': 'rgba(187, 201, 203, 0.35)',
+            'border-color': 'rgba(147, 197, 253, 0.35)',
             'transition-property': 'background-color, border-color, width, height',
             'transition-duration': '0.2s'
           }
@@ -93,8 +93,8 @@ export default function CytoscapeGraph({
         {
           selector: 'node[risk_level = "Medium"], node[risk_level = "MEDIUM"]',
           style: {
-            'background-color': '#6CEEFF',
-            'border-color': '#0E7C86',
+            'background-color': '#60A5FA',
+            'border-color': '#2563EB',
             'width': 34,
             'height': 34
           }
@@ -103,8 +103,8 @@ export default function CytoscapeGraph({
         {
           selector: 'node[risk_level = "High"], node[risk_level = "HIGH"]',
           style: {
-            'background-color': '#22D3E6',
-            'border-color': '#006973',
+            'background-color': '#3B82F6',
+            'border-color': '#60A5FA',
             'border-width': 3,
             'width': 40,
             'height': 40
@@ -114,7 +114,7 @@ export default function CytoscapeGraph({
         {
           selector: 'node[?is_root], node[?is_target]',
           style: {
-            'border-color': '#22D3E6',
+            'border-color': '#3B82F6',
             'border-width': 4,
             'width': 46,
             'height': 46
@@ -124,9 +124,9 @@ export default function CytoscapeGraph({
         {
           selector: 'node:selected',
           style: {
-            'border-color': '#22D3E6',
+            'border-color': '#3B82F6',
             'border-width': 4,
-            'background-color': '#05080A'
+            'background-color': '#252B37'
           }
         },
         // Edge styling (directed arrow)
@@ -134,8 +134,8 @@ export default function CytoscapeGraph({
           selector: 'edge',
           style: {
             'width': 'mapData(weight, 1000, 500000, 1.5, 6)',
-            'line-color': 'rgba(187, 201, 203, 0.2)',
-            'target-arrow-color': 'rgba(187, 201, 203, 0.35)',
+            'line-color': 'rgba(147, 197, 253, 0.25)',
+            'target-arrow-color': 'rgba(147, 197, 253, 0.35)',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'arrow-scale': 1.2,
@@ -146,8 +146,8 @@ export default function CytoscapeGraph({
         {
           selector: 'edge[?is_suspicious]',
           style: {
-            'line-color': '#22D3E6',
-            'target-arrow-color': '#22D3E6',
+            'line-color': '#3B82F6',
+            'target-arrow-color': '#3B82F6',
             'width': 3.5,
             'line-style': 'dashed',
             'opacity': 0.95
@@ -157,8 +157,8 @@ export default function CytoscapeGraph({
         {
           selector: 'edge:selected',
           style: {
-            'line-color': '#22D3E6',
-            'target-arrow-color': '#22D3E6',
+            'line-color': '#3B82F6',
+            'target-arrow-color': '#3B82F6',
             'width': 4,
             'opacity': 1
           }
@@ -167,9 +167,9 @@ export default function CytoscapeGraph({
         {
           selector: '.cycle-highlight',
           style: {
-            'line-color': '#22D3E6',
-            'target-arrow-color': '#22D3E6',
-            'border-color': '#22D3E6',
+            'line-color': '#3B82F6',
+            'target-arrow-color': '#3B82F6',
+            'border-color': '#3B82F6',
             'width': 4,
             'line-style': 'solid'
           }

@@ -7,94 +7,111 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Authentic Stitch Cyberpunk HUD Design System Palette
+        // Direct mapping to User Palette:
+        // #1F242E (Dark Charcoal Slate)
+        // #3B82F6 (Primary Electric Blue)
+        // #60A5FA (Light Azure Blue)
+        // #93C5FD (Soft Sky Blue)
+        // #F3F4F6 (Crisp Off-White)
+        palette: {
+          dark: "#1F242E",
+          surface: "#252B37",
+          elevated: "#2A3241",
+          border: "#333D50",
+          blue: "#3B82F6",
+          azure: "#60A5FA",
+          sky: "#93C5FD",
+          light: "#F3F4F6",
+        },
+        // Authentic Stitch HUD Architecture re-mapped to the 5-color palette
         stitch: {
-          bg: "#000000",
-          ink: "#050505",
-          panel: "#05080A",
-          line: "#1B1F22",
-          cyan: "#22D3E6",
-          cyanDeep: "#0E7C86",
-          tealFill: "#0B2E33",
-          lime: "#D6E85A",
-          alert: "#FF3B4E",
-          text2: "#9AA0A6",
-          text3: "#5A5F64",
-          tracks: "#2A2D30",
+          bg: "#1F242E",
+          ink: "#171B23",
+          panel: "#252B37",
+          line: "rgba(147, 197, 253, 0.16)",
+          cyan: "#3B82F6",
+          cyanDeep: "#2563EB",
+          tealFill: "rgba(59, 130, 246, 0.16)",
+          lime: "#93C5FD",
+          alert: "#EF4444",
+          text2: "#93C5FD",
+          text3: "#64748B",
+          tracks: "#2C3443",
         },
-        // Mapped aubergine to Stitch deep black/panel architecture
+        // aubergine mapped to dark palette architecture
         aubergine: {
-          950: "#000000", // pure canvas
-          900: "#05080A", // primary panel surface
-          850: "#0B0F12", // elevated panel
-          DEFAULT: "#05080A",
-          800: "#12161A",
-          750: "#181E24",
-          700: "#222A32",
-          600: "#2F3B46",
-          500: "#3D4C5A",
-          400: "#5A6E80",
-          300: "#8097AC",
+          950: "#171B23",
+          900: "#1F242E",
+          850: "#252B37",
+          DEFAULT: "#1F242E",
+          800: "#2C3443",
+          750: "#333C4E",
+          700: "#3D475C",
+          600: "#4C5972",
+          500: "#5D6C88",
+          400: "#7A8CA8",
+          300: "#93C5FD",
         },
-        // Mapped icesilver to high-contrast HUD telemetry / white text
+        // icesilver mapped to #F3F4F6 and #93C5FD
         icesilver: {
           50: "#FFFFFF",
-          100: "#F0F4F6",
-          200: "#E2E2E2",
-          DEFAULT: "#E2E2E2",
-          300: "#BBC9CB",
-          400: "#9AA0A6",
-          500: "#7A8188",
-          600: "#5A5F64",
-          700: "#3C4348",
-          800: "#2A2D30",
-          900: "#1B1F22",
-          950: "#05080A",
+          100: "#F3F4F6",
+          200: "#E5E7EB",
+          DEFAULT: "#F3F4F6",
+          300: "#D1D5DB",
+          400: "#93C5FD",
+          500: "#60A5FA",
+          600: "#64748B",
+          700: "#475569",
+          800: "#334155",
+          900: "#252B37",
+          950: "#1F242E",
         },
-        // Mapped marigold to Stitch Electric Cyan & Lime
+        // marigold mapped to #3B82F6 and #60A5FA
         marigold: {
-          50: "#E6FCFF",
-          100: "#B8F7FF",
-          200: "#92F1FF",
-          300: "#6CEEFF",
-          400: "#31DAED",
-          500: "#22D3E6", // Primary Electric Cyan
-          DEFAULT: "#22D3E6",
-          600: "#0E7C86",
-          700: "#006973",
-          800: "#0B2E33",
-          900: "#00363C",
+          50: "#EFF6FF",
+          100: "#DBEAFE",
+          200: "#BFDBFE",
+          300: "#93C5FD",
+          400: "#60A5FA",
+          500: "#3B82F6",
+          DEFAULT: "#3B82F6",
+          600: "#2563EB",
+          700: "#1D4ED8",
+          800: "#1E3A5F",
+          900: "#172554",
         },
-        // Mapped legacy navy to Stitch pure black & panel surfaces
+        // navy mapped to palette dark slate (#1F242E)
         navy: {
-          950: "#000000",
-          900: "#05080A",
-          850: "#0B0F12",
-          800: "#12161A",
-          750: "#181E24",
-          700: "#222A32",
-          600: "#2F3B46",
+          950: "#171B23",
+          900: "#1F242E",
+          850: "#252B37",
+          800: "#2C3443",
+          750: "#333C4E",
+          700: "#3D475C",
+          600: "#4C5972",
         },
-        // Mapped legacy electric to Stitch Electric Cyan
+        // electric mapped to palette blues (#3B82F6, #60A5FA, #93C5FD)
         electric: {
-          200: "#92F1FF",
-          300: "#6CEEFF",
-          400: "#31DAED",
-          500: "#22D3E6",
-          600: "#0E7C86",
-          700: "#006973",
+          DEFAULT: "#3B82F6",
+          200: "#BFDBFE",
+          300: "#93C5FD",
+          400: "#60A5FA",
+          500: "#3B82F6",
+          600: "#2563EB",
+          700: "#1D4ED8",
         },
-        // Stitch Risk Signaling: High = Alert Red (#FF3B4E), Medium = Lime (#D6E85A), Low = Cyan (#22D3E6)
+        // Risk Signaling: Alert Red, Soft Sky Medium, Primary Blue Low
         risk: {
-          high: "#FF3B4E",
-          highBg: "rgba(255, 59, 78, 0.16)",
-          highBorder: "rgba(255, 59, 78, 0.45)",
-          medium: "#D6E85A",
-          mediumBg: "rgba(214, 232, 90, 0.16)",
-          mediumBorder: "rgba(214, 232, 90, 0.45)",
-          low: "#22D3E6",
-          lowBg: "rgba(34, 211, 230, 0.14)",
-          lowBorder: "rgba(34, 211, 230, 0.35)",
+          high: "#EF4444",
+          highBg: "rgba(239, 68, 68, 0.16)",
+          highBorder: "rgba(239, 68, 68, 0.45)",
+          medium: "#60A5FA",
+          mediumBg: "rgba(96, 165, 250, 0.16)",
+          mediumBorder: "rgba(96, 165, 250, 0.45)",
+          low: "#3B82F6",
+          lowBg: "rgba(59, 130, 246, 0.14)",
+          lowBorder: "rgba(59, 130, 246, 0.35)",
         }
       },
       borderRadius: {
@@ -111,15 +128,15 @@ export default {
         krona: ['"Krona One"', 'sans-serif'],
       },
       boxShadow: {
-        'glow-electric': '0 0 16px -2px rgba(34, 211, 230, 0.45)',
-        'glow-marigold': '0 0 16px -2px rgba(34, 211, 230, 0.45)',
-        'glow-cyan': '0 0 16px -2px rgba(34, 211, 230, 0.45)',
-        
-        'glow-danger': '0 0 16px -2px rgba(255, 59, 78, 0.55)',
-        'glow-lime': '0 0 16px -2px rgba(214, 232, 90, 0.45)',
-        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.7)',
-        'apple-card': '0 4px 20px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(90, 95, 100, 0.2)',
-        'apple-card-hover': '0 8px 28px 0 rgba(34, 211, 230, 0.2), inset 0 1px 0 0 rgba(34, 211, 230, 0.4)',
+        'glow-electric': '0 0 20px -2px rgba(59, 130, 246, 0.5)',
+        'glow-marigold': '0 0 20px -2px rgba(59, 130, 246, 0.5)',
+        'glow-cyan': '0 0 20px -2px rgba(96, 165, 250, 0.5)',
+        'glow-blue': '0 0 20px -2px rgba(59, 130, 246, 0.5)',
+        'glow-danger': '0 0 16px -2px rgba(239, 68, 68, 0.55)',
+        'glow-lime': '0 0 16px -2px rgba(147, 197, 253, 0.45)',
+        'glass': '0 8px 32px 0 rgba(15, 23, 42, 0.6)',
+        'apple-card': '0 4px 20px 0 rgba(15, 23, 42, 0.5), inset 0 1px 0 0 rgba(147, 197, 253, 0.15)',
+        'apple-card-hover': '0 8px 28px 0 rgba(59, 130, 246, 0.25), inset 0 1px 0 0 rgba(96, 165, 250, 0.4)',
       }
     },
   },

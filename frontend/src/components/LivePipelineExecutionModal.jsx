@@ -212,12 +212,12 @@ export default function LivePipelineExecutionModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-hidden">
-      <div className="w-full max-w-6xl h-[92vh] max-h-[850px] bg-gradient-to-b from-[#05080A] to-[#000000] border border-[#1B1F22]/80 rounded-none shadow-2xl flex flex-col overflow-hidden text-[#E2E2E2] font-sans">
+      <div className="w-full max-w-6xl h-[92vh] max-h-[850px] bg-gradient-to-b from-[#252B37] to-[#1F242E] border border-[#333D50]/80 rounded-none shadow-2xl flex flex-col overflow-hidden text-[#F3F4F6] font-sans">
         
         {/* Modal Top Bar */}
-        <div className="px-6 py-4 border-b border-[#1B1F22] bg-[#000000]/90 flex flex-wrap items-center justify-between gap-4 shrink-0">
+        <div className="px-6 py-4 border-b border-[#333D50] bg-[#1F242E]/90 flex flex-wrap items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-none bg-gradient-to-tr from-electric-600 to-cyan-400 flex items-center justify-center text-white shadow-glow-marigold">
+            <div className="w-9 h-9 rounded-none bg-gradient-to-tr from-electric-600 to-[#60A5FA] flex items-center justify-center text-white shadow-glow-marigold">
               <Activity className="w-5 h-5 animate-pulse" />
             </div>
             <div>
@@ -225,25 +225,25 @@ export default function LivePipelineExecutionModal({
                 <span className="font-bold text-white tracking-wide text-sm sm:text-base font-mono">
                   FINTRACE REAL-TIME PIPELINE RUNNER
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-electric-950 text-electric-300 border border-[#22D3E6]/40 font-bold">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-electric-950 text-electric-300 border border-[#3B82F6]/40 font-bold">
                   {isRunning ? "PROCESSING LIVE" : isCompleted ? "ALL 12 STAGES VERIFIED" : "READY"}
                 </span>
               </div>
-              <p className="text-xs text-[#E2E2E2]-400">
+              <p className="text-xs text-[#93C5FD]">
                 Execute strict end-to-end processing across banking datasets, directed graph topology, GraphSAGE inference, and case dossiers.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="font-mono text-xs text-[#E2E2E2]-300 bg-[#000000] px-3 py-1.5 rounded-lg border border-[#1B1F22] flex items-center gap-2">
-              <span className="text-[#E2E2E2]-500 text-[10px]">ELAPSED:</span>
-              <span className="font-bold text-cyan-400">{formatElapsed(elapsedMs)}</span>
+            <div className="font-mono text-xs text-[#93C5FD] bg-[#1F242E] px-3 py-1.5 rounded-lg border border-[#333D50] flex items-center gap-2">
+              <span className="text-[#93C5FD] text-[10px]">ELAPSED:</span>
+              <span className="font-bold text-[#60A5FA]">{formatElapsed(elapsedMs)}</span>
             </div>
 
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-[#0E1215] text-[#E2E2E2]-400 hover:text-white transition"
+              className="p-2 rounded-lg hover:bg-[#252B37] text-[#93C5FD] hover:text-white transition"
               title="Close modal"
             >
               <X className="w-5 h-5" />
@@ -252,16 +252,16 @@ export default function LivePipelineExecutionModal({
         </div>
 
         {/* Global Progress Track */}
-        <div className="w-full bg-[#050811] px-6 py-2 border-b border-[#1B1F22]/80 flex items-center justify-between gap-4 text-xs font-mono shrink-0">
+        <div className="w-full bg-[#171B23] px-6 py-2 border-b border-[#333D50]/80 flex items-center justify-between gap-4 text-xs font-mono shrink-0">
           <div className="flex-1 flex items-center gap-3">
-            <span className="text-[#E2E2E2]-400 text-[11px] shrink-0">PROGRESS:</span>
-            <div className="flex-1 h-2 bg-[#000000] rounded-full overflow-hidden border border-[#1B1F22] relative">
+            <span className="text-[#93C5FD] text-[11px] shrink-0">PROGRESS:</span>
+            <div className="flex-1 h-2 bg-[#1F242E] rounded-full overflow-hidden border border-[#333D50] relative">
               <div
-                className="h-full bg-gradient-to-r from-cyan-500 via-electric-400 to-emerald-400 transition-all duration-300 rounded-full"
+                className="h-full bg-gradient-to-r from-[#3B82F6] via-electric-400 to-emerald-400 transition-all duration-300 rounded-full"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <span className="font-bold text-cyan-300 text-xs shrink-0">{progressPercent}% ({completedCount}/12)</span>
+            <span className="font-bold text-[#93C5FD] text-xs shrink-0">{progressPercent}% ({completedCount}/12)</span>
           </div>
 
           {/* Stepper Controls */}
@@ -269,7 +269,7 @@ export default function LivePipelineExecutionModal({
             {!isRunning ? (
               <button
                 onClick={handleStartExecution}
-                className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-electric-600 to-cyan-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-xs shadow-glow-marigold transition flex items-center gap-1.5 active:scale-95"
+                className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-electric-600 to-[#3B82F6] hover:from-electric-500 hover:to-[#60A5FA] text-white font-bold text-xs shadow-glow-marigold transition flex items-center gap-1.5 active:scale-95"
               >
                 <Play className="w-3.5 h-3.5 fill-white" />
                 <span>{currentStageIndex > 0 && !isCompleted ? "Resume Pipeline" : "Execute Full Pipeline"}</span>
@@ -286,7 +286,7 @@ export default function LivePipelineExecutionModal({
 
             <button
               onClick={handleRestart}
-              className="p-1.5 rounded-lg bg-[#000000] hover:bg-[#0E1215] text-[#E2E2E2]-300 border border-[#1B1F22] transition"
+              className="p-1.5 rounded-lg bg-[#1F242E] hover:bg-[#252B37] text-[#93C5FD] border border-[#333D50] transition"
               title="Reset Execution"
             >
               <RotateCcw className="w-4 h-4" />
@@ -298,13 +298,13 @@ export default function LivePipelineExecutionModal({
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 min-h-0 overflow-hidden">
           
           {/* Left Column: 12-Stage Subway List */}
-          <div className="lg:col-span-5 border-r border-[#1B1F22]/90 overflow-y-auto p-4 space-y-2 bg-[#090D18]/90 font-mono text-xs">
-            <div className="flex items-center justify-between pb-2 border-b border-[#1B1F22] text-[11px] text-[#E2E2E2]-400">
+          <div className="lg:col-span-5 border-r border-[#333D50]/90 overflow-y-auto p-4 space-y-2 bg-[#090D18]/90 font-mono text-xs">
+            <div className="flex items-center justify-between pb-2 border-b border-[#333D50] text-[11px] text-[#93C5FD]">
               <span className="font-bold uppercase tracking-wider">PIPELINE STAGES</span>
               <button
                 onClick={() => setSelectedStageFilter('ALL')}
                 className={`text-[10px] px-2 py-0.5 rounded transition ${
-                  selectedStageFilter === 'ALL' ? 'bg-[#22D3E6]/20 text-electric-300 border border-[#22D3E6]/30 font-bold' : 'text-[#E2E2E2]-500 hover:text-[#E2E2E2]-300'
+                  selectedStageFilter === 'ALL' ? 'bg-[#3B82F6]/20 text-electric-300 border border-[#3B82F6]/30 font-bold' : 'text-[#93C5FD] hover:text-[#93C5FD]'
                 }`}
               >
                 Show All Logs
@@ -325,42 +325,42 @@ export default function LivePipelineExecutionModal({
                   onClick={() => setSelectedStageFilter(spec.num)}
                   className={`p-2.5 rounded-none border transition cursor-pointer flex items-center justify-between gap-3 ${
                     isCurrent
-                      ? 'bg-cyan-950/40 border-cyan-500/60 shadow-glow-cyan'
+                      ? 'bg-[#1F242E]/40 border-[#3B82F6]/60 shadow-glow-azure'
                       : isDone
-                      ? 'bg-[#000000]/60 border-[#1B1F22]/80 hover:border-[#1B1F22]'
-                      : 'bg-[#000000]/20 border-[#1B1F22] opacity-60'
+                      ? 'bg-[#1F242E]/60 border-[#333D50]/80 hover:border-[#333D50]'
+                      : 'bg-[#1F242E]/20 border-[#333D50] opacity-60'
                   } ${isFiltered ? 'ring-1 ring-electric-400' : ''}`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
                       isDone
-                        ? 'bg-emerald-950 text-[#D6E85A] border border-[#D6E85A]/40'
+                        ? 'bg-emerald-950 text-[#93C5FD] border border-[#93C5FD]/40'
                         : isCurrent
-                        ? 'bg-cyan-950 text-cyan-300 border border-cyan-500 animate-spin'
-                        : 'bg-[#05080A] text-[#E2E2E2]-500 border border-[#1B1F22]'
+                        ? 'bg-[#1F242E] text-[#93C5FD] border border-[#3B82F6] animate-spin'
+                        : 'bg-[#252B37] text-[#93C5FD] border border-[#333D50]'
                     }`}>
                       {isDone ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Icon className="w-3.5 h-3.5" />}
                     </div>
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-bold text-[#E2E2E2]-500">#{spec.num.toString().padStart(2, '0')}</span>
+                        <span className="text-[10px] font-bold text-[#93C5FD]">#{spec.num.toString().padStart(2, '0')}</span>
                         <h4 className="font-bold text-xs text-white truncate">{spec.name}</h4>
                       </div>
-                      <p className="text-[10px] text-[#E2E2E2]-400 truncate font-sans">{spec.desc}</p>
+                      <p className="text-[10px] text-[#93C5FD] truncate font-sans">{spec.desc}</p>
                     </div>
                   </div>
 
                   {/* Status Indicator */}
                   <div className="shrink-0 flex items-center gap-2">
                     {result?.duration_ms && (
-                      <span className="text-[10px] text-[#E2E2E2]-400">{result.duration_ms}ms</span>
+                      <span className="text-[10px] text-[#93C5FD]">{result.duration_ms}ms</span>
                     )}
                     {isCurrent && (
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                      <span className="w-2 h-2 rounded-full bg-[#60A5FA] animate-ping" />
                     )}
                     {isDone && (
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-950/80 text-[#D6E85A] border border-[#D6E85A]/30">
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-950/80 text-[#93C5FD] border border-[#93C5FD]/30">
                         DONE
                       </span>
                     )}
@@ -376,54 +376,54 @@ export default function LivePipelineExecutionModal({
           </div>
 
           {/* Right Column: Live Terminal Output */}
-          <div className="lg:col-span-7 flex flex-col bg-[#050811] overflow-hidden">
+          <div className="lg:col-span-7 flex flex-col bg-[#171B23] overflow-hidden">
             
             {/* Terminal Window Chrome */}
-            <div className="px-4 py-2.5 bg-[#080E1B] border-b border-[#1B1F22] flex items-center justify-between text-xs font-mono shrink-0">
+            <div className="px-4 py-2.5 bg-[#171B23] border-b border-[#333D50] flex items-center justify-between text-xs font-mono shrink-0">
               <div className="flex items-center gap-2">
                 <div className="flex gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#FF3B4E]/80"></span>
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#D6E85A]/80"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#93C5FD]/80"></span>
                 </div>
-                <Terminal className="w-3.5 h-3.5 text-cyan-400 ml-2" />
-                <span className="text-[#E2E2E2]-300 text-[11px] font-bold">fintrace@forensic-core:~$ run-pipeline --realtime</span>
+                <Terminal className="w-3.5 h-3.5 text-[#60A5FA] ml-2" />
+                <span className="text-[#93C5FD] text-[11px] font-bold">fintrace@forensic-core:~$ run-pipeline --realtime</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleCopyLogs}
-                  className="px-2 py-1 rounded bg-[#0E1215] hover:bg-slate-700 text-[#E2E2E2]-300 text-[10px] flex items-center gap-1 transition"
+                  className="px-2 py-1 rounded bg-[#252B37] hover:bg-slate-700 text-[#93C5FD] text-[10px] flex items-center gap-1 transition"
                   title="Copy terminal logs"
                 >
-                  {copied ? <Check className="w-3 h-3 text-[#D6E85A]" /> : <Copy className="w-3 h-3" />}
+                  {copied ? <Check className="w-3 h-3 text-[#93C5FD]" /> : <Copy className="w-3 h-3" />}
                   <span>{copied ? "Copied" : "Copy"}</span>
                 </button>
               </div>
             </div>
 
             {/* Scrollable Terminal Screen */}
-            <div className="flex-1 p-4 overflow-y-auto font-mono text-[11px] space-y-1.5 select-text text-[#E2E2E2]-300 leading-relaxed">
+            <div className="flex-1 p-4 overflow-y-auto font-mono text-[11px] space-y-1.5 select-text text-[#93C5FD] leading-relaxed">
               {filteredLogs.map((l) => (
                 <div key={l.id} className="flex items-start gap-2">
-                  <span className="text-[#E2E2E2]-500 text-[10px] select-none shrink-0">{l.time}</span>
+                  <span className="text-[#93C5FD] text-[10px] select-none shrink-0">{l.time}</span>
                   {l.stage > 0 && (
-                    <span className="text-cyan-400 font-bold text-[10px] select-none shrink-0">
+                    <span className="text-[#60A5FA] font-bold text-[10px] select-none shrink-0">
                       [STAGE {l.stage.toString().padStart(2, '0')}]
                     </span>
                   )}
                   <span className={`break-all ${
                     l.type === 'header'
-                      ? 'text-cyan-300 font-bold'
+                      ? 'text-[#93C5FD] font-bold'
                       : l.type === 'stage-start'
                       ? 'text-electric-300 font-bold'
                       : l.type === 'success'
-                      ? 'text-[#D6E85A] font-semibold'
+                      ? 'text-[#93C5FD] font-semibold'
                       : l.type === 'warn'
                       ? 'text-amber-400'
                       : l.type === 'error'
                       ? 'text-[#FF3B4E] font-bold'
-                      : 'text-[#E2E2E2]-300'
+                      : 'text-[#93C5FD]'
                   }`}>
                     {l.text}
                   </span>
@@ -431,7 +431,7 @@ export default function LivePipelineExecutionModal({
               ))}
 
               {filteredLogs.length === 0 && (
-                <div className="h-full flex flex-col items-center justify-center text-[#E2E2E2]-500 space-y-2 py-16">
+                <div className="h-full flex flex-col items-center justify-center text-[#93C5FD] space-y-2 py-16">
                   <Terminal className="w-8 h-8 text-slate-600" />
                   <p>Ready to execute. Click &quot;Execute Full Pipeline&quot; to begin real-time processing.</p>
                 </div>
@@ -440,15 +440,15 @@ export default function LivePipelineExecutionModal({
             </div>
 
             {/* Real-Time Database Synchronizer Bar */}
-            <div className="p-3 bg-[#080E1B] border-t border-[#1B1F22] flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono shrink-0">
+            <div className="p-3 bg-[#171B23] border-t border-[#333D50] flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono shrink-0">
               <div className="flex items-center gap-4">
                 <span>ACCOUNTS: <strong className="text-white">1,985</strong></span>
                 <span>TXNS: <strong className="text-white">3,218</strong></span>
                 <span>ALERTS: <strong className="text-[#FF3B4E]">29 High Risk</strong></span>
-                <span>CASES: <strong className="text-cyan-400">8 Active</strong></span>
+                <span>CASES: <strong className="text-[#60A5FA]">8 Active</strong></span>
               </div>
 
-              <div className="text-[#D6E85A] font-semibold flex items-center gap-1.5">
+              <div className="text-[#93C5FD] font-semibold flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span>RELATIONAL DB SYNCHRONIZED</span>
               </div>
@@ -459,11 +459,11 @@ export default function LivePipelineExecutionModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3 border-t border-[#1B1F22] bg-[#000000] flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <div className="text-xs text-[#E2E2E2]-400 font-mono">
+        <div className="px-6 py-3 border-t border-[#333D50] bg-[#1F242E] flex flex-wrap items-center justify-between gap-3 shrink-0">
+          <div className="text-xs text-[#93C5FD] font-mono">
             {isCompleted ? (
-              <span className="text-[#D6E85A] font-bold flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#D6E85A]" />
+              <span className="text-[#93C5FD] font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-[#93C5FD]" />
                 <span>All 12 stages executed successfully. Real database state refreshed.</span>
               </span>
             ) : (
@@ -477,7 +477,7 @@ export default function LivePipelineExecutionModal({
                 onClose();
                 if (setCurrentPage) setCurrentPage('dashboard');
               }}
-              className="px-4 py-2 rounded-none bg-electric-600/30 hover:bg-electric-600/50 text-electric-300 border border-[#22D3E6]/40 text-xs font-bold transition flex items-center gap-1.5"
+              className="px-4 py-2 rounded-none bg-electric-600/30 hover:bg-electric-600/50 text-electric-300 border border-[#3B82F6]/40 text-xs font-bold transition flex items-center gap-1.5"
             >
               <span>View Executive Dashboard</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -485,7 +485,7 @@ export default function LivePipelineExecutionModal({
 
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-none bg-[#0E1215] hover:bg-slate-700 text-[#E2E2E2]-300 text-xs font-semibold transition"
+              className="px-4 py-2 rounded-none bg-[#252B37] hover:bg-slate-700 text-[#93C5FD] text-xs font-semibold transition"
             >
               Close
             </button>

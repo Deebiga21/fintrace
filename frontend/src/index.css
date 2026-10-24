@@ -9,9 +9,9 @@
     overflow-y: auto;
   }
   body {
-    background-color: #000000 !important;
-    background: #000000 !important;
-    color: #E2E2E2;
+    background-color: #1F242E !important;
+    background: #1F242E !important;
+    color: #F3F4F6;
     @apply min-h-screen antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     overflow-x: hidden;
@@ -19,21 +19,22 @@
     letter-spacing: -0.01em;
   }
   ::selection {
-    background-color: #22D3E6;
-    color: #050505;
+    background-color: #3B82F6;
+    color: #F3F4F6;
   }
   #root {
     min-height: 100vh;
   }
   h1, h2, h3, h4 {
     letter-spacing: -0.02em;
+    color: #F3F4F6;
   }
 }
 
-/* Tactical HUD Refined Scrollbar */
+/* Tactical HUD Refined Scrollbar in Palette Colors */
 html {
   scrollbar-width: thin;
-  scrollbar-color: #1B1F22 #000000;
+  scrollbar-color: #3B82F6 #1F242E;
 }
 
 ::-webkit-scrollbar {
@@ -42,37 +43,38 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
-  border-left: 1px solid #1B1F22;
+  background: #1F242E;
+  border-left: 1px solid rgba(147, 197, 253, 0.12);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1B1F22;
-  border: 1px solid #000000;
+  background: #2C3443;
+  border: 1px solid #1F242E;
   min-height: 40px;
   transition: background 0.2s ease;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #22D3E6;
-  box-shadow: 0 0 10px rgba(34, 211, 230, 0.5);
+  background: #3B82F6;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: #6CEEFF;
-  box-shadow: 0 0 16px rgba(34, 211, 230, 0.85);
+  background: #60A5FA;
+  box-shadow: 0 0 16px rgba(96, 165, 250, 0.85);
 }
 
-/* Watch Dogs HUD Signature Meter & Panel Classes */
+/* Watch Dogs HUD Signature Meter & Panel Classes in Palette Colors */
 .meter {
   height: 5px;
-  background: #2A2D30;
+  background: #2C3443;
   position: relative;
 }
 .meter > i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #0E7C86, #22D3E6);
+  background: linear-gradient(90deg, #3B82F6, #60A5FA);
 }
 .meter::after {
   content: "";
@@ -81,8 +83,8 @@ html {
   top: -4px;
   width: 12px;
   height: 12px;
-  border: 1.5px solid #22D3E6;
-  background: #000000;
+  border: 1.5px solid #60A5FA;
+  background: #1F242E;
   transform: rotate(45deg);
 }
 
@@ -90,7 +92,7 @@ html {
   position: relative;
   padding: 24px;
   border: 0;
-  background: #05080A;
+  background: #252B37;
 }
 .hud-panel::before,
 .hud-panel::after {
@@ -98,7 +100,7 @@ html {
   position: absolute;
   width: 14px;
   height: 14px;
-  border: 1px solid #22D3E6;
+  border: 1.5px solid #3B82F6;
 }
 .hud-panel::before {
   top: 0;
@@ -113,12 +115,12 @@ html {
   border-top: 0;
 }
 
-/* Tactical Panel & Surface Classes */
+/* Tactical Panel & Surface Classes in Palette */
 .glass-panel {
-  background: rgba(5, 8, 10, 0.88);
+  background: rgba(31, 36, 46, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid #1B1F22;
+  border: 1px solid rgba(147, 197, 253, 0.16);
 }
 
 .glass-panel-hover {
@@ -126,23 +128,23 @@ html {
 }
 
 .glass-panel-hover:hover {
-  border-color: #22D3E6;
-  box-shadow: 0 0 16px rgba(34, 211, 230, 0.25);
+  border-color: #60A5FA;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.3);
 }
 
 .glass-apple-card {
-  background: #05080A;
+  background: #252B37;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid #1B1F22;
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(90, 95, 100, 0.15);
+  border: 1px solid rgba(147, 197, 253, 0.16);
+  box-shadow: 0 4px 20px 0 rgba(15, 23, 42, 0.5), inset 0 1px 0 0 rgba(147, 197, 253, 0.12);
 }
 
 .glass-apple-subtle {
-  background: rgba(14, 18, 21, 0.7);
+  background: rgba(37, 43, 55, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #1B1F22;
+  border: 1px solid rgba(147, 197, 253, 0.14);
 }
 
 /* Tactical Mesh / Grid Background Pattern */
@@ -150,20 +152,20 @@ html {
   background-color: transparent !important;
   background-size: 30px 30px;
   background-image: 
-    linear-gradient(to right, rgba(90, 95, 100, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(90, 95, 100, 0.06) 1px, transparent 1px);
+    linear-gradient(to right, rgba(147, 197, 253, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(147, 197, 253, 0.04) 1px, transparent 1px);
 }
 
 /* Alert Red radar pulse animation for high risk nodes / critical threats */
 @keyframes radar-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 59, 78, 0.65);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.65);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(255, 59, 78, 0);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 59, 78, 0);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
   }
 }
 

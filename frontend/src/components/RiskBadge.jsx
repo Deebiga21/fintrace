@@ -14,9 +14,9 @@ export default function RiskBadge({ level, score, showScore = true, size = "md" 
   }[size] || "px-2.5 py-0.5 text-xs font-bold";
 
   let badgeStyle = {
-    backgroundColor: "rgba(34, 211, 230, 0.12)",
-    color: "#22D3E6",
-    borderColor: "#22D3E6"
+    backgroundColor: "rgba(59, 130, 246, 0.15)",
+    color: "#3B82F6",
+    borderColor: "#3B82F6"
   };
   let marker = "○";
   let Icon = ShieldCheck;
@@ -31,9 +31,9 @@ export default function RiskBadge({ level, score, showScore = true, size = "md" 
     Icon = AlertTriangle;
   } else if (isMed) {
     badgeStyle = {
-      backgroundColor: "#D6E85A",
-      color: "#050505",
-      borderColor: "#D6E85A"
+      backgroundColor: "#93C5FD",
+      color: "#171B23",
+      borderColor: "#93C5FD"
     };
     marker = "◇";
     Icon = AlertCircle;

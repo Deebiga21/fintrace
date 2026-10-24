@@ -70,7 +70,7 @@ const DEFAULT_FONT = {
   lineHeight: 1.2,
 }
 
-const DEFAULT_TEXT_COLOR = "#22D3E6"
+const DEFAULT_TEXT_COLOR = "#3B82F6"
 
 const DEFAULT_NETWORK = {
   nodes: 900,
@@ -79,8 +79,8 @@ const DEFAULT_NETWORK = {
 }
 
 const DEFAULT_LINES = {
-  color: "#5A5F64",
-  accent: "#22D3E6",
+  color: "#93C5FD",
+  accent: "#3B82F6",
   thickness: 0.65,
   opacity: 5,
   depth: 8,
@@ -96,8 +96,8 @@ const DEFAULT_INTRO = {
 const DEFAULT_HOVER = {
   reach: 20,
   glowSize: 130,
-  glow: "#22D3E6",
-  pill: "rgba(5, 8, 10, 0.95)",
+  glow: "#3B82F6",
+  pill: "rgba(31, 36, 46, 0.95)",
   lag: 4.5,
 }
 
@@ -142,7 +142,7 @@ function parseColor(ctx, input) {
   if (!input) return BLACK
   const hit = colorCache.get(input)
   if (hit) return hit
-  ctx.fillStyle = "#000000"
+  ctx.fillStyle = "#1F242E"
   ctx.fillStyle = input
   const normal = ctx.fillStyle
   let out = BLACK
@@ -1339,8 +1339,8 @@ export default function BriarGlobe({
                 backgroundColor: resolvedHover.pill,
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
-                border: "1px solid rgba(56, 189, 248, 0.4)",
-                boxShadow: "0 4px 20px -2px rgba(56, 189, 248, 0.35)",
+                border: "1px solid rgba(96, 165, 250, 0.4)",
+                boxShadow: "0 4px 20px -2px rgba(59, 130, 246, 0.35)",
                 color: textColor,
                 whiteSpace: "nowrap",
                 userSelect: "none",
