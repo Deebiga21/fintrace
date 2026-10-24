@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Network,
   Share2,
@@ -24,8 +24,7 @@ import {
   Wrench,
   Globe,
   Radio,
-  Lock,
-  Layers as LayersIcon
+  Lock
 } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
 import BriarGlobe from '../components/BriarGlobe';
@@ -154,16 +153,17 @@ export default function LandingPage({
   };
 
   return (
-    <div className="min-h-screen w-full bg-fintech-bg text-fintech-text relative overflow-x-hidden transition-colors duration-300">
+    <div className="min-h-screen w-full bg-fintech-bg text-fintech-text relative overflow-x-hidden transition-colors duration-200">
 
       {/* =========================================================================
-          HERO SECTION (Strictly based on Template Screenshot 1)
+          HERO SECTION (Strictly based on Template Screenshot 1 with Same Palette)
           ========================================================================= */}
-      <section className="relative min-h-screen flex flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-14 pt-6 pb-10">
+      <section className="relative min-h-screen flex flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-14 pt-6 pb-10 bg-fintech-bg">
 
-        {/* 3D Model Background: Creation of Adam Hand Mesh / Video Recording in Center Background */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none" aria-hidden="true">
-          {/* Central 3D Video & Poster */}
+        {/* 3D Model Background: Monochrome Chrome Sculpture + Radial Mask to #0B0B0F */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none bg-fintech-bg" aria-hidden="true">
+          
+          {/* Central 3D Video & Poster in Pure Monochrome Metallic Chrome */}
           <div className="absolute inset-0 w-full h-full flex items-center justify-center">
             <video
               autoPlay
@@ -171,48 +171,47 @@ export default function LandingPage({
               muted
               playsInline
               poster="/creation_of_adam_hand.png"
-              className="w-full h-full object-cover transition-opacity duration-700"
+              className="w-full h-full object-cover transition-opacity duration-700 pointer-events-none select-none"
               style={{
-                opacity: isDark ? 0.38 : 0.16,
+                opacity: isDark ? 0.42 : 0.15,
                 mixBlendMode: isDark ? 'screen' : 'multiply',
                 filter: isDark
-                  ? 'contrast(125%) brightness(105%) hue-rotate(160deg) saturate(1.3)'
-                  : 'contrast(115%) brightness(95%) hue-rotate(185deg) saturate(1.1)',
-                transform: 'scale(1.12) translateY(5%)',
+                  ? 'grayscale(100%) contrast(180%) brightness(78%)'
+                  : 'grayscale(100%) contrast(140%) brightness(105%)',
+                maskImage: 'radial-gradient(ellipse 65% 55% at 50% 50%, black 20%, transparent 80%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 65% 55% at 50% 50%, black 20%, transparent 80%)',
+                transform: 'scale(1.08) translateY(2%)',
               }}
             >
               <source src="/the_creation_of_adam-recording.mp4" type="video/mp4" />
             </video>
           </div>
 
-          {/* Smooth Radial Vignette Mask */}
+          {/* 3D Topological Wireframe Wave Grid (matching template Screenshot 1) */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="0 0 1440 900" fill="none" preserveAspectRatio="none">
+            <path d="M-100 620 C200 480 400 700 720 540 C1040 380 1200 640 1540 500" stroke={isDark ? "#1FC8DB" : "#0E9FB3"} strokeWidth="1" strokeDasharray="4 4" opacity="0.35" />
+            <path d="M-100 660 C200 520 400 740 720 580 C1040 420 1200 680 1540 540" stroke={isDark ? "#1FC8DB" : "#0E9FB3"} strokeWidth="1" strokeDasharray="3 3" opacity="0.25" />
+            <path d="M-100 700 C200 560 400 780 720 620 C1040 460 1200 720 1540 580" stroke="#FFFFFF" strokeWidth="0.8" opacity="0.12" />
+            <path d="M-100 740 C200 600 400 820 720 660 C1040 500 1200 760 1540 620" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.08" />
+          </svg>
+
+          {/* Smooth Radial Vignette Mask: Guarantees 100% same background color throughout */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background: isDark
-                ? 'radial-gradient(ellipse at 50% 50%, rgba(11, 11, 15, 0.25) 0%, rgba(11, 11, 15, 0.72) 60%, #0B0B0F 95%)'
-                : 'radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.35) 0%, rgba(245, 247, 250, 0.8) 60%, #FFFFFF 95%)',
+                ? 'radial-gradient(ellipse at 50% 50%, rgba(11, 11, 15, 0.2) 0%, rgba(11, 11, 15, 0.75) 60%, #0B0B0F 95%)'
+                : 'radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.3) 0%, rgba(245, 247, 250, 0.8) 60%, #FFFFFF 95%)',
             }}
           />
 
-          {/* Precision Perspective Grid Floor */}
+          {/* Soft Turquoise Ambient Center Glow */}
           <div
-            className="absolute inset-0 pointer-events-none opacity-20"
-            style={{
-              backgroundImage: isDark
-                ? 'linear-gradient(to right, rgba(31, 200, 219, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(31, 200, 219, 0.1) 1px, transparent 1px)'
-                : 'linear-gradient(to right, rgba(14, 159, 179, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(14, 159, 179, 0.1) 1px, transparent 1px)',
-              backgroundSize: '40px 40px',
-            }}
-          />
-
-          {/* Soft Turquoise Horizon Glow */}
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] rounded-full blur-[140px] pointer-events-none"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[340px] rounded-full blur-[140px] pointer-events-none"
             style={{
               background: isDark
-                ? 'radial-gradient(circle, rgba(31, 200, 219, 0.15) 0%, transparent 70%)'
-                : 'radial-gradient(circle, rgba(14, 159, 179, 0.1) 0%, transparent 70%)',
+                ? 'radial-gradient(circle, rgba(31, 200, 219, 0.12) 0%, transparent 70%)'
+                : 'radial-gradient(circle, rgba(14, 159, 179, 0.08) 0%, transparent 70%)',
             }}
           />
         </div>
@@ -370,15 +369,15 @@ export default function LandingPage({
               </div>
 
               {/* Preview Thumbnail with Floating Badge */}
-              <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-gradient-to-br from-[#1C1E27] to-[#0B0B0F] border border-fintech-border/50 flex items-center justify-center p-3">
+              <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-fintech-surface border border-fintech-border/50 flex items-center justify-center p-3">
                 <div className="w-full h-full flex items-center justify-between gap-2">
-                  <div className="w-12 h-16 rounded-md bg-fintech-surface border border-fintech-border/80 flex flex-col items-center justify-center p-1 text-[8px] font-mono">
+                  <div className="w-12 h-16 rounded-md bg-fintech-card border border-fintech-border flex flex-col items-center justify-center p-1 text-[8px] font-mono">
                     <span className="text-[7px] text-fintech-primary">Electric</span>
                     <span className="text-[6px] text-fintech-muted">Future</span>
                   </div>
                   <div className="flex-1 space-y-1">
-                    <div className="h-1.5 bg-fintech-border/70 rounded w-4/5" />
-                    <div className="h-1.5 bg-fintech-border/40 rounded w-2/3" />
+                    <div className="h-1.5 bg-fintech-border rounded w-4/5" />
+                    <div className="h-1.5 bg-fintech-border/60 rounded w-2/3" />
                     <div className="h-1.5 bg-fintech-primary/30 rounded w-1/2" />
                   </div>
                 </div>
@@ -408,7 +407,7 @@ export default function LandingPage({
       {/* =========================================================================
           "WHAT WE DO" SECTION (Strictly based on Template Screenshot 2)
           ========================================================================= */}
-      <section id="what-we-do" className="relative z-20 px-4 sm:px-8 lg:px-14 py-20 border-t border-fintech-border/60">
+      <section id="what-we-do" className="relative z-20 px-4 sm:px-8 lg:px-14 py-20 border-t border-fintech-border/60 bg-fintech-bg">
         
         {/* Top Centered Pill Badge */}
         <div className="flex justify-start mb-6">
@@ -610,7 +609,7 @@ export default function LandingPage({
       {/* =========================================================================
           INTERACTIVE PROCESSING LIFECYCLE (FinTech Intelligence Stepper)
           ========================================================================= */}
-      <section id="dashboard-preview" className="relative z-20 px-4 sm:px-8 lg:px-14 py-16 max-w-7xl mx-auto space-y-6">
+      <section id="dashboard-preview" className="relative z-20 px-4 sm:px-8 lg:px-14 py-16 max-w-7xl mx-auto space-y-6 bg-fintech-bg">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-fintech-primary font-bold tracking-wider">
@@ -636,18 +635,18 @@ export default function LandingPage({
 
         {/* Stepper Frame */}
         <div className="rounded-3xl border border-fintech-border bg-fintech-card overflow-hidden shadow-card-dark">
-          <div className="px-5 py-3.5 bg-fintech-surface/80 border-b border-fintech-border flex items-center justify-between text-xs font-mono">
+          <div className="px-5 py-3.5 bg-fintech-surface border-b border-fintech-border flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-2">
               <Terminal className="w-3.5 h-3.5 text-fintech-accent" />
               <span className="font-bold text-fintech-text text-[11px]">fintrace-ai://pipeline-runner</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+            <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 bg-fintech-surface px-2.5 py-0.5 rounded-full border border-fintech-border">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span>REPOSITORIES CONNECTED</span>
             </div>
           </div>
 
-          <div className="p-4 sm:p-6">
+          <div className="p-4 sm:p-6 bg-fintech-card">
             <AnimaticPipelineStepper
               setCurrentPage={setCurrentPage}
               onAccountSelect={onAccountSelect}
@@ -666,7 +665,7 @@ export default function LandingPage({
       {/* =========================================================================
           TYPOLOGY ANALYZER (Interactive Scenario Simulator)
           ========================================================================= */}
-      <section id="typology-simulator" className="relative z-20 px-4 sm:px-8 lg:px-14 py-16 max-w-7xl mx-auto space-y-6">
+      <section id="typology-simulator" className="relative z-20 px-4 sm:px-8 lg:px-14 py-16 max-w-7xl mx-auto space-y-6 bg-fintech-bg">
         <div className="p-6 md:p-8 rounded-3xl border border-fintech-border bg-fintech-card space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-fintech-border pb-4">
             <div>
@@ -733,7 +732,7 @@ export default function LandingPage({
                 </div>
                 <div className="p-2.5 rounded-xl bg-fintech-surface border border-fintech-border">
                   <span className="text-fintech-muted text-[10px] block">TURNOVER</span>
-                  <span className="font-bold text-amber-400">{currentScenario.metrics.drainRatio}</span>
+                  <span className="font-bold text-fintech-accent">{currentScenario.metrics.drainRatio}</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-fintech-surface border border-fintech-border">
                   <span className="text-fintech-muted text-[10px] block">FLOW HOPS</span>
@@ -765,11 +764,11 @@ export default function LandingPage({
                     <div className="flex-1 flex flex-col items-center text-center p-3 rounded-xl bg-fintech-card border border-fintech-border">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border mb-2 ${
                         node.type === 'victim'
-                          ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40'
+                          ? 'bg-fintech-surface text-emerald-400 border-emerald-500/40'
                           : node.type === 'target'
-                          ? 'bg-rose-950 text-rose-200 border-rose-500 animate-pulse'
+                          ? 'bg-fintech-surface text-rose-400 border-rose-500/50 animate-pulse'
                           : node.type === 'layer'
-                          ? 'bg-amber-950/70 text-amber-300 border-amber-500/40'
+                          ? 'bg-fintech-surface text-amber-400 border-amber-500/40'
                           : 'bg-fintech-surface text-fintech-text border-fintech-border'
                       }`}>
                         {i + 1}
@@ -796,7 +795,7 @@ export default function LandingPage({
       {/* =========================================================================
           3D SPATIAL RELATIONAL GRAPH CANVAS (BriarGlobe)
           ========================================================================= */}
-      <section id="topology-3d" className="relative z-20 px-4 sm:px-8 lg:px-14 py-16 max-w-7xl mx-auto space-y-6">
+      <section id="topology-3d" className="relative z-20 px-4 sm:px-8 lg:px-14 py-16 max-w-7xl mx-auto space-y-6 bg-fintech-bg">
         <div className="p-6 md:p-8 rounded-3xl border border-fintech-border bg-fintech-card space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
@@ -829,7 +828,7 @@ export default function LandingPage({
       {/* =========================================================================
           FOOTER (Clean & Aligned with Theme Palette)
           ========================================================================= */}
-      <footer className="relative z-20 border-t border-fintech-border bg-fintech-card/80 backdrop-blur-xl px-6 lg:px-14 py-10 text-xs text-fintech-muted">
+      <footer className="relative z-20 border-t border-fintech-border bg-fintech-card px-6 lg:px-14 py-10 text-xs text-fintech-muted">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <span className="text-xl font-black text-fintech-text tracking-tighter">fintrace</span>

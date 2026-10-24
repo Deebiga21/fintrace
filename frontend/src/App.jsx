@@ -3,7 +3,6 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import CreateCaseModal from './components/CreateCaseModal';
 import LivePipelineExecutionModal from './components/LivePipelineExecutionModal';
-import DedsecBackground from './components/DedsecBackground';
 import SiteBackground from './components/SiteBackground';
 
 // Pages
@@ -110,9 +109,7 @@ export default function App() {
   // Standalone Full-Screen Landing Showcase (Integrated Dashboard-First Experience)
   if (currentPage === 'landing') {
     return (
-      <div className="dedsec-app-shell dedsec-landing-shell relative bg-fintech-bg text-fintech-text">
-        <SiteBackground />
-        <DedsecBackground />
+      <div className="relative bg-fintech-bg text-fintech-text">
         <LandingPage
           setCurrentPage={setCurrentPage}
           onAccountSelect={handleAccountSelect}
@@ -137,10 +134,9 @@ export default function App() {
   }
 
   return (
-    <div className="dedsec-app-shell flex h-screen bg-fintech-bg text-fintech-text overflow-hidden font-sans relative">
+    <div className="flex h-screen bg-fintech-bg text-fintech-text overflow-hidden font-sans relative">
       <SiteBackground />
-      <DedsecBackground />
-      {/* Consistent Navigation Sidebar */}
+            {/* Consistent Navigation Sidebar */}
       <Sidebar
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -149,7 +145,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <div className="dedsec-app-content flex-1 flex flex-col h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top Navbar */}
         <Navbar
           currentPage={currentPage}
