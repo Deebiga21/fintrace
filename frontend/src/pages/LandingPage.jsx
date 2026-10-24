@@ -275,7 +275,7 @@ export default function LandingPage({
                 color: isDark ? '#0B0B0F' : '#FFFFFF',
               }}
             >
-              <span>Let's Chat!</span>
+              <span>Launch Command Center</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
@@ -286,7 +286,7 @@ export default function LandingPage({
           {/* Big Editorial Headline */}
           <div className="lg:col-span-8 space-y-0 leading-none">
             <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[104px] font-black tracking-tight text-fintech-text block">
-              Create,
+              Dismantle,
             </h1>
             <span
               className="font-serif-italic text-6xl sm:text-7xl md:text-8xl lg:text-[116px] font-normal tracking-tight block leading-[0.95]"
@@ -295,29 +295,29 @@ export default function LandingPage({
                 letterSpacing: '-0.03em',
               }}
             >
-              Impactful
+              Syndicates
             </span>
           </div>
 
           {/* Top-Right Subtitle & Socials Block */}
           <div className="lg:col-span-4 flex flex-col justify-end space-y-4 lg:pl-6 text-right lg:text-left">
             <p className="text-xs sm:text-sm font-normal text-fintech-muted leading-relaxed max-w-sm">
-              <strong className="text-fintech-text font-semibold">© We Build Brands, websites</strong> and digital experience with intention, clarity and care
+              <strong className="text-fintech-text font-semibold">Autonomous AML Intelligence:</strong> Neural graph tracing and forensic case dossier automation for financial institutions and enforcement agencies.
             </p>
             <div className="pt-2 border-t border-fintech-border/80 flex items-center justify-between gap-4">
-              <span className="text-xs font-semibold text-fintech-text tracking-tight">Contact Us</span>
+              <span className="text-xs font-semibold text-fintech-text tracking-tight">Standards</span>
               <div className="flex items-center gap-2">
                 <span className="w-7 h-7 rounded-full border border-fintech-border flex items-center justify-center text-[10px] text-fintech-muted hover:text-fintech-text hover:border-fintech-primary transition-colors cursor-pointer">
-                  fb
+                  AML
                 </span>
                 <span className="w-7 h-7 rounded-full border border-fintech-border flex items-center justify-center text-[10px] text-fintech-muted hover:text-fintech-text hover:border-fintech-primary transition-colors cursor-pointer">
-                  ig
+                  GNN
                 </span>
                 <span className="w-7 h-7 rounded-full border border-fintech-border flex items-center justify-center text-[10px] text-fintech-muted hover:text-fintech-text hover:border-fintech-primary transition-colors cursor-pointer">
-                  tw
+                  API
                 </span>
                 <span className="w-7 h-7 rounded-full border border-fintech-border flex items-center justify-center text-[10px] text-fintech-muted hover:text-fintech-text hover:border-fintech-primary transition-colors cursor-pointer">
-                  Bē
+                  1930
                 </span>
               </div>
             </div>
@@ -331,19 +331,23 @@ export default function LandingPage({
           <div className="md:col-span-4 space-y-3">
             <div>
               <span className="text-xs font-bold text-fintech-text uppercase tracking-wider block mb-1">
-                We do
+                Core Focus
               </span>
               <p className="text-xs font-normal text-fintech-muted leading-relaxed">
-                Brand Identity <span className="text-fintech-border">/</span> UI/UX Design<br />
-                Development <span className="text-fintech-border">/</span> Marketing
+                Graph Neural Networks <span className="text-fintech-border">/</span> Mule Detection<br />
+                Autonomous Money Trail <span className="text-fintech-border">/</span> Legal Dossiers
               </p>
             </div>
 
             {/* Subtle Client Typography Logos */}
-            <div className="flex items-center gap-6 pt-2 text-fintech-muted/70 text-sm font-serif-italic tracking-wide">
-              <span className="hover:text-fintech-text transition-colors cursor-default font-semibold">venice.</span>
-              <span className="hover:text-fintech-text transition-colors cursor-default font-bold font-sans">cairo</span>
-              <span className="hover:text-fintech-text transition-colors cursor-default font-serif italic">italic</span>
+            <div className="flex items-center gap-4 pt-2 text-fintech-muted/80 text-xs font-mono tracking-wider">
+              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">RBI</span>
+              <span className="text-fintech-border">•</span>
+              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">FIU-IND</span>
+              <span className="text-fintech-border">•</span>
+              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">1930 LEA</span>
+              <span className="text-fintech-border">•</span>
+              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">CERT-In</span>
             </div>
           </div>
 
@@ -373,8 +377,8 @@ export default function LandingPage({
               <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-fintech-surface border border-fintech-border/50 flex items-center justify-center p-3">
                 <div className="w-full h-full flex items-center justify-between gap-2">
                   <div className="w-12 h-16 rounded-md bg-fintech-card border border-fintech-border flex flex-col items-center justify-center p-1 text-[8px] font-mono">
-                    <span className="text-[7px] text-fintech-primary">Electric</span>
-                    <span className="text-[6px] text-fintech-muted">Future</span>
+                    <span className="text-[7px] text-fintech-primary">MULE_01</span>
+                    <span className="text-[6px] text-fintech-muted">94.2%</span>
                   </div>
                   <div className="flex-1 space-y-1">
                     <div className="h-1.5 bg-fintech-border rounded w-4/5" />
@@ -398,8 +402,8 @@ export default function LandingPage({
             onClick={() => scrollToSection('what-we-do')}
             className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-fintech-border bg-fintech-card/90 hover:border-fintech-primary text-xs font-semibold text-fintech-text transition-all duration-200 shadow-sm"
           >
-            <Wrench className="w-3.5 h-3.5 text-fintech-primary" />
-            <span>Our Services</span>
+            <Shield className="w-3.5 h-3.5 text-fintech-primary" />
+            <span>Platform Capabilities</span>
           </button>
         </div>
       </section>
@@ -413,8 +417,8 @@ export default function LandingPage({
         {/* Top Centered Pill Badge */}
         <div className="flex justify-start mb-6">
           <span className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-fintech-border bg-fintech-card text-xs font-semibold text-fintech-text shadow-sm">
-            <Wrench className="w-3.5 h-3.5 text-fintech-primary" />
-            <span>Our Services</span>
+            <Shield className="w-3.5 h-3.5 text-fintech-primary" />
+            <span>Platform Capabilities</span>
           </span>
         </div>
 
@@ -429,7 +433,7 @@ export default function LandingPage({
 
           <div className="lg:col-span-6 flex items-center lg:justify-end">
             <p className="text-sm sm:text-base text-fintech-muted font-normal leading-relaxed max-w-xl">
-              We craft digital experiences from idea to launch — blending strategy, design, and engineering to build products that performs.
+              We dismantle organized financial crime syndicates in real time — combining inductive Graph Neural Networks, topological money trail analysis, and judicial evidentiary synthesis.
             </p>
           </div>
         </div>
@@ -469,10 +473,10 @@ export default function LandingPage({
             <div className="space-y-3">
               <span className="text-xs font-mono font-bold text-fintech-muted">/01</span>
               <h3 className="text-xl font-bold text-fintech-text tracking-tight group-hover:text-fintech-primary transition-colors">
-                Brand Identity
+                Graph Topology Analysis
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed font-normal">
-                Create visual identities that align with your voice and make lasting impressions.
+                Construct directed transaction graphs from raw banking ledgers to uncover hidden mule aggregator hubs and smurfing structures.
               </p>
             </div>
           </div>
@@ -504,10 +508,10 @@ export default function LandingPage({
             <div className="space-y-3">
               <span className="text-xs font-mono font-bold text-fintech-muted">/02</span>
               <h3 className="text-xl font-bold text-fintech-text tracking-tight group-hover:text-fintech-primary transition-colors">
-                UI/UX Design
+                Mule Account Detection
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed font-normal">
-                Focus on user-first interfaces that are both beautiful, intuitive, and purposes.
+                2-hop GraphSAGE inductive neural classifiers identify dormant conduits, shell accounts, and rapid fund drains with &gt;96% precision.
               </p>
             </div>
           </div>
@@ -547,10 +551,10 @@ export default function LandingPage({
             <div className="space-y-3">
               <span className="text-xs font-mono font-bold text-fintech-muted">/03</span>
               <h3 className="text-xl font-bold text-fintech-text tracking-tight group-hover:text-fintech-primary transition-colors">
-                Web Development
+                Autonomous Money Trail
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed font-normal">
-                Develop high-performance websites and apps built to grow with you.
+                Trace illicit fund dispersal across multi-bank hops and pinpoint primary beneficiaries before accounts are drained.
               </p>
             </div>
           </div>
@@ -584,10 +588,10 @@ export default function LandingPage({
             <div className="space-y-3">
               <span className="text-xs font-mono font-bold text-fintech-muted">/04</span>
               <h3 className="text-xl font-bold text-fintech-text tracking-tight group-hover:text-fintech-primary transition-colors">
-                Digital Marketing
+                Evidentiary Legal Dossiers
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed font-normal">
-                Craft data-driven campaigns that attract, engage, and convert — across channels.
+                Compile SHA-256 sealed investigation dockets linked to 1930 cyber complaints, formatted for immediate statutory lien orders.
               </p>
             </div>
           </div>
