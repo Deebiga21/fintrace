@@ -3,7 +3,6 @@ import {
   Search,
   RefreshCw,
   Cpu,
-  Shield,
   UserCheck,
   CheckCircle2,
   AlertCircle,
@@ -74,33 +73,34 @@ export default function Navbar({
     cases: "Investigation Case Management",
     "case-details": "Case Dossier, Evidence & Audit Logs",
     "analytics-reports": "Intelligence Reports & Model Analytics",
-    "settings-model": "GraphSAGE Model Architecture & Settings"
+    "settings-model": "GraphSAGE Model Architecture & Settings",
+    pipeline: "Interactive System Execution Pipeline"
   };
 
   return (
-    <header className="h-16 bg-navy-900/90 border-b border-slate-800 px-6 flex items-center justify-between backdrop-blur-md sticky top-0 z-10">
+    <header className="h-14 bg-[#05080A]/95 border-b border-[#1B1F22] px-6 flex items-center justify-between sticky top-0 z-10 select-none font-['Titillium_Web',sans-serif]">
       {/* Title & Breadcrumbs */}
       <div>
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <span className="font-mono text-electric-400">FINTRACE</span>
-          <span>/</span>
-          <span className="text-slate-300 font-medium capitalize">{currentPage.replace('-', ' ')}</span>
+        <div className="flex items-center gap-2 text-[10px] text-[#9AA0A6] font-['Share_Tech_Mono',monospace]">
+          <span className="text-[#22D3E6] font-bold">FINTRACE_OS</span>
+          <span className="text-[#5A5F64]">&gt;</span>
+          <span className="text-[#bbc9cb] uppercase tracking-wider">{currentPage.replace('-', '_')}</span>
         </div>
-        <h1 className="text-sm font-bold text-white tracking-wide">
-          {pageTitles[currentPage] || "Investigator Console"}
+        <h1 className="text-xs sm:text-sm font-['Rajdhani',sans-serif] font-bold text-white uppercase tracking-wider">
+          {pageTitles[currentPage] || "INVESTIGATOR CONSOLE"}
         </h1>
       </div>
 
       {/* Center Actions / Global Search */}
       <div className="flex items-center gap-3">
-        <form onSubmit={handleSearchSubmit} className="relative w-64 md:w-80">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <form onSubmit={handleSearchSubmit} className="relative w-56 md:w-72 flex items-center">
+          <span className="font-['Share_Tech_Mono',monospace] text-xs text-[#22D3E6] mr-1.5 font-bold">&gt;</span>
           <input
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search Account ID (e.g. MULE_AGG_01) or Txn..."
-            className="w-full pl-9 pr-3 py-1.5 bg-navy-850 border border-slate-700/80 rounded-lg text-xs text-slate-100 placeholder-slate-400 focus:outline-none focus:border-electric-400 transition font-mono"
+            placeholder="search account, hash, txn..."
+            className="w-full bg-transparent border-b border-[#5A5F64] text-xs text-white placeholder-[#5A5F64] focus:outline-none focus:border-[#22D3E6] pb-0.5 rounded-none font-['Share_Tech_Mono',monospace] transition"
           />
         </form>
 
@@ -108,52 +108,51 @@ export default function Navbar({
           onClick={handleReloadSampleData}
           disabled={isSyncing}
           title="Sync benchmark banking network"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-750 border border-slate-700 text-xs font-medium text-slate-200 transition hover:border-slate-600 disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-1 bg-[#05080A] hover:bg-[#0B2E33] border border-[#5A5F64] hover:border-[#22D3E6] text-xs font-['Rajdhani',sans-serif] font-bold text-[#bbc9cb] hover:text-[#22D3E6] uppercase tracking-wider transition disabled:opacity-50"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-electric-400" : "text-slate-400"}`} />
+          <RefreshCw className={`w-3 h-3 ${isSyncing ? "animate-spin text-[#22D3E6]" : "text-[#5A5F64]"}`} />
           <span className="hidden sm:inline">Sync Benchmark</span>
         </button>
-
 
         <button
           onClick={handleRunInference}
           disabled={isSyncing}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-electric-600/20 hover:bg-electric-600/30 border border-electric-500/40 text-xs font-semibold text-electric-300 transition shadow-sm disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-1 bg-[#0B2E33] hover:bg-[#22D3E6] hover:text-[#050505] border border-[#22D3E6] text-xs font-['Rajdhani',sans-serif] font-bold text-[#22D3E6] uppercase tracking-wider transition disabled:opacity-50"
         >
-          <Cpu className="w-3.5 h-3.5 text-electric-400" />
+          <Cpu className="w-3 h-3" />
           <span className="hidden sm:inline">Run GNN Scoring</span>
         </button>
 
         <button
           onClick={onOpenLivePipeline}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-electric-600 via-cyan-500 to-emerald-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-xs shadow-glow-electric transition transform hover:scale-105 active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 py-1 bg-[#FFFFFF] hover:bg-[#22D3E6] text-[#050505] font-['Rajdhani',sans-serif] font-bold text-xs uppercase tracking-wider transition"
           title="Run Real-Time End-to-End Pipeline Execution with live logs"
         >
-          <Play className="w-3.5 h-3.5 fill-white" />
-          <span className="hidden md:inline">Run Live Pipeline</span>
-          <span className="text-[9px] bg-black/40 px-1.5 py-0.2 rounded font-mono">⚡ Real-Time</span>
+          <Play className="w-3 h-3 fill-current text-current" />
+          <span className="hidden md:inline">Live Pipeline</span>
+          <span className="text-[9px] bg-[#050505] text-[#22D3E6] px-1 py-0.2 font-['Share_Tech_Mono',monospace] font-bold">● LIVE</span>
         </button>
       </div>
 
       {/* Investigator Info */}
-      <div className="flex items-center gap-3 pl-4 border-l border-slate-800">
-        <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-electric-400">
-          <UserCheck className="w-4 h-4" />
+      <div className="flex items-center gap-3 pl-4 border-l border-[#1B1F22]">
+        <div className="w-7 h-7 bg-[#0B2E33] border border-[#22D3E6] rotate-45 flex items-center justify-center text-[#22D3E6]">
+          <UserCheck className="w-3.5 h-3.5 -rotate-45" />
         </div>
-        <div className="hidden lg:block text-right">
-          <div className="text-xs font-semibold text-slate-200">Investigator</div>
-          <div className="text-[10px] text-slate-400 font-mono">Financial Crime Investigation Workspace</div>
+        <div className="hidden lg:block text-right font-['Share_Tech_Mono',monospace]">
+          <div className="text-xs text-white font-bold">OPERATOR_01</div>
+          <div className="text-[9px] text-[#22D3E6]">SEC: CLEARED</div>
         </div>
       </div>
 
       {/* Floating Notice */}
       {actionNotice && (
-        <div className={`fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium shadow-glass border transition-all ${
+        <div className={`fixed top-16 right-6 z-50 flex items-center gap-2 px-3 py-2 text-xs font-['Share_Tech_Mono',monospace] border shadow-lg transition-all ${
           actionNotice.type === 'success'
-            ? 'bg-emerald-950/90 text-emerald-300 border-emerald-500/40'
-            : 'bg-rose-950/90 text-rose-300 border-rose-500/40'
+            ? 'bg-[#05080A] text-[#22D3E6] border-[#22D3E6]'
+            : 'bg-[#05080A] text-[#FF3B4E] border-[#FF3B4E]'
         }`}>
-          {actionNotice.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <AlertCircle className="w-4 h-4 text-rose-400" />}
+          {actionNotice.type === 'success' ? <CheckCircle2 className="w-3.5 h-3.5 text-[#22D3E6]" /> : <AlertCircle className="w-3.5 h-3.5 text-[#FF3B4E]" />}
           <span>{actionNotice.text}</span>
         </div>
       )}

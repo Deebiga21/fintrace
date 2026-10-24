@@ -137,21 +137,21 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg bg-navy-900 border border-slate-700 rounded-xl shadow-glass overflow-hidden flex flex-col animate-fadeIn">
+      <div className="w-full max-w-lg bg-[#05080A] border border-[#1B1F22] rounded-none shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col animate-fadeIn">
         {/* Header */}
-        <div className="p-4 bg-navy-850 border-b border-slate-800 flex items-center justify-between">
+        <div className="p-4 bg-navy-850 border-b border-[#1B1F22] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-electric-600/20 border border-electric-500/30 flex items-center justify-center text-electric-400">
+            <div className="w-8 h-8 rounded-lg bg-electric-600/20 border border-[#22D3E6]/30 flex items-center justify-center text-[#22D3E6]">
               <Briefcase className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white tracking-wide">Initiate Investigation Case</h3>
-              <p className="text-[11px] text-slate-400">Escalate flagged activity to formal investigative docket</p>
+              <h3 className="text-sm font-bold text-[#E2E2E2] tracking-wide">Initiate Investigation Case</h3>
+              <p className="text-[11px] text-[#E2E2E2]-400">Escalate flagged activity to formal investigative docket</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+            className="p-1 text-[#E2E2E2]-400 hover:text-[#E2E2E2] rounded-lg hover:bg-[#0E1215] transition"
           >
             <X className="w-4 h-4" />
           </button>
@@ -160,15 +160,15 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-5 space-y-4 text-xs font-sans">
           {error && (
-            <div className="p-3 rounded-lg bg-rose-950/70 border border-rose-500/50 text-rose-300 flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+            <div className="p-3 rounded-lg bg-rose-950/70 border border-[#FF3B4E]/50 text-[#FF3B4E] flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-[#FF3B4E] shrink-0 mt-0.5" />
               <span className="leading-snug">{error}</span>
             </div>
           )}
 
-          <div className="p-3 rounded-lg bg-sky-950/40 border border-sky-500/30 text-sky-100 space-y-2">
+          <div className="p-3 rounded-lg bg-[#05080A] border border-[#22D3E6] text-[#E2E2E2] rounded-none space-y-2">
             <p className="font-semibold">Want to see a complete example?</p>
-            <p className="text-[11px] leading-relaxed text-sky-100/80">
+            <p className="text-[11px] leading-relaxed text-[#E2E2E2]-400">
               Load the bundled synthetic MULE_AGG_01 example. It adds two sample transfer records as evidence and labels the case as a demo.
             </p>
             <button
@@ -181,31 +181,31 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
                 setSourceRef('');
                 setSummary('PROTOTYPE DEMO — Synthetic sample data only. TXN_10161–TXN_10166 send a combined ₹347,060.42 into MULE_AGG_01; TXN_10167 sends ₹340,000 to MULE_LAYER_02, followed by TXN_10168 sending ₹335,000 to CASHOUT_CRYPTO_09. Verify these IDs in the transaction records. This is not a real allegation or a trained-model finding.');
               }}
-              className="px-2.5 py-1.5 rounded border border-sky-400/40 text-sky-200 hover:bg-sky-900/60 font-semibold"
+              className="px-2.5 py-1.5 rounded border border-[#22D3E6] text-[#22D3E6] hover:bg-[#22D3E6]/15 rounded-full font-semibold"
             >
               Load sample case details
             </button>
           </div>
 
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Case Title *</label>
+            <label className="block text-[#E2E2E2]-300 font-semibold mb-1">Case Title *</label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Investigation into Mule Ring Layering Network"
-              className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-electric-400 text-xs"
+              className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-lg text-[#E2E2E2] focus:outline-none focus:border-[#22D3E6] text-xs"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1">Priority Level</label>
+              <label className="block text-[#E2E2E2]-300 font-semibold mb-1">Priority Level</label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-electric-400 text-xs"
+                className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-lg text-[#E2E2E2] focus:outline-none focus:border-[#22D3E6] text-xs"
               >
                 <option value="Critical">Critical Priority</option>
                 <option value="High">High Priority</option>
@@ -215,12 +215,12 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1">Assigned Investigator</label>
+              <label className="block text-[#E2E2E2]-300 font-semibold mb-1">Assigned Investigator</label>
               {investigatorsList.length > 0 ? (
                 <select
                   value={investigator}
                   onChange={(e) => setInvestigator(e.target.value)}
-                  className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-electric-400 text-xs"
+                  className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-lg text-[#E2E2E2] focus:outline-none focus:border-[#22D3E6] text-xs"
                 >
                   {investigatorsList.map((inv) => (
                     <option key={inv.id || inv.badge_id} value={inv.name}>
@@ -233,7 +233,7 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
                   type="text"
                   value={investigator}
                   onChange={(e) => setInvestigator(e.target.value)}
-                  className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-electric-400 text-xs"
+                  className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-lg text-[#E2E2E2] focus:outline-none focus:border-[#22D3E6] text-xs"
                 />
               )}
             </div>
@@ -241,23 +241,23 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1">Primary Subject Account</label>
+              <label className="block text-[#E2E2E2]-300 font-semibold mb-1">Primary Subject Account</label>
               <input
                 type="text"
                 value={primaryAccount}
                 onChange={(e) => setPrimaryAccount(e.target.value)}
                 placeholder="e.g. MULE_AGG_01"
-                className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-electric-400 font-mono text-xs"
+                className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-lg text-[#E2E2E2] focus:outline-none focus:border-[#22D3E6] font-mono text-xs"
               />
               <p className="mt-1 text-[10px] text-slate-500">Use an exact account ID already present in the transaction records.</p>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1">Investigation Source</label>
+              <label className="block text-[#E2E2E2]-300 font-semibold mb-1">Investigation Source</label>
               <select
                 value={sourceType}
                 onChange={(e) => setSourceType(e.target.value)}
-                className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-electric-400 text-xs"
+                className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-lg text-[#E2E2E2] focus:outline-none focus:border-[#22D3E6] text-xs"
               >
                 <option value="GNN Alert">GNN Mule Alert</option>
                 <option value="Money Trail">Multi-Hop Money Trail</option>
@@ -268,30 +268,30 @@ export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onC
           </div>
 
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Investigative Summary & Premise</label>
+            <label className="block text-[#E2E2E2]-300 font-semibold mb-1">Investigative Summary & Premise</label>
             <textarea
               rows={3}
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               placeholder="Outline the initial investigative premise, suspected mule typology, and rapid pass-through velocity..."
-              className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-electric-400 text-xs resize-none leading-relaxed"
+              className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-lg text-[#E2E2E2] focus:outline-none focus:border-[#22D3E6] text-xs resize-none leading-relaxed"
             />
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-800">
+          <div className="pt-2 flex items-center justify-end gap-3 border-t border-[#1B1F22]">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg transition"
+              className="px-4 py-2 bg-[#0E1215] hover:bg-slate-700 text-[#E2E2E2]-300 font-medium rounded-lg transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-electric-600 hover:bg-electric-500 text-white font-semibold rounded-lg shadow-glow-electric transition disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-electric-600 hover:bg-[#22D3E6] text-[#E2E2E2] font-semibold rounded-lg shadow-glow-electric transition disabled:opacity-50 flex items-center gap-2"
             >
               {isSubmitting ? 'Creating Docket...' : 'Create Formal Case'}
             </button>

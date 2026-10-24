@@ -4,32 +4,50 @@ import { AlertTriangle, ShieldCheck, AlertCircle } from 'lucide-react';
 export default function RiskBadge({ level, score, showScore = true, size = "md" }) {
   const normLevel = (level || "Low").toUpperCase();
 
-  const isHigh = normLevel === "HIGH";
-  const isMed = normLevel === "MEDIUM";
+  const isHigh = normLevel === "HIGH" || normLevel === "CRITICAL";
+  const isMed = normLevel === "MEDIUM" || normLevel === "SUSPECT";
 
   const sizeClasses = {
-    sm: "px-2 py-0.5 text-xs font-semibold",
-    md: "px-2.5 py-1 text-xs font-semibold",
-    lg: "px-3.5 py-1.5 text-sm font-bold tracking-wide"
-  }[size] || "px-2.5 py-1 text-xs font-semibold";
+    sm: "px-2 py-0.5 text-[10px] font-bold",
+    md: "px-2.5 py-0.5 text-xs font-bold",
+    lg: "px-3 py-1 text-sm font-bold tracking-wider"
+  }[size] || "px-2.5 py-0.5 text-xs font-bold";
 
-  let colorClasses = "bg-emerald-950/60 text-emerald-400 border border-emerald-500/30";
+  let badgeStyle = {
+    backgroundColor: "rgba(34, 211, 230, 0.12)",
+    color: "#22D3E6",
+    borderColor: "#22D3E6"
+  };
+  let marker = "○";
   let Icon = ShieldCheck;
 
   if (isHigh) {
-    colorClasses = "bg-rose-950/70 text-rose-300 border border-rose-500/50 shadow-glow-danger";
+    badgeStyle = {
+      backgroundColor: "#FF3B4E",
+      color: "#FFFFFF",
+      borderColor: "#FF3B4E"
+    };
+    marker = "◆";
     Icon = AlertTriangle;
   } else if (isMed) {
-    colorClasses = "bg-amber-950/60 text-amber-300 border border-amber-500/40";
+    badgeStyle = {
+      backgroundColor: "#D6E85A",
+      color: "#050505",
+      borderColor: "#D6E85A"
+    };
+    marker = "◇";
     Icon = AlertCircle;
   }
 
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full ${colorClasses} ${sizeClasses}`}>
-      <Icon className={size === "sm" ? "w-3 h-3" : "w-3.5 h-3.5"} />
+    <span
+      style={badgeStyle}
+      className={`inline-flex items-center gap-1.5 border font-['Rajdhani',sans-serif] uppercase tracking-wider ${sizeClasses}`}
+    >
+      <span className="text-[10px]">{marker}</span>
       <span>{normLevel} RISK</span>
-      {showScore && score !== undefined && score !== null && (
-        <span className="opacity-80 font-mono text-[11px] ml-0.5">
+      {showScore !== false && score !== undefined && score !== null && (
+        <span className="font-['Share_Tech_Mono',monospace] text-[10px] ml-1 opacity-90 font-bold">
           ({(score * 100).toFixed(0)}%)
         </span>
       )}

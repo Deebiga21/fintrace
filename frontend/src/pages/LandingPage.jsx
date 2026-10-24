@@ -48,7 +48,7 @@ class GlobeErrorBoundary extends React.Component {
             <Network className="w-6 h-6 animate-pulse" />
           </div>
           <span className="text-white text-sm font-bold">3D Relational Topology</span>
-          <span className="text-slate-400 text-xs mt-1">WebGL Network Stream Active</span>
+          <span className="text-icesilver-400 text-xs mt-1">WebGL Network Stream Active</span>
         </div>
       );
     }
@@ -248,7 +248,7 @@ export default function LandingPage({
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#070B14] text-slate-100 selection:bg-electric-500 selection:text-white relative overflow-x-hidden font-sans">
+    <div className="min-h-screen w-full bg-[#000000] text-icesilver selection:bg-electric-500 selection:text-white relative overflow-x-hidden font-sans">
       
       {/* 1. Full-Screen 3D Model Background (The Creation of Adam 3D Render) */}
       <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0 select-none">
@@ -263,17 +263,15 @@ export default function LandingPage({
           className="w-full h-full object-cover opacity-35 filter contrast-110 saturate-125 transform scale-105 pointer-events-none select-none"
         />
         {/* Soft Vignette Overlay ensuring text readability while 3D model animation is visible in the background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/85 via-[#070B14]/65 to-[#070B14]/85 pointer-events-none"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#070B14_85%)] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#000000]/85 via-[#000000]/65 to-[#000000]/85 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#000000_85%)] pointer-events-none"></div>
       </div>
 
       {/* Ambient Blue & Cyan Glows */}
-      <div className="fixed -top-40 -left-40 w-[650px] h-[650px] bg-electric-600/10 rounded-full blur-[160px] pointer-events-none z-0"></div>
-      <div className="fixed top-1/3 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[160px] pointer-events-none z-0"></div>
-      <div className="fixed -bottom-40 left-1/4 w-[700px] h-[700px] bg-blue-700/8 rounded-full blur-[180px] pointer-events-none z-0"></div>
+      {/* Pure Black Ambient */}
 
       {/* 2. Top Navigation Bar */}
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#070B14]/80 border-b border-slate-800/80 px-6 lg:px-12 py-3.5">
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#000000]/80 border-b border-icesilver/10 px-6 lg:px-12 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Logo */}
           <div
@@ -281,9 +279,9 @@ export default function LandingPage({
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
             <div className="flex items-center gap-1">
-              <span className="w-1.5 h-6 bg-gradient-to-b from-electric-400 to-blue-600 rounded-full transform -skew-x-12"></span>
-              <span className="w-1.5 h-6 bg-gradient-to-b from-electric-400 to-blue-600 rounded-full transform -skew-x-12 opacity-80"></span>
-              <span className="w-1.5 h-6 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full transform -skew-x-12 opacity-50"></span>
+              <span className="w-1.5 h-6 bg-gradient-to-b from-marigold-400 to-marigold-600 rounded-full transform -skew-x-12"></span>
+              <span className="w-1.5 h-6 bg-gradient-to-b from-marigold-400 to-marigold-600 rounded-full transform -skew-x-12 opacity-80"></span>
+              <span className="w-1.5 h-6 bg-gradient-to-b from-marigold-300 to-marigold-500 rounded-full transform -skew-x-12 opacity-50"></span>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -296,26 +294,26 @@ export default function LandingPage({
           </div>
 
           {/* Center Navigation Links */}
-          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-slate-300">
-            <button onClick={() => scrollToSection('dashboard-preview')} className="transition hover:text-white flex items-center gap-1.5">
+          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-icesilver-300">
+            <button onClick={() => scrollToSection('dashboard-preview')} className="transition hover:text-icesilver flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-electric-400"></span>
               <span>Live Dashboard</span>
             </button>
-            <button onClick={() => setCurrentPage('pipeline')} className="transition text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 font-semibold">
+            <button onClick={() => setCurrentPage('pipeline')} className="transition text-marigold hover:text-marigold-300 flex items-center gap-1.5 font-semibold">
               <Workflow className="w-3.5 h-3.5" />
               <span>System Pipeline</span>
             </button>
-            <button onClick={() => scrollToSection('simulator')} className="transition hover:text-white">Typology Analyzer</button>
-            <button onClick={() => scrollToSection('battle-arena')} className="transition hover:text-white">GNN vs XGBoost</button>
-            <button onClick={() => scrollToSection('topology-3d')} className="transition hover:text-white">3D Canvas</button>
-            <button onClick={() => scrollToSection('pipeline')} className="transition hover:text-white">Workflow</button>
+            <button onClick={() => scrollToSection('simulator')} className="transition hover:text-icesilver">Typology Analyzer</button>
+            <button onClick={() => scrollToSection('battle-arena')} className="transition hover:text-icesilver">GNN vs XGBoost</button>
+            <button onClick={() => scrollToSection('topology-3d')} className="transition hover:text-icesilver">3D Canvas</button>
+            <button onClick={() => scrollToSection('pipeline')} className="transition hover:text-icesilver">Workflow</button>
           </nav>
 
           {/* Right Action CTAs */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setCurrentPage('dashboard')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-electric-600 via-electric-500 to-cyan-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-xs shadow-glow-electric transition transform hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-marigold-500 to-marigold-400 hover:from-marigold-400 hover:to-marigold-300 text-white font-bold text-xs shadow-glow-marigold transition transform hover:scale-105 active:scale-95"
             >
               <span>Open Full Dashboard</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -329,7 +327,7 @@ export default function LandingPage({
         
         {/* Telemetry Status Bar */}
         <AnimatedContent trigger="mount" distance={25} duration={0.7} ease="power3.out">
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-[#0B1120]/90 border border-slate-800 text-xs shadow-lg backdrop-blur-md">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-[#05080A]/90 border border-icesilver/10 text-xs shadow-lg backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -338,9 +336,9 @@ export default function LandingPage({
                 </span>
               </div>
               <span className="text-slate-700 hidden sm:inline">|</span>
-              <div className="hidden md:flex items-center gap-4 text-[11px] text-slate-400 font-mono">
+              <div className="hidden md:flex items-center gap-4 text-[11px] text-icesilver-400 font-mono">
                 <span>ENGINE: <strong className="text-electric-300">Axum + SQLx (Tokio)</strong></span>
-                <span>MODEL: <strong className="text-cyan-400">GraphSAGE v2.1 (PyG)</strong></span>
+                <span>MODEL: <strong className="text-marigold">GraphSAGE v2.1 (PyG)</strong></span>
                 <span>MONITORED: <strong className="text-white">1,948 Nodes</strong></span>
                 <span>INFERENCE: <strong className="text-emerald-400">&lt; 45ms</strong></span>
               </div>
@@ -360,8 +358,8 @@ export default function LandingPage({
         {/* 3. High-Impact Institutional Hero Section (Fast, Responsive & Direct) */}
         <AnimatedContent trigger="mount" distance={35} delay={0.15} duration={0.8} ease="power3.out">
           <section className="text-center max-w-4xl mx-auto space-y-6 pt-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-electric-500/15 border border-electric-500/40 text-electric-300 text-xs font-semibold font-mono tracking-wide shadow-glow-electric">
-              <Zap className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-electric-500/15 border border-electric-500/40 text-electric-300 text-xs font-semibold font-mono tracking-wide shadow-glow-marigold">
+              <Zap className="w-3.5 h-3.5 text-marigold animate-pulse" />
               <span>Autonomous Mule Account Detection &amp; Network Intelligence</span>
             </div>
 
@@ -372,14 +370,14 @@ export default function LandingPage({
               </span>
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto font-normal">
+            <p className="text-icesilver-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto font-normal">
               Institutional AML investigation platform unmasking fan-in smurfing rings, circular laundering loops, and rapid pass-through conduits through deep 2-hop GraphSAGE neighborhood aggregation.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
               <button
                 onClick={() => setCurrentPage('dashboard')}
-                className="flex items-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-electric-600 via-electric-500 to-cyan-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-sm shadow-glow-electric transition transform hover:scale-105 active:scale-95"
+                className="flex items-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-marigold-500 to-marigold-400 hover:from-marigold-400 hover:to-marigold-300 text-white font-bold text-sm shadow-glow-marigold transition transform hover:scale-105 active:scale-95"
               >
                 <span>Open Full Dashboard</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -397,30 +395,30 @@ export default function LandingPage({
 
               <button
                 onClick={() => setCurrentPage('graph')}
-                className="flex items-center gap-2 px-6 py-3 rounded-full bg-navy-900/90 hover:bg-navy-850 text-slate-200 border border-slate-700 hover:border-electric-500/50 font-semibold text-sm transition group"
+                className="flex items-center gap-2 px-6 py-3 rounded-full bg-navy-900/90 hover:bg-navy-850 text-slate-200 border border-icesilver/15 hover:border-electric-500/50 font-semibold text-sm transition group"
               >
-                <Network className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                <Network className="w-4 h-4 text-marigold group-hover:scale-110 transition-transform" />
                 <span>Explore Graph Canvas</span>
               </button>
             </div>
 
             {/* Live Micro Metric Chips */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-slate-800/80 text-xs font-mono max-w-2xl mx-auto">
-              <div className="p-3 rounded-xl bg-[#0B1120]/90 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block uppercase">MONITORED NODES</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-icesilver/10 text-xs font-mono max-w-2xl mx-auto">
+              <div className="p-3 rounded-xl bg-[#05080A]/90 border border-icesilver/10">
+                <span className="text-[10px] text-icesilver-500 block uppercase">MONITORED NODES</span>
                 <span className="text-base font-bold text-white">1,985 Accounts</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#0B1120]/90 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block uppercase">FLAGGED MULES</span>
+              <div className="p-3 rounded-xl bg-[#05080A]/90 border border-icesilver/10">
+                <span className="text-[10px] text-icesilver-500 block uppercase">FLAGGED MULES</span>
                 <span className="text-base font-bold text-rose-400">29 High Risk</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#0B1120]/90 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block uppercase">LATENCY</span>
+              <div className="p-3 rounded-xl bg-[#05080A]/90 border border-icesilver/10">
+                <span className="text-[10px] text-icesilver-500 block uppercase">LATENCY</span>
                 <span className="text-base font-bold text-emerald-400">&lt; 45ms Neural Inference</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#0B1120]/90 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block uppercase">ROC-AUC</span>
-                <span className="text-base font-bold text-cyan-400">0.9981 Genuine</span>
+              <div className="p-3 rounded-xl bg-[#05080A]/90 border border-icesilver/10">
+                <span className="text-[10px] text-icesilver-500 block uppercase">ROC-AUC</span>
+                <span className="text-base font-bold text-marigold">0.9981 Genuine</span>
               </div>
             </div>
           </section>
@@ -433,13 +431,13 @@ export default function LandingPage({
             <div className="flex flex-wrap items-center justify-between gap-3 px-2">
               <div>
                 <div className="flex items-center gap-2 text-xs font-mono text-electric-400 font-bold tracking-wider">
-                  <BarChart3 className="w-4 h-4 text-cyan-400" />
+                  <BarChart3 className="w-4 h-4 text-marigold" />
                   <span>INTERACTIVE PROCESSING LIFECYCLE</span>
                 </div>
                 <h2 className="text-xl sm:text-2xl font-black text-white mt-0.5 tracking-tight">
                   Step-by-Step Financial Crime Intelligence
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5 max-w-xl">
+                <p className="text-xs text-icesilver-400 mt-0.5 max-w-xl">
                   Experience how FINTRACE ingests transaction ledgers, constructs multi-hop graphs, and executes GraphSAGE inference.
                 </p>
               </div>
@@ -447,7 +445,7 @@ export default function LandingPage({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCurrentPage('dashboard')}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-electric-600 to-cyan-500 hover:from-electric-500 hover:to-cyan-400 text-white font-bold text-xs shadow-glow-electric transition transform hover:scale-105 active:scale-95"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-electric-600 to-cyan-500 hover:from-marigold-400 hover:to-marigold-300 text-white font-bold text-xs shadow-glow-marigold transition transform hover:scale-105 active:scale-95"
                 >
                   <span>Enter Full Command Center</span>
                   <ArrowUpRight className="w-4 h-4" />
@@ -456,9 +454,9 @@ export default function LandingPage({
             </div>
 
             {/* Interactive Stepper inside Clean Console Frame */}
-            <div className="rounded-3xl border-2 border-slate-800/90 bg-[#070B14] shadow-[0_25px_70px_-15px_rgba(2,132,199,0.22)] overflow-hidden">
+            <div className="rounded-3xl border-2 border-icesilver/10/90 bg-[#000000] shadow-[0_25px_70px_-15px_rgba(2,132,199,0.22)] overflow-hidden">
               {/* Console Window Chrome Header */}
-              <div className="px-5 py-3.5 bg-[#0B1120] border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+              <div className="px-5 py-3.5 bg-[#05080A] border-b border-icesilver/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
                     <span className="w-3 h-3 rounded-full bg-rose-500/80"></span>
@@ -466,8 +464,8 @@ export default function LandingPage({
                     <span className="w-3 h-3 rounded-full bg-emerald-500/80"></span>
                   </div>
                   <span className="text-slate-700">|</span>
-                  <div className="flex items-center gap-2 text-slate-300">
-                    <Terminal className="w-3.5 h-3.5 text-cyan-400" />
+                  <div className="flex items-center gap-2 text-icesilver-300">
+                    <Terminal className="w-3.5 h-3.5 text-marigold" />
                     <span className="font-bold text-white text-[11px]">fintrace-ai://pipeline-runner</span>
                   </div>
                 </div>
@@ -499,12 +497,12 @@ export default function LandingPage({
 
         {/* 5. Interactive Financial Crime Typology Analyzer */}
         <AnimatedContent distance={40} threshold={0.1} duration={0.8} ease="power3.out">
-          <section id="simulator" className="scroll-mt-24 space-y-6 rounded-3xl bg-[#0B1120]/90 border border-slate-800 p-6 md:p-8 backdrop-blur-md">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <section id="simulator" className="scroll-mt-24 space-y-6 rounded-3xl bg-[#05080A]/90 border border-icesilver/10 p-6 md:p-8 backdrop-blur-md">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-icesilver/10 pb-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-cyan-400" />
-                  <span className="font-mono text-xs font-bold text-cyan-400 tracking-wider">
+                  <Activity className="w-4 h-4 text-marigold" />
+                  <span className="font-mono text-xs font-bold text-marigold tracking-wider">
                     TYPOLOGY ANALYZER
                   </span>
                 </div>
@@ -513,13 +511,13 @@ export default function LandingPage({
                 </h2>
               </div>
 
-              <div className="flex items-center gap-2 p-1 rounded-xl bg-black/60 border border-slate-800">
+              <div className="flex items-center gap-2 p-1 rounded-xl bg-black/60 border border-icesilver/10">
                 <button
                   onClick={() => setActiveScenario('cbs_freeze')}
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
                     activeScenario === 'cbs_freeze'
-                      ? 'bg-electric-600 text-white shadow-glow-electric'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-electric-600 text-white shadow-glow-marigold'
+                      : 'text-icesilver-400 hover:text-icesilver'
                   }`}
                 >
                   Core Banking Freeze
@@ -528,8 +526,8 @@ export default function LandingPage({
                   onClick={() => setActiveScenario('rapid')}
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
                     activeScenario === 'rapid'
-                      ? 'bg-electric-600 text-white shadow-glow-electric'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-electric-600 text-white shadow-glow-marigold'
+                      : 'text-icesilver-400 hover:text-icesilver'
                   }`}
                 >
                   Pass-Through Drain
@@ -538,8 +536,8 @@ export default function LandingPage({
                   onClick={() => setActiveScenario('closure')}
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
                     activeScenario === 'closure'
-                      ? 'bg-electric-600 text-white shadow-glow-electric'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-electric-600 text-white shadow-glow-marigold'
+                      : 'text-icesilver-400 hover:text-icesilver'
                   }`}
                 >
                   Abrupt Closure
@@ -554,21 +552,21 @@ export default function LandingPage({
                   <h3 className="text-base font-bold text-white font-mono">{currentScenario.title}</h3>
                   <RiskBadge level={currentScenario.riskLevel} score={currentScenario.riskScore} />
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-icesilver-300 leading-relaxed">
                   {currentScenario.description}
                 </p>
 
                 <div className="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1">
-                  <div className="p-2.5 rounded-xl bg-black/60 border border-slate-800">
-                    <span className="text-slate-500 text-[10px] block">VELOCITY</span>
-                    <span className="font-bold text-cyan-400">{currentScenario.metrics.velocity}</span>
+                  <div className="p-2.5 rounded-xl bg-black/60 border border-icesilver/10">
+                    <span className="text-icesilver-500 text-[10px] block">VELOCITY</span>
+                    <span className="font-bold text-marigold">{currentScenario.metrics.velocity}</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-black/60 border border-slate-800">
-                    <span className="text-slate-500 text-[10px] block">TURNOVER</span>
+                  <div className="p-2.5 rounded-xl bg-black/60 border border-icesilver/10">
+                    <span className="text-icesilver-500 text-[10px] block">TURNOVER</span>
                     <span className="font-bold text-amber-400">{currentScenario.metrics.drainRatio}</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-black/60 border border-slate-800">
-                    <span className="text-slate-500 text-[10px] block">FLOW HOPS</span>
+                  <div className="p-2.5 rounded-xl bg-black/60 border border-icesilver/10">
+                    <span className="text-icesilver-500 text-[10px] block">FLOW HOPS</span>
                     <span className="font-bold text-electric-300">
                       {currentScenario.metrics.inflowHops} in / {currentScenario.metrics.outflowHops} out
                     </span>
@@ -577,7 +575,7 @@ export default function LandingPage({
 
                 <button
                   onClick={() => handleLaunchScenario(currentScenario.targetAccount)}
-                  className="w-full py-2.5 bg-gradient-to-r from-electric-600 to-cyan-600 hover:from-electric-500 hover:to-cyan-500 text-white font-bold text-xs rounded-xl shadow-glow-electric transition flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-gradient-to-r from-electric-600 to-cyan-600 hover:from-electric-500 hover:to-cyan-500 text-white font-bold text-xs rounded-xl shadow-glow-marigold transition flex items-center justify-center gap-2"
                 >
                   <Share2 className="w-4 h-4" />
                   <span>Trace {currentScenario.targetAccount} Money Trail Live</span>
@@ -585,16 +583,16 @@ export default function LandingPage({
               </div>
 
               {/* Sequence Diagram Display */}
-              <div className="lg:col-span-7 p-5 rounded-2xl bg-black/60 border border-slate-800 space-y-4">
+              <div className="lg:col-span-7 p-5 rounded-2xl bg-black/60 border border-icesilver/10 space-y-4">
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-slate-400">DISSEMINATION SEQUENCE</span>
-                  <span className="text-cyan-400 font-bold">{currentScenario.pattern}</span>
+                  <span className="text-icesilver-400">DISSEMINATION SEQUENCE</span>
+                  <span className="text-marigold font-bold">{currentScenario.pattern}</span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 pt-2 font-mono">
                   {currentScenario.flowNodes.map((node, i) => (
                     <React.Fragment key={node.id}>
-                      <div className="flex-1 flex flex-col items-center text-center p-3 rounded-xl bg-[#0B1120] border border-slate-800">
+                      <div className="flex-1 flex flex-col items-center text-center p-3 rounded-xl bg-[#05080A] border border-icesilver/10">
                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border mb-2 ${
                           node.type === 'victim'
                             ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40'
@@ -602,14 +600,14 @@ export default function LandingPage({
                             ? 'bg-rose-950 text-rose-200 border-rose-500 shadow-glow-danger animate-pulse'
                             : node.type === 'layer'
                             ? 'bg-amber-950/70 text-amber-300 border-amber-500/40'
-                            : 'bg-purple-950/70 text-purple-300 border-purple-500/40'
+                            : 'bg-[#05080A] text-[#22D3E6] border-[#22D3E6]'
                         }`}>
                           {i + 1}
                         </div>
                         <span className="text-xs font-bold text-slate-200 truncate w-full">
                           {node.label}
                         </span>
-                        <span className="text-[10px] text-slate-500 truncate w-full mt-0.5">
+                        <span className="text-[10px] text-icesilver-500 truncate w-full mt-0.5">
                           {node.sub}
                         </span>
                       </div>
@@ -626,8 +624,8 @@ export default function LandingPage({
 
         {/* 6. GraphSAGE vs Traditional XGBoost Battle Arena */}
         <AnimatedContent distance={40} threshold={0.1} duration={0.8} ease="power3.out">
-          <section id="battle-arena" className="scroll-mt-24 p-6 md:p-8 rounded-3xl bg-[#0B1120]/90 border border-slate-800 space-y-6 backdrop-blur-md">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <section id="battle-arena" className="scroll-mt-24 p-6 md:p-8 rounded-3xl bg-[#05080A]/90 border border-icesilver/10 space-y-6 backdrop-blur-md">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-icesilver/10 pb-4">
               <div>
                 <div className="flex items-center gap-2">
                   <Cpu className="w-4 h-4 text-electric-400" />
@@ -650,7 +648,7 @@ export default function LandingPage({
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-800 text-[11px] font-mono text-slate-400 uppercase">
+                  <tr className="border-b border-icesilver/10 text-[11px] font-mono text-icesilver-400 uppercase">
                     <th className="py-3 px-4">Financial Crime Topology</th>
                     <th className="py-3 px-4 text-rose-400">XGBoost (Tabular Row-by-Row)</th>
                     <th className="py-3 px-4 text-emerald-400">FinTrace GraphSAGE (GNN)</th>
@@ -662,7 +660,7 @@ export default function LandingPage({
                       <td className="py-3.5 px-4 font-semibold text-white">
                         {row.feature}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-400">
+                      <td className="py-3.5 px-4 text-icesilver-400">
                         <span className="inline-block px-2 py-0.5 rounded bg-rose-950/40 text-rose-300 font-mono text-[11px] mr-1.5">
                           Limit
                         </span>
@@ -685,11 +683,11 @@ export default function LandingPage({
         {/* 7. 3D Topology Box with WebGL Canvas */}
         <AnimatedContent distance={40} threshold={0.1} duration={0.8} ease="power3.out">
           <section id="topology-3d" className="scroll-mt-24 space-y-6">
-            <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+            <div className="border-b border-icesilver/10 pb-3 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <Network className="w-4 h-4 text-cyan-400" />
-                  <span className="font-mono text-xs font-bold text-cyan-400 tracking-wider">
+                  <Network className="w-4 h-4 text-marigold" />
+                  <span className="font-mono text-xs font-bold text-marigold tracking-wider">
                     3D RELATIONAL TOPOLOGY
                   </span>
                 </div>
@@ -699,16 +697,16 @@ export default function LandingPage({
               </div>
               <button
                 onClick={() => setCurrentPage('graph')}
-                className="text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold"
+                className="text-xs font-mono text-marigold hover:text-marigold-300 flex items-center gap-1 font-semibold"
               >
                 <span>Explore 2D/3D Graph Canvas</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="relative h-[480px] lg:h-[520px] rounded-3xl bg-gradient-to-br from-[#0B1120] via-[#080E1B] to-[#05070E] border-2 border-slate-800 shadow-[0_25px_60px_-15px_rgba(2,132,199,0.2)] overflow-hidden group">
+            <div className="relative h-[480px] lg:h-[520px] rounded-3xl bg-gradient-to-br from-[#05080A] via-[#080E1B] to-[#05070E] border-2 border-icesilver/10 shadow-[0_25px_60px_-15px_rgba(2,132,199,0.2)] overflow-hidden group">
               {/* Box Top Toolbar */}
-              <div className="absolute top-0 left-0 right-0 z-30 px-5 py-3.5 border-b border-slate-800 bg-[#070B14]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
+              <div className="absolute top-0 left-0 right-0 z-30 px-5 py-3.5 border-b border-icesilver/10 bg-[#000000]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
@@ -719,7 +717,7 @@ export default function LandingPage({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span className="text-[10px] text-slate-300 bg-black/60 px-2 py-0.5 rounded border border-slate-800">
+                  <span className="text-[10px] text-icesilver-300 bg-black/60 px-2 py-0.5 rounded border border-icesilver/10">
                     Live WebGL
                   </span>
                 </div>
@@ -770,12 +768,12 @@ export default function LandingPage({
               </div>
 
               {/* Box Footer Status Bar */}
-              <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-slate-400 pointer-events-none bg-[#070B14]/90 px-3.5 py-1.5 rounded-xl border border-slate-800 backdrop-blur-md">
+              <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-icesilver-400 pointer-events-none bg-[#000000]/90 px-3.5 py-1.5 rounded-xl border border-icesilver/10 backdrop-blur-md">
                 <span className="text-emerald-400 flex items-center gap-1 font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                   Interactive 3D Network: Drag to Rotate • Real-Time Physics
                 </span>
-                <span className="text-cyan-400 font-bold">8-Feature Tensor Embeddings</span>
+                <span className="text-marigold font-bold">8-Feature Tensor Embeddings</span>
               </div>
             </div>
           </section>
@@ -783,15 +781,15 @@ export default function LandingPage({
 
         {/* 8. Quick Module Navigation Bar */}
         <AnimatedContent distance={40} threshold={0.1} duration={0.8} ease="power3.out">
-          <section id="pipeline" className="scroll-mt-24 p-6 rounded-3xl bg-gradient-to-r from-[#0B1120] to-[#070B14] border border-slate-800 space-y-4 shadow-xl">
+          <section id="pipeline" className="scroll-mt-24 p-6 rounded-3xl bg-gradient-to-r from-[#05080A] to-[#000000] border border-icesilver/10 space-y-4 shadow-xl">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span className="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider">DIRECT MODULE ACCESS</span>
+                <span className="text-xs font-mono text-marigold font-bold uppercase tracking-wider">DIRECT MODULE ACCESS</span>
                 <h3 className="text-lg font-bold text-white mt-0.5">Jump Straight into Any Forensic Workspace</h3>
               </div>
               <button
                 onClick={() => setCurrentPage('pipeline')}
-                className="px-4 py-2 rounded-xl bg-electric-600 hover:bg-electric-500 text-white font-mono text-xs font-bold transition flex items-center gap-1.5 shadow-glow-electric"
+                className="px-4 py-2 rounded-xl bg-electric-600 hover:bg-electric-500 text-white font-mono text-xs font-bold transition flex items-center gap-1.5 shadow-glow-marigold"
               >
                 <Workflow className="w-3.5 h-3.5" />
                 <span>Full 12-Stage Pipeline Specification</span>
@@ -812,12 +810,12 @@ export default function LandingPage({
                   <button
                     key={m.page}
                     onClick={() => setCurrentPage(m.page)}
-                    className="p-3 rounded-xl bg-navy-950/80 border border-slate-800 hover:border-electric-400 hover:bg-slate-800/60 transition group flex flex-col items-center text-center space-y-1.5"
+                    className="p-3 rounded-xl bg-navy-950/80 border border-icesilver/10 hover:border-electric-400 hover:bg-slate-800/60 transition group flex flex-col items-center text-center space-y-1.5"
                   >
-                    <div className="p-2 rounded-lg bg-navy-900 text-slate-400 group-hover:text-cyan-400 transition-colors">
+                    <div className="p-2 rounded-lg bg-navy-900 text-icesilver-400 group-hover:text-marigold transition-colors">
                       <Icon className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">
+                    <span className="text-xs font-bold text-slate-200 group-hover:text-icesilver transition-colors">
                       {m.label}
                     </span>
                   </button>
@@ -829,7 +827,7 @@ export default function LandingPage({
 
         {/* 9. Institutional Trust & Compliance Notice */}
         <AnimatedContent distance={30} threshold={0.1} duration={0.7} ease="power3.out">
-          <section className="p-5 rounded-2xl bg-[#0B1120]/90 border border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <section className="p-5 rounded-2xl bg-[#05080A]/90 border border-icesilver/10 text-xs text-icesilver-400 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
               <span>
@@ -838,7 +836,7 @@ export default function LandingPage({
             </div>
             <button
               onClick={() => setCurrentPage("settings-model")}
-              className="shrink-0 px-3 py-1.5 rounded-lg bg-navy-850 hover:bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[11px] transition"
+              className="shrink-0 px-3 py-1.5 rounded-lg bg-navy-850 hover:bg-slate-800 text-icesilver-300 border border-icesilver/15 font-mono text-[11px] transition"
             >
               Review GNN Weights
             </button>
@@ -847,7 +845,7 @@ export default function LandingPage({
 
         {/* 10. Modern Fintech SaaS Footer */}
         <AnimatedContent distance={20} threshold={0.1} duration={0.6} ease="power3.out">
-          <footer className="pt-8 pb-12 border-t border-slate-800/80 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-4">
+          <footer className="pt-8 pb-12 border-t border-icesilver/10 text-xs text-icesilver-400 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-0.5">
                 <span className="w-1 h-4 bg-electric-500 rounded-full transform -skew-x-12"></span>
@@ -859,16 +857,16 @@ export default function LandingPage({
             </div>
 
             <div className="flex items-center gap-6">
-              <button onClick={() => setCurrentPage('dashboard')} className="hover:text-white transition">
+              <button onClick={() => setCurrentPage('dashboard')} className="hover:text-icesilver transition">
                 Dashboard
               </button>
-              <button onClick={() => setCurrentPage('graph')} className="hover:text-white transition">
+              <button onClick={() => setCurrentPage('graph')} className="hover:text-icesilver transition">
                 Graph Canvas
               </button>
-              <button onClick={() => setCurrentPage('money-trail')} className="hover:text-white transition">
+              <button onClick={() => setCurrentPage('money-trail')} className="hover:text-icesilver transition">
                 Money Trail
               </button>
-              <button onClick={() => setCurrentPage('cases')} className="hover:text-white transition">
+              <button onClick={() => setCurrentPage('cases')} className="hover:text-icesilver transition">
                 Case Dossiers
               </button>
             </div>

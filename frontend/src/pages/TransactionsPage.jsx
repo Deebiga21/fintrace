@@ -32,7 +32,7 @@ export default function TransactionsPage({
       if (minAmount) params.min_amount = minAmount;
 
       const data = await api.getTransactions(params);
-      setTransactions(data);
+      setTransactions(Array.isArray(data) ? data : (data.transactions || []));
     } catch (err) {
       console.error(err);
     } finally {
@@ -44,167 +44,221 @@ export default function TransactionsPage({
     fetchTransactions();
   }, [search, isSuspiciousOnly, minAmount, refreshTrigger]);
 
-  const totalFilteredVolume = transactions.reduce((acc, t) => acc + t.amount, 0);
+  const totalFilteredVolume = transactions.reduce((acc, t) => acc + (t.amount || 0), 0);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-white tracking-wide">
-            Step 2: Financial Transaction Ledger Explorer
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Query and filter directional transaction edges with real-time heuristic fraud flags and party linkages.
-          </p>
+    <div className="bg-[#050505] text-[#e2e2e2] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6 space-y-6">
+      {/* Top HUD Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#1B1F22]">
+        <div className="flex items-center gap-3">
+          <div className="w-2.5 h-2.5 bg-[#22D3E6] rotate-45 shrink-0" />
+          <span className="font-['Krona_One',sans-serif] text-base sm:text-lg text-white tracking-widest uppercase">
+            EXPLORER // TRANSACTION_LEDGER
+          </span>
+          <span className="bg-[#FFFFFF] text-[#050505] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase ml-2">
+            DIRECTIONAL EDGES
+          </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1.5 rounded-lg bg-navy-900 border border-slate-800 text-xs text-slate-300">
-            <span className="text-slate-500 mr-2 font-mono">RECORDS:</span>
-            <span className="font-bold text-white font-mono">{transactions.length}</span>
-          </div>
-          <div className="px-3 py-1.5 rounded-lg bg-navy-900 border border-slate-800 text-xs text-slate-300">
-            <span className="text-slate-500 mr-2 font-mono">VOLUME:</span>
-            <span className="font-bold text-electric-300 font-mono">₹{totalFilteredVolume.toLocaleString()}</span>
-          </div>
+        <div className="flex items-center gap-3 font-['Share_Tech_Mono',monospace] text-xs text-[#9AA0A6]">
+          <span>ENTRIES: <span className="text-white font-bold">{transactions.length}</span></span>
+          <span>|</span>
+          <span>VOLUME: <span className="text-[#22D3E6] font-bold">₹{totalFilteredVolume.toLocaleString()}</span></span>
         </div>
       </div>
 
       {/* Filter Toolbar */}
-      <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs">
-        <div className="flex items-center gap-3 flex-1 min-w-[240px]">
-          <div className="relative flex-1">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+      <div className="p-3 bg-[#05080A] border border-[#1B1F22] flex flex-wrap items-center justify-between gap-4 text-xs font-['Share_Tech_Mono',monospace]">
+        <div className="flex items-center gap-3 flex-1 min-w-[280px]">
+          <div className="relative flex-1 flex items-center">
+            <span className="text-[#22D3E6] text-sm mr-2 font-bold">&gt;</span>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Filter by Txn ID, Sender, Receiver..."
-              className="w-full pl-9 pr-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-electric-400"
+              placeholder="filter transaction ID, sender, receiver..."
+              className="w-full bg-transparent border-b border-[#5A5F64] text-xs text-white placeholder-[#5A5F64] focus:outline-none focus:border-[#22D3E6] pb-1"
             />
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 font-mono text-[11px]">MIN ₹:</span>
+            <span className="text-[#9AA0A6] text-[10px]">MIN ₹:</span>
             <input
               type="number"
               value={minAmount}
               onChange={(e) => setMinAmount(e.target.value)}
               placeholder="0"
-              className="w-24 px-2.5 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-electric-400"
+              className="w-24 bg-transparent border-b border-[#5A5F64] text-xs text-white placeholder-[#5A5F64] focus:outline-none focus:border-[#22D3E6] pb-1"
             />
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 cursor-pointer select-none text-slate-300">
+        <div className="flex items-center gap-3 font-['Rajdhani',sans-serif]">
+          <label className="flex items-center gap-2 cursor-pointer bg-[#000000] px-3 py-1 border border-[#1B1F22]">
             <input
               type="checkbox"
               checked={isSuspiciousOnly}
               onChange={(e) => setIsSuspiciousOnly(e.target.checked)}
-              className="rounded bg-navy-950 border-slate-700 text-electric-500 focus:ring-0"
+              className="hidden"
             />
-            <span className="text-xs font-semibold text-rose-400 flex items-center gap-1">
-              <AlertTriangle className="w-3.5 h-3.5" />
-              Flagged Suspicious Only
+            <div className="w-3.5 h-3.5 bg-[#000000] flex items-center justify-center border border-[#22D3E6]">
+              {isSuspiciousOnly && <div className="w-1.5 h-1.5 bg-[#22D3E6]" />}
+            </div>
+            <span className="text-xs font-bold text-[#FF3B4E] tracking-wider uppercase">
+              SUSPICIOUS ONLY
             </span>
           </label>
 
           <button
+            type="button"
             onClick={fetchTransactions}
-            className="p-2 bg-navy-850 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-700 transition"
+            className="px-3 py-1 bg-[#000000] hover:bg-[#0B2E33] border border-[#5A5F64] hover:border-[#22D3E6] text-[#bbc9cb] hover:text-[#22D3E6] text-xs font-bold uppercase tracking-wider transition"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-electric-400" : ""}`} />
+            REFRESH
           </button>
         </div>
       </div>
 
-      {/* Transactions Table */}
-      <div className="rounded-xl bg-navy-900 border border-slate-800 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="bg-navy-950 border-b border-slate-800 text-slate-400 font-mono text-[11px]">
-                <th className="py-3 px-4">TXN ID</th>
-                <th className="py-3 px-4">TIMESTAMP</th>
-                <th className="py-3 px-4">SENDER ACCOUNT</th>
-                <th className="py-3 px-4"></th>
-                <th className="py-3 px-4">RECEIVER ACCOUNT</th>
-                <th className="py-3 px-4">AMOUNT (INR)</th>
-                <th className="py-3 px-4">CHANNEL</th>
-                <th className="py-3 px-4">INVESTIGATION STATUS</th>
-                <th className="py-3 px-4 text-right">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60 font-mono">
-              {transactions.map((t) => (
-                <tr key={t.transaction_id} className="hover:bg-slate-800/40 transition">
-                  <td className="py-3 px-4 font-bold text-electric-300">
-                    {t.transaction_id}
-                  </td>
-                  <td className="py-3 px-4 text-slate-400 text-[11px]">
-                    {new Date(t.timestamp).toLocaleString()}
-                  </td>
-                  <td className="py-3 px-4">
-                    <button
-                      onClick={() => {
-                        if (onAccountSelect) onAccountSelect(t.sender_account);
-                        setCurrentPage("mule-detection");
-                      }}
-                      className="font-bold text-slate-200 hover:text-electric-400 hover:underline"
-                    >
-                      {t.sender_account}
-                    </button>
-                  </td>
-                  <td className="py-3 px-1 text-slate-500">
-                    <ArrowRight className="w-3.5 h-3.5 inline text-slate-600" />
-                  </td>
-                  <td className="py-3 px-4">
-                    <button
-                      onClick={() => {
-                        if (onAccountSelect) onAccountSelect(t.receiver_account);
-                        setCurrentPage("mule-detection");
-                      }}
-                      className="font-bold text-slate-200 hover:text-electric-400 hover:underline"
-                    >
-                      {t.receiver_account}
-                    </button>
-                  </td>
-                  <td className="py-3 px-4 font-bold text-white">
-                    ₹{t.amount.toLocaleString()}
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 border border-slate-700 text-slate-300">
-                      {t.transaction_type}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-sans">
-                    {t.is_suspicious ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-950/60 text-rose-300 border border-rose-500/40">
-                        <AlertTriangle className="w-3 h-3 text-rose-400" />
-                        <span>{t.flag_reason || "Suspicious Flow"}</span>
-                      </span>
-                    ) : (
-                      <span className="text-[11px] text-slate-500">Normal</span>
-                    )}
-                  </td>
-                  <td className="py-3 px-4 text-right font-sans">
-                    <button
-                      onClick={() => {
-                        if (onAccountSelect) onAccountSelect(t.receiver_account);
-                        setCurrentPage("money-trail");
-                      }}
-                      className="px-2 py-1 bg-navy-850 hover:bg-slate-800 text-electric-300 border border-slate-700 rounded text-[11px] transition inline-flex items-center gap-1"
-                    >
-                      <Share2 className="w-3 h-3" />
-                      <span>Trace Trail</span>
-                    </button>
-                  </td>
+      {/* Main Grid: Transactions Table + Detail Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8 bg-[#05080A] border border-[#1B1F22] flex flex-col overflow-hidden">
+          <div className="h-10 px-3 bg-[#000000] flex items-center justify-between shrink-0 border-b border-[#1B1F22]">
+            <span className="bg-[#FFFFFF] text-[#050505] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
+              TRANSACTION STREAM
+            </span>
+            <span className="font-['Share_Tech_Mono',monospace] text-[10px] text-[#9AA0A6]">
+              CHRONOLOGICAL_STREAM
+            </span>
+          </div>
+
+          <div className="overflow-x-auto flex-1">
+            <table className="w-full text-left text-xs font-['Share_Tech_Mono',monospace]">
+              <thead>
+                <tr className="bg-[#000000] border-b border-[#1B1F22] text-[#9AA0A6] text-[10px]">
+                  <th className="py-2.5 px-3 uppercase tracking-wider">TXN ID</th>
+                  <th className="py-2.5 px-3 uppercase tracking-wider">ORIGINATOR</th>
+                  <th className="py-2.5 px-3 uppercase tracking-wider">BENEFICIARY</th>
+                  <th className="py-2.5 px-3 uppercase tracking-wider">AMOUNT (₹)</th>
+                  <th className="py-2.5 px-3 uppercase tracking-wider">STATUS</th>
+                  <th className="py-2.5 px-3 uppercase tracking-wider text-right">TIMESTAMP</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[#1B1F22]">
+                {transactions.map((t) => {
+                  const isSelected = selectedTxn?.transaction_id === t.transaction_id;
+                  const isFlagged = t.is_suspicious;
+
+                  return (
+                    <tr
+                      key={t.transaction_id}
+                      onClick={() => setSelectedTxn(t)}
+                      className={`cursor-pointer transition ${
+                        isSelected
+                          ? 'bg-[#0B2E33] border-l-2 border-[#22D3E6]'
+                          : 'hover:bg-[#0E1215]'
+                      }`}
+                    >
+                      <td className="py-2.5 px-3 font-bold text-white">
+                        {t.transaction_id}
+                      </td>
+                      <td className="py-2.5 px-3 text-[#22D3E6] hover:underline" onClick={(e) => { e.stopPropagation(); onAccountSelect && onAccountSelect(t.sender_account); }}>
+                        {t.sender_account}
+                      </td>
+                      <td className="py-2.5 px-3 text-[#22D3E6] hover:underline" onClick={(e) => { e.stopPropagation(); onAccountSelect && onAccountSelect(t.receiver_account); }}>
+                        {t.receiver_account}
+                      </td>
+                      <td className="py-2.5 px-3 font-bold text-white tabular-nums">
+                        ₹{t.amount.toLocaleString()}
+                      </td>
+                      <td className="py-2.5 px-3">
+                        {isFlagged ? (
+                          <span className="inline-flex items-center gap-1 font-['Rajdhani',sans-serif] text-[10px] font-bold bg-[#FF3B4E] text-white px-1.5 py-0.2 uppercase tracking-wide">
+                            <span>◆</span> ANOMALOUS
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 font-['Rajdhani',sans-serif] text-[10px] font-bold bg-[#12161A] text-[#9AA0A6] px-1.5 py-0.2 uppercase tracking-wide">
+                            <span>○</span> CLEARED
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-right text-[#9AA0A6] text-[11px]">
+                        {t.timestamp ? t.timestamp.replace('T', ' ').slice(0, 19) : 'LIVE_FEED'}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Selected Transaction Telemetry (4 cols) */}
+        <div className="lg:col-span-4 bg-[#05080A] border border-[#1B1F22] flex flex-col h-full font-['Share_Tech_Mono',monospace]">
+          <div className="h-10 px-3 bg-[#000000] flex items-center justify-between shrink-0 border-b border-[#1B1F22]">
+            <span className="bg-[#FFFFFF] text-[#050505] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
+              TXN TELEMETRY
+            </span>
+            <span className="text-[10px] text-[#22D3E6]">
+              {selectedTxn ? selectedTxn.transaction_id : 'STANDBY'}
+            </span>
+          </div>
+
+          <div className="p-4 space-y-4 flex-1 overflow-y-auto text-xs">
+            {selectedTxn ? (
+              <div className="space-y-4">
+                <div className="p-3 bg-[#000000] border border-[#1B1F22] space-y-2">
+                  <div className="text-[#9AA0A6] text-[10px]">TOTAL SETTLEMENT VALUE</div>
+                  <div className="text-xl font-bold text-white font-['Share_Tech_Mono',monospace]">
+                    ₹{selectedTxn.amount.toLocaleString()}
+                  </div>
+                  <div className="text-[10px] text-[#22D3E6]">
+                    CHANNEL: {selectedTxn.payment_channel || 'UPI / IMPS'}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="font-['Rajdhani',sans-serif] text-xs font-bold text-[#bbc9cb] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="text-[#22D3E6]">◇</span> DIRECTIONAL ROUTING
+                  </div>
+                  <div className="p-2.5 bg-[#000000] border border-[#1B1F22] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#9AA0A6] text-[10px]">FROM:</span>
+                      <span className="text-[#22D3E6] font-bold cursor-pointer" onClick={() => onAccountSelect && onAccountSelect(selectedTxn.sender_account)}>
+                        {selectedTxn.sender_account}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#9AA0A6] text-[10px]">TO:</span>
+                      <span className="text-[#22D3E6] font-bold cursor-pointer" onClick={() => onAccountSelect && onAccountSelect(selectedTxn.receiver_account)}>
+                        {selectedTxn.receiver_account}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between border-t border-[#1B1F22] pt-1.5">
+                      <span className="text-[#9AA0A6] text-[10px]">FLAG:</span>
+                      <span className={selectedTxn.is_suspicious ? "text-[#FF3B4E] font-bold" : "text-[#22D3E6]"}>
+                        {selectedTxn.is_suspicious ? "ANOMALY (HIGH VELOCITY)" : "ROUTINE WIRE"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onAccountSelect) onAccountSelect(selectedTxn.sender_account);
+                    setCurrentPage('graph');
+                  }}
+                  className="w-full py-2 bg-[#FFFFFF] hover:bg-[#22D3E6] text-[#050505] font-['Rajdhani',sans-serif] font-bold text-xs uppercase tracking-wider transition"
+                >
+                  PLOT ROUTE ON GRAPH
+                </button>
+              </div>
+            ) : (
+              <div className="h-48 flex flex-col items-center justify-center text-[#5A5F64] text-xs text-center">
+                SELECT A TRANSACTION ROW TO VIEW ROUTE TELEMETRY & BEHAVIORAL DETAILS
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -9,90 +9,114 @@
     overflow-y: auto;
   }
   body {
-    @apply bg-navy-950 text-slate-100 min-h-screen antialiased selection:bg-electric-500 selection:text-white;
+    background-color: #000000 !important;
+    background: #000000 !important;
+    color: #E2E2E2;
+    @apply min-h-screen antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     overflow-x: hidden;
     overflow-y: auto;
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background-color: #22D3E6;
+    color: #050505;
   }
   #root {
     min-height: 100vh;
   }
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
+  }
 }
 
-/* Ergonomic High-Usability Scrollbar (Easy to Grab & Drag) */
+/* Tactical HUD Refined Scrollbar */
 html {
-  scrollbar-width: auto;
-  scrollbar-color: #475569 #070A12;
+  scrollbar-width: thin;
+  scrollbar-color: #1B1F22 #000000;
 }
 
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #070A12;
-  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  background: #000000;
+  border-left: 1px solid #1B1F22;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #475569;
-  border: 2px solid #070A12;
-  border-radius: 9999px;
-  min-height: 48px;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  background: #1B1F22;
+  border: 1px solid #000000;
+  min-height: 40px;
+  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #F43F5E;
-  border: 2px solid #070A12;
-  box-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
+  background: #22D3E6;
+  box-shadow: 0 0 10px rgba(34, 211, 230, 0.5);
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: #FB7185;
-  border: 1px solid #070A12;
-  box-shadow: 0 0 14px rgba(244, 63, 94, 0.9);
+  background: #6CEEFF;
+  box-shadow: 0 0 16px rgba(34, 211, 230, 0.85);
 }
 
-/* Glassmorphism Surface */
+/* Tactical Panel & Surface Classes */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(5, 8, 10, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(51, 65, 85, 0.4);
+  border: 1px solid #1B1F22;
 }
 
 .glass-panel-hover {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-out;
 }
 
 .glass-panel-hover:hover {
-  border-color: rgba(56, 189, 248, 0.4);
-  box-shadow: 0 4px 20px -2px rgba(56, 189, 248, 0.15);
+  border-color: #22D3E6;
+  box-shadow: 0 0 16px rgba(34, 211, 230, 0.25);
 }
 
-/* Subtle Grid Background Pattern */
+.glass-apple-card {
+  background: #05080A;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #1B1F22;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(90, 95, 100, 0.15);
+}
+
+.glass-apple-subtle {
+  background: rgba(14, 18, 21, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #1B1F22;
+}
+
+/* Tactical Mesh / Grid Background Pattern */
 .bg-grid-pattern {
-  background-size: 32px 32px;
+  background-color: #000000 !important;
+  background-size: 30px 30px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(to right, rgba(90, 95, 100, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(90, 95, 100, 0.06) 1px, transparent 1px);
 }
 
-/* Radar pulse animation for high risk nodes / alerts */
+/* Alert Red radar pulse animation for high risk nodes / critical threats */
 @keyframes radar-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 0 0 rgba(255, 59, 78, 0.65);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    box-shadow: 0 0 0 10px rgba(255, 59, 78, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    box-shadow: 0 0 0 0 rgba(255, 59, 78, 0);
   }
 }
 
 .pulse-danger {
-  animation: radar-pulse 2s infinite;
+  animation: radar-pulse 2s infinite cubic-bezier(0.16, 1, 0.3, 1);
 }

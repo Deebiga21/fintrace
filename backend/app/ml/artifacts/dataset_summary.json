@@ -1,10 +1,10 @@
 {
   "dataset_filename": "benchmark_transactions.csv",
-  "provenance": "FinTrace Synthetic & Multi-Typology Financial Investigation Benchmark",
-  "source_url": "FinTrace Internal Benchmark Generator",
-  "license": "Research & Regulatory Compliance Prototype (Lawful Internal Verification)",
-  "domain": "Indian Banking & UPI Multi-Typology Mule Network",
-  "domain_comparison": "Custom synthetic benchmark featuring smurfing rings, circular round-trip layering, and rapid pass-through conduit mules.",
+  "provenance": "User-provided or local transaction dataset (provenance not verified)",
+  "source_url": null,
+  "license": "Verify data license and sharing restrictions with the data provider",
+  "domain": "Transaction dataset; domain and collection method not verified",
+  "domain_comparison": "Dataset-specific transaction behavior; inspect source documentation before drawing conclusions.",
   "total_transactions": 1810,
   "total_accounts": 217,
   "unique_senders": 199,
@@ -26,5 +26,5 @@
   "class_imbalance_ratio": "63.64:1 (Normal:Fraud)",
   "label_type": "transaction_and_mule_conduit_level",
   "is_synthetic": true,
-  "synthetic_disclaimer": "Labels reflect simulated financial typologies (smurfing, layering, circular loops, conduit mules) for pipeline and model benchmarking. They must not be claimed as real judicial evidence without statutory verification."
+  "synthetic_disclaimer": "This report describes schema and statistical properties only. It does not verify data provenance, labels, or real-world fraud findings."
 }

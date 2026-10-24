@@ -18,6 +18,7 @@ import CaseDetailsPage from './pages/CaseDetailsPage';
 import AnalyticsReportsPage from './pages/AnalyticsReportsPage';
 import SettingsModelPage from './pages/SettingsModelPage';
 import SystemPipelinePage from './pages/SystemPipelinePage';
+import LegalPrivacyPage from './pages/LegalPrivacyPage';
 import { wsService } from './services/websocket';
 
 export default function App() {
@@ -132,7 +133,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-navy-950 text-slate-100 overflow-hidden font-sans">
+    <div className="flex h-screen bg-[#000000] text-slate-100 overflow-hidden font-sans">
       {/* Consistent Navigation Sidebar */}
       <Sidebar
         currentPage={currentPage}
@@ -158,7 +159,7 @@ export default function App() {
         />
 
         {/* Scrollable Page Body */}
-        <main className="flex-1 overflow-y-auto p-6 bg-grid-pattern">
+        <main className="flex-1 overflow-y-auto p-6 bg-[#000000] bg-grid-pattern">
           {currentPage === 'landing' && (
             <LandingPage
               setCurrentPage={setCurrentPage}
@@ -282,6 +283,12 @@ export default function App() {
           onOpenLivePipeline={() => setIsLivePipelineOpen(true)}
               setRefreshTrigger={setRefreshTrigger}
               onAccountSelect={handleAccountSelect}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
+
+          {currentPage === 'legal-privacy' && (
+            <LegalPrivacyPage
               setCurrentPage={setCurrentPage}
             />
           )}

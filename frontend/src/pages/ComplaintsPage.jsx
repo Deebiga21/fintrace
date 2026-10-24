@@ -234,17 +234,17 @@ export default function ComplaintsPage({
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-white tracking-wide flex items-center gap-2">
-            <FileWarning className="w-5 h-5 text-amber-400" />
+            <FileWarning className="w-5 h-5 text-[#D6E85A]" />
             <span>Step 7: Cybercrime Complaint Cross-Correlation Engine</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#E2E2E2]-400 mt-1">
             Correlate victim fraud complaints from national portals and police FIRs with flagged banking mule accounts.
           </p>
         </div>
 
         <button
           onClick={() => setIsNewModalOpen(true)}
-          className="px-4 py-2 rounded-lg bg-electric-600 hover:bg-electric-500 text-white font-bold text-xs shadow-glow-electric transition flex items-center gap-1.5"
+          className="px-4 py-2 rounded-none bg-electric-600 hover:bg-[#22D3E6] text-white font-bold text-xs shadow-glow-electric transition flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           <span>Record New Complaint</span>
@@ -254,58 +254,58 @@ export default function ComplaintsPage({
       {/* Summary Statistics Bar */}
       {summary && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono">
-          <div className="p-3.5 rounded-xl bg-navy-900 border border-slate-800">
-            <div className="text-[10px] text-slate-400 uppercase">Total Complaints</div>
+          <div className="p-3.5 rounded-none bg-[#05080A]/75 backdrop-blur-2xl border border-[#1B1F22]">
+            <div className="text-[10px] text-[#E2E2E2]-400 uppercase">Total Complaints</div>
             <div className="text-xl font-bold text-white mt-1">{summary.total_complaints}</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">National FIR intake</div>
+            <div className="text-[10px] text-[#5A5F64] mt-0.5">National FIR intake</div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-navy-900 border border-slate-800">
-            <div className="text-[10px] text-slate-400 uppercase">Correlated Entities</div>
-            <div className="text-xl font-bold text-emerald-400 mt-1">{summary.correlated_complaints || 0}</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Mule matches identified</div>
+          <div className="p-3.5 rounded-none bg-[#05080A]/75 backdrop-blur-2xl border border-[#1B1F22]">
+            <div className="text-[10px] text-[#E2E2E2]-400 uppercase">Correlated Entities</div>
+            <div className="text-xl font-bold text-[#D6E85A] mt-1">{summary.correlated_complaints || 0}</div>
+            <div className="text-[10px] text-[#5A5F64] mt-0.5">Mule matches identified</div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-navy-900 border border-slate-800">
-            <div className="text-[10px] text-slate-400 uppercase">Linked to Active Cases</div>
-            <div className="text-xl font-bold text-electric-400 mt-1">{summary.linked_to_investigation}</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Formal probe underway</div>
+          <div className="p-3.5 rounded-none bg-[#05080A]/75 backdrop-blur-2xl border border-[#1B1F22]">
+            <div className="text-[10px] text-[#E2E2E2]-400 uppercase">Linked to Active Cases</div>
+            <div className="text-xl font-bold text-[#22D3E6] mt-1">{summary.linked_to_investigation}</div>
+            <div className="text-[10px] text-[#5A5F64] mt-0.5">Formal probe underway</div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-navy-900 border border-slate-800">
-            <div className="text-[10px] text-slate-400 uppercase">New Unlinked Intake</div>
-            <div className="text-xl font-bold text-amber-400 mt-1">{summary.new_complaints}</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Awaiting correlation</div>
+          <div className="p-3.5 rounded-none bg-[#05080A]/75 backdrop-blur-2xl border border-[#1B1F22]">
+            <div className="text-[10px] text-[#E2E2E2]-400 uppercase">New Unlinked Intake</div>
+            <div className="text-xl font-bold text-[#D6E85A] mt-1">{summary.new_complaints}</div>
+            <div className="text-[10px] text-[#5A5F64] mt-0.5">Awaiting correlation</div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-navy-900 border border-slate-800">
-            <div className="text-[10px] text-slate-400 uppercase">Total Loss Claimed</div>
-            <div className="text-xl font-bold text-rose-400 mt-1">₹{(summary.total_confirmed_loss_inr || 0).toLocaleString()}</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Cumulative reported sum</div>
+          <div className="p-3.5 rounded-none bg-[#05080A]/75 backdrop-blur-2xl border border-[#1B1F22]">
+            <div className="text-[10px] text-[#E2E2E2]-400 uppercase">Total Loss Claimed</div>
+            <div className="text-xl font-bold text-[#FF3B4E] mt-1">₹{(summary.total_confirmed_loss_inr || 0).toLocaleString()}</div>
+            <div className="text-[10px] text-[#5A5F64] mt-0.5">Cumulative reported sum</div>
           </div>
         </div>
       )}
 
       {/* Filter and Search Bar */}
-      <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+      <div className="p-4 rounded-none bg-[#05080A]/75 backdrop-blur-2xl border border-[#1B1F22] flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
         <div className="relative flex-1 min-w-[280px]">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#E2E2E2]-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Complaint ID, Complainant, Reported Account, or Narrative..."
-            className="w-full pl-9 pr-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-electric-400"
+            className="w-full pl-9 pr-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white font-mono text-xs focus:outline-none focus:border-[#22D3E6]"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-slate-400 text-[11px]">STATUS:</span>
+            <span className="text-[#E2E2E2]-400 text-[11px]">STATUS:</span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-2.5 py-1.5 bg-navy-950 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-electric-400"
+              className="px-2.5 py-1.5 bg-[#000000] border border-[#1B1F22] rounded-none text-white text-xs focus:outline-none focus:border-[#22D3E6]"
             >
               <option value="ALL">All Statuses</option>
               <option value="New">New Intake</option>
@@ -316,11 +316,11 @@ export default function ComplaintsPage({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-slate-400 text-[11px]">CATEGORY:</span>
+            <span className="text-[#E2E2E2]-400 text-[11px]">CATEGORY:</span>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-2.5 py-1.5 bg-navy-950 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-electric-400"
+              className="px-2.5 py-1.5 bg-[#000000] border border-[#1B1F22] rounded-none text-white text-xs focus:outline-none focus:border-[#22D3E6]"
             >
               <option value="ALL">All Fraud Types</option>
               <option value="Cyber Fraud">Cyber Fraud</option>
@@ -336,8 +336,8 @@ export default function ComplaintsPage({
 
       {/* Complaints Grid */}
       {loading ? (
-        <div className="h-64 flex flex-col items-center justify-center gap-3 text-slate-400">
-          <RefreshCw className="w-6 h-6 animate-spin text-electric-400" />
+        <div className="h-64 flex flex-col items-center justify-center gap-3 text-[#E2E2E2]-400">
+          <RefreshCw className="w-6 h-6 animate-spin text-[#22D3E6]" />
           <span className="text-xs font-mono">Loading cybercrime complaint records...</span>
         </div>
       ) : (
@@ -349,20 +349,20 @@ export default function ComplaintsPage({
             return (
               <div
                 key={c.complaint_id}
-                className="p-5 rounded-xl bg-navy-900 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between space-y-4 shadow-sm"
+                className="p-5 rounded-none bg-[#05080A]/75 backdrop-blur-2xl border border-[#1B1F22] hover:border-[#1B1F22] transition flex flex-col justify-between space-y-4 shadow-sm"
               >
                 <div className="space-y-3 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/40 text-[11px]">
+                    <span className="font-mono font-bold text-[#D6E85A] bg-[#D6E85A]/15/60 px-2 py-0.5 rounded border border-[#D6E85A]/40 text-[11px]">
                       {c.complaint_id}
                     </span>
                     <div className="flex items-center gap-1.5">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${
                         c.status === 'Linked'
-                          ? 'bg-electric-950 text-electric-300 border-electric-500/40'
+                          ? 'bg-electric-950 text-[#22D3E6] border-[#22D3E6]'
                           : c.status === 'CORRELATED'
-                          ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40'
-                          : 'bg-navy-950 text-slate-400 border-slate-800'
+                          ? 'bg-[#D6E85A]/15 text-[#D6E85A] border-[#D6E85A]/40'
+                          : 'bg-[#000000] text-[#E2E2E2]-400 border-[#1B1F22]'
                       }`}>
                         {c.status}
                       </span>
@@ -370,43 +370,43 @@ export default function ComplaintsPage({
                   </div>
 
                   <div>
-                    <div className="text-[10px] text-slate-400 uppercase font-mono">Victim Complainant</div>
+                    <div className="text-[10px] text-[#E2E2E2]-400 uppercase font-mono">Victim Complainant</div>
                     <div className="text-sm font-bold text-white">{c.complainant_name}</div>
-                    <div className="text-xs text-rose-400 font-mono font-semibold mt-0.5">
+                    <div className="text-xs text-[#FF3B4E] font-mono font-semibold mt-0.5">
                       Claimed Loss: ₹{(c.amount_lost || 0).toLocaleString()}
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-navy-950 border border-slate-800/80 text-[11px] text-slate-300 leading-relaxed italic">
+                  <div className="p-3 rounded-none bg-[#000000] border border-[#1B1F22]/80 text-[11px] text-[#E2E2E2]-300 leading-relaxed italic">
                     "{c.description}"
                   </div>
 
                   <div className="space-y-1.5 pt-1">
-                    <div className="text-[10px] text-slate-500 font-mono">REPORTED BENEFICIARY MULE:</div>
+                    <div className="text-[10px] text-[#5A5F64] font-mono">REPORTED BENEFICIARY MULE:</div>
                     <button
                       onClick={() => {
                         if (onAccountSelect) onAccountSelect(c.reported_account_id);
                         setCurrentPage("mule-detection");
                       }}
-                      className="font-mono text-xs font-bold text-electric-300 hover:text-electric-200 flex items-center gap-1.5"
+                      className="font-mono text-xs font-bold text-[#22D3E6] hover:text-electric-200 flex items-center gap-1.5"
                     >
-                      <LinkIcon className="w-3.5 h-3.5 text-electric-400" />
+                      <LinkIcon className="w-3.5 h-3.5 text-[#22D3E6]" />
                       <span>{c.reported_account_id}</span>
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                    <span>Category: <strong className="text-slate-300 font-sans">{c.category || 'Cyber Fraud'}</strong></span>
+                  <div className="flex items-center justify-between text-[10px] text-[#5A5F64] font-mono">
+                    <span>Category: <strong className="text-[#E2E2E2]-300 font-sans">{c.category || 'Cyber Fraud'}</strong></span>
                     <span>{new Date(c.date_reported).toLocaleDateString()}</span>
                   </div>
                 </div>
 
                 {/* Bottom Action Buttons */}
-                <div className="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                <div className="pt-3 border-t border-[#1B1F22] flex flex-wrap items-center justify-between gap-2">
                   <button
                     onClick={() => handleRunCorrelation(c)}
                     disabled={isCorrelating}
-                    className="flex-1 py-1.5 px-2 rounded bg-electric-600/30 hover:bg-electric-600/50 text-electric-300 border border-electric-500/40 text-[11px] font-bold font-mono transition flex items-center justify-center gap-1"
+                    className="flex-1 py-1.5 px-2 rounded bg-electric-600/30 hover:bg-electric-600/50 text-[#22D3E6] border border-[#22D3E6] text-[11px] font-bold font-mono transition flex items-center justify-center gap-1"
                   >
                     {isCorrelating ? (
                       <RefreshCw className="w-3 h-3 animate-spin" />
@@ -419,7 +419,7 @@ export default function ComplaintsPage({
                   {hasCorrelation && (
                     <button
                       onClick={() => handleViewExistingCorrelation(c)}
-                      className="py-1.5 px-2 rounded bg-navy-850 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold transition"
+                      className="py-1.5 px-2 rounded bg-navy-850 hover:bg-[#0E1215] text-[#D6E85A] border border-[#D6E85A]/30 text-[11px] font-semibold transition"
                     >
                       View Findings
                     </button>
@@ -430,7 +430,7 @@ export default function ComplaintsPage({
                       if (onAccountSelect) onAccountSelect(c.reported_account_id);
                       setCurrentPage("money-trail");
                     }}
-                    className="py-1.5 px-2 rounded bg-navy-850 hover:bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-semibold transition"
+                    className="py-1.5 px-2 rounded bg-navy-850 hover:bg-[#0E1215] text-[#E2E2E2]-300 border border-[#1B1F22] text-[11px] font-semibold transition"
                   >
                     Trace Flow
                   </button>
@@ -440,7 +440,7 @@ export default function ComplaintsPage({
           })}
 
           {complaints.length === 0 && (
-            <div className="col-span-3 p-12 text-center text-slate-500 text-xs bg-navy-900 rounded-xl border border-slate-800 font-mono">
+            <div className="col-span-3 p-12 text-center text-[#5A5F64] text-xs bg-[#05080A] rounded-none border border-[#1B1F22] font-mono">
               No complaint records found matching the active filters.
             </div>
           )}
@@ -450,17 +450,17 @@ export default function ComplaintsPage({
       {/* Correlation Results Modal / Side Drawer */}
       {activeCorrelationComplaint && correlationData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fadeIn">
-          <div className="w-full max-w-4xl bg-navy-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="w-full max-w-4xl bg-[#05080A] border border-[#1B1F22] rounded-none shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="p-4 bg-navy-850 border-b border-slate-800 flex items-center justify-between shrink-0">
+            <div className="p-4 bg-navy-850 border-b border-[#1B1F22] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <Network className="w-5 h-5 text-emerald-400" />
+                <Network className="w-5 h-5 text-[#D6E85A]" />
                 <div>
                   <h3 className="text-sm font-bold text-white font-mono flex items-center gap-2">
                     <span>COMPLAINT CORRELATION: {activeCorrelationComplaint.complaint_id}</span>
-                    <span className="text-slate-400 font-normal">➔ {activeCorrelationComplaint.reported_account_id}</span>
+                    <span className="text-[#E2E2E2]-400 font-normal">➔ {activeCorrelationComplaint.reported_account_id}</span>
                   </h3>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-[#E2E2E2]-400">
                     Multi-evidence cross-matching across core banking, 1-2 hop mule graph, and prior police reports.
                   </p>
                 </div>
@@ -469,9 +469,9 @@ export default function ComplaintsPage({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleOpenDossier(activeCorrelationComplaint)}
-                  className="px-2.5 py-1 bg-navy-950 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded transition flex items-center gap-1 font-mono"
+                  className="px-2.5 py-1 bg-[#000000] hover:bg-[#0E1215] border border-[#1B1F22] text-[#E2E2E2] text-xs rounded transition flex items-center gap-1 font-mono"
                 >
-                  <FileText className="w-3 h-3 text-emerald-400" />
+                  <FileText className="w-3 h-3 text-[#D6E85A]" />
                   <span>Dossier</span>
                 </button>
                 <button
@@ -480,7 +480,7 @@ export default function ComplaintsPage({
                     setCorrelationData(null);
                     setCorrelationGraph(null);
                   }}
-                  className="text-slate-400 hover:text-white"
+                  className="text-[#E2E2E2]-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -490,35 +490,35 @@ export default function ComplaintsPage({
             {/* Modal Body */}
             <div className="flex-1 overflow-y-auto p-5 space-y-5 font-mono text-xs">
               {/* Score Banner */}
-              <div className="p-4 rounded-xl bg-navy-950 border border-slate-800 space-y-2">
+              <div className="p-4 rounded-none bg-[#000000] border border-[#1B1F22] space-y-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase">HEURISTIC CONFIDENCE SCORE</span>
-                    <div className="text-2xl font-bold text-emerald-400 mt-0.5">
+                    <span className="text-[10px] text-[#E2E2E2]-400 uppercase">HEURISTIC CONFIDENCE SCORE</span>
+                    <div className="text-2xl font-bold text-[#D6E85A] mt-0.5">
                       {correlationData.heuristic_confidence_score?.toFixed(1) || '0.0'}%
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 uppercase">CORRELATION STATUS</span>
-                    <div className="text-xs font-bold text-electric-300 mt-0.5">
+                    <span className="text-[10px] text-[#E2E2E2]-400 uppercase">CORRELATION STATUS</span>
+                    <div className="text-xs font-bold text-[#22D3E6] mt-0.5">
                       {correlationData.status || 'CORRELATED'}
                     </div>
-                    <div className="text-[10px] text-slate-500">
+                    <div className="text-[10px] text-[#5A5F64]">
                       {correlationData.total_related_transactions || 0} Connected Transactions
                     </div>
                   </div>
                 </div>
 
                 {/* Progress Meter */}
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-[#0E1215] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                    className="bg-[#D6E85A] h-full rounded-full transition-all duration-500"
                     style={{ width: `${correlationData.heuristic_confidence_score || 0}%` }}
                   />
                 </div>
 
-                <div className="text-[10px] text-slate-400 font-sans italic pt-1">
+                <div className="text-[10px] text-[#E2E2E2]-400 font-sans italic pt-1">
                   * {correlationData.score_disclaimer || "Heuristic correlation score reflects aggregated evidence signals and is not conclusive proof of guilt."}
                 </div>
               </div>
@@ -526,86 +526,86 @@ export default function ComplaintsPage({
               {/* Categorized Findings */}
               <div className="space-y-3 font-sans">
                 <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-amber-400" />
+                  <ShieldAlert className="w-4 h-4 text-[#D6E85A]" />
                   <span>CATEGORIZED EVIDENCE FINDINGS</span>
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {/* Direct Account Match */}
-                  <div className="p-3.5 rounded-lg bg-navy-950 border border-slate-800 space-y-1.5">
-                    <div className="text-[10px] font-mono font-bold text-slate-400 uppercase flex items-center justify-between">
+                  <div className="p-3.5 rounded-none bg-[#000000] border border-[#1B1F22] space-y-1.5">
+                    <div className="text-[10px] font-mono font-bold text-[#E2E2E2]-400 uppercase flex items-center justify-between">
                       <span>1. Core Banking Account Match</span>
                       <span className={`px-1.5 py-0.2 rounded text-[9px] ${
                         correlationData.matched_categories?.direct_account_match?.matched
-                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40'
-                          : 'bg-slate-800 text-slate-400'
+                          ? 'bg-[#D6E85A]/15 text-[#D6E85A] border border-[#D6E85A]/40'
+                          : 'bg-[#0E1215] text-[#E2E2E2]-400'
                       }`}>
                         {correlationData.matched_categories?.direct_account_match?.matched ? 'MATCHED' : 'UNMATCHED'}
                       </span>
                     </div>
                     {correlationData.matched_categories?.direct_account_match?.matched ? (
-                      <div className="text-xs text-slate-200 space-y-0.5 font-mono">
-                        <div>Account: <strong className="text-electric-300">{correlationData.matched_categories.direct_account_match.account_id}</strong></div>
-                        <div className="text-slate-400 text-[11px] font-sans">
+                      <div className="text-xs text-[#E2E2E2] space-y-0.5 font-mono">
+                        <div>Account: <strong className="text-[#22D3E6]">{correlationData.matched_categories.direct_account_match.account_id}</strong></div>
+                        <div className="text-[#E2E2E2]-400 text-[11px] font-sans">
                           Entity: {correlationData.matched_categories.direct_account_match.customer_name}
                         </div>
                       </div>
                     ) : (
-                      <div className="text-xs text-slate-500 italic">No exact account match found.</div>
+                      <div className="text-xs text-[#5A5F64] italic">No exact account match found.</div>
                     )}
                   </div>
 
                   {/* Recidivism / Shared Complaints */}
-                  <div className="p-3.5 rounded-lg bg-navy-950 border border-slate-800 space-y-1.5">
-                    <div className="text-[10px] font-mono font-bold text-slate-400 uppercase flex items-center justify-between">
+                  <div className="p-3.5 rounded-none bg-[#000000] border border-[#1B1F22] space-y-1.5">
+                    <div className="text-[10px] font-mono font-bold text-[#E2E2E2]-400 uppercase flex items-center justify-between">
                       <span>2. Recidivism & Shared Complaints</span>
-                      <span className="text-rose-400 font-mono font-bold">
+                      <span className="text-[#FF3B4E] font-mono font-bold">
                         {correlationData.matched_categories?.shared_complaints?.count || 0} Other Reports
                       </span>
                     </div>
                     {(correlationData.matched_categories?.shared_complaints?.complaints || []).map((sc, i) => (
-                      <div key={i} className="text-[11px] text-slate-300 border-t border-slate-800/80 pt-1 font-sans">
-                        <strong className="font-mono text-amber-300">{sc.complaint_id}</strong> by {sc.complainant_name}: "{sc.description}"
+                      <div key={i} className="text-[11px] text-[#E2E2E2]-300 border-t border-[#1B1F22]/80 pt-1 font-sans">
+                        <strong className="font-mono text-[#D6E85A]">{sc.complaint_id}</strong> by {sc.complainant_name}: "{sc.description}"
                       </div>
                     ))}
                     {(!correlationData.matched_categories?.shared_complaints?.complaints || correlationData.matched_categories.shared_complaints.complaints.length === 0) && (
-                      <div className="text-xs text-slate-500 italic">First reported complaint on this entity.</div>
+                      <div className="text-xs text-[#5A5F64] italic">First reported complaint on this entity.</div>
                     )}
                   </div>
 
                   {/* Graph-Connected High-Risk Mules */}
-                  <div className="p-3.5 rounded-lg bg-navy-950 border border-slate-800 space-y-1.5">
-                    <div className="text-[10px] font-mono font-bold text-slate-400 uppercase flex items-center justify-between">
+                  <div className="p-3.5 rounded-none bg-[#000000] border border-[#1B1F22] space-y-1.5">
+                    <div className="text-[10px] font-mono font-bold text-[#E2E2E2]-400 uppercase flex items-center justify-between">
                       <span>3. Graph-Connected Mules (1-2 Hops)</span>
-                      <span className="text-amber-400 font-mono font-bold">
+                      <span className="text-[#D6E85A] font-mono font-bold">
                         {correlationData.matched_categories?.graph_connected_mules?.count || 0} Connected
                       </span>
                     </div>
                     {(correlationData.matched_categories?.graph_connected_mules?.mules || []).map((m, i) => (
-                      <div key={i} className="text-[11px] text-slate-300 border-t border-slate-800/80 pt-1 font-mono">
-                        <span className="text-rose-400 font-bold">{m.account_id}</span> ({m.connection_type}) - Risk: {m.risk_score} (Turnover: {((m.turnover_ratio || 0) * 100).toFixed(1)}%)
+                      <div key={i} className="text-[11px] text-[#E2E2E2]-300 border-t border-[#1B1F22]/80 pt-1 font-mono">
+                        <span className="text-[#FF3B4E] font-bold">{m.account_id}</span> ({m.connection_type}) - Risk: {m.risk_score} (Turnover: {((m.turnover_ratio || 0) * 100).toFixed(1)}%)
                       </div>
                     ))}
                     {(!correlationData.matched_categories?.graph_connected_mules?.mules || correlationData.matched_categories.graph_connected_mules.mules.length === 0) && (
-                      <div className="text-xs text-slate-500 italic">No flagged mule accounts directly connected within 2 hops.</div>
+                      <div className="text-xs text-[#5A5F64] italic">No flagged mule accounts directly connected within 2 hops.</div>
                     )}
                   </div>
 
                   {/* Active Investigation Cases */}
-                  <div className="p-3.5 rounded-lg bg-navy-950 border border-slate-800 space-y-1.5">
-                    <div className="text-[10px] font-mono font-bold text-slate-400 uppercase flex items-center justify-between">
+                  <div className="p-3.5 rounded-none bg-[#000000] border border-[#1B1F22] space-y-1.5">
+                    <div className="text-[10px] font-mono font-bold text-[#E2E2E2]-400 uppercase flex items-center justify-between">
                       <span>4. Active Investigation Cases</span>
-                      <span className="text-electric-400 font-mono font-bold">
+                      <span className="text-[#22D3E6] font-mono font-bold">
                         {correlationData.matched_categories?.existing_cases?.count || 0} Open
                       </span>
                     </div>
                     {(correlationData.matched_categories?.existing_cases?.cases || []).map((cs, i) => (
-                      <div key={i} className="text-[11px] text-slate-300 border-t border-slate-800/80 pt-1 font-mono">
-                        <strong className="text-electric-300">{cs.case_id}</strong>: {cs.title} ({cs.status})
+                      <div key={i} className="text-[11px] text-[#E2E2E2]-300 border-t border-[#1B1F22]/80 pt-1 font-mono">
+                        <strong className="text-[#22D3E6]">{cs.case_id}</strong>: {cs.title} ({cs.status})
                       </div>
                     ))}
                     {(!correlationData.matched_categories?.existing_cases?.cases || correlationData.matched_categories.existing_cases.cases.length === 0) && (
-                      <div className="text-xs text-slate-500 italic">No existing cases active on this entity.</div>
+                      <div className="text-xs text-[#5A5F64] italic">No existing cases active on this entity.</div>
                     )}
                   </div>
                 </div>
@@ -617,10 +617,10 @@ export default function ComplaintsPage({
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider">
                     EVIDENCE EXPLANATION NARRATIVE:
                   </h4>
-                  <div className="p-3.5 rounded-xl bg-navy-950 border border-slate-800 space-y-1.5 font-sans text-xs">
+                  <div className="p-3.5 rounded-none bg-[#000000] border border-[#1B1F22] space-y-1.5 font-sans text-xs">
                     {correlationData.explanations.map((exp, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-slate-300">
-                        <ChevronRight className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <div key={idx} className="flex items-start gap-2 text-[#E2E2E2]-300">
+                        <ChevronRight className="w-3.5 h-3.5 text-[#D6E85A] shrink-0 mt-0.5" />
                         <span>{exp}</span>
                       </div>
                     ))}
@@ -632,10 +632,10 @@ export default function ComplaintsPage({
               {correlationGraph && correlationGraph.elements?.length > 0 && (
                 <div className="space-y-2">
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
-                    <Network className="w-4 h-4 text-electric-400" />
+                    <Network className="w-4 h-4 text-[#22D3E6]" />
                     <span>COMPLAINT RELATIONSHIP GRAPH TOPOLOGY</span>
                   </h4>
-                  <div className="h-[280px] rounded-xl overflow-hidden border border-slate-800 bg-navy-950">
+                  <div className="h-[280px] rounded-none overflow-hidden border border-[#1B1F22] bg-[#000000]">
                     <CytoscapeGraph
                       graphData={correlationGraph}
                       selectedNodeId={activeCorrelationComplaint.complaint_id}
@@ -646,19 +646,19 @@ export default function ComplaintsPage({
             </div>
 
             {/* Modal Bottom Actions */}
-            <div className="p-4 bg-navy-850 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0 font-mono text-xs">
+            <div className="p-4 bg-navy-850 border-t border-[#1B1F22] flex flex-wrap items-center justify-between gap-3 shrink-0 font-mono text-xs">
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleOpenLinkCase}
-                  className="px-3 py-1.5 bg-navy-950 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded-lg transition flex items-center gap-1.5"
+                  className="px-3 py-1.5 bg-[#000000] hover:bg-[#0E1215] text-[#E2E2E2] border border-[#1B1F22] rounded-none transition flex items-center gap-1.5"
                 >
-                  <Briefcase className="w-3.5 h-3.5 text-electric-400" />
+                  <Briefcase className="w-3.5 h-3.5 text-[#22D3E6]" />
                   <span>Link to Existing Case</span>
                 </button>
 
                 <button
                   onClick={() => handleCreateCaseFromComplaint(activeCorrelationComplaint)}
-                  className="px-3.5 py-1.5 bg-electric-600 hover:bg-electric-500 text-white font-bold rounded-lg shadow-glow-electric transition flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 bg-electric-600 hover:bg-[#22D3E6] text-white font-bold rounded-none shadow-glow-electric transition flex items-center gap-1.5"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Create New Case</span>
@@ -667,7 +667,7 @@ export default function ComplaintsPage({
 
               <button
                 onClick={() => handleOpenDossier(activeCorrelationComplaint)}
-                className="px-3.5 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 rounded-lg transition flex items-center gap-1.5"
+                className="px-3.5 py-1.5 bg-[#D6E85A]/15 hover:bg-emerald-900 border border-[#D6E85A]/40 text-[#D6E85A] rounded-none transition flex items-center gap-1.5"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Export Official Dossier</span>
@@ -680,15 +680,15 @@ export default function ComplaintsPage({
       {/* Link to Existing Case Modal */}
       {isLinkCaseOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-navy-900 border border-slate-700 rounded-xl p-5 space-y-4 shadow-2xl font-mono text-xs">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="w-full max-w-md bg-[#05080A] border border-[#1B1F22] rounded-none p-5 space-y-4 shadow-2xl font-mono text-xs">
+            <div className="flex items-center justify-between border-b border-[#1B1F22] pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-electric-400" />
+                <Briefcase className="w-4 h-4 text-[#22D3E6]" />
                 <span>LINK COMPLAINT TO CASE</span>
               </h3>
               <button
                 onClick={() => setIsLinkCaseOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-[#E2E2E2]-400 hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -696,13 +696,13 @@ export default function ComplaintsPage({
 
             <div className="space-y-3 font-sans">
               <div>
-                <label className="block text-xs font-mono text-slate-400 mb-1">
+                <label className="block text-xs font-mono text-[#E2E2E2]-400 mb-1">
                   SELECT TARGET CASE:
                 </label>
                 <select
                   value={selectedCaseId}
                   onChange={(e) => setSelectedCaseId(e.target.value)}
-                  className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-electric-400"
+                  className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white font-mono text-xs focus:outline-none focus:border-[#22D3E6]"
                 >
                   {existingCases.map((c) => (
                     <option key={c.case_id} value={c.case_id}>
@@ -713,7 +713,7 @@ export default function ComplaintsPage({
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-slate-400 mb-1">
+                <label className="block text-xs font-mono text-[#E2E2E2]-400 mb-1">
                   CORRELATION NOTES:
                 </label>
                 <textarea
@@ -721,21 +721,21 @@ export default function ComplaintsPage({
                   value={linkNotes}
                   onChange={(e) => setLinkNotes(e.target.value)}
                   placeholder="Note evidentiary grounds linking this FIR to the open case..."
-                  className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white font-sans text-xs focus:outline-none focus:border-electric-400"
+                  className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white font-sans text-xs focus:outline-none focus:border-[#22D3E6]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#1B1F22]">
                 <button
                   onClick={() => setIsLinkCaseOpen(false)}
-                  className="px-3 py-1.5 bg-navy-950 hover:bg-slate-800 text-slate-300 font-mono text-xs rounded-lg transition"
+                  className="px-3 py-1.5 bg-[#000000] hover:bg-[#0E1215] text-[#E2E2E2]-300 font-mono text-xs rounded-none transition"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmLinkCase}
                   disabled={linkingCase}
-                  className="px-4 py-1.5 bg-electric-600 hover:bg-electric-500 disabled:opacity-50 text-white font-mono text-xs font-bold rounded-lg shadow-glow-electric transition flex items-center gap-1.5"
+                  className="px-4 py-1.5 bg-electric-600 hover:bg-[#22D3E6] disabled:opacity-50 text-white font-mono text-xs font-bold rounded-none shadow-glow-electric transition flex items-center gap-1.5"
                 >
                   {linkingCase ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Briefcase className="w-3.5 h-3.5" />}
                   <span>Confirm Link</span>
@@ -749,23 +749,23 @@ export default function ComplaintsPage({
       {/* Dossier Report Modal */}
       {isDossierModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-2xl bg-navy-900 border border-slate-700 rounded-xl p-5 space-y-4 shadow-2xl font-mono text-xs max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
+          <div className="w-full max-w-2xl bg-[#05080A] border border-[#1B1F22] rounded-none p-5 space-y-4 shadow-2xl font-mono text-xs max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-[#1B1F22] pb-3 shrink-0">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-400" />
+                <FileText className="w-4 h-4 text-[#D6E85A]" />
                 <span>OFFICIAL COMPLAINT FORENSIC DOSSIER</span>
               </h3>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleDownloadDossierJson}
-                  className="px-2.5 py-1 bg-emerald-950 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-300 rounded text-xs transition flex items-center gap-1"
+                  className="px-2.5 py-1 bg-[#D6E85A]/15 hover:bg-emerald-900 border border-[#D6E85A]/50 text-[#D6E85A] rounded text-xs transition flex items-center gap-1"
                 >
                   <Download className="w-3 h-3" />
                   <span>Download JSON</span>
                 </button>
                 <button
                   onClick={() => setIsDossierModalOpen(false)}
-                  className="text-slate-400 hover:text-white"
+                  className="text-[#E2E2E2]-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -774,43 +774,43 @@ export default function ComplaintsPage({
 
             <div className="flex-1 overflow-y-auto space-y-4 pr-1">
               {loadingDossier ? (
-                <div className="py-12 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
-                  <RefreshCw className="w-5 h-5 animate-spin text-electric-400" />
+                <div className="py-12 text-center text-[#E2E2E2]-400 flex flex-col items-center justify-center gap-2">
+                  <RefreshCw className="w-5 h-5 animate-spin text-[#22D3E6]" />
                   <span>Synthesizing official complaint dossier...</span>
                 </div>
               ) : dossierReport ? (
-                <div className="space-y-4 font-sans text-slate-300">
-                  <div className="p-3.5 rounded-lg bg-navy-950 border border-slate-800 font-mono text-[11px] space-y-1">
+                <div className="space-y-4 font-sans text-[#E2E2E2]-300">
+                  <div className="p-3.5 rounded-none bg-[#000000] border border-[#1B1F22] font-mono text-[11px] space-y-1">
                     <div className="text-white font-bold">{dossierReport.report_title}</div>
-                    <div className="text-slate-500">
+                    <div className="text-[#5A5F64]">
                       ID: {dossierReport.complaint_id} | AUTHORITY: {dossierReport.investigating_authority}
                     </div>
-                    <div className="text-amber-400 text-[10px]">
+                    <div className="text-[#D6E85A] text-[10px]">
                       {dossierReport.legal_disclaimer}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 font-mono text-xs">
-                    <div className="p-3 rounded bg-navy-950 border border-slate-800 space-y-1">
-                      <div className="text-[10px] text-slate-500 uppercase">Complainant</div>
+                    <div className="p-3 rounded bg-[#000000] border border-[#1B1F22] space-y-1">
+                      <div className="text-[10px] text-[#5A5F64] uppercase">Complainant</div>
                       <div className="text-white font-bold">{dossierReport.complainant}</div>
-                      <div className="text-rose-400">Claimed Loss: ₹{(dossierReport.amount_lost || 0).toLocaleString()}</div>
+                      <div className="text-[#FF3B4E]">Claimed Loss: ₹{(dossierReport.amount_lost || 0).toLocaleString()}</div>
                     </div>
 
-                    <div className="p-3 rounded bg-navy-950 border border-slate-800 space-y-1">
-                      <div className="text-[10px] text-slate-500 uppercase">Subject Entity</div>
-                      <div className="text-electric-300 font-bold">{dossierReport.reported_account}</div>
-                      <div className="text-slate-400">Category: {dossierReport.category}</div>
+                    <div className="p-3 rounded bg-[#000000] border border-[#1B1F22] space-y-1">
+                      <div className="text-[10px] text-[#5A5F64] uppercase">Subject Entity</div>
+                      <div className="text-[#22D3E6] font-bold">{dossierReport.reported_account}</div>
+                      <div className="text-[#E2E2E2]-400">Category: {dossierReport.category}</div>
                     </div>
                   </div>
 
                   {dossierReport.correlation_evidence?.explanations?.length > 0 && (
                     <div className="space-y-2 font-mono text-xs">
                       <div className="font-bold text-white uppercase text-[11px]">CORRELATION FINDINGS:</div>
-                      <div className="p-3 rounded bg-navy-950 border border-slate-800 space-y-1.5 font-sans text-xs">
+                      <div className="p-3 rounded bg-[#000000] border border-[#1B1F22] space-y-1.5 font-sans text-xs">
                         {dossierReport.correlation_evidence.explanations.map((exp, i) => (
-                          <div key={i} className="flex items-start gap-2 text-slate-300">
-                            <ChevronRight className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                          <div key={i} className="flex items-start gap-2 text-[#E2E2E2]-300">
+                            <ChevronRight className="w-3.5 h-3.5 text-[#D6E85A] shrink-0 mt-0.5" />
                             <span>{exp}</span>
                           </div>
                         ))}
@@ -827,10 +827,10 @@ export default function ComplaintsPage({
       {/* New Complaint Modal */}
       {isNewModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg bg-navy-900 border border-slate-700 rounded-xl shadow-glass overflow-hidden flex flex-col">
-            <div className="p-4 bg-navy-850 border-b border-slate-800 flex items-center justify-between">
+          <div className="w-full max-w-lg bg-[#05080A] border border-[#1B1F22] rounded-none shadow-glass overflow-hidden flex flex-col">
+            <div className="p-4 bg-navy-850 border-b border-[#1B1F22] flex items-center justify-between">
               <h3 className="text-sm font-bold text-white tracking-wide">Register Cybercrime Complaint</h3>
-              <button onClick={() => setIsNewModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsNewModalOpen(false)} className="text-[#E2E2E2]-400 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -838,60 +838,60 @@ export default function ComplaintsPage({
             <form onSubmit={handleCreateComplaint} className="p-5 space-y-4 text-xs font-sans">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1 font-mono text-[11px]">Complaint ID / FIR</label>
+                  <label className="block text-[#E2E2E2]-300 font-semibold mb-1 font-mono text-[11px]">Complaint ID / FIR</label>
                   <input
                     type="text"
                     required
                     value={newId}
                     onChange={(e) => setNewId(e.target.value)}
-                    className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-electric-400"
+                    className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white font-mono text-xs focus:outline-none focus:border-[#22D3E6]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1 font-mono text-[11px]">Complainant Full Name</label>
+                  <label className="block text-[#E2E2E2]-300 font-semibold mb-1 font-mono text-[11px]">Complainant Full Name</label>
                   <input
                     type="text"
                     required
                     value={complainant}
                     onChange={(e) => setComplainant(e.target.value)}
                     placeholder="e.g. Ramesh K. Patel"
-                    className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-electric-400"
+                    className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white text-xs focus:outline-none focus:border-[#22D3E6]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1 font-mono text-[11px]">Reported Mule Account</label>
+                  <label className="block text-[#E2E2E2]-300 font-semibold mb-1 font-mono text-[11px]">Reported Mule Account</label>
                   <input
                     type="text"
                     required
                     value={accId}
                     onChange={(e) => setAccId(e.target.value)}
                     placeholder="e.g. MULE_AGG_01"
-                    className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-electric-400"
+                    className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white font-mono text-xs focus:outline-none focus:border-[#22D3E6]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1 font-mono text-[11px]">Claimed Loss (INR ₹)</label>
+                  <label className="block text-[#E2E2E2]-300 font-semibold mb-1 font-mono text-[11px]">Claimed Loss (INR ₹)</label>
                   <input
                     type="number"
                     required
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="e.g. 75000"
-                    className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-electric-400"
+                    className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white font-mono text-xs focus:outline-none focus:border-[#22D3E6]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1 font-mono text-[11px]">Fraud Category</label>
+                  <label className="block text-[#E2E2E2]-300 font-semibold mb-1 font-mono text-[11px]">Fraud Category</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-electric-400"
+                    className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white text-xs focus:outline-none focus:border-[#22D3E6]"
                   >
                     <option value="Cyber Fraud">Cyber Fraud</option>
                     <option value="KYC Phishing Fraud">KYC Phishing Fraud</option>
@@ -903,11 +903,11 @@ export default function ComplaintsPage({
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1 font-mono text-[11px]">Reporting Source</label>
+                  <label className="block text-[#E2E2E2]-300 font-semibold mb-1 font-mono text-[11px]">Reporting Source</label>
                   <select
                     value={source}
                     onChange={(e) => setSource(e.target.value)}
-                    className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-electric-400"
+                    className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white text-xs focus:outline-none focus:border-[#22D3E6]"
                   >
                     <option value="National Cyber Crime Reporting Portal (1930)">National Portal (1930)</option>
                     <option value="State Police Cyber Cell FIR">Police Cyber Cell FIR</option>
@@ -918,29 +918,29 @@ export default function ComplaintsPage({
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1 font-mono text-[11px]">Incident Description & Modus Operandi</label>
+                <label className="block text-[#E2E2E2]-300 font-semibold mb-1 font-mono text-[11px]">Incident Description & Modus Operandi</label>
                 <textarea
                   rows={3}
                   required
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                   placeholder="Detail phishing pretext, digital arrest claim, or fraudulent task scheme..."
-                  className="w-full px-3 py-2 bg-navy-950 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-electric-400 resize-none"
+                  className="w-full px-3 py-2 bg-[#000000] border border-[#1B1F22] rounded-none text-white text-xs focus:outline-none focus:border-[#22D3E6] resize-none"
                 />
               </div>
 
-              <div className="pt-2 flex justify-end gap-3 border-t border-slate-800 font-mono">
+              <div className="pt-2 flex justify-end gap-3 border-t border-[#1B1F22] font-mono">
                 <button
                   type="button"
                   onClick={() => setIsNewModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 font-medium rounded-lg text-xs"
+                  className="px-4 py-2 bg-[#0E1215] text-[#E2E2E2]-300 font-medium rounded-none text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 bg-electric-600 hover:bg-electric-500 text-white font-bold rounded-lg shadow-glow-electric disabled:opacity-50 text-xs"
+                  className="px-4 py-2 bg-electric-600 hover:bg-[#22D3E6] text-white font-bold rounded-none shadow-glow-electric disabled:opacity-50 text-xs"
                 >
                   {isSubmitting ? "Recording..." : "Save Complaint Record"}
                 </button>
