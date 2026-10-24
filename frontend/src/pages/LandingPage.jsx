@@ -229,57 +229,48 @@ export default function LandingPage({
   return (
     <div className="dedsec-page--landing dedsec-page-arrival min-h-screen w-full bg-transparent text-icesilver selection:bg-electric-500 selection:text-white relative overflow-x-hidden font-sans">
 
-      {/* 3D WebGL Model in Background of Landing Page */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-center select-none" aria-hidden="true">
-        <div className="absolute w-[125vw] h-[125vh] max-w-[1450px] max-h-[1450px] -top-[10vh] lg:-right-[8vw] flex items-center justify-center opacity-85 transition-opacity duration-1000">
-          <GlobeErrorBoundary>
-            <BriarGlobe
-              background="transparent"
-              lines={{
-                color: "#1FC8DB",
-                accent: "#FFD23F",
-                thickness: 0.85,
-                opacity: 5.8,
-                depth: 8.5
-              }}
-              hover={{
-                reach: 24,
-                glowSize: 140,
-                glow: "#1FC8DB",
-                pill: "var(--bg-surface)",
-                lag: 4.5
-              }}
-              network={{
-                nodes: 950,
-                hubs: 30,
-                links: 6
-              }}
-              labels={[
-                "Mule Detection Engine: Active",
-                "Layering Flow Correlation: 98.4%",
-                "GNN 2-Hop Aggregation: Online",
-                "Smurfing Topology Flow: Monitored",
-                "Rapid Pass-Through: Tracked",
-                "Synthetic Benchmark Network",
-                "High Risk Mule Flagged",
-                "Layering Cycle Detected"
-              ]}
-              textColor="var(--text-primary)"
-              speed={1.2}
-              direction={1}
-              motion={{ style: "both", amount: 6, pace: 5 }}
-              tilt={16}
-              parallax={7}
-              className="w-full h-full pointer-events-auto cursor-grab active:cursor-grabbing"
-            />
-          </GlobeErrorBoundary>
+      {/* 3D Model Background from Folder: Creation of Adam 3D Recording & Spatial Mesh */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none" aria-hidden="true">
+        {/* 3D Model Video Player */}
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/creation_of_adam_hand.png"
+            className="w-full h-full object-cover transition-opacity duration-700"
+            style={{
+              opacity: isDark ? 0.42 : 0.18,
+              mixBlendMode: isDark ? 'screen' : 'multiply',
+              filter: isDark 
+                ? 'contrast(125%) brightness(110%) hue-rotate(165deg) saturate(1.4)' 
+                : 'contrast(115%) brightness(95%) hue-rotate(185deg) saturate(1.1)',
+              transform: 'scale(1.08)',
+            }}
+          >
+            <source src="/the_creation_of_adam-recording.mp4" type="video/mp4" />
+          </video>
         </div>
 
-        {/* Soft Radial Gradient Overlay for text contrast */}
+        {/* Vignette & Radial Mask for WCAG AA Typography & Card Contrast */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at 50% 30%, transparent 0%, var(--bg-app) 85%)'
+            background: isDark
+              ? 'radial-gradient(ellipse at 50% 35%, rgba(11, 11, 15, 0.4) 0%, rgba(11, 11, 15, 0.75) 55%, var(--bg-app) 92%)'
+              : 'radial-gradient(ellipse at 50% 35%, rgba(255, 255, 255, 0.45) 0%, rgba(245, 247, 250, 0.75) 55%, var(--bg-app) 92%)',
+          }}
+        />
+
+        {/* High-Tech Fine Coordinate Grid Layer */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-25"
+          style={{
+            backgroundImage: isDark
+              ? 'linear-gradient(to right, rgba(31, 200, 219, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(31, 200, 219, 0.08) 1px, transparent 1px)'
+              : 'linear-gradient(to right, rgba(14, 159, 179, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(14, 159, 179, 0.08) 1px, transparent 1px)',
+            backgroundSize: '36px 36px'
           }}
         />
       </div>
