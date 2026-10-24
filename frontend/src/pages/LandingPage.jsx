@@ -24,12 +24,13 @@ import {
   Wrench,
   Globe,
   Radio,
-  Lock
+  Lock,
+  Search,
+  FileCheck2
 } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
 import BriarGlobe from '../components/BriarGlobe';
 import ThemeToggle from '../components/ThemeToggle';
-import AnimaticPipelineStepper from '../components/AnimaticPipelineStepper';
 import AnimatedContent from '../components/AnimatedContent';
 import { useTheme } from '../context/ThemeContext';
 
@@ -156,11 +157,11 @@ export default function LandingPage({
     <div className="min-h-screen w-full bg-fintech-bg text-fintech-text relative overflow-x-hidden transition-colors duration-200">
 
       {/* =========================================================================
-          HERO SECTION (Strictly based on Template Screenshot 1 with Same Palette)
+          HERO SECTION (Strictly based on Template Screenshot 1)
           ========================================================================= */}
       <section className="relative min-h-screen flex flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-14 pt-6 pb-10 bg-fintech-bg">
 
-        {/* 3D Model Background: Monochrome Chrome Sculpture + Radial Mask to #0B0B0F */}
+        {/* 3D Model Background: Monochrome Chrome Sculpture + Radial Mask */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none bg-fintech-bg" aria-hidden="true">
           
           {/* Central 3D Video & Poster in Pure Monochrome Metallic Chrome */}
@@ -187,7 +188,7 @@ export default function LandingPage({
             </video>
           </div>
 
-          {/* 3D Topological Wireframe Wave Grid (matching template Screenshot 1) */}
+          {/* 3D Topological Wireframe Wave Grid */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="0 0 1440 900" fill="none" preserveAspectRatio="none">
             <path d="M-100 620 C200 480 400 700 720 540 C1040 380 1200 640 1540 500" stroke={isDark ? "#1FC8DB" : "#0E9FB3"} strokeWidth="1" strokeDasharray="4 4" opacity="0.35" />
             <path d="M-100 660 C200 520 400 740 720 580 C1040 420 1200 680 1540 540" stroke={isDark ? "#1FC8DB" : "#0E9FB3"} strokeWidth="1" strokeDasharray="3 3" opacity="0.25" />
@@ -195,7 +196,7 @@ export default function LandingPage({
             <path d="M-100 740 C200 600 400 820 720 660 C1040 500 1200 760 1540 620" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.08" />
           </svg>
 
-          {/* Smooth Radial Vignette Mask: Guarantees 100% same background color throughout */}
+          {/* Smooth Radial Vignette Mask */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -238,7 +239,7 @@ export default function LandingPage({
               Services
             </button>
             <button
-              onClick={() => scrollToSection('typology-simulator')}
+              onClick={() => scrollToSection('about-project')}
               className="hover:text-fintech-text transition-colors"
             >
               About
@@ -256,7 +257,7 @@ export default function LandingPage({
               GNN Engine
             </button>
             <button
-              onClick={() => setCurrentPage('money-trail')}
+              onClick={() => scrollToSection('contact-footer')}
               className="hover:text-fintech-text transition-colors"
             >
               Contact
@@ -326,7 +327,7 @@ export default function LandingPage({
         {/* --- 3. Bottom Hero Grid: We Do + Client Marks + Scroll Arrow + Featured Card --- */}
         <div className="relative z-20 pt-8 border-t border-fintech-border/40 grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
 
-          {/* Bottom Left: "We do" + Authority Marks */}
+          {/* Bottom Left: "We do" */}
           <div className="md:col-span-4 space-y-3">
             <div>
               <span className="text-xs font-bold text-fintech-text uppercase tracking-wider block mb-1">
@@ -596,69 +597,154 @@ export default function LandingPage({
         {/* Bottom Centered Transition Pill (About Us from Screenshot 2) */}
         <div className="flex justify-center pt-12">
           <button
-            onClick={() => scrollToSection('dashboard-preview')}
+            onClick={() => scrollToSection('about-project')}
             className="flex items-center gap-2 px-5 py-2 rounded-full border border-fintech-border bg-fintech-card hover:border-fintech-primary text-xs font-semibold text-fintech-text transition-all duration-200 shadow-sm"
           >
             <Star className="w-3.5 h-3.5 text-fintech-accent" />
-            <span>About Us</span>
+            <span>About The Project</span>
           </button>
         </div>
       </section>
 
 
       {/* =========================================================================
-          INTERACTIVE PROCESSING LIFECYCLE (FinTech Intelligence Stepper)
+          ABOUT THE PROJECT (Architecture, Mission, & Neural Intelligence)
+          Replacing the old Interactive Processing Lifecycle Stepper as requested
           ========================================================================= */}
-      <section id="dashboard-preview" className="relative z-20 px-4 sm:px-8 lg:px-14 py-16 max-w-7xl mx-auto space-y-6 bg-fintech-bg">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-fintech-primary font-bold tracking-wider">
-              <BarChart3 className="w-4 h-4 text-fintech-accent" />
-              <span>INTERACTIVE PROCESSING LIFECYCLE</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-fintech-text mt-1 tracking-tight">
-              Step-by-Step Financial Crime Intelligence
+      <section id="about-project" className="relative z-20 px-4 sm:px-8 lg:px-14 py-20 max-w-7xl mx-auto space-y-12 bg-fintech-bg border-t border-fintech-border/60">
+        
+        {/* Top Centered Pill Badge */}
+        <div className="flex justify-start">
+          <span className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-fintech-border bg-fintech-card text-xs font-semibold text-fintech-text shadow-sm">
+            <Star className="w-3.5 h-3.5 text-fintech-accent" />
+            <span>About The Project</span>
+          </span>
+        </div>
+
+        {/* Section Heading Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-7">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl tracking-tight text-fintech-text font-black leading-tight">
+              <span className="font-serif-italic font-normal mr-3">Autonomous</span>
+              <span>Financial Crime Intelligence</span>
             </h2>
-            <p className="text-xs text-fintech-muted mt-1 max-w-xl">
-              Experience how FINTRACE ingests transaction ledgers, constructs multi-hop graphs, and executes GraphSAGE inference.
+          </div>
+
+          <div className="lg:col-span-5 flex items-center lg:justify-end">
+            <p className="text-sm sm:text-base text-fintech-muted font-normal leading-relaxed">
+              FinTrace AI is an institutional fraud investigation platform engineered to dismantle organized mule syndicates, money laundering rings, and cybercrime funnels through relational Graph Neural Networks.
             </p>
           </div>
-
-          <button
-            onClick={() => setCurrentPage('dashboard')}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-full btn-accent font-bold text-xs shadow-sm transition transform hover:scale-105 active:scale-95"
-          >
-            <span>Enter Command Center</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
         </div>
 
-        {/* Stepper Frame */}
-        <div className="rounded-3xl border border-fintech-border bg-fintech-card overflow-hidden shadow-card-dark">
-          <div className="px-5 py-3.5 bg-fintech-surface border-b border-fintech-border flex items-center justify-between text-xs font-mono">
-            <div className="flex items-center gap-2">
-              <Terminal className="w-3.5 h-3.5 text-fintech-accent" />
-              <span className="font-bold text-fintech-text text-[11px]">fintrace-ai://pipeline-runner</span>
+        {/* 3 Core Architecture Pillars (Sleek Container matching template) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: The Challenge */}
+          <div className="p-8 rounded-3xl border border-fintech-border bg-fintech-card flex flex-col justify-between space-y-6 hover:border-fintech-primary/50 transition-all duration-300">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-fintech-surface border border-fintech-border flex items-center justify-center text-fintech-accent">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-mono font-bold text-fintech-primary uppercase tracking-wider block">
+                01 • The Problem
+              </span>
+              <h3 className="text-xl font-bold text-fintech-text tracking-tight">
+                Tabular AML Is Blind to Network Topologies
+              </h3>
+              <p className="text-xs text-fintech-muted leading-relaxed">
+                Conventional rule-based monitoring and XGBoost classifiers evaluate transactions in isolation. Syndicates exploit this by smurfing transfers below ₹50,000 across hundreds of dormant accounts, evading static detection thresholds.
+              </p>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 bg-fintech-surface px-2.5 py-0.5 rounded-full border border-fintech-border">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>REPOSITORIES CONNECTED</span>
+            <div className="pt-4 border-t border-fintech-border/60 flex items-center justify-between text-xs font-mono text-fintech-muted">
+              <span>Evasion Vulnerability</span>
+              <span className="text-rose-400 font-bold">High in Legacy AML</span>
             </div>
           </div>
 
-          <div className="p-4 sm:p-6 bg-fintech-card">
-            <AnimaticPipelineStepper
-              setCurrentPage={setCurrentPage}
-              onAccountSelect={onAccountSelect}
-              onOpenLivePipeline={onOpenLivePipeline}
-              stats={{
-                totalAccounts: 1985,
-                totalTransactions: 3218,
-                openCases: 4
-              }}
-            />
+          {/* Card 2: The GraphSAGE Solution */}
+          <div className="p-8 rounded-3xl border border-fintech-border bg-fintech-card flex flex-col justify-between space-y-6 hover:border-fintech-primary/50 transition-all duration-300 relative overflow-hidden">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-fintech-surface border border-fintech-border flex items-center justify-center text-fintech-primary">
+                <Cpu className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-mono font-bold text-fintech-primary uppercase tracking-wider block">
+                02 • Neural Innovation
+              </span>
+              <h3 className="text-xl font-bold text-fintech-text tracking-tight">
+                2-Hop Inductive Graph Neural Networks
+              </h3>
+              <p className="text-xs text-fintech-muted leading-relaxed">
+                FinTrace models banking ledgers as directed, dynamic graph topologies. Our 2-layer GraphSAGE architecture aggregates 1-hop and 2-hop neighborhood message-passing to classify aggregator hubs, circular loops, and rapid pass-through conduits with &gt;96% precision.
+              </p>
+            </div>
+            <div className="pt-4 border-t border-fintech-border/60 flex items-center justify-between text-xs font-mono text-fintech-muted">
+              <span>Model Accuracy</span>
+              <span className="text-emerald-400 font-bold">&gt; 96.5% F1-Score</span>
+            </div>
+          </div>
+
+          {/* Card 3: Judicial Readiness */}
+          <div className="p-8 rounded-3xl border border-fintech-border bg-fintech-card flex flex-col justify-between space-y-6 hover:border-fintech-primary/50 transition-all duration-300">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-fintech-surface border border-fintech-border flex items-center justify-center text-fintech-accent">
+                <Briefcase className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-mono font-bold text-fintech-primary uppercase tracking-wider block">
+                03 • Enforcement Ready
+              </span>
+              <h3 className="text-xl font-bold text-fintech-text tracking-tight">
+                SHA-256 Evidentiary Chain-of-Custody
+              </h3>
+              <p className="text-xs text-fintech-muted leading-relaxed">
+                Every detected entity links directly to National Cyber Crime Portal (1930) complaints and bank statements. Case files are compiled into tamper-evident dossiers with cryptographic integrity hashes, ready for statutory bank lien orders and law enforcement escalation.
+              </p>
+            </div>
+            <div className="pt-4 border-t border-fintech-border/60 flex items-center justify-between text-xs font-mono text-fintech-muted">
+              <span>Judicial Admissibility</span>
+              <span className="text-fintech-primary font-bold">100% Audit Sealed</span>
+            </div>
           </div>
         </div>
+
+        {/* Live Project Metrics & Quick-Action Banner */}
+        <div className="rounded-3xl border border-fintech-border bg-fintech-card p-6 sm:p-8 flex flex-wrap items-center justify-between gap-6 shadow-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 flex-1">
+            <div>
+              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Architecture</span>
+              <span className="text-lg sm:text-xl font-bold text-fintech-text font-mono mt-0.5 block">GraphSAGE v2</span>
+            </div>
+            <div>
+              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Inference Speed</span>
+              <span className="text-lg sm:text-xl font-bold text-emerald-400 font-mono mt-0.5 block">&lt; 45ms</span>
+            </div>
+            <div>
+              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Ledger Scale</span>
+              <span className="text-lg sm:text-xl font-bold text-fintech-primary font-mono mt-0.5 block">100,000+ Txns</span>
+            </div>
+            <div>
+              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Compliance</span>
+              <span className="text-lg sm:text-xl font-bold text-fintech-accent font-mono mt-0.5 block">FIU / RBI / 1930</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 w-full lg:w-auto">
+            <button
+              onClick={() => setCurrentPage('dashboard')}
+              className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-full btn-accent font-bold text-xs shadow-sm transition transform hover:scale-105 active:scale-95"
+            >
+              <span>Explore Live Dashboard</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setCurrentPage('graph')}
+              className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-fintech-border hover:border-fintech-primary bg-fintech-surface font-semibold text-xs text-fintech-text transition"
+            >
+              <Network className="w-3.5 h-3.5 text-fintech-primary" />
+              <span>Inspect Graph Topology</span>
+            </button>
+          </div>
+        </div>
+
       </section>
 
 
@@ -826,9 +912,9 @@ export default function LandingPage({
 
 
       {/* =========================================================================
-          FOOTER (Clean & Aligned with Theme Palette)
+          FOOTER / CONTACT (Clean & Aligned with Theme Palette)
           ========================================================================= */}
-      <footer className="relative z-20 border-t border-fintech-border bg-fintech-card px-6 lg:px-14 py-10 text-xs text-fintech-muted">
+      <footer id="contact-footer" className="relative z-20 border-t border-fintech-border bg-fintech-card px-6 lg:px-14 py-10 text-xs text-fintech-muted">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <span className="text-xl font-black text-fintech-text tracking-tighter">fintrace</span>
