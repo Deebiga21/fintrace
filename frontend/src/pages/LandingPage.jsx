@@ -228,6 +228,63 @@ export default function LandingPage({
   return (
     <div className="dedsec-page--landing dedsec-page-arrival min-h-screen w-full bg-transparent text-icesilver selection:bg-electric-500 selection:text-white relative overflow-x-hidden font-sans">
 
+      {/* 3D WebGL Model in Background of Landing Page */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-center select-none" aria-hidden="true">
+        <div className="absolute w-[125vw] h-[125vh] max-w-[1450px] max-h-[1450px] -top-[10vh] lg:-right-[8vw] flex items-center justify-center opacity-85 transition-opacity duration-1000">
+          <GlobeErrorBoundary>
+            <BriarGlobe
+              background="transparent"
+              lines={{
+                color: "#E2B4BD",
+                accent: "#B86B7A",
+                thickness: 0.85,
+                opacity: 5.8,
+                depth: 8.5
+              }}
+              hover={{
+                reach: 24,
+                glowSize: 140,
+                glow: "#E2B4BD",
+                pill: "rgba(255, 245, 245, 0.95)",
+                lag: 4.5
+              }}
+              network={{
+                nodes: 950,
+                hubs: 30,
+                links: 6
+              }}
+              labels={[
+                "Mule Detection Engine: Active",
+                "Layering Flow Correlation: 98.4%",
+                "GNN 2-Hop Aggregation: Online",
+                "Smurfing Topology Flow: Monitored",
+                "Rapid Pass-Through: Tracked",
+                "Synthetic Benchmark Network",
+                "High Risk Mule Flagged",
+                "Layering Cycle Detected"
+              ]}
+              textColor="#4A4A4A"
+              speed={1.2}
+              direction={1}
+              motion={{ style: "both", amount: 6, pace: 5 }}
+              tilt={16}
+              parallax={7}
+              className="w-full h-full pointer-events-auto cursor-grab active:cursor-grabbing"
+            />
+          </GlobeErrorBoundary>
+        </div>
+
+        {/* Soft Radial Gradient Overlay for text contrast */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 30%, rgba(255, 245, 245, 0.45) 0%, rgba(255, 245, 245, 0.75) 55%, #FFF5F5 95%)'
+          }}
+        />
+      </div>
+
+
+
       {/* Ambient Blue & Cyan Glows */}
       {/* Pure Black Ambient */}
 
@@ -665,7 +722,7 @@ export default function LandingPage({
               </button>
             </div>
 
-            <div className="relative h-[480px] lg:h-[520px] rounded-3xl bg-gradient-to-br from-[#252B37] via-[#171B23] to-[#05070E] border-2 border-icesilver/10 shadow-[0_25px_60px_-15px_rgba(2,132,199,0.2)] overflow-hidden group">
+            <div className="relative h-[480px] lg:h-[520px] rounded-3xl bg-[#FFFFFF] border-2 border-[#E8C2BB] shadow-[0_20px_50px_-10px_rgba(226,180,189,0.35)] overflow-hidden group">
               {/* Box Top Toolbar */}
               <div className="absolute top-0 left-0 right-0 z-30 px-5 py-3.5 border-b border-icesilver/10 bg-[#FFF5F5]/85 backdrop-blur-md flex items-center justify-between text-xs font-mono">
                 <div className="flex items-center gap-2">
@@ -674,11 +731,11 @@ export default function LandingPage({
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
                   </div>
-                  <span className="text-white font-bold text-[11px] ml-2">3D SPHERICAL PROJECTION</span>
+                  <span className="text-[#4A4A4A] font-bold text-[11px] ml-2">3D SPHERICAL PROJECTION</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span className="text-[10px] text-icesilver-300 bg-black/60 px-2 py-0.5 rounded border border-icesilver/10">
+                  <span className="text-[10px] text-[#6E6264] bg-[#FDF1F0] px-2 py-0.5 rounded border border-[#E8C2BB]">
                     Live WebGL
                   </span>
                 </div>
@@ -690,8 +747,8 @@ export default function LandingPage({
                   <BriarGlobe
                     background="transparent"
                     lines={{
-                      color: "#60A5FA",
-                      accent: "#F43F5E",
+                      color: "#E2B4BD",
+                      accent: "#B86B7A",
                       thickness: 0.7,
                       opacity: 6,
                       depth: 8.5
@@ -699,8 +756,8 @@ export default function LandingPage({
                     hover={{
                       reach: 24,
                       glowSize: 140,
-                      glow: "#0284C7",
-                      pill: "rgba(15, 23, 42, 0.95)",
+                      glow: "#E2B4BD",
+                      pill: "rgba(255, 245, 245, 0.95)",
                       lag: 4.2
                     }}
                     network={{
@@ -718,7 +775,7 @@ export default function LandingPage({
                       "Cybercrime Portal (1930) Link",
                       "Illustrative turnover pattern"
                     ]}
-                    textColor="#60A5FA"
+                    textColor="#4A4A4A"
                     speed={1.0}
                     direction={1}
                     motion={{ style: "both", amount: 6, pace: 5 }}
