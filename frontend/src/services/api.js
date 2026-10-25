@@ -30,6 +30,7 @@ async function request(endpoint, options = {}) {
 export const api = {
   // Analytics
   getOverview: () => request("/analytics/overview"),
+  getDashboardSummary: () => request("/dashboard/summary"),
   getAuditLogs: (limit = 50) => request(`/analytics/audit-logs?limit=${limit}`),
 
   // Transactions

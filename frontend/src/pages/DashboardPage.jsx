@@ -1,12 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   ArrowUpRight,
   ArrowDownLeft,
   Search,
   ShieldAlert,
   ShieldCheck,
-  Send,
-  CheckCircle2,
   AlertTriangle,
   Layers,
   Activity,
@@ -14,7 +12,8 @@ import {
   ChevronRight,
   ExternalLink,
   Zap,
-  CreditCard
+  CreditCard,
+  RefreshCw
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -26,6 +25,60 @@ import {
   CartesianGrid
 } from 'recharts';
 import { useTheme } from '../context/ThemeContext';
+import { api } from '../services/api';
+
+const CURRENCY = '₹';
+const TIMEFRAME_HOURS = { '24H': 24, '7D': 168, '30D': 720, '90D': 2160, '1Y': 8760 };
+
+const formatAmount = (value) => {
+  const amount = Number(value) || 0;
+  return `${CURRENCY}${amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
+const splitAmount = (value) => {
+  const [whole, fraction] = (Number(value) || 0).toFixed(2).split('.');
+  return { whole: `${CURRENCY}${Number(whole).toLocaleString('en-IN')}`, fraction: `.${fraction}` };
+};
+
+const formatCompact = (value) => {
+  const amount = Number(value) || 0;
+  if (Math.abs(amount) >= 1e7) return `${CURRENCY}${(amount / 1e7).toFixed(2)} Cr`;
+  if (Math.abs(amount) >= 1e5) return `${CURRENCY}${(amount / 1e5).toFixed(2)} L`;
+  if (Math.abs(amount) >= 1e3) return `${CURRENCY}${(amount / 1e3).toFixed(1)}K`;
+  return `${CURRENCY}${amount.toFixed(0)}`;
+};
+
+// Aggregate the real transaction stream into day buckets (hour buckets for 24H).
+// The window is anchored to the newest loaded transaction, not to wall-clock time,
+// so a static benchmark dataset never renders an empty chart.
+const buildChartSeries = (transactions, timeframe) => {
+  const parsed = transactions
+    .map((tx) => ({ tx, stamp: new Date(tx.timestamp).getTime() }))
+    .filter(({ stamp }) => Number.isFinite(stamp));
+  if (!parsed.length) return [];
+
+  const latest = Math.max(...parsed.map(({ stamp }) => stamp));
+  const cutoff = latest - (TIMEFRAME_HOURS[timeframe] ?? 720) * 3600 * 1000;
+  const hourly = timeframe === '24H';
+  const buckets = new Map();
+
+  parsed.forEach(({ tx, stamp }) => {
+    if (stamp < cutoff) return;
+    // Timestamps are stored without a zone, so bucket on the literal date/hour
+    // instead of converting through the browser's local timezone.
+    const raw = String(tx.timestamp);
+    const key = hourly
+      ? `${raw.slice(5, 10)} ${raw.slice(11, 13)}h`
+      : raw.slice(0, 10);
+    const bucket = buckets.get(key) || { date: key, volume: 0, suspicious: 0, count: 0 };
+    bucket.volume += Number(tx.amount) || 0;
+    bucket.count += 1;
+    if (tx.is_suspicious) bucket.suspicious += Number(tx.amount) || 0;
+    buckets.set(key, bucket);
+  });
+
+  return [...buckets.values()].sort((a, b) => a.date.localeCompare(b.date));
+};
 
 export default function DashboardPage({
   setCurrentPage,
@@ -36,170 +89,107 @@ export default function DashboardPage({
 }) {
   const { isDark } = useTheme();
 
-  // Timeframe selector
+  // Timeframe / chart selectors
   const [timeframe, setTimeframe] = useState('30D');
-  const [flowType, setFlowType] = useState('all'); // 'all', 'inflow', 'outflow'
+  const [flowType, setFlowType] = useState('volume'); // 'volume' | 'suspicious' | 'count'
   const [txSearch, setTxSearch] = useState('');
-  const [txFilter, setTxFilter] = useState('ALL'); // 'ALL', 'INFLOW', 'OUTFLOW', 'FLAGGED'
+  const [txFilter, setTxFilter] = useState('ALL'); // 'ALL' | 'FLAGGED' | 'CLEARED'
 
-  // Send Money Modal State
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false);
-  const [sendForm, setSendForm] = useState({
-    recipient: 'ACC-0048 (Benchmark Corp)',
-    amount: '',
-    note: 'Inter-desk liquidity allocation',
-    category: 'Wire Transfer'
-  });
-  const [sendNotice, setSendNotice] = useState(null);
+  // Live data from the Rust API
+  const [summary, setSummary] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
-  // Cash Flow / Spending Chart Dataset
-  const chartData = useMemo(() => {
-    return [
-      { date: 'Oct 01', inflow: 142000, outflow: 98000, balance: 2450000 },
-      { date: 'Oct 04', inflow: 185000, outflow: 124000, balance: 2511000 },
-      { date: 'Oct 08', inflow: 92000, outflow: 110000, balance: 2493000 },
-      { date: 'Oct 11', inflow: 240000, outflow: 165000, balance: 2568000 },
-      { date: 'Oct 15', inflow: 198000, outflow: 130000, balance: 2636000 },
-      { date: 'Oct 18', inflow: 165000, outflow: 142000, balance: 2659000 },
-      { date: 'Oct 21', inflow: 280000, outflow: 175000, balance: 2764000 },
-      { date: 'Oct 24', inflow: 235000, outflow: 153080, balance: 2845920 },
-    ];
+  const loadDashboard = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [summaryResponse, transactionRows] = await Promise.all([
+        api.getDashboardSummary(),
+        api.getTransactions({ limit: 500 })
+      ]);
+      setSummary(summaryResponse);
+      setTransactions(Array.isArray(transactionRows) ? transactionRows : []);
+      setLastUpdated(new Date());
+      setFetchError(null);
+    } catch (err) {
+      setFetchError(err?.message || 'Cannot reach the FinTrace API on port 8000.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // Filtered Chart Metric
-  const currentMetricKey = flowType === 'inflow' ? 'inflow' : flowType === 'outflow' ? 'outflow' : 'balance';
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard, refreshTrigger]);
 
-  // Transaction Ledger Data
-  const initialTransactions = useMemo(() => [
-    {
-      id: 'TXN-9042',
-      counterparty: 'Apex Global Liquidity Ltd',
-      accountId: 'ACC-0048',
-      type: 'INFLOW',
-      method: 'SWIFT Wire',
-      date: '2026-10-24 14:28:10',
-      status: 'SUCCESS',
-      amount: 145000.00,
-      riskLevel: 'LOW',
-      category: 'Treasury Settlement'
-    },
-    {
-      id: 'TXN-9041',
-      counterparty: 'Mule Nexus Alpha (Flagged Ring)',
-      accountId: 'ACC-0012',
-      type: 'OUTFLOW',
-      method: 'Rapid Fan-Out P2P',
-      date: '2026-10-24 12:14:07',
-      status: 'FLAGGED',
-      amount: 32400.00,
-      riskLevel: 'HIGH',
-      category: 'Layering Conduit'
-    },
-    {
-      id: 'TXN-9040',
-      counterparty: 'Cloud Infrastructure Services',
-      accountId: 'ACC-0084',
-      type: 'OUTFLOW',
-      method: 'Corporate Card',
-      date: '2026-10-23 18:45:00',
-      status: 'SUCCESS',
-      amount: 12450.00,
-      riskLevel: 'LOW',
-      category: 'Operational Cost'
-    },
-    {
-      id: 'TXN-9039',
-      counterparty: 'Vanguard Custody Escrow',
-      accountId: 'ACC-0091',
-      type: 'INFLOW',
-      method: 'SEPA Instant',
-      date: '2026-10-23 15:10:22',
-      status: 'SUCCESS',
-      amount: 89000.00,
-      riskLevel: 'LOW',
-      category: 'Inbound Inflow'
-    },
-    {
-      id: 'TXN-9038',
-      counterparty: 'Pacific Smurfing Cluster #4',
-      accountId: 'ACC-0014',
-      type: 'OUTFLOW',
-      method: 'Micro-Structuring',
-      date: '2026-10-22 20:05:14',
-      status: 'FLAGGED',
-      amount: 15800.00,
-      riskLevel: 'HIGH',
-      category: 'Smurfing Ring'
-    },
-    {
-      id: 'TXN-9037',
-      counterparty: 'Federal Clearing Settlement',
-      accountId: 'ACC-0002',
-      type: 'INFLOW',
-      method: 'Fedwire Batch',
-      date: '2026-10-22 11:30:00',
-      status: 'SUCCESS',
-      amount: 310500.00,
-      riskLevel: 'LOW',
-      category: 'Capital Inflow'
-    },
-    {
-      id: 'TXN-9036',
-      counterparty: 'Offshore Holding Node 07',
-      accountId: 'ACC-0019',
-      type: 'OUTFLOW',
-      method: 'Cross-Border ACH',
-      date: '2026-10-21 09:12:45',
-      status: 'REVIEW',
-      amount: 24300.00,
-      riskLevel: 'MEDIUM',
-      category: 'Pending Review'
-    }
-  ], []);
+  // Totals straight from /dashboard/summary; flagged accounts derived from the ledger
+  const totals = useMemo(() => {
+    const volume = summary?.transactions?.total_volume ?? 0;
+    const suspiciousVolume = summary?.transactions?.suspicious_volume ?? 0;
+    const totalCount = summary?.transactions?.total_count ?? 0;
+    const suspiciousCount = summary?.transactions?.suspicious_count ?? 0;
+    const accounts = summary?.accounts?.total ?? 0;
+    const highRiskAccounts = summary?.accounts?.high_risk ?? 0;
+    const flaggedAccounts = new Set();
 
-  const [transactions, setTransactions] = useState(initialTransactions);
+    transactions.forEach((tx) => {
+      if (tx.is_suspicious) {
+        flaggedAccounts.add(tx.sender_account);
+        flaggedAccounts.add(tx.receiver_account);
+      }
+    });
 
-  // Filtered transactions
+    return {
+      volume,
+      suspiciousVolume,
+      totalCount,
+      suspiciousCount,
+      accounts,
+      highRiskAccounts,
+      flaggedAccounts: flaggedAccounts.size,
+      cleanVolume: Math.max(volume - suspiciousVolume, 0),
+      cleanShare: volume > 0 ? ((volume - suspiciousVolume) / volume) * 100 : 0,
+      suspiciousShare: volume > 0 ? (suspiciousVolume / volume) * 100 : 0
+    };
+  }, [summary, transactions]);
+
+  const chartData = useMemo(() => buildChartSeries(transactions, timeframe), [transactions, timeframe]);
+
+  const chartMetricKey = flowType === 'suspicious' ? 'suspicious' : flowType === 'count' ? 'count' : 'volume';
+  const chartMetricLabel =
+    flowType === 'suspicious' ? 'Suspicious volume' : flowType === 'count' ? 'Transaction count' : 'Total volume';
+  const chartPeak = chartData.reduce((max, point) => Math.max(max, point[chartMetricKey] || 0), 0);
+
+  // Map API records onto the ledger table's presentation shape
+  const ledgerRows = useMemo(() => transactions.map((tx) => ({
+    id: tx.transaction_id,
+    sender: tx.sender_account,
+    receiver: tx.receiver_account,
+    description: tx.description || 'No description',
+    method: tx.transaction_type || 'N/A',
+    date: (tx.timestamp || '').replace('T', ' ').slice(0, 19),
+    status: tx.status || 'UNKNOWN',
+    flagged: Boolean(tx.is_suspicious),
+    amount: Number(tx.amount) || 0
+  })), [transactions]);
+
   const filteredTransactions = useMemo(() => {
-    return transactions.filter(t => {
-      const matchSearch =
-        t.counterparty.toLowerCase().includes(txSearch.toLowerCase()) ||
-        t.accountId.toLowerCase().includes(txSearch.toLowerCase()) ||
-        t.id.toLowerCase().includes(txSearch.toLowerCase());
-      if (!matchSearch) return false;
-
-      if (txFilter === 'INFLOW') return t.type === 'INFLOW';
-      if (txFilter === 'OUTFLOW') return t.type === 'OUTFLOW';
-      if (txFilter === 'FLAGGED') return t.status === 'FLAGGED' || t.riskLevel === 'HIGH';
+    const query = txSearch.trim().toLowerCase();
+    return ledgerRows.filter((tx) => {
+      if (query) {
+        const haystack = `${tx.id} ${tx.sender} ${tx.receiver} ${tx.description}`.toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+      if (txFilter === 'FLAGGED') return tx.flagged;
+      if (txFilter === 'CLEARED') return !tx.flagged;
       return true;
     });
-  }, [transactions, txSearch, txFilter]);
+  }, [ledgerRows, txSearch, txFilter]);
 
-  // Handle Send Money Submit
-  const handleSendSubmit = (e) => {
-    e.preventDefault();
-    const parsedAmt = parseFloat(sendForm.amount);
-    if (!parsedAmt || parsedAmt <= 0) return;
+  const visibleTransactions = filteredTransactions.slice(0, 10);
 
-    const newTx = {
-      id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
-      counterparty: sendForm.recipient,
-      accountId: 'ACC-0001 (Main Treasury)',
-      type: 'OUTFLOW',
-      method: sendForm.category,
-      date: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      status: 'SUCCESS',
-      amount: parsedAmt,
-      riskLevel: 'LOW',
-      category: sendForm.note || 'Treasury Transfer'
-    };
-
-    setTransactions(prev => [newTx, ...prev]);
-    setIsSendModalOpen(false);
-    setSendForm({ recipient: 'ACC-0048 (Benchmark Corp)', amount: '', note: 'Inter-desk liquidity allocation', category: 'Wire Transfer' });
-    setSendNotice(`Successfully authorized transfer of $${parsedAmt.toLocaleString()} to ${sendForm.recipient}`);
-    setTimeout(() => setSendNotice(null), 4000);
-  };
 
   // Primary brand turquoise based on active theme
   const brandTurquoise = isDark ? '#1FC8DB' : '#0E9FB3';
@@ -207,11 +197,12 @@ export default function DashboardPage({
   return (
     <div className="w-full space-y-6 max-w-7xl mx-auto pb-16 font-sans">
 
-      {/* Floating Notice */}
-      {sendNotice && (
-        <div className="fixed top-16 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl bg-[#22C55E]/15 border border-[#22C55E]/40 text-[#22C55E] text-xs font-semibold shadow-lg backdrop-blur-md animate-in fade-in">
-          <CheckCircle2 className="w-4 h-4 text-[#22C55E]" />
-          <span>{sendNotice}</span>
+      {/* API status banner */}
+      {fetchError && (
+        <div className="fixed top-16 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl bg-[#FF5C6C]/15 border border-[#FF5C6C]/40 text-[#FF5C6C] text-xs font-semibold shadow-lg backdrop-blur-md animate-in fade-in">
+          <AlertTriangle className="w-4 h-4 text-[#FF5C6C] shrink-0" />
+          <span>{fetchError}</span>
+          <button onClick={loadDashboard} className="underline font-mono">Retry</button>
         </div>
       )}
 
@@ -248,18 +239,27 @@ export default function DashboardPage({
             </h1>
 
             <p className="text-xs sm:text-sm text-fintech-muted mt-1 max-w-2xl">
-              Real-time balance settlement, multi-hop liquidity tracing, and GNN anomaly mitigation with full audit compliance.
+              Live transaction monitoring, multi-hop money-trail tracing, and GNN anomaly scoring over the loaded benchmark dataset.
+            </p>
+            <p className="text-[11px] font-mono text-fintech-muted mt-1">
+              {loading
+                ? 'Synchronising with /api/v1/dashboard/summary…'
+                : lastUpdated
+                ? `Last synced ${lastUpdated.toLocaleTimeString('en-IN')} • Dataset: ${summary?.dataset_name || 'n/a'}`
+                : 'Awaiting first sync'}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              onClick={() => setIsSendModalOpen(true)}
-              className="btn-accent px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-sm"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>Send / Transfer</span>
-            </button>
+            {onOpenCreateCase && (
+              <button
+                onClick={onOpenCreateCase}
+                className="btn-accent px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-sm"
+              >
+                <ShieldAlert className="w-3.5 h-3.5" />
+                <span>Open New Case</span>
+              </button>
+            )}
 
             {onOpenLivePipeline && (
               <button
@@ -278,6 +278,15 @@ export default function DashboardPage({
               <FileText className="w-3.5 h-3.5 text-fintech-muted" />
               <span>Ledger View</span>
             </button>
+
+            <button
+              onClick={loadDashboard}
+              disabled={loading}
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-fintech-surface hover:bg-fintech-elevated border border-fintech-border text-fintech-text transition flex items-center gap-1.5 disabled:opacity-60"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-fintech-muted ${loading ? 'animate-spin' : ''}`} />
+              <span>{loading ? 'Syncing' : 'Refresh'}</span>
+            </button>
           </div>
         </div>
       </section>
@@ -290,21 +299,22 @@ export default function DashboardPage({
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold uppercase tracking-wider font-mono text-fintech-muted">
-                TOTAL INSTITUTIONAL CAPITAL
+                TOTAL TRANSACTION VOLUME
               </span>
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#22C55E]/15 border border-[#22C55E]/30 text-[#22C55E]">
-                <span>+14.8%</span>
-                <span className="text-[10px]">▲</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
+                <span>{summary?.currency || 'INR'} • LIVE</span>
               </span>
             </div>
 
             {/* Large Bold Numbers (Fintech rule) */}
             <div className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-fintech-text">
-              $2,845,920<span className="text-fintech-muted text-3xl font-bold">.40</span>
+              {splitAmount(totals.volume).whole}
+              <span className="text-fintech-muted text-3xl font-bold">{splitAmount(totals.volume).fraction}</span>
             </div>
 
             <p className="text-xs text-fintech-muted mt-2">
-              Audited across 4 primary liquidity nodes • Fully collateralized reserve
+              {totals.totalCount.toLocaleString('en-IN')} transactions across {totals.accounts.toLocaleString('en-IN')} accounts • {totals.suspiciousCount.toLocaleString('en-IN')} flagged in the dataset
             </p>
           </div>
 
@@ -312,39 +322,37 @@ export default function DashboardPage({
           <div className="grid grid-cols-3 gap-3 pt-6 mt-6 border-t border-fintech-border">
             <div className="p-3 rounded-xl bg-fintech-surface border border-fintech-borderSubtle">
               <span className="text-[11px] font-mono font-medium text-fintech-muted block">
-                AVAILABLE LIQUIDITY
+                TOTAL TRANSACTIONS
               </span>
               <span className="text-base sm:text-lg font-bold font-mono text-fintech-text mt-0.5 block">
-                $2,140,500.00
-              </span>
-              <span className="text-[10px] text-[#22C55E] font-bold flex items-center gap-0.5 mt-1">
-                <span>+8.2%</span>
-                <span>▲</span>
-              </span>
-            </div>
-
-            <div className="p-3 rounded-xl bg-fintech-surface border border-fintech-borderSubtle">
-              <span className="text-[11px] font-mono font-medium text-fintech-muted block">
-                IN-TRANSIT / ESCROW
-              </span>
-              <span className="text-base sm:text-lg font-bold font-mono text-fintech-text mt-0.5 block">
-                $580,220.40
+                {totals.totalCount.toLocaleString('en-IN')}
               </span>
               <span className="text-[10px] text-fintech-muted font-bold flex items-center gap-0.5 mt-1">
-                <span>Settling today</span>
+                <span>Ingested &amp; normalised</span>
               </span>
             </div>
 
             <div className="p-3 rounded-xl bg-fintech-surface border border-fintech-borderSubtle">
               <span className="text-[11px] font-mono font-medium text-fintech-muted block">
-                FLAGGED HOLDINGS
+                FLAGGED TRANSACTIONS
               </span>
               <span className="text-base sm:text-lg font-bold font-mono text-fintech-text mt-0.5 block">
-                $125,200.00
+                {totals.suspiciousCount.toLocaleString('en-IN')}
               </span>
               <span className="text-[10px] text-[#FF5C6C] font-bold flex items-center gap-0.5 mt-1">
-                <span>-3.4%</span>
-                <span>▼</span>
+                <span>{totals.suspiciousShare.toFixed(1)}% of volume</span>
+              </span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-fintech-surface border border-fintech-borderSubtle">
+              <span className="text-[11px] font-mono font-medium text-fintech-muted block">
+                FLAGGED VOLUME
+              </span>
+              <span className="text-base sm:text-lg font-bold font-mono text-fintech-text mt-0.5 block">
+                {formatCompact(totals.suspiciousVolume)}
+              </span>
+              <span className="text-[10px] text-[#FF5C6C] font-bold flex items-center gap-0.5 mt-1">
+                <span>▲ Needs review</span>
               </span>
             </div>
           </div>
@@ -361,15 +369,18 @@ export default function DashboardPage({
             </div>
 
             <div className="grid grid-cols-2 gap-2.5">
-              {/* Transfer: Yellow accent with black text */}
+              {/* New case: Yellow accent with black text */}
               <button
-                onClick={() => setIsSendModalOpen(true)}
+                onClick={() => {
+                  if (onOpenCreateCase) onOpenCreateCase();
+                  else setCurrentPage('cases');
+                }}
                 className="btn-accent p-3.5 rounded-xl flex flex-col items-center justify-center text-center gap-1.5 shadow-sm group"
               >
                 <div className="w-8 h-8 rounded-full bg-[#0B0B0F] text-[#FFD23F] flex items-center justify-center transition-transform group-hover:scale-110">
-                  <Send className="w-4 h-4" />
+                  <ShieldAlert className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-bold leading-tight">Send Capital</span>
+                <span className="text-xs font-bold leading-tight">New Case</span>
               </button>
 
               {/* Receive / Ingest: Primary turquoise */}
@@ -422,75 +433,74 @@ export default function DashboardPage({
 
       {/* 3. Four Telemetry KPI Metric Cards */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* KPI 1: Inflow */}
+        {/* KPI 1: Ingested volume */}
         <div className="fintech-card p-4">
           <div className="flex items-center justify-between text-fintech-muted text-xs font-mono">
-            <span>MONTHLY INFLOW</span>
+            <span>INGESTED VOLUME</span>
             <ArrowDownLeft className="w-4 h-4 text-[#22C55E]" />
           </div>
           <div className="text-2xl font-bold font-mono text-fintech-text mt-2">
-            +$1,480,250<span className="text-sm font-normal text-fintech-muted">.00</span>
+            {formatCompact(totals.volume)}
           </div>
           <div className="flex items-center justify-between mt-2 text-xs">
             <span className="text-[#22C55E] font-bold font-mono flex items-center gap-1">
-              <span>+8.4%</span>
-              <span className="text-[10px]">▲</span>
+              <span>{totals.totalCount.toLocaleString('en-IN')} txns</span>
             </span>
-            <span className="text-fintech-muted text-[11px]">1,248 receipts</span>
+            <span className="text-fintech-muted text-[11px]">full dataset</span>
           </div>
         </div>
 
-        {/* KPI 2: Outflow */}
+        {/* KPI 2: Suspicious volume */}
         <div className="fintech-card p-4">
           <div className="flex items-center justify-between text-fintech-muted text-xs font-mono">
-            <span>MONTHLY OUTFLOW</span>
+            <span>SUSPICIOUS VOLUME</span>
             <ArrowUpRight className="w-4 h-4 text-[#FF5C6C]" />
           </div>
           <div className="text-2xl font-bold font-mono text-fintech-text mt-2">
-            -$920,410<span className="text-sm font-normal text-fintech-muted">.00</span>
+            {formatCompact(totals.suspiciousVolume)}
           </div>
           <div className="flex items-center justify-between mt-2 text-xs">
             <span className="text-[#FF5C6C] font-bold font-mono flex items-center gap-1">
-              <span>-3.2%</span>
+              <span>{totals.suspiciousCount.toLocaleString('en-IN')} flows</span>
               <span className="text-[10px]">▼</span>
             </span>
-            <span className="text-fintech-muted text-[11px]">832 settlements</span>
+            <span className="text-fintech-muted text-[11px]">{totals.suspiciousShare.toFixed(1)}% of total</span>
           </div>
         </div>
 
-        {/* KPI 3: Mule Exposure */}
+        {/* KPI 3: Accounts touching flagged flows */}
         <div className="fintech-card p-4">
           <div className="flex items-center justify-between text-fintech-muted text-xs font-mono">
-            <span>MULE ANOMALY EXP.</span>
+            <span>ACCOUNTS IN FLAGGED FLOWS</span>
             <ShieldAlert className="w-4 h-4 text-[#FF5C6C]" />
           </div>
           <div className="text-2xl font-bold font-mono text-fintech-text mt-2">
-            $48,200<span className="text-sm font-normal text-fintech-muted">.00</span>
+            {totals.flaggedAccounts.toLocaleString('en-IN')}
           </div>
           <div className="flex items-center justify-between mt-2 text-xs">
             <span className="text-[#FF5C6C] font-bold font-mono flex items-center gap-1">
-              <span>3 Rings</span>
+              <span>{totals.highRiskAccounts.toLocaleString('en-IN')} high risk</span>
               <span className="text-[10px]">▼</span>
             </span>
-            <span className="text-fintech-muted text-[11px]">Under surveillance</span>
+            <span className="text-fintech-muted text-[11px]">{totals.accounts.toLocaleString('en-IN')} monitored</span>
           </div>
         </div>
 
-        {/* KPI 4: Capital Health Index */}
+        {/* KPI 4: Clean flow share */}
         <div className="fintech-card p-4">
           <div className="flex items-center justify-between text-fintech-muted text-xs font-mono">
-            <span>CAPITAL HEALTH SCORE</span>
+            <span>CLEAN FLOW SHARE</span>
             <ShieldCheck className="w-4 h-4 text-[#22C55E]" />
           </div>
           <div className="text-2xl font-bold font-mono text-fintech-text mt-2">
-            98.6<span className="text-sm font-normal text-fintech-muted"> / 100</span>
+            {totals.cleanShare.toFixed(1)}<span className="text-sm font-normal text-fintech-muted">%</span>
           </div>
           <div className="flex items-center justify-between mt-2 text-xs">
             <span className="text-[#22C55E] font-bold font-mono flex items-center gap-1">
-              <span>Optimal</span>
+              <span>{formatCompact(totals.cleanVolume)} clean</span>
               <span className="text-[10px]">▲</span>
             </span>
-            <span className="text-fintech-muted text-[11px]">Zero chargeback</span>
+            <span className="text-fintech-muted text-[11px]">balance of volume</span>
           </div>
         </div>
       </section>
@@ -501,14 +511,14 @@ export default function DashboardPage({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-fintech-muted">
-                FINANCIAL LIQUIDITY &amp; CASH FLOW
+                TRANSACTION VELOCITY &amp; SUSPICION
               </span>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-fintech-surface border border-fintech-border text-fintech-primary">
-                DYNAMIC VELOCITY
+                DATASET WINDOW
               </span>
             </div>
             <h3 className="text-lg font-bold text-fintech-text mt-0.5">
-              Net Capital Flow &amp; Liquidity Horizon
+              Daily Volume vs Flagged Flow
             </h3>
           </div>
 
@@ -516,34 +526,34 @@ export default function DashboardPage({
             {/* Metric Mode Filter */}
             <div className="flex rounded-lg bg-fintech-surface p-1 border border-fintech-border text-xs">
               <button
-                onClick={() => setFlowType('all')}
+                onClick={() => setFlowType('volume')}
                 className={`px-2.5 py-1 rounded-md font-mono transition ${
-                  flowType === 'all'
+                  flowType === 'volume'
                     ? 'bg-fintech-card text-fintech-text font-bold shadow-sm'
                     : 'text-fintech-muted hover:text-fintech-text'
                 }`}
               >
-                Portfolio Balance
+                Total Volume
               </button>
               <button
-                onClick={() => setFlowType('inflow')}
+                onClick={() => setFlowType('suspicious')}
                 className={`px-2.5 py-1 rounded-md font-mono transition ${
-                  flowType === 'inflow'
-                    ? 'bg-fintech-card text-[#22C55E] font-bold shadow-sm'
-                    : 'text-fintech-muted hover:text-fintech-text'
-                }`}
-              >
-                Inflow (+▲)
-              </button>
-              <button
-                onClick={() => setFlowType('outflow')}
-                className={`px-2.5 py-1 rounded-md font-mono transition ${
-                  flowType === 'outflow'
+                  flowType === 'suspicious'
                     ? 'bg-fintech-card text-[#FF5C6C] font-bold shadow-sm'
                     : 'text-fintech-muted hover:text-fintech-text'
                 }`}
               >
-                Outflow (-▼)
+                Flagged Volume
+              </button>
+              <button
+                onClick={() => setFlowType('count')}
+                className={`px-2.5 py-1 rounded-md font-mono transition ${
+                  flowType === 'count'
+                    ? 'bg-fintech-card text-[#FFD23F] font-bold shadow-sm'
+                    : 'text-fintech-muted hover:text-fintech-text'
+                }`}
+              >
+                Txn Count
               </button>
             </div>
 
@@ -567,6 +577,12 @@ export default function DashboardPage({
         </div>
 
         {/* Recharts Area Chart with Turquoise to Yellow Line Gradient */}
+        {chartData.length === 0 ? (
+          <div className="h-72 w-full flex flex-col items-center justify-center gap-2 text-center text-fintech-muted font-mono text-xs">
+            <Activity className="w-6 h-6" />
+            <span>{loading ? 'Loading transaction history…' : 'No transactions in this window.'}</span>
+          </div>
+        ) : (
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
@@ -604,7 +620,7 @@ export default function DashboardPage({
                 tickLine={false}
                 axisLine={false}
                 fontFamily="monospace"
-                tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
+                tickFormatter={(val) => (flowType === 'count' ? `${val}` : formatCompact(val))}
               />
 
               <Tooltip
@@ -617,13 +633,16 @@ export default function DashboardPage({
                   fontSize: '12px',
                   color: isDark ? '#FFFFFF' : '#0B0B0F'
                 }}
-                formatter={(val) => [`$${Number(val).toLocaleString()}`, 'Amount']}
+                formatter={(val) => [
+                  flowType === 'count' ? `${Number(val).toLocaleString('en-IN')} txns` : formatAmount(val),
+                  chartMetricLabel
+                ]}
                 labelStyle={{ fontWeight: 'bold', color: isDark ? '#FFFFFF' : '#0B0B0F' }}
               />
 
               <Area
                 type="monotone"
-                dataKey={currentMetricKey}
+                dataKey={chartMetricKey}
                 stroke="url(#fintechLineGrad)"
                 strokeWidth={3}
                 fillOpacity={1}
@@ -633,19 +652,22 @@ export default function DashboardPage({
             </AreaChart>
           </ResponsiveContainer>
         </div>
+        )}
 
         <div className="flex items-center justify-between text-xs text-fintech-muted font-mono mt-4 pt-4 border-t border-fintech-border">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full" style={{ background: brandTurquoise }} />
-              <span>Capital Velocity Baseline</span>
+              <span>{chartMetricLabel} (daily)</span>
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#FFD23F]" />
-              <span>Peak Target Projection</span>
+              <span>Peak {flowType === 'count' ? chartPeak.toLocaleString('en-IN') : formatCompact(chartPeak)}</span>
             </span>
           </div>
-          <span>Updated realtime via WebSocket</span>
+          <span>
+            {loading ? 'Syncing…' : `Source: /api/v1/transactions (${totals.totalCount.toLocaleString('en-IN')} records)`}
+          </span>
         </div>
       </section>
 
@@ -657,7 +679,7 @@ export default function DashboardPage({
               Recent Transactions Ledger
             </h3>
             <p className="text-xs text-fintech-muted mt-0.5">
-              70% neutral design compliant • Instant counterparty settlement validation
+              Live records from the Rust API • showing {visibleTransactions.length} of {filteredTransactions.length} matching entries
             </p>
           </div>
 
@@ -675,26 +697,6 @@ export default function DashboardPage({
                 All
               </button>
               <button
-                onClick={() => setTxFilter('INFLOW')}
-                className={`px-2.5 py-1 rounded-md transition ${
-                  txFilter === 'INFLOW'
-                    ? 'bg-fintech-card text-[#22C55E] font-bold shadow-sm'
-                    : 'text-fintech-muted hover:text-fintech-text'
-                }`}
-              >
-                Inflow (+▲)
-              </button>
-              <button
-                onClick={() => setTxFilter('OUTFLOW')}
-                className={`px-2.5 py-1 rounded-md transition ${
-                  txFilter === 'OUTFLOW'
-                    ? 'bg-fintech-card text-[#FF5C6C] font-bold shadow-sm'
-                    : 'text-fintech-muted hover:text-fintech-text'
-                }`}
-              >
-                Outflow (-▼)
-              </button>
-              <button
                 onClick={() => setTxFilter('FLAGGED')}
                 className={`px-2.5 py-1 rounded-md transition ${
                   txFilter === 'FLAGGED'
@@ -702,7 +704,17 @@ export default function DashboardPage({
                     : 'text-fintech-muted hover:text-fintech-text'
                 }`}
               >
-                Flagged (Mules)
+                Flagged
+              </button>
+              <button
+                onClick={() => setTxFilter('CLEARED')}
+                className={`px-2.5 py-1 rounded-md transition ${
+                  txFilter === 'CLEARED'
+                    ? 'bg-fintech-card text-[#22C55E] font-bold shadow-sm'
+                    : 'text-fintech-muted hover:text-fintech-text'
+                }`}
+              >
+                Cleared
               </button>
             </div>
 
@@ -735,10 +747,21 @@ export default function DashboardPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-fintech-borderSubtle">
-              {filteredTransactions.map((tx) => {
-                const isInflow = tx.type === 'INFLOW';
-                const isFlagged = tx.status === 'FLAGGED' || tx.riskLevel === 'HIGH';
-                const isReview = tx.status === 'REVIEW';
+              {loading && transactions.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-10 px-3 text-center text-fintech-muted font-mono text-xs">
+                    Loading ledger from /api/v1/transactions…
+                  </td>
+                </tr>
+              ) : visibleTransactions.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-10 px-3 text-center text-fintech-muted font-mono text-xs">
+                    No transactions match this filter. Clear the search or pick another tab.
+                  </td>
+                </tr>
+              ) : visibleTransactions.map((tx) => {
+                const isFlagged = tx.flagged;
+                const isReview = tx.status === 'PENDING' || tx.status === 'REVIEW';
 
                 return (
                   <tr
@@ -750,36 +773,34 @@ export default function DashboardPage({
                       {tx.id}
                     </td>
 
-                    {/* Counterparty */}
+                    {/* Sender -> receiver */}
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-2">
                         <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                          isInflow
-                            ? 'bg-[#22C55E]/15 text-[#22C55E]'
-                            : isFlagged
+                          isFlagged
                             ? 'bg-[#FF5C6C]/15 text-[#FF5C6C]'
                             : 'bg-fintech-surface border border-fintech-border text-fintech-muted'
                         }`}>
-                          {isInflow ? (
-                            <ArrowDownLeft className="w-3.5 h-3.5" />
-                          ) : isFlagged ? (
+                          {isFlagged ? (
                             <AlertTriangle className="w-3.5 h-3.5" />
                           ) : (
                             <CreditCard className="w-3.5 h-3.5" />
                           )}
                         </div>
                         <div>
-                          <div className="font-semibold text-fintech-text">
-                            {tx.counterparty}
+                          <div className="font-semibold text-fintech-text flex items-center gap-1.5">
+                            <span>{tx.sender}</span>
+                            <span className="text-fintech-muted">→</span>
+                            <span>{tx.receiver}</span>
                           </div>
                           <div className="text-[10px] font-mono text-fintech-muted">
-                            {tx.accountId} • {tx.category}
+                            {tx.description}
                           </div>
                         </div>
                       </div>
                     </td>
 
-                    {/* Method */}
+                    {/* Channel */}
                     <td className="py-3 px-3 font-mono text-fintech-muted">
                       {tx.method}
                     </td>
@@ -812,10 +833,10 @@ export default function DashboardPage({
                     {/* Amount: Large bold figures with WCAG AA compliance */}
                     <td className="py-3 px-3 text-right">
                       <div className={`font-mono font-bold text-sm sm:text-base ${
-                        isInflow ? 'text-[#22C55E]' : 'text-[#FF5C6C]'
+                        isFlagged ? 'text-[#FF5C6C]' : 'text-fintech-text'
                       }`}>
-                        {isInflow ? `+$${tx.amount.toLocaleString()}` : `-$${tx.amount.toLocaleString()}`}
-                        <span className="text-[10px] ml-1">{isInflow ? '▲' : '▼'}</span>
+                        {formatAmount(tx.amount)}
+                        {isFlagged && <span className="text-[10px] ml-1">▼</span>}
                       </div>
                     </td>
 
@@ -823,7 +844,7 @@ export default function DashboardPage({
                     <td className="py-3 px-3 text-center">
                       <button
                         onClick={() => {
-                          if (onAccountSelect) onAccountSelect(tx.accountId);
+                          if (onAccountSelect) onAccountSelect(tx.sender);
                           setCurrentPage('money-trail');
                         }}
                         className="px-2 py-1 rounded bg-fintech-surface hover:bg-fintech-elevated border border-fintech-border text-fintech-primary text-[10px] font-mono font-bold transition inline-flex items-center gap-1"
@@ -839,122 +860,21 @@ export default function DashboardPage({
             </tbody>
           </table>
         </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-4 pt-4 border-t border-fintech-border text-[11px] font-mono text-fintech-muted">
+          <span>
+            Amounts in {summary?.currency || 'INR'} • flagged rows use the dataset&apos;s is_suspicious label
+          </span>
+          <button
+            onClick={() => setCurrentPage('transactions')}
+            className="text-fintech-primary font-bold hover:underline flex items-center gap-1 self-start sm:self-auto"
+          >
+            <span>Open full ledger</span>
+            <ChevronRight className="w-3 h-3" />
+          </button>
+        </div>
       </section>
 
-      {/* 6. Send Money / Capital Transfer Modal */}
-      {isSendModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="fintech-card w-full max-w-md p-6 bg-fintech-card border border-fintech-border shadow-2xl relative">
-            <div className="flex items-center justify-between pb-3 border-b border-fintech-border">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#FFD23F] text-[#0B0B0F] flex items-center justify-center">
-                  <Send className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-base text-fintech-text">Authorize Capital Transfer</h3>
-                  <p className="text-xs text-fintech-muted">Immediate Settlement with AML Pre-Clearance</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsSendModalOpen(false)}
-                className="text-fintech-muted hover:text-fintech-text text-lg font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleSendSubmit} className="space-y-4 pt-4">
-              <div>
-                <label className="block text-xs font-mono font-bold text-fintech-muted mb-1">
-                  RECIPIENT INSTITUTION / ACCOUNT
-                </label>
-                <select
-                  value={sendForm.recipient}
-                  onChange={(e) => setSendForm({ ...sendForm, recipient: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-fintech-surface border border-fintech-border text-xs text-fintech-text focus:outline-none focus:border-fintech-primary"
-                >
-                  <option value="ACC-0048 (Apex Global Liquidity)">ACC-0048 (Apex Global Liquidity)</option>
-                  <option value="ACC-0002 (Federal Clearing)">ACC-0002 (Federal Clearing)</option>
-                  <option value="ACC-0084 (Infrastructure Node)">ACC-0084 (Infrastructure Node)</option>
-                  <option value="ACC-0091 (Vanguard Escrow)">ACC-0091 (Vanguard Escrow)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono font-bold text-fintech-muted mb-1">
-                  TRANSFER AMOUNT (USD)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-fintech-muted font-mono font-bold">$</span>
-                  <input
-                    type="number"
-                    step="any"
-                    required
-                    value={sendForm.amount}
-                    onChange={(e) => setSendForm({ ...sendForm, amount: e.target.value })}
-                    placeholder="25,000.00"
-                    className="w-full pl-7 pr-3 py-2 rounded-xl bg-fintech-surface border border-fintech-border text-sm font-mono font-bold text-fintech-text focus:outline-none focus:border-fintech-primary"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono font-bold text-fintech-muted mb-1">
-                  SETTLEMENT METHOD
-                </label>
-                <select
-                  value={sendForm.category}
-                  onChange={(e) => setSendForm({ ...sendForm, category: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-fintech-surface border border-fintech-border text-xs text-fintech-text focus:outline-none focus:border-fintech-primary"
-                >
-                  <option value="SWIFT Wire">SWIFT Wire (Real-Time Gross Settlement)</option>
-                  <option value="Fedwire Batch">Fedwire Batch Transfer</option>
-                  <option value="SEPA Instant">SEPA Instant Settlement</option>
-                  <option value="Internal Escrow">Internal Vault Transfer</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono font-bold text-fintech-muted mb-1">
-                  REFERENCE NOTE
-                </label>
-                <input
-                  type="text"
-                  value={sendForm.note}
-                  onChange={(e) => setSendForm({ ...sendForm, note: e.target.value })}
-                  placeholder="e.g. Treasury liquidity rebalance"
-                  className="w-full px-3 py-2 rounded-xl bg-fintech-surface border border-fintech-border text-xs text-fintech-text focus:outline-none focus:border-fintech-primary"
-                />
-              </div>
-
-              <div className="p-3 rounded-xl bg-fintech-surface border border-fintech-borderSubtle text-[11px] text-fintech-muted flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0 mt-0.5" />
-                <span>
-                  Transactions above $10,000 are automatically hashed and registered into the immutable audit trail.
-                </span>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsSendModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-fintech-surface hover:bg-fintech-elevated border border-fintech-border text-fintech-text"
-                >
-                  Cancel
-                </button>
-                {/* Yellow Accent button with black text */}
-                <button
-                  type="submit"
-                  className="btn-accent px-5 py-2 rounded-xl text-xs flex items-center gap-2"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Confirm &amp; Authorize</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

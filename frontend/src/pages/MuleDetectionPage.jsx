@@ -144,6 +144,20 @@ export default function MuleDetectionPage({
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#333D50]">
+                {loading && accounts.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-8 px-3 text-center text-[#6E6264]">
+                      Loading accounts from the core ledger…
+                    </td>
+                  </tr>
+                )}
+                {!loading && accounts.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-8 px-3 text-center text-[#6E6264]">
+                      No accounts match this filter.
+                    </td>
+                  </tr>
+                )}
                 {accounts.map((acc) => {
                   const isSelected = selectedAccount === acc.account_id;
                   const isCritical = acc.risk_level === 'High' || acc.risk_level === 'HIGH';
@@ -174,11 +188,13 @@ export default function MuleDetectionPage({
                       <td className="py-2.5 px-3 font-bold text-white tabular-nums">
                         {(acc.risk_score * 100).toFixed(0)}%
                       </td>
-                      <td className="py-2.5 px-3 text-[#6E6264] tabular-nums">
-                        {acc.confidence ? `${(acc.confidence * 100).toFixed(0)}%` : '88%'}
+                      <td className="py-2.5 px-3 text-[#6E6264] tabular-nums" title={acc.score_source === 'model' ? 'Model confidence' : 'Cold-start scores come from dataset labels, so no model confidence exists'}>
+                        {acc.score_source === 'model' && acc.prediction_confidence != null
+                          ? `${(acc.prediction_confidence * 100).toFixed(0)}%`
+                          : '—'}
                       </td>
                       <td className="py-2.5 px-3 text-[#6E6264] tabular-nums">
-                        {acc.turnover_ratio ? `${(acc.turnover_ratio * 100).toFixed(0)}%` : '94%'}
+                        {acc.turnover_ratio ? `${(acc.turnover_ratio * 100).toFixed(0)}%` : '—'}
                       </td>
                       <td className="py-2.5 px-3 text-right">
                         <button
