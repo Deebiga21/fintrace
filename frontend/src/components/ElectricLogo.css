@@ -1,0 +1,87 @@
+.electric-logo {
+  position: relative;
+  display: inline-block;
+  width: 220px;
+  height: 54px;
+  flex: 0 0 auto;
+  overflow: visible;
+  transform: scale(var(--electric-scale, 1));
+  transform-origin: left center;
+  isolation: isolate;
+}
+
+.electric-logo__mask {
+  position: absolute;
+  inset: 0;
+  background-color: var(--electric-color, #ecc7ff);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: left center;
+  mask-position: left center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.electric-logo__glow {
+  opacity: 0.7;
+  filter: drop-shadow(0 0 calc(3px * var(--electric-crackle, 1)) var(--electric-glow, #ecc7ff))
+    drop-shadow(0 0 calc(8px * var(--electric-crackle, 1)) var(--electric-glow, #ecc7ff));
+  animation: electric-logo-pulse var(--electric-speed, 1.6s) ease-in-out infinite alternate;
+}
+
+.electric-logo__ink {
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.5));
+}
+
+.electric-logo__arcs {
+  position: absolute;
+  inset: -5px -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 10px);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.electric-logo__strand,
+.electric-logo__arc {
+  fill: none;
+  stroke: var(--electric-color, #ecc7ff);
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  stroke-dasharray: 15 46;
+  opacity: 0;
+  filter: drop-shadow(0 0 3px var(--electric-glow, #ecc7ff));
+  animation: electric-logo-spark var(--electric-speed, 1.6s) linear infinite;
+}
+
+.electric-logo__arc {
+  stroke-width: 1.1;
+  stroke-dasharray: 7 32;
+  animation-duration: calc(var(--electric-speed, 1.6s) * 0.72);
+}
+
+.electric-logo--interactive:hover .electric-logo__strand,
+.electric-logo--interactive:hover .electric-logo__arc {
+  stroke-width: 1.4;
+  filter: drop-shadow(0 0 5px var(--electric-glow, #ecc7ff));
+}
+
+@keyframes electric-logo-pulse {
+  from { opacity: 0.45; }
+  to { opacity: 0.95; }
+}
+
+@keyframes electric-logo-spark {
+  0%, 72%, 100% { opacity: 0; stroke-dashoffset: 62; }
+  76% { opacity: 0.9; }
+  82% { opacity: 0.22; }
+  89% { opacity: 0.8; }
+  94% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .electric-logo__glow,
+  .electric-logo__strand,
+  .electric-logo__arc { animation: none; }
+  .electric-logo__glow { opacity: 0.8; }
+}

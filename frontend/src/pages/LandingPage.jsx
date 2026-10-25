@@ -1,35 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Network,
-  Share2,
   Briefcase,
   Cpu,
   ArrowRight,
-  Database,
-  Zap,
   AlertTriangle,
-  Play,
-  Activity,
   ChevronDown,
   Shield,
-  Layers,
   ArrowUpRight,
-  BarChart3,
-  CheckCircle2,
-  Terminal,
-  ShieldCheck,
-  Workflow,
-  Sparkles,
   Star,
-  Wrench,
   Globe,
-  Radio,
-  Lock,
   Search,
-  FileCheck2
 } from 'lucide-react';
-import RiskBadge from '../components/RiskBadge';
 import BriarGlobe from '../components/BriarGlobe';
+import DitherVeil from '../components/DitherVeil';
+import ElectricLogo from '../components/ElectricLogo';
+import InvestigationFlowAnimation from '../components/InvestigationFlowAnimation';
 import ThemeToggle from '../components/ThemeToggle';
 import AnimatedContent from '../components/AnimatedContent';
 import { useTheme } from '../context/ThemeContext';
@@ -70,9 +56,6 @@ export default function LandingPage({
 }) {
   const { isDark, toggleTheme } = useTheme();
 
-  // Typology Analyzer State
-  const [activeScenario, setActiveScenario] = useState('cbs_freeze');
-
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -80,78 +63,6 @@ export default function LandingPage({
     }
   };
 
-  const scenarios = {
-    cbs_freeze: {
-      id: 'cbs_freeze',
-      title: 'Illustrative smurfing aggregator scenario (MULE_AGG_01)',
-      targetAccount: 'MULE_AGG_01',
-      description: 'Illustrative synthetic scenario: an aggregation account receives multiple transfers and forwards consolidated funds. Use this example to explore the investigation workflow; it is not a real case or verified finding.',
-      riskScore: 0.98,
-      riskLevel: 'Critical',
-      pattern: 'Synthetic rapid-transfer pattern',
-      flowNodes: [
-        { id: 'VICTIMS', type: 'victim', label: 'Multiple victim accounts', sub: 'Smurfing inflows' },
-        { id: 'MULE_AGG_01', type: 'target', label: 'MULE_AGG_01', sub: 'Aggregation account' },
-        { id: 'MULE_LAYER_02', type: 'layer', label: 'MULE_LAYER_02', sub: 'Consolidated transfer' },
-        { id: 'REVIEW', type: 'cashout', label: 'Review point', sub: 'Illustrative only; no legal action taken' }
-      ],
-      metrics: {
-        inflowHops: 11446,
-        outflowHops: 32,
-        velocity: '< 18 minutes',
-        drainRatio: '99.8%'
-      }
-    },
-    rapid: {
-      id: 'rapid',
-      title: 'High-Turnover Pass-Through Conduit (DEMO_ACCOUNT_48 • Synthetic Account 48)',
-      targetAccount: 'DEMO_ACCOUNT_48',
-      description: 'Illustrative synthetic example of a high-turnover account with rapidly dispersed outflows. Values shown are demonstration data, not verified findings.',
-      riskScore: 0.92,
-      riskLevel: 'High',
-      pattern: 'Pass-Through Conduit (>98% Turnover Drain)',
-      flowNodes: [
-        { id: 'INFLOW_CORP', type: 'victim', label: 'Corporate Diversions', sub: 'Inflow: ₹55.09 Cr' },
-        { id: 'DEMO_ACCOUNT_48', type: 'target', label: 'DEMO_ACCOUNT_48 (Synthetic Account 48)', sub: '98.7% Drain Ratio' },
-        { id: 'DEMO_ACCOUNT_28', type: 'layer', label: 'DEMO_ACCOUNT_28 (Synthetic Account 28)', sub: 'Layering Conduit' },
-        { id: 'DEMO_ACCOUNT_06', type: 'cashout', label: 'DEMO_ACCOUNT_06 (Synthetic Account 06)', sub: 'Zero Residual Exit' }
-      ],
-      metrics: {
-        inflowHops: 820,
-        outflowHops: 14,
-        velocity: '14 minutes',
-        drainRatio: '98.7%'
-      }
-    },
-    closure: {
-      id: 'closure',
-      title: 'Abrupt Account Closure Syndicate (DEMO_ACCOUNT_02 • Synthetic Account 02)',
-      targetAccount: 'DEMO_ACCOUNT_02',
-      description: 'Illustrative synthetic example of an account with rapid fund movement before closure. It does not describe a verified account or finding.',
-      riskScore: 0.95,
-      riskLevel: 'Critical',
-      pattern: 'Abrupt Account Closure + Layering Exit',
-      flowNodes: [
-        { id: 'MULTI_INFLOW', type: 'victim', label: '11,109 Transactions', sub: 'Inflow: ₹10.91 Cr' },
-        { id: 'DEMO_ACCOUNT_02', type: 'target', label: 'DEMO_ACCOUNT_02 (Synthetic Account 02)', sub: 'Primary Conduit (Closed)' },
-        { id: 'DEMO_ACCOUNT_05', type: 'layer', label: 'DEMO_ACCOUNT_05 (Synthetic Account 05)', sub: 'Layering Conduit' },
-        { id: 'OFFSHORE_EXIT', type: 'cashout', label: 'Offshore OTC Exit', sub: 'Cleared Pre-Closure' }
-      ],
-      metrics: {
-        inflowHops: 11109,
-        outflowHops: 24,
-        velocity: '< 25 minutes',
-        drainRatio: '99.5%'
-      }
-    }
-  };
-
-  const currentScenario = scenarios[activeScenario];
-
-  const handleLaunchScenario = (accId) => {
-    if (onAccountSelect) onAccountSelect(accId);
-    setCurrentPage('money-trail');
-  };
 
   return (
     <div className="min-h-screen w-full bg-fintech-bg text-fintech-text relative overflow-x-hidden transition-colors duration-200">
@@ -224,43 +135,51 @@ export default function LandingPage({
             className="flex items-center gap-1.5 cursor-pointer group"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <span className="text-2xl sm:text-3xl font-black tracking-tighter text-fintech-text font-sans">
-              fintrace
-            </span>
-            <span className="w-2.5 h-2.5 rounded-full bg-fintech-primary shadow-glow-turquoise animate-pulse" />
+            <ElectricLogo
+              src="/logo.svg"
+              color="#ecc7ff"
+              glowColor="#000000"
+              scale={0.7}
+              strands={4}
+              bend={0.6}
+              crackle={1.5}
+              arcs={1}
+              speed={2.5}
+              interactive
+            />
           </div>
 
           {/* Center Capsule Pill Navbar */}
           <nav className="hidden md:flex items-center gap-8 px-8 py-2.5 rounded-full glass-pill text-xs font-medium text-fintech-muted shadow-sm">
             <button
-              onClick={() => scrollToSection('what-we-do')}
+              onClick={() => setCurrentPage('transactions')}
               className="hover:text-fintech-text transition-colors"
             >
-              Services
+              Transactions
             </button>
             <button
-              onClick={() => scrollToSection('about-project')}
+              onClick={() => setCurrentPage('graph')}
               className="hover:text-fintech-text transition-colors"
             >
-              About
-            </button>
-            <button
-              onClick={() => setCurrentPage('cases')}
-              className="hover:text-fintech-text transition-colors"
-            >
-              Projects
+              Network
             </button>
             <button
               onClick={() => setCurrentPage('mule-detection')}
               className="hover:text-fintech-text transition-colors"
             >
-              GNN Engine
+              Model Review
             </button>
             <button
-              onClick={() => scrollToSection('contact-footer')}
+              onClick={() => setCurrentPage('money-trail')}
               className="hover:text-fintech-text transition-colors"
             >
-              Contact
+              Money Trails
+            </button>
+            <button
+              onClick={() => setCurrentPage('cases')}
+              className="hover:text-fintech-text transition-colors"
+            >
+              Cases
             </button>
           </nav>
 
@@ -275,7 +194,7 @@ export default function LandingPage({
                 color: isDark ? '#0B0B0F' : '#FFFFFF',
               }}
             >
-              <span>Launch Command Center</span>
+              <span>Open Investigation Dashboard</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
@@ -286,7 +205,7 @@ export default function LandingPage({
           {/* Big Editorial Headline */}
           <div className="lg:col-span-8 space-y-0 leading-none">
             <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[104px] font-black tracking-tight text-fintech-text block">
-              Dismantle,
+              Trace,
             </h1>
             <span
               className="font-serif-italic text-6xl sm:text-7xl md:text-8xl lg:text-[116px] font-normal tracking-tight block leading-[0.95]"
@@ -295,29 +214,29 @@ export default function LandingPage({
                 letterSpacing: '-0.03em',
               }}
             >
-              Syndicates
+              Suspicious Flows
             </span>
           </div>
 
           {/* Top-Right Subtitle & Socials Block */}
           <div className="lg:col-span-4 flex flex-col justify-end space-y-4 lg:pl-6 text-right lg:text-left">
             <p className="text-xs sm:text-sm font-normal text-fintech-muted leading-relaxed max-w-sm">
-              <strong className="text-fintech-text font-semibold">Autonomous AML Intelligence:</strong> Neural graph tracing and forensic case dossier automation for financial institutions and enforcement agencies.
+              <strong className="text-fintech-text font-semibold">Financial investigation workspace:</strong> Review transaction activity, explore account connections, inspect anomaly signals, and manage investigation cases in one prototype.
             </p>
             <div className="pt-2 border-t border-fintech-border/80 flex items-center justify-between gap-4">
-              <span className="text-xs font-semibold text-fintech-text tracking-tight">Standards</span>
+              <span className="text-xs font-semibold text-fintech-text tracking-tight">Project tools</span>
               <div className="flex items-center gap-2">
                 <span className="w-7 h-7 rounded-full border border-fintech-border flex items-center justify-center text-[10px] text-fintech-muted hover:text-fintech-text hover:border-fintech-primary transition-colors cursor-pointer">
-                  AML
+                  TXN
                 </span>
                 <span className="w-7 h-7 rounded-full border border-fintech-border flex items-center justify-center text-[10px] text-fintech-muted hover:text-fintech-text hover:border-fintech-primary transition-colors cursor-pointer">
-                  GNN
+                  ML
                 </span>
                 <span className="w-7 h-7 rounded-full border border-fintech-border flex items-center justify-center text-[10px] text-fintech-muted hover:text-fintech-text hover:border-fintech-primary transition-colors cursor-pointer">
                   API
                 </span>
                 <span className="w-7 h-7 rounded-full border border-fintech-border flex items-center justify-center text-[10px] text-fintech-muted hover:text-fintech-text hover:border-fintech-primary transition-colors cursor-pointer">
-                  1930
+                  CASE
                 </span>
               </div>
             </div>
@@ -331,23 +250,23 @@ export default function LandingPage({
           <div className="md:col-span-4 space-y-3">
             <div>
               <span className="text-xs font-bold text-fintech-text uppercase tracking-wider block mb-1">
-                Core Focus
+                What you can explore
               </span>
               <p className="text-xs font-normal text-fintech-muted leading-relaxed">
-                Graph Neural Networks <span className="text-fintech-border">/</span> Mule Detection<br />
-                Autonomous Money Trail <span className="text-fintech-border">/</span> Legal Dossiers
+                Transaction network <span className="text-fintech-border">/</span> Anomaly signals<br />
+                Money trail exploration <span className="text-fintech-border">/</span> Case records
               </p>
             </div>
 
             {/* Subtle Client Typography Logos */}
             <div className="flex items-center gap-4 pt-2 text-fintech-muted/80 text-xs font-mono tracking-wider">
-              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">RBI</span>
+              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">DEMO DATA</span>
               <span className="text-fintech-border">•</span>
-              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">FIU-IND</span>
+              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">ANALYST REVIEW</span>
               <span className="text-fintech-border">•</span>
-              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">1930 LEA</span>
+              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">MODEL SIGNALS</span>
               <span className="text-fintech-border">•</span>
-              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">CERT-In</span>
+              <span className="hover:text-fintech-primary transition-colors cursor-default font-bold">CASE WORKFLOW</span>
             </div>
           </div>
 
@@ -356,7 +275,7 @@ export default function LandingPage({
             <button
               onClick={() => scrollToSection('what-we-do')}
               className="w-11 h-7 rounded-full border border-fintech-border bg-fintech-card/80 backdrop-blur-md hover:border-fintech-primary flex items-center justify-center text-fintech-muted hover:text-fintech-primary transition-all duration-200"
-              title="Scroll to Services"
+              title="Explore FinTrace capabilities"
             >
               <ChevronDown className="w-4 h-4 animate-bounce" />
             </button>
@@ -365,32 +284,35 @@ export default function LandingPage({
           {/* Bottom Right: Featured (02) Thumbnail Card */}
           <div className="md:col-span-4 flex justify-end">
             <div
-              onClick={() => setCurrentPage('cases')}
-              className="group relative cursor-pointer p-2.5 rounded-2xl border border-fintech-border bg-fintech-card/90 hover:border-fintech-primary backdrop-blur-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 w-full max-w-xs"
+              className="group relative p-2.5 rounded-2xl border border-fintech-border bg-fintech-card/90 hover:border-fintech-primary backdrop-blur-xl shadow-lg transition-all duration-300 w-full max-w-xs"
             >
               <div className="flex items-center justify-between mb-2 px-1">
-                <span className="text-[11px] font-bold text-fintech-text tracking-tight">Featured</span>
-                <span className="text-[11px] font-mono text-fintech-muted">(02)</span>
+                <span className="text-[11px] font-bold text-fintech-text tracking-tight">Transaction network preview</span>
+                <span className="text-[11px] font-mono text-fintech-muted">DEMO</span>
               </div>
 
-              {/* Preview Thumbnail with Floating Badge */}
-              <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-fintech-surface border border-fintech-border/50 flex items-center justify-center p-3">
-                <div className="w-full h-full flex items-center justify-between gap-2">
-                  <div className="w-12 h-16 rounded-md bg-fintech-card border border-fintech-border flex flex-col items-center justify-center p-1 text-[8px] font-mono">
-                    <span className="text-[7px] text-fintech-primary">MULE_01</span>
-                    <span className="text-[6px] text-fintech-muted">94.2%</span>
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <div className="h-1.5 bg-fintech-border rounded w-4/5" />
-                    <div className="h-1.5 bg-fintech-border/60 rounded w-2/3" />
-                    <div className="h-1.5 bg-fintech-primary/30 rounded w-1/2" />
-                  </div>
+              <div className="relative h-[208px] rounded-xl overflow-hidden border border-fintech-border/50 bg-[#101117]">
+                <DitherVeil
+                  src="/images/landing/transaction-network.svg"
+                  fit="cover"
+                  pattern="floyd"
+                  pixelSize={3}
+                  levels={3}
+                  palette="duotone"
+                  inkColor="#101117"
+                  paperColor="#DDECF0"
+                  rimColor="#24C7D8"
+                  rim={0.16}
+                  revealRadius={120}
+                  softness={0.6}
+                  linger={1.2}
+                  clickBurst
+                  className="absolute inset-0"
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-[#101117] via-[#101117]/85 to-transparent px-3 pb-2 pt-7 text-[9px] font-mono text-white/80">
+                  <span>ACCOUNT NETWORK</span>
+                  <span>SYNTHETIC DEMO DATA</span>
                 </div>
-
-                {/* Black Overlay Badge from Template */}
-                <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/90 text-white text-[9px] font-extrabold tracking-wider border border-white/10 uppercase shadow-md">
-                  NEW TEMPLATES
-                </span>
               </div>
             </div>
           </div>
@@ -403,7 +325,7 @@ export default function LandingPage({
             className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-fintech-border bg-fintech-card/90 hover:border-fintech-primary text-xs font-semibold text-fintech-text transition-all duration-200 shadow-sm"
           >
             <Shield className="w-3.5 h-3.5 text-fintech-primary" />
-            <span>Platform Capabilities</span>
+            <span>Explore FinTrace</span>
           </button>
         </div>
       </section>
@@ -418,7 +340,7 @@ export default function LandingPage({
         <div className="flex justify-start mb-6">
           <span className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-fintech-border bg-fintech-card text-xs font-semibold text-fintech-text shadow-sm">
             <Shield className="w-3.5 h-3.5 text-fintech-primary" />
-            <span>Platform Capabilities</span>
+            <span>FinTrace capabilities</span>
           </span>
         </div>
 
@@ -433,7 +355,7 @@ export default function LandingPage({
 
           <div className="lg:col-span-6 flex items-center lg:justify-end">
             <p className="text-sm sm:text-base text-fintech-muted font-normal leading-relaxed max-w-xl">
-              We dismantle organized financial crime syndicates in real time — combining inductive Graph Neural Networks, topological money trail analysis, and judicial evidentiary synthesis.
+              Explore transaction records, follow connected accounts through a network view, review anomaly model output, and organize findings in investigation cases. Demo records are synthetic; analysts must verify every signal.
             </p>
           </div>
         </div>
@@ -446,27 +368,9 @@ export default function LandingPage({
             onClick={() => setCurrentPage('graph')}
             className="group relative p-8 flex flex-col justify-between space-y-10 hover:bg-fintech-surface/40 transition-all duration-300 cursor-pointer"
           >
-            {/* 3D Isometric Illustration: Cluster of 3D Cubes */}
-            <div className="pt-4 flex items-center justify-center min-h-[160px]">
-              <svg viewBox="0 0 160 140" className="w-32 h-28 transform group-hover:scale-105 transition-transform duration-300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Cube 1 (Center Top) */}
-                <path d="M80 20 L108 36 L80 52 L52 36 Z" fill={isDark ? "#A0A5B5" : "#D1D5DB"} />
-                <path d="M52 36 L80 52 L80 84 L52 68 Z" fill={isDark ? "#606474" : "#9CA3AF"} />
-                <path d="M80 52 L108 36 L108 68 L80 84 Z" fill={isDark ? "#3A3D4A" : "#6B7280"} />
-
-                {/* Cube 2 (Left Bottom) */}
-                <path d="M50 48 L78 64 L50 80 L22 64 Z" fill={isDark ? "#7A7E8D" : "#9CA3AF"} opacity="0.85" />
-                <path d="M22 64 L50 80 L50 112 L22 96 Z" fill={isDark ? "#484B58" : "#6B7280"} opacity="0.85" />
-                <path d="M50 80 L78 64 L78 96 L50 112 Z" fill={isDark ? "#2A2C35" : "#4B5563"} opacity="0.85" />
-
-                {/* Cube 3 (Right Bottom) */}
-                <path d="M110 48 L138 64 L110 80 L82 64 Z" fill={isDark ? "#7A7E8D" : "#9CA3AF"} opacity="0.85" />
-                <path d="M82 64 L110 80 L110 112 L82 96 Z" fill={isDark ? "#484B58" : "#6B7280"} opacity="0.85" />
-                <path d="M110 80 L138 64 L138 96 L110 112 Z" fill={isDark ? "#2A2C35" : "#4B5563"} opacity="0.85" />
-
-                {/* Soft Turquoise Accent Lighting Dot */}
-                <circle cx="80" cy="52" r="3" fill="#1FC8DB" className="animate-pulse" />
-              </svg>
+            {/* FinTrace transaction network illustration */}
+            <div className="pt-2 flex items-center justify-center min-h-[190px]">
+              <img src="/images/landing/transaction-network.svg" alt="Illustration of connected financial accounts in a transaction network" className="w-full h-[190px] rounded-2xl object-cover border border-fintech-border/50 shadow-lg transition-transform duration-300 group-hover:scale-[1.02]" />
             </div>
 
             {/* Text Information */}
@@ -481,27 +385,14 @@ export default function LandingPage({
             </div>
           </div>
 
-          {/* Column /02: UI/UX Design */}
+          {/* Column /02: Anomaly review */}
           <div
             onClick={() => setCurrentPage('mule-detection')}
             className="group relative p-8 flex flex-col justify-between space-y-10 hover:bg-fintech-surface/40 transition-all duration-300 cursor-pointer"
           >
-            {/* 3D Illustration: Framed Card with Diamond Pin */}
-            <div className="pt-4 flex items-center justify-center min-h-[160px]">
-              <svg viewBox="0 0 160 140" className="w-32 h-28 transform group-hover:scale-105 transition-transform duration-300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Back Outer Frame */}
-                <rect x="36" y="24" width="88" height="92" rx="16" fill={isDark ? "#1C1E27" : "#E5E7EB"} stroke={isDark ? "#383B4B" : "#D1D5DB"} strokeWidth="2" />
-                
-                {/* Inner Landscape Mountain Silhouette */}
-                <path d="M46 96 L70 66 L86 84 L100 68 L114 96 Z" fill={isDark ? "#3D4152" : "#9CA3AF"} />
-                
-                {/* Floating 3D Badge Pin */}
-                <circle cx="108" cy="40" r="18" fill={isDark ? "#262937" : "#D1D5DB"} stroke={isDark ? "#4F5366" : "#9CA3AF"} strokeWidth="2" />
-                <rect x="103" y="35" width="10" height="10" rx="2" transform="rotate(45 108 40)" fill={isDark ? "#FFFFFF" : "#0B0B0F"} opacity="0.9" />
-
-                {/* Soft Turquoise Accent */}
-                <circle cx="108" cy="40" r="2" fill="#1FC8DB" />
-              </svg>
+            {/* Isolation Forest model signal illustration */}
+            <div className="pt-2 flex items-center justify-center min-h-[190px]">
+              <img src="/images/landing/anomaly-review.svg" alt="Illustration of transaction anomaly analysis with an outlier marked for review" className="w-full h-[190px] rounded-2xl object-cover border border-fintech-border/50 shadow-lg transition-transform duration-300 group-hover:scale-[1.02]" />
             </div>
 
             {/* Text Information */}
@@ -511,87 +402,51 @@ export default function LandingPage({
                 Mule Account Detection
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed font-normal">
-                2-hop GraphSAGE inductive neural classifiers identify dormant conduits, shell accounts, and rapid fund drains with &gt;96% precision.
+                Review anomaly scores produced by the prototype model alongside transaction patterns. A score is a prompt for analyst review, not proof of suspicious activity.
               </p>
             </div>
           </div>
 
-          {/* Column /03: Web Development */}
+          {/* Column /03: Transaction tracing */}
           <div
             onClick={() => setCurrentPage('money-trail')}
             className="group relative p-8 flex flex-col justify-between space-y-10 hover:bg-fintech-surface/40 transition-all duration-300 cursor-pointer"
           >
-            {/* 3D Illustration: Chrome Browser Window with Network Node Graph */}
-            <div className="pt-4 flex items-center justify-center min-h-[160px]">
-              <svg viewBox="0 0 160 140" className="w-32 h-28 transform group-hover:scale-105 transition-transform duration-300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Window Chrome Header & Body */}
-                <rect x="32" y="28" width="96" height="84" rx="14" fill={isDark ? "#1C1E27" : "#E5E7EB"} stroke={isDark ? "#383B4B" : "#D1D5DB"} strokeWidth="2" />
-                <circle cx="44" cy="39" r="3" fill={isDark ? "#52576D" : "#9CA3AF"} />
-                <circle cx="53" cy="39" r="3" fill={isDark ? "#52576D" : "#9CA3AF"} />
-                <circle cx="62" cy="39" r="3" fill={isDark ? "#52576D" : "#9CA3AF"} />
-                
-                {/* Central Connected Network Ring */}
-                <circle cx="80" cy="74" r="8" fill={isDark ? "#FFFFFF" : "#0B0B0F"} opacity="0.8" />
-                <circle cx="60" cy="62" r="5" fill={isDark ? "#82879C" : "#6B7280"} />
-                <circle cx="100" cy="62" r="5" fill={isDark ? "#82879C" : "#6B7280"} />
-                <circle cx="60" cy="86" r="5" fill={isDark ? "#82879C" : "#6B7280"} />
-                <circle cx="100" cy="86" r="5" fill={isDark ? "#82879C" : "#6B7280"} />
-
-                <line x1="80" y1="74" x2="60" y2="62" stroke={isDark ? "#484D63" : "#9CA3AF"} strokeWidth="2" />
-                <line x1="80" y1="74" x2="100" y2="62" stroke={isDark ? "#484D63" : "#9CA3AF"} strokeWidth="2" />
-                <line x1="80" y1="74" x2="60" y2="86" stroke={isDark ? "#484D63" : "#9CA3AF"} strokeWidth="2" />
-                <line x1="80" y1="74" x2="100" y2="86" stroke={isDark ? "#484D63" : "#9CA3AF"} strokeWidth="2" />
-
-                {/* Yellow Accent Focus Node */}
-                <circle cx="80" cy="74" r="3" fill="#FFD23F" />
-              </svg>
+            {/* Transaction trail illustration */}
+            <div className="pt-2 flex items-center justify-center min-h-[190px]">
+              <img src="/images/landing/transaction-trail.svg" alt="Illustration of money moving from a source account through a demo account to another account" className="w-full h-[190px] rounded-2xl object-cover border border-fintech-border/50 shadow-lg transition-transform duration-300 group-hover:scale-[1.02]" />
             </div>
 
             {/* Text Information */}
             <div className="space-y-3">
               <span className="text-xs font-mono font-bold text-fintech-muted">/03</span>
               <h3 className="text-xl font-bold text-fintech-text tracking-tight group-hover:text-fintech-primary transition-colors">
-                Autonomous Money Trail
+                Account & Transaction Trails
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed font-normal">
-                Trace illicit fund dispersal across multi-bank hops and pinpoint primary beneficiaries before accounts are drained.
+                Follow linked transactions and account relationships across available records to understand how funds move through the network.
               </p>
             </div>
           </div>
 
-          {/* Column /04: Digital Marketing */}
+          {/* Column /04: Case management */}
           <div
             onClick={() => setCurrentPage('cases')}
             className="group relative p-8 flex flex-col justify-between space-y-10 hover:bg-fintech-surface/40 transition-all duration-300 cursor-pointer"
           >
-            {/* 3D Illustration: 3D Vertical Bar Chart */}
-            <div className="pt-4 flex items-center justify-center min-h-[160px]">
-              <svg viewBox="0 0 160 140" className="w-32 h-28 transform group-hover:scale-105 transition-transform duration-300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Base Plate */}
-                <rect x="28" y="104" width="104" height="6" rx="3" fill={isDark ? "#282B38" : "#D1D5DB"} />
-
-                {/* Bar 1 */}
-                <rect x="36" y="68" width="18" height="36" rx="4" fill={isDark ? "#4F5366" : "#9CA3AF"} />
-                {/* Bar 2 (Highest) */}
-                <rect x="62" y="32" width="20" height="72" rx="4" fill={isDark ? "#FFFFFF" : "#0B0B0F"} opacity="0.85" />
-                {/* Bar 3 */}
-                <rect x="90" y="52" width="18" height="52" rx="4" fill={isDark ? "#4F5366" : "#9CA3AF"} />
-                {/* Bar 4 */}
-                <rect x="116" y="80" width="14" height="24" rx="4" fill={isDark ? "#383C4D" : "#D1D5DB"} />
-
-                {/* Turquoise Top Cap on Main Bar */}
-                <rect x="62" y="32" width="20" height="4" rx="2" fill="#1FC8DB" />
-              </svg>
+            {/* Investigation case record illustration */}
+            <div className="pt-2 flex items-center justify-center min-h-[190px]">
+              <img src="/images/landing/case-records.svg" alt="Illustration of an investigation case record with notes and analyst review" className="w-full h-[190px] rounded-2xl object-cover border border-fintech-border/50 shadow-lg transition-transform duration-300 group-hover:scale-[1.02]" />
             </div>
 
             {/* Text Information */}
             <div className="space-y-3">
               <span className="text-xs font-mono font-bold text-fintech-muted">/04</span>
               <h3 className="text-xl font-bold text-fintech-text tracking-tight group-hover:text-fintech-primary transition-colors">
-                Evidentiary Legal Dossiers
+                Investigation Case Records
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed font-normal">
-                Compile SHA-256 sealed investigation dockets linked to 1930 cyber complaints, formatted for immediate statutory lien orders.
+                Create and update case records, capture investigative findings, and link relevant accounts or evidence references for follow-up.
               </p>
             </div>
           </div>
@@ -629,14 +484,14 @@ export default function LandingPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-7">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl tracking-tight text-fintech-text font-black leading-tight">
-              <span className="font-serif-italic font-normal mr-3">Autonomous</span>
-              <span>Financial Crime Intelligence</span>
+              <span className="font-serif-italic font-normal mr-3">Financial</span>
+              <span>Transaction Investigation</span>
             </h2>
           </div>
 
           <div className="lg:col-span-5 flex items-center lg:justify-end">
             <p className="text-sm sm:text-base text-fintech-muted font-normal leading-relaxed">
-              FinTrace AI is an institutional fraud investigation platform engineered to dismantle organized mule syndicates, money laundering rings, and cybercrime funnels through relational Graph Neural Networks.
+              FinTrace is a prototype investigation workspace for exploring financial transaction data. It brings account search, transaction trails, network visualization, anomaly model signals, and case management together for analyst review.
             </p>
           </div>
         </div>
@@ -656,56 +511,56 @@ export default function LandingPage({
                 Tabular AML Is Blind to Network Topologies
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed">
-                Conventional rule-based monitoring and XGBoost classifiers evaluate transactions in isolation. Syndicates exploit this by smurfing transfers below ₹50,000 across hundreds of dormant accounts, evading static detection thresholds.
+                Reviewing transactions one at a time can make relationships across accounts difficult to see. FinTrace lets users inspect linked activity and investigate patterns across the available dataset.
               </p>
             </div>
             <div className="pt-4 border-t border-fintech-border/60 flex items-center justify-between text-xs font-mono text-fintech-muted">
-              <span>Evasion Vulnerability</span>
-              <span className="text-fintech-loss font-bold">High in Legacy AML</span>
+                <span>Investigation challenge</span>
+              <span className="text-fintech-loss font-bold">Hidden account links</span>
             </div>
           </div>
 
-          {/* Card 2: The GraphSAGE Solution */}
+              {/* Card 2: Anomaly model review */}
           <div className="p-8 rounded-3xl border border-fintech-border bg-fintech-card flex flex-col justify-between space-y-6 hover:border-fintech-primary/50 transition-all duration-300 relative overflow-hidden">
             <div className="space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-fintech-surface border border-fintech-border flex items-center justify-center text-fintech-primary">
                 <Cpu className="w-6 h-6" />
               </div>
               <span className="text-xs font-mono font-bold text-fintech-primary uppercase tracking-wider block">
-                02 • Neural Innovation
+                02 • Model Signals
               </span>
               <h3 className="text-xl font-bold text-fintech-text tracking-tight">
-                2-Hop Inductive Graph Neural Networks
+                Isolation Forest Anomaly Review
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed">
-                FinTrace models banking ledgers as directed, dynamic graph topologies. Our 2-layer GraphSAGE architecture aggregates 1-hop and 2-hop neighborhood message-passing to classify aggregator hubs, circular loops, and rapid pass-through conduits with &gt;96% precision.
+                The prototype applies an Isolation Forest model to transaction features and surfaces unusual records for review. Network views provide relationship context; model output should be checked against source records.
               </p>
             </div>
             <div className="pt-4 border-t border-fintech-border/60 flex items-center justify-between text-xs font-mono text-fintech-muted">
-              <span>Model Accuracy</span>
-              <span className="text-fintech-gain font-bold">&gt; 96.5% F1-Score</span>
+              <span>Model role</span>
+              <span className="text-fintech-gain font-bold">Decision support</span>
             </div>
           </div>
 
-          {/* Card 3: Judicial Readiness */}
+          {/* Card 3: Case documentation */}
           <div className="p-8 rounded-3xl border border-fintech-border bg-fintech-card flex flex-col justify-between space-y-6 hover:border-fintech-primary/50 transition-all duration-300">
             <div className="space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-fintech-surface border border-fintech-border flex items-center justify-center text-fintech-accent">
                 <Briefcase className="w-6 h-6" />
               </div>
               <span className="text-xs font-mono font-bold text-fintech-primary uppercase tracking-wider block">
-                03 • Enforcement Ready
+                03 • Investigation Records
               </span>
               <h3 className="text-xl font-bold text-fintech-text tracking-tight">
-                SHA-256 Evidentiary Chain-of-Custody
+                Case Notes & Evidence References
               </h3>
               <p className="text-xs text-fintech-muted leading-relaxed">
-                Every detected entity links directly to National Cyber Crime Portal (1930) complaints and bank statements. Case files are compiled into tamper-evident dossiers with cryptographic integrity hashes, ready for statutory bank lien orders and law enforcement escalation.
+                Keep the case stage, priority, subject accounts, findings, and attached evidence references together. The prototype does not file complaints, issue freezes, or certify legal admissibility.
               </p>
             </div>
             <div className="pt-4 border-t border-fintech-border/60 flex items-center justify-between text-xs font-mono text-fintech-muted">
-              <span>Judicial Admissibility</span>
-              <span className="text-fintech-primary font-bold">100% Audit Sealed</span>
+              <span>Case status</span>
+              <span className="text-fintech-primary font-bold">Analyst maintained</span>
             </div>
           </div>
         </div>
@@ -715,19 +570,19 @@ export default function LandingPage({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 flex-1">
             <div>
               <span className="text-[11px] font-mono text-fintech-muted uppercase block">Architecture</span>
-              <span className="text-lg sm:text-xl font-bold text-fintech-text font-mono mt-0.5 block">GraphSAGE v2</span>
+              <span className="text-lg sm:text-xl font-bold text-fintech-text font-mono mt-0.5 block">Isolation Forest</span>
             </div>
             <div>
-              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Inference Speed</span>
-              <span className="text-lg sm:text-xl font-bold text-fintech-gain font-mono mt-0.5 block">&lt; 45ms</span>
+              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Analysis mode</span>
+              <span className="text-lg sm:text-xl font-bold text-fintech-gain font-mono mt-0.5 block">On available data</span>
             </div>
             <div>
-              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Ledger Scale</span>
-              <span className="text-lg sm:text-xl font-bold text-fintech-primary font-mono mt-0.5 block">100,000+ Txns</span>
+              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Investigation tools</span>
+              <span className="text-lg sm:text-xl font-bold text-fintech-primary font-mono mt-0.5 block">Search · Trace · Cases</span>
             </div>
             <div>
-              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Compliance</span>
-              <span className="text-lg sm:text-xl font-bold text-fintech-accent font-mono mt-0.5 block">FIU / RBI / 1930</span>
+              <span className="text-[11px] font-mono text-fintech-muted uppercase block">Data notice</span>
+              <span className="text-lg sm:text-xl font-bold text-fintech-accent font-mono mt-0.5 block">Demo data may be synthetic</span>
             </div>
           </div>
 
@@ -736,7 +591,7 @@ export default function LandingPage({
               onClick={() => setCurrentPage('dashboard')}
               className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-full btn-accent font-bold text-xs shadow-sm transition transform hover:scale-105 active:scale-95"
             >
-              <span>Explore Live Dashboard</span>
+              <span>Open Investigation Dashboard</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
             <button
@@ -752,135 +607,7 @@ export default function LandingPage({
       </section>
 
 
-      {/* =========================================================================
-          TYPOLOGY ANALYZER (Interactive Scenario Simulator)
-          ========================================================================= */}
-      <section id="typology-simulator" className="relative z-20 px-4 sm:px-8 lg:px-14 py-16 max-w-7xl mx-auto space-y-6 bg-fintech-bg">
-        <div className="p-6 md:p-8 rounded-3xl border border-fintech-border bg-fintech-card space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-fintech-border pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-fintech-accent" />
-                <span className="font-mono text-xs font-bold text-fintech-accent tracking-wider">
-                  TYPOLOGY ANALYZER
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-fintech-text mt-1">
-                Analyze Known Financial Crime Typologies
-              </h2>
-            </div>
-
-            <div className="flex items-center gap-2 p-1 rounded-xl bg-fintech-surface border border-fintech-border">
-              <button
-                onClick={() => setActiveScenario('cbs_freeze')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
-                  activeScenario === 'cbs_freeze'
-                    ? 'btn-primary shadow-glow-turquoise'
-                    : 'text-fintech-muted hover:text-fintech-text'
-                }`}
-              >
-                Core Banking Freeze
-              </button>
-              <button
-                onClick={() => setActiveScenario('rapid')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
-                  activeScenario === 'rapid'
-                    ? 'btn-primary shadow-glow-turquoise'
-                    : 'text-fintech-muted hover:text-fintech-text'
-                }`}
-              >
-                Pass-Through Drain
-              </button>
-              <button
-                onClick={() => setActiveScenario('closure')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition ${
-                  activeScenario === 'closure'
-                    ? 'btn-primary shadow-glow-turquoise'
-                    : 'text-fintech-muted hover:text-fintech-text'
-                }`}
-              >
-                Abrupt Closure
-              </button>
-            </div>
-          </div>
-
-          {/* Scenario Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            <div className="lg:col-span-5 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-fintech-text font-mono">{currentScenario.title}</h3>
-                <RiskBadge level={currentScenario.riskLevel} score={currentScenario.riskScore} />
-              </div>
-              <p className="text-xs text-fintech-muted leading-relaxed">
-                {currentScenario.description}
-              </p>
-
-              <div className="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1">
-                <div className="p-2.5 rounded-xl bg-fintech-surface border border-fintech-border">
-                  <span className="text-fintech-muted text-[10px] block">VELOCITY</span>
-                  <span className="font-bold text-fintech-accent">{currentScenario.metrics.velocity}</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-fintech-surface border border-fintech-border">
-                  <span className="text-fintech-muted text-[10px] block">TURNOVER</span>
-                  <span className="font-bold text-fintech-accent">{currentScenario.metrics.drainRatio}</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-fintech-surface border border-fintech-border">
-                  <span className="text-fintech-muted text-[10px] block">FLOW HOPS</span>
-                  <span className="font-bold text-fintech-primary">
-                    {currentScenario.metrics.inflowHops} in / {currentScenario.metrics.outflowHops} out
-                  </span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => handleLaunchScenario(currentScenario.targetAccount)}
-                className="w-full py-2.5 btn-primary rounded-xl transition flex items-center justify-center gap-2 text-xs font-bold"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>Trace {currentScenario.targetAccount} Money Trail Live</span>
-              </button>
-            </div>
-
-            {/* Sequence Diagram Display */}
-            <div className="lg:col-span-7 p-5 rounded-2xl bg-fintech-surface border border-fintech-border space-y-4">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-fintech-muted">DISSEMINATION SEQUENCE</span>
-                <span className="text-fintech-accent font-bold">{currentScenario.pattern}</span>
-              </div>
-
-              <div className="flex items-center justify-between gap-2 pt-2 font-mono">
-                {currentScenario.flowNodes.map((node, i) => (
-                  <React.Fragment key={node.id}>
-                    <div className="flex-1 flex flex-col items-center text-center p-3 rounded-xl bg-fintech-card border border-fintech-border">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border mb-2 ${
-                        node.type === 'victim'
-                          ? 'bg-fintech-surface text-fintech-gain border-fintech-gain/40'
-                          : node.type === 'target'
-                          ? 'bg-fintech-surface text-fintech-loss border-fintech-loss/50 animate-pulse'
-                          : node.type === 'layer'
-                          ? 'bg-fintech-surface text-fintech-accent border-fintech-accent/40'
-                          : 'bg-fintech-surface text-fintech-text border-fintech-border'
-                      }`}>
-                        {i + 1}
-                      </div>
-                      <span className="text-xs font-bold text-fintech-text truncate w-full">
-                        {node.label}
-                      </span>
-                      <span className="text-[10px] text-fintech-muted truncate w-full mt-0.5">
-                        {node.sub}
-                      </span>
-                    </div>
-                    {i < currentScenario.flowNodes.length - 1 && (
-                      <ArrowRight className="w-4 h-4 text-fintech-muted shrink-0" />
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <InvestigationFlowAnimation />
 
       {/* =========================================================================
           3D SPATIAL RELATIONAL GRAPH CANVAS (BriarGlobe)
@@ -894,7 +621,7 @@ export default function LandingPage({
                 <span>3D SPATIAL RELATIONAL CANVAS</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-fintech-text mt-1">
-                Real-Time Topological Syndicate Visualizer
+                Transaction Account Network
               </h2>
             </div>
             <button
@@ -906,9 +633,16 @@ export default function LandingPage({
             </button>
           </div>
 
-          <div className="h-[420px] rounded-2xl overflow-hidden border border-fintech-border bg-fintech-surface relative">
+          <div className="h-[420px] rounded-2xl overflow-hidden border border-slate-200 bg-white relative">
             <GlobeErrorBoundary>
-              <BriarGlobe onAccountSelect={onAccountSelect} setCurrentPage={setCurrentPage} />
+              <BriarGlobe
+                onAccountSelect={onAccountSelect}
+                setCurrentPage={setCurrentPage}
+                background="#FFFFFF"
+                textColor="#164E63"
+                lines={{ color: "#0E7490", accent: "#B7791F", opacity: 5.5, thickness: 0.8, depth: 8 }}
+                hover={{ pill: "rgba(255,255,255,0.96)", glow: "#0E7490" }}
+              />
             </GlobeErrorBoundary>
           </div>
         </div>
@@ -923,7 +657,7 @@ export default function LandingPage({
           <div className="flex items-center gap-2">
             <span className="text-xl font-black text-fintech-text tracking-tighter">fintrace</span>
             <span className="w-2 h-2 rounded-full bg-fintech-primary" />
-            <span className="text-fintech-muted ml-2">© 2026 FinTrace Intelligence Platform. All rights reserved.</span>
+              <span className="text-fintech-muted ml-2">© 2026 FinTrace prototype · Investigation support for financial transaction data</span>
           </div>
 
           <div className="flex items-center gap-6">

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="35" y1="26" x2="610" y2="340" gradientUnits="userSpaceOnUse"><stop stop-color="#14212D"/><stop offset="1" stop-color="#101117"/></linearGradient>
+    <linearGradient id="line" x1="115" y1="262" x2="518" y2="95" gradientUnits="userSpaceOnUse"><stop stop-color="#657080"/><stop offset=".52" stop-color="#24C7D8"/><stop offset="1" stop-color="#75819A"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#24C7D8" stop-opacity=".25"/><stop offset="1" stop-color="#24C7D8" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="640" height="360" rx="24" fill="url(#bg)"/>
+  <circle cx="330" cy="176" r="165" fill="url(#glow)"/>
+  <g stroke="url(#line)" stroke-width="3" opacity=".8"><path d="m112 235 106-79 115 59 97-111 91 53"/><path d="m218 156 45-82 70 141 94-111 39 123"/><path d="m112 235 98 53 123-73 133 12 55-70"/><path d="m263 74 55-33 35 174 94 12 41-69"/></g>
+  <g fill="#171E29" stroke="#8994A7" stroke-width="3"><circle cx="112" cy="235" r="14"/><circle cx="218" cy="156" r="14"/><circle cx="263" cy="74" r="12"/><circle cx="333" cy="215" r="15"/><circle cx="430" cy="104" r="14"/><circle cx="521" cy="157" r="13"/><circle cx="210" cy="288" r="12"/><circle cx="466" cy="227" r="12"/></g>
+  <circle cx="333" cy="215" r="7" fill="#25D1DF"/><circle cx="430" cy="104" r="6" fill="#25D1DF"/>
+  <g fill="#B8C4D4" font-family="ui-monospace,monospace" font-size="13" letter-spacing="2"><text x="36" y="326">ACCOUNT RELATIONSHIP MAP</text><text x="487" y="326" fill="#24C7D8">SAMPLE</text></g>
+</svg>

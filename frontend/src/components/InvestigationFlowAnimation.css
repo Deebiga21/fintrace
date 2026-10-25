@@ -1,0 +1,69 @@
+.flow-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #1fc8db;
+  box-shadow: 0 0 12px rgba(31, 200, 219, 0.75);
+  animation: flow-live-pulse 1.8s ease-in-out infinite;
+}
+
+.flow-network {
+  display: block;
+  width: 100%;
+  height: clamp(180px, 26vw, 270px);
+  overflow: visible;
+  color: #1fc8db;
+}
+
+.flow-network__track {
+  fill: none;
+  stroke: rgba(148, 163, 184, 0.35);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 8;
+}
+
+.flow-network__packet {
+  fill: #63e3ed;
+  filter: drop-shadow(0 0 6px rgba(31, 200, 219, 0.9));
+}
+
+.flow-network__packet--2 { fill: #f4c95d; filter: drop-shadow(0 0 6px rgba(244, 201, 93, 0.85)); }
+.flow-network__packet--3 { fill: #a7f3d0; }
+.flow-network__node { fill: #17212b; stroke: #738195; stroke-width: 2.5; }
+.flow-network__halo { fill: url(#flow-halo); color: #1fc8db; animation: flow-halo-pulse 3s ease-in-out infinite; }
+.flow-network__focus-ring { fill: #14232b; stroke: rgba(31, 200, 219, 0.6); stroke-width: 1.5; }
+.flow-network__focus { fill: #1fc8db; filter: drop-shadow(0 0 15px rgba(31, 200, 219, 0.65)); animation: flow-focus-pulse 2s ease-in-out infinite; }
+.flow-network__mark { color: #101117; }
+.flow-network__label { fill: #94a3b8; font: 700 11px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.5px; }
+.flow-network__label--focus { fill: #1fc8db; }
+
+.flow-stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 24px 20px;
+}
+
+.flow-stage__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 11px;
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.06);
+}
+
+.flow-stage--model .flow-stage__icon { color: #1fc8db; border-color: rgba(31, 200, 219, 0.35); background: rgba(31, 200, 219, 0.08); }
+.flow-stage--case .flow-stage__icon { color: #f4c95d; border-color: rgba(244, 201, 93, 0.3); background: rgba(244, 201, 93, 0.07); }
+
+@keyframes flow-live-pulse { 50% { opacity: 0.45; transform: scale(0.8); } }
+@keyframes flow-halo-pulse { 50% { opacity: 0.55; transform: scale(1.12); transform-origin: 469px 120px; } }
+@keyframes flow-focus-pulse { 50% { opacity: 0.72; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-live-dot, .flow-network__halo, .flow-network__focus { animation: none; }
+  .flow-network__packet animateMotion { display: none; }
+}

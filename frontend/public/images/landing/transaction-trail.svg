@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" fill="none">
+  <defs><linearGradient id="bg" x1="15" y1="25" x2="620" y2="340" gradientUnits="userSpaceOnUse"><stop stop-color="#14232D"/><stop offset="1" stop-color="#101117"/></linearGradient><linearGradient id="flow" x1="100" y1="192" x2="542" y2="192" gradientUnits="userSpaceOnUse"><stop stop-color="#677589"/><stop offset=".52" stop-color="#24C7D8"/><stop offset="1" stop-color="#A8B7C8"/></linearGradient></defs>
+  <rect width="640" height="360" rx="24" fill="url(#bg)"/><path d="M110 180h420" stroke="url(#flow)" stroke-width="4" stroke-dasharray="10 10"/>
+  <g><circle cx="126" cy="180" r="45" fill="#202A38" stroke="#758399" stroke-width="2"/><circle cx="320" cy="180" r="58" fill="#15323B" stroke="#24C7D8" stroke-width="3"/><circle cx="514" cy="180" r="45" fill="#202A38" stroke="#758399" stroke-width="2"/><circle cx="126" cy="180" r="9" fill="#C3CEDB"/><circle cx="320" cy="180" r="12" fill="#24C7D8"/><circle cx="514" cy="180" r="9" fill="#C3CEDB"/></g>
+  <path d="m197 169 16 11-16 11m193-22 16 11-16 11" stroke="#24C7D8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#E5EDF5" font-family="ui-monospace,monospace" text-anchor="middle"><text x="126" y="252" font-size="13">SOURCE ACCOUNT</text><text x="320" y="265" font-size="14" fill="#24C7D8">DEMO_MULE_01</text><text x="514" y="252" font-size="13">NEXT ACCOUNT</text><text x="320" y="306" font-size="11" fill="#95A3B5">ILLUSTRATIVE TRANSFER PATH · SYNTHETIC DATA</text></g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" fill="none">
+  <defs><linearGradient id="bg" x1="30" y1="20" x2="610" y2="350" gradientUnits="userSpaceOnUse"><stop stop-color="#171D2A"/><stop offset="1" stop-color="#101117"/></linearGradient><linearGradient id="axis" x1="86" y1="272" x2="550" y2="82" gradientUnits="userSpaceOnUse"><stop stop-color="#526071"/><stop offset="1" stop-color="#24C7D8"/></linearGradient></defs>
+  <rect width="640" height="360" rx="24" fill="url(#bg)"/><path d="M86 55v225h480" stroke="#657183" stroke-width="2"/><path d="M86 225h480M86 170h480M86 115h480" stroke="#758195" stroke-opacity=".18" stroke-dasharray="5 9"/>
+  <path d="M118 240c51-15 71-83 123-85 47-2 57 48 105 41 47-7 58-93 106-105 42-11 56 21 89 14" stroke="url(#axis)" stroke-width="3" stroke-dasharray="7 8"/>
+  <g fill="#8390A3"><circle cx="132" cy="204" r="6"/><circle cx="174" cy="226" r="6"/><circle cx="202" cy="164" r="6"/><circle cx="241" cy="189" r="6"/><circle cx="278" cy="147" r="6"/><circle cx="313" cy="203" r="6"/><circle cx="356" cy="170" r="6"/><circle cx="382" cy="127" r="6"/><circle cx="418" cy="151" r="6"/><circle cx="469" cy="99" r="6"/><circle cx="500" cy="123" r="6"/></g>
+  <circle cx="535" cy="105" r="22" fill="#FF687D" fill-opacity=".15"/><circle cx="535" cy="105" r="9" fill="#FF7187"/><circle cx="535" cy="105" r="17" stroke="#FF7187" stroke-opacity=".65"/>
+  <path d="M535 76v-20m0 98v-20m29-29h20m-98 0h20" stroke="#FF7187" stroke-width="2" stroke-linecap="round"/>
+  <g fill="#B8C4D4" font-family="ui-monospace,monospace" font-size="13" letter-spacing="2"><text x="36" y="326">ISOLATION FOREST · REVIEW SIGNAL</text><text x="506" y="326" fill="#24C7D8">DEMO</text></g>
+</svg>
