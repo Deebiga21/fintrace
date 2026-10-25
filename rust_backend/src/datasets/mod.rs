@@ -332,85 +332,216 @@ async fn import_dataset(
     })))
 }
 
+/// Packaged synthetic demo network, embedded at compile time so a fresh container
+/// (where the Python service's data folder is not mounted) still has demo rows.
+const EMBEDDED_DEMO_CSV: &str = include_str!("../../data/sample_transactions.csv");
+
+const DEMO_CSV_PATHS: [&str; 5] = [
+    "../backend/app/data/sample_transactions.csv",
+    "backend/app/data/sample_transactions.csv",
+    "app/data/sample_transactions.csv",
+    "data/sample_transactions.csv",
+    "../rust_backend/data/sample_transactions.csv",
+];
+
+fn demo_csv_bytes() -> Result<Vec<u8>, AppError> {
+    if let Some(path) = DEMO_CSV_PATHS
+        .iter()
+        .find(|path| FilePath::new(path).exists())
+    {
+        return std::fs::read(path).map_err(|e| AppError::Internal(e.to_string()));
+    }
+
+    Ok(EMBEDDED_DEMO_CSV.as_bytes().to_vec())
+}
+
+fn column_index(headers: &csv::StringRecord, candidates: &[&str]) -> Option<usize> {
+    headers.iter().position(|header| {
+        let normalized = header.trim().to_lowercase();
+        candidates.iter().any(|candidate| normalized == *candidate)
+    })
+}
+
+fn cell<'a>(record: &'a csv::StringRecord, index: Option<usize>) -> &'a str {
+    index
+        .and_then(|i| record.get(i))
+        .map(str::trim)
+        .unwrap_or("")
+}
+
+fn truthy(value: &str) -> bool {
+    matches!(
+        value.trim().to_lowercase().as_str(),
+        "1" | "true" | "yes" | "y" | "fraud" | "suspicious"
+    )
+}
+
+/// Load the packaged synthetic network into the live tables.
+///
+/// Columns are resolved by header name (not position) so the demo CSV can gain or
+/// reorder columns, and so `is_ground_truth_mule` is honoured as the label instead
+/// of being silently written into `flag_reason`.
+async fn seed_demo_transactions(pool: &DbPool) -> Result<usize, AppError> {
+    let csv_bytes = demo_csv_bytes()?;
+    let mut reader = csv::ReaderBuilder::new()
+        .has_headers(true)
+        .from_reader(csv_bytes.as_slice());
+    let headers = reader
+        .headers()
+        .map_err(|e| AppError::BadRequest(format!("Malformed demo CSV header: {}", e)))?
+        .clone();
+
+    let txn_col = column_index(&headers, &["transaction_id", "txn_id", "txnid"]);
+    let sender_col = column_index(
+        &headers,
+        &["sender_account", "sender", "nameorig", "from_account"],
+    );
+    let receiver_col = column_index(
+        &headers,
+        &["receiver_account", "receiver", "namedest", "to_account"],
+    );
+    let amount_col = column_index(&headers, &["amount", "amt", "value"]);
+    let ts_col = column_index(&headers, &["timestamp", "time", "date"]);
+    let status_col = column_index(&headers, &["status"]);
+    let type_col = column_index(&headers, &["transaction_type", "type", "channel"]);
+    let description_col = column_index(&headers, &["description", "notes"]);
+    let suspicious_col = column_index(
+        &headers,
+        &[
+            "is_suspicious",
+            "is_ground_truth_mule",
+            "is_fraud",
+            "fraud_label",
+            "fraud",
+        ],
+    );
+    let reason_col = column_index(&headers, &["flag_reason", "reason"]);
+
+    let (txn_col, sender_col, receiver_col, amount_col) =
+        match (txn_col, sender_col, receiver_col, amount_col) {
+            (Some(txn), Some(sender), Some(receiver), Some(amount)) => {
+                (txn, sender, receiver, amount)
+            }
+            _ => {
+                return Err(AppError::BadRequest(
+                    "Demo CSV must contain transaction_id, sender_account, receiver_account and amount columns"
+                        .to_string(),
+                ))
+            }
+        };
+
+    let mut loaded = 0usize;
+
+    for record in reader.records().flatten() {
+        let txn_id = cell(&record, Some(txn_col));
+        let sender = cell(&record, Some(sender_col));
+        let receiver = cell(&record, Some(receiver_col));
+        let amount: f64 = cell(&record, Some(amount_col)).parse().unwrap_or(0.0);
+
+        if txn_id.is_empty() || sender.is_empty() || receiver.is_empty() || amount <= 0.0 {
+            continue;
+        }
+
+        let timestamp = match cell(&record, ts_col) {
+            "" => "2026-10-15 10:00:00".to_string(),
+            value => value.to_string(),
+        };
+        let status = match cell(&record, status_col) {
+            "" => "COMPLETED".to_string(),
+            value => value.to_string(),
+        };
+        let txn_type = match cell(&record, type_col) {
+            "" => "IMPS".to_string(),
+            value => value.to_string(),
+        };
+        let description = cell(&record, description_col);
+        let flag_reason = cell(&record, reason_col);
+        let is_suspicious = truthy(cell(&record, suspicious_col));
+
+        sqlx::query(
+            "INSERT OR IGNORE INTO accounts (account_id, created_at) VALUES ($1, datetime('now'))",
+        )
+        .bind(sender)
+        .execute(pool)
+        .await?;
+        sqlx::query(
+            "INSERT OR IGNORE INTO accounts (account_id, created_at) VALUES ($1, datetime('now'))",
+        )
+        .bind(receiver)
+        .execute(pool)
+        .await?;
+
+        sqlx::query(
+            r#"
+            INSERT OR REPLACE INTO transactions
+                (transaction_id, sender_account, receiver_account, amount, timestamp, status, transaction_type, description, is_suspicious, flag_reason)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            "#,
+        )
+        .bind(txn_id)
+        .bind(sender)
+        .bind(receiver)
+        .bind(amount)
+        .bind(&timestamp)
+        .bind(&status)
+        .bind(&txn_type)
+        .bind(if description.is_empty() {
+            None
+        } else {
+            Some(description)
+        })
+        .bind(if is_suspicious { 1 } else { 0 })
+        .bind(if flag_reason.is_empty() {
+            None
+        } else {
+            Some(flag_reason)
+        })
+        .execute(pool)
+        .await?;
+
+        loaded += 1;
+    }
+
+    let _ = update_account_graph_metrics(pool).await;
+
+    Ok(loaded)
+}
+
+/// Seed the packaged demo network when the database has no transactions yet.
+///
+/// Returns how many rows were inserted (0 when data already existed), so the
+/// caller can log a cold start without re-seeding an investigator's real dataset.
+pub async fn ensure_demo_seed(pool: &DbPool) -> Result<usize, AppError> {
+    let existing: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM transactions")
+        .fetch_one(pool)
+        .await?;
+
+    if existing > 0 {
+        return Ok(0);
+    }
+
+    let loaded = seed_demo_transactions(pool).await?;
+
+    if loaded > 0 {
+        let now = Utc::now().to_rfc3339();
+        let _ = sqlx::query(
+            "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, 'SYSTEM', 'DEMO_DATA_AUTO_SEEDED', 'DATASET', 'SYNTHETIC_DEMO', $2)",
+        )
+        .bind(&now)
+        .bind(format!(
+            "Cold-start seed: {} synthetic transactions loaded before first request.",
+            loaded
+        ))
+        .execute(pool)
+        .await;
+    }
+
+    Ok(loaded)
+}
+
 async fn load_demo_dataset(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let now = Utc::now().to_rfc3339();
-
-    // Load sample_transactions.csv
-    let sample_paths = [
-        "../backend/app/data/sample_transactions.csv",
-        "backend/app/data/sample_transactions.csv",
-        "app/data/sample_transactions.csv",
-    ];
-
-    let mut found_path = None;
-    for p in &sample_paths {
-        if FilePath::new(p).exists() {
-            found_path = Some(*p);
-            break;
-        }
-    }
-
-    let csv_path = found_path
-        .ok_or_else(|| AppError::NotFound("Synthetic sample transactions not found".to_string()))?;
-    let file = File::open(csv_path).map_err(|e| AppError::Internal(e.to_string()))?;
-    let mut rdr = csv::ReaderBuilder::new()
-        .has_headers(true)
-        .from_reader(file);
-
-    let mut loaded = 0;
-    for result in rdr.records() {
-        if let Ok(rec) = result {
-            if rec.len() < 4 {
-                continue;
-            }
-            let txn_id = rec.get(0).unwrap_or("").trim().to_string();
-            let sender = rec.get(1).unwrap_or("").trim().to_string();
-            let receiver = rec.get(2).unwrap_or("").trim().to_string();
-            let amount: f64 = rec
-                .get(3)
-                .and_then(|a| a.trim().parse().ok())
-                .unwrap_or(0.0);
-            let timestamp = rec
-                .get(4)
-                .unwrap_or("2026-10-15 10:00:00")
-                .trim()
-                .to_string();
-            let status = rec.get(5).unwrap_or("COMPLETED").trim().to_string();
-            let txn_type = rec.get(6).unwrap_or("IMPS").trim().to_string();
-            let is_susp: bool = rec
-                .get(7)
-                .map(|v| v.trim() == "1" || v.trim().eq_ignore_ascii_case("true"))
-                .unwrap_or(false);
-            let flag_reason = rec.get(8).map(|s| s.trim().to_string());
-
-            let _ = sqlx::query("INSERT OR IGNORE INTO accounts (account_id, created_at) VALUES ($1, datetime('now'))")
-                .bind(&sender).execute(&pool).await;
-            let _ = sqlx::query("INSERT OR IGNORE INTO accounts (account_id, created_at) VALUES ($1, datetime('now'))")
-                .bind(&receiver).execute(&pool).await;
-
-            let _ = sqlx::query(
-                r#"
-                INSERT OR REPLACE INTO transactions (transaction_id, sender_account, receiver_account, amount, timestamp, status, transaction_type, is_suspicious, flag_reason)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-                "#
-            )
-            .bind(&txn_id)
-            .bind(&sender)
-            .bind(&receiver)
-            .bind(amount)
-            .bind(&timestamp)
-            .bind(&status)
-            .bind(&txn_type)
-            .bind(if is_susp { 1 } else { 0 })
-            .bind(flag_reason)
-            .execute(&pool)
-            .await;
-
-            loaded += 1;
-        }
-    }
-
-    let _ = update_account_graph_metrics(&pool).await;
+    let loaded = seed_demo_transactions(&pool).await?;
 
     let node_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
         .fetch_one(&pool)
