@@ -33,7 +33,7 @@
 
 * **Rust API Backend (`rust_backend/`)**: Acts as the single source of truth for accounts, transactions, cases, evidence, complaints, alerts, and audit logs. Provides WebSocket streaming (`/ws`) for real-time AML updates.
 * **Python ML Microservice (`backend/`)**: Dedicated generative AI and deep learning microservice executing PyTorch neural networks for synthetic transaction synthesis and GraphSAGE neighborhood aggregation.
-* **Frontend Web Application (`frontend/`)**: High-performance dark-navy glassmorphism dashboard built with React 19, Cytoscape.js, Recharts, and Tailwind CSS.
+* **Frontend Web Application (`frontend/`)**: High-performance black-and-yellow fintech console built with React 19, Cytoscape.js, Recharts, and Tailwind CSS. The investigation console uses a dark operator theme; the landing page and legal pages use a light editorial layout.
 
 > **API surface note:** the dashboard and every end-user flow call only the Rust API on port 8000. The Python service still keeps standalone CRUD routes for ML debugging and notebook-style experiments, but Compose does not publish port 8001 and the UI never calls it. Rust remains the single source of truth at runtime.
 
@@ -43,7 +43,7 @@
 
 1. **Open API**: The local dashboard and API run without a login or authentication token.
 2. **Transaction Management (`transactions`)**: Idempotent CSV ingestion, duplicate detection, and streaming transaction queries.
-3. **Mule Account Risk Assessment (`accounts`)**: Continuous GraphSAGE risk scores ($0.0 - 1.0$), topological degree, and turnover ratio drain analysis.
+3. **Mule Account Risk Assessment (`accounts`)**: Continuous GraphSAGE risk scores ($0.0 - 1.0$), topological degree, and turnover ratio drain analysis. On a cold start before the GNN is trained, 18 accounts carry label-derived demo triage scores so the queue is populated; the API tags those rows `score_source: demo_label` and the UI shows no model confidence for them.
 4. **Graph Canvas & Cycle Detection (`graph`)**: Interactive Cytoscape.js directed graph, 2-hop ego subgraphs, and Petgraph elementary cycle detection ($A \to B \to C \to A$).
 5. **Multi-Hop Money Trail (`money_trail`)**: Breadth-first inbound origin tracing (cyber victims) and outbound cash-out tracing (crypto / offshore conduits).
 6. **Cyber Complaint Cross-Correlation (`complaints`)**: Links National Cyber Crime Portal complaints to suspect recipient accounts.
@@ -75,7 +75,7 @@ docker compose up --build
 * **Python ML Microservice**: private to the Compose network on port 8001
 * **Database**: SQLite in a persistent Compose volume (the current Rust SQLx build enables SQLite only)
 
-On the first start against an empty database, the Rust backend **auto-seeds the packaged 182-transaction synthetic demo network** (74 accounts, 15 flagged mule transfers). There is no manual "load demo data" step before the dashboard is presentable; the seed is skipped whenever the `transactions` table already has rows.
+On the first start against an empty database, the Rust backend **auto-seeds the packaged 182-transaction synthetic demo network** (74 accounts, 15 flagged mule transfers), **18 label-derived triage scores** (9 high / 9 medium risk) and **three investigation dossiers** that reference those seeded records. There is no manual "load demo data" step before the dashboard is presentable; the seed is skipped whenever the `transactions` table already has rows.
 
 ---
 
@@ -147,6 +147,7 @@ Tests verify:
 | `GET` | `/health` | Rust backend health check |
 | `GET` | `/api/v1/analytics/overview` | Executive KPI dashboard and risk distributions |
 | `GET` | `/api/v1/analytics/audit-logs` | Retrieve recent audit history |
+| `GET` | `/api/v1/dashboard/summary` | Aggregated volume, risk and investigation counters used by the home dashboard |
 | `GET` | `/api/v1/transactions/` | Filter transactions by account, amount, or type |
 | `POST` | `/api/v1/transactions/upload` | Multipart CSV transaction ingestion |
 | `POST` | `/api/v1/transactions/load-sample` | Seed pre-packaged demonstration network |
@@ -178,6 +179,7 @@ Tests verify:
 * **Synthetic Data Quality vs Fraud Detection**: Tabular GAN quality is evaluated strictly through statistical distribution similarity (Wasserstein distance, Kolmogorov-Smirnov test, Total Variation distance) and memorization risk audits. A high GAN quality score is an assessment of fidelity, not classification accuracy.
 * **Evaluation on Held-Out Benchmark Splits**: Supervised classifier metrics (Precision, Recall, F1, PR-AUC, Confusion Matrix) are computed on a held-out test partition that was never exposed during GAN training or feature scaling. The word "real" in `classifier_benchmark_report.json` means **non-generated benchmark rows**, not customer data: the packaged datasets are the public PaySim simulation and locally generated synthetic networks. No real bank records are in this repository.
 * **Investigative Lead Standard**: Alerts generated by GraphSAGE and CWGAN-GP represent automated investigative leads for human verification, complying with legal guidelines for financial crime investigations.
+* **Cold-start demo scaffolding**: the 18 seeded risk scores and three seeded dossiers exist to make an empty database demonstrable. The scores are computed from the packaged dataset's own suspicious-transaction labels, not from a trained model; the API marks them `score_source: demo_label`, and training the GNN replaces them.
 
 ### Data handling
 
@@ -223,8 +225,9 @@ Every figure below is copied from a JSON artifact committed under [`backend/app/
 | ML training runs | **Real executions** | GraphSAGE, CWGAN-GP, Isolation Forest and the classifier were actually trained; metrics and weights are committed |
 | GAN-generated rows | **Synthetic** | Produced by the trained generator, validated for fidelity and memorization before use |
 | Rust detection logic | **Real implementation** | Bound-parameter SQL, breadth-first multi-hop tracing, Petgraph cycle detection, graph metrics — no mocked paths |
-| Risk scores & alerts | **Model output** | Automated leads requiring human verification, not fraud verdicts |
-| Cases, complaints, audit log | **Demo records** | Seeded synthetic dossiers; the audit trail is real application state, the subjects are not |
+| Model risk scores & alerts | **Model output** | GraphSAGE / Isolation Forest artifacts; automated leads requiring human verification, not fraud verdicts |
+| Cold-start triage scores | **Label-derived (demo)** | 18 accounts scored from the packaged dataset's own suspicious-transaction labels so the queue is populated before training. Tagged `score_source: demo_label`; the UI shows `—` instead of inventing model confidence |
+| Cases, complaints, audit log | **Demo records** | Three seeded dossiers reference real seeded transactions and accounts; the audit trail is real application state, the subjects are not |
 | Authentication | **Intentionally absent** | Local demo only; see [§4](#4-local-access) |
 
 ---
@@ -233,14 +236,14 @@ Every figure below is copied from a JSON artifact committed under [`backend/app/
 
 A cold database is enough — the backend seeds itself on first start. Suggested walkthrough:
 
-1. **Capital Command** (30 s) — dashboard opens with 182 transactions, 74 accounts and 15 flagged transfers already loaded. Point out that this came from the cold-start seed, not a pre-baked screenshot.
-2. **Mule Account Detection** (45 s) — sorted by risk; open `MULE_AGG_01` to show the GraphSAGE score, structural signals (in/out degree, turnover ratio) and the explanation panel.
+1. **Capital Command** (30 s) — dashboard opens with 182 transactions, 74 accounts, 15 flagged transfers, 18 accounts in flagged flows and 9 high-risk triage scores already loaded. Point out that this came from the cold-start seed, not a pre-baked screenshot.
+2. **Mule Account Detection** (45 s) — sorted by risk; open `MULE_AGG_01` to show the seeded triage score plus the **real** structural signals computed from the ledger: 6 inbound counterparties collapsing into 1 outbound hop and a 97.97% turnover ratio. Say plainly that cold-start scores come from dataset labels; if time allows, retrain the GNN in Model Studio and show model-scored rows with a confidence value.
 3. **Graph Topology Canvas** (30 s) — expand the `MULE_AGG_01` ego network, then show cycle detection for the `CIRC_MULE_A → B → C → D` circular flow.
 4. **Money Trail Analysis** (45 s) — trace `MULE_AGG_01` in both directions: victim accounts on the inbound side, crypto/offshore cash-out on the outbound side.
-5. **Investigation Cases → Dossier** (45 s) — open a seeded case, show the evidence locker and compile the legal dossier view.
+5. **Investigation Cases → Dossier** (45 s) — open one of the three seeded dossiers (smurfing fan-out, circular layering, crypto cash-out), show the evidence locker and compile the legal dossier view.
 6. **Model Architecture** (20 s) — show the committed artifacts: GAN fidelity 81.46, 0.2% memorization, classifier lift +2.11% F1, and state the honest scope (synthetic data, leads not verdicts).
 
-If the volume already contains unrelated data, `POST /api/v1/datasets/demo/load` re-loads the demo network idempotently, and `POST /api/v1/demo/reset` restores the baseline account states.
+If the volume already contains unrelated data, `POST /api/v1/datasets/demo/load` re-loads the demo network, triage scores and dossiers idempotently.
 
 ---
 
@@ -251,6 +254,7 @@ If the volume already contains unrelated data, `POST /api/v1/datasets/demo/load`
 * **Benchmark scope.** All metrics are on synthetic/public simulation data. The GraphSAGE artifact was recorded on a larger test partition than the packaged 1,810-row benchmark.
 * **Classifier naming.** "Real-only" in the artifact means non-augmented benchmark rows; it does not mean production bank data.
 * **Seed duplication.** Local runs prefer `backend/app/data/sample_transactions.csv` and fall back to the copy embedded in the Rust binary (`rust_backend/data/`); if the source CSV changes, re-copy it to keep both in sync.
+* **Cold-start triage scores.** The 18 seeded risk scores are derived from dataset labels, not model inference, and are overwritten when the GNN is trained. The UI deliberately shows `—` rather than a confidence for these rows.
 * **Alerts are leads.** No model output here should be treated as a confirmed fraud determination.
 
 ---
