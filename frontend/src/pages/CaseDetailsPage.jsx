@@ -8,28 +8,22 @@ import {
   Trash2,
   FileText,
   ShieldAlert,
-  Clock,
-  UserCheck,
   CheckCircle2,
   AlertTriangle,
   RefreshCw,
-  FolderOpen,
   GitCommit,
   Network,
   Users,
   CreditCard,
   History,
-  ExternalLink,
   Lock,
-  Layers,
-  Search,
   Check,
   HelpCircle,
   Copy,
   ChevronDown,
   ChevronUp,
-  Info,
-  ShieldCheck
+  ShieldCheck,
+  X
 } from 'lucide-react';
 import { api } from '../services/api';
 import { wsService } from '../services/websocket';

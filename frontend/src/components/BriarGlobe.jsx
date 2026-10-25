@@ -1179,7 +1179,7 @@ export default function BriarGlobe({
       host.style.cursor = "grabbing"
       try {
         host.setPointerCapture(event.pointerId)
-      } catch (_) {}
+      } catch {}
     }
 
     function onPointerMove(event) {
@@ -1219,7 +1219,7 @@ export default function BriarGlobe({
         }, 120)
         try {
           host.releasePointerCapture(event.pointerId)
-        } catch (_) {}
+        } catch {}
       }
     }
 

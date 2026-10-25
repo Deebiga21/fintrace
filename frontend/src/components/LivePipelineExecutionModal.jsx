@@ -18,8 +18,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Check,
-  Copy,
-  Download
+  Copy
 } from 'lucide-react';
 import { api } from '../services/api';
 

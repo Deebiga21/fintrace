@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, FileText, Lock, Copyright, Scale, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Shield, Lock, Copyright, Scale, ArrowRight } from 'lucide-react';
 
 export default function LegalPrivacyPage({ setCurrentPage }) {
   const [activeTab, setActiveTab] = useState('privacy');

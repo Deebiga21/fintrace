@@ -14,13 +14,7 @@ import {
   Download,
   FolderOpen,
   Loader2,
-  FileCheck,
   ShieldCheck,
-  Activity,
-  Layers,
-  Network,
-  Sliders,
-  ChevronDown,
   ChevronRight,
   Eye,
   RefreshCw,
@@ -197,7 +191,7 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
     if (activeJobId) {
       try {
         await api.cancelIngestionJob(activeJobId);
-      } catch (e) {
+      } catch {
         // Ignore cancel errors
       }
     }

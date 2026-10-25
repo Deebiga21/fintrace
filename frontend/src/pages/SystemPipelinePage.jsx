@@ -3,13 +3,7 @@ import {
   RefreshCw,
   Play,
   X,
-  ExternalLink,
-  ChevronRight,
-  Activity,
-  Layers,
-  Database,
-  Shield,
-  FileText
+  ExternalLink
 } from 'lucide-react';
 import { api } from '../services/api';
 

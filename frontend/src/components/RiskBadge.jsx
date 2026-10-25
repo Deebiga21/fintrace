@@ -1,5 +1,4 @@
 import React from 'react';
-import { AlertTriangle, ShieldCheck, AlertCircle } from 'lucide-react';
 
 export default function RiskBadge({ level, score, showScore = true, size = "md" }) {
   const normLevel = (level || "Low").toUpperCase();

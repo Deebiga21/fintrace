@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Cpu,
   Sparkles,
-  Layers,
   Activity,
   Play,
-  RotateCcw,
-  CheckCircle2,
   AlertTriangle,
-  Sliders,
   Info,
   Database,
   BarChart3,
@@ -18,7 +13,6 @@ import {
   TrendingUp,
   FileText,
   RefreshCw,
-  Search,
   ExternalLink
 } from 'lucide-react';
 import { api } from '../services/api';
@@ -92,22 +86,22 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
       try {
         const cm = await api.getClassifierMetrics();
         setClassifierMetrics(cm);
-      } catch (e) {}
+      } catch {}
 
       // Try GAN metrics
       try {
         const gm = await api.getGANMetrics();
         setGanMetrics(gm);
-      } catch (e) {}
+      } catch {}
 
       try {
         const im = await api.getIsolationForestMetrics();
         setIsolationForestMetrics(im);
-      } catch (e) { setIsolationForestMetrics(null); }
+      } catch { setIsolationForestMetrics(null); }
       try {
         const scored = await api.getIsolationForestScores(50);
         setIsolationForestScores(scored.rows || []);
-      } catch (e) { setIsolationForestScores([]); }
+      } catch { setIsolationForestScores([]); }
 
     } catch (err) {
       console.error(err);
@@ -209,7 +203,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
             completed = true;
             break;
           }
-        } catch (pollError) {
+        } catch {
           // Metrics are not available until the first successful training run.
         }
       }

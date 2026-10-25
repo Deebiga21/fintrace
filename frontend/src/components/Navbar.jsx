@@ -6,8 +6,7 @@ import {
   UserCheck,
   CheckCircle2,
   AlertCircle,
-  Play,
-  Bell
+  Play
 } from 'lucide-react';
 import { api } from '../services/api';
 import ThemeToggle from './ThemeToggle';

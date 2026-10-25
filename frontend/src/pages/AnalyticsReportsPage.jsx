@@ -3,12 +3,7 @@ import {
   BarChart3,
   Download,
   Printer,
-  ShieldCheck,
   Cpu,
-  TrendingUp,
-  FileText,
-  AlertTriangle,
-  RefreshCw,
   Info
 } from 'lucide-react';
 import {
@@ -18,8 +13,6 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
   Cell
 } from 'recharts';
 import { api } from '../services/api';

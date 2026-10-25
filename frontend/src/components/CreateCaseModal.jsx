@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Briefcase, ShieldAlert, CheckCircle2, UserCheck, AlertTriangle } from 'lucide-react';
+import { X, Briefcase, AlertTriangle } from 'lucide-react';
 import { api } from '../services/api';
 
 export default function CreateCaseModal({ isOpen, onClose, initialData = {}, onCaseCreated }) {

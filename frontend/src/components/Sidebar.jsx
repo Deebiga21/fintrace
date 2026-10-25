@@ -16,10 +16,7 @@ import {
   ChevronRight,
   ChevronDown,
   Workflow,
-  Lock,
-  Scale,
-  CreditCard,
-  Send
+  Scale
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '../context/ThemeContext';

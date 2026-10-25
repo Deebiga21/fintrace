@@ -4,12 +4,7 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
-  Filter,
-  Play,
-  RotateCcw,
-  ShieldAlert,
-  ArrowRight,
-  Info
+  Filter
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 

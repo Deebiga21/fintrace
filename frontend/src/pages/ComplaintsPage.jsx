@@ -4,26 +4,19 @@ import {
   Search,
   Plus,
   Link as LinkIcon,
-  AlertTriangle,
-  ArrowRight,
   Briefcase,
-  CheckCircle2,
   X,
   ShieldAlert,
-  Building,
   RefreshCw,
   Network,
   Download,
   FileText,
-  ChevronRight,
-  Layers,
-  ExternalLink,
-  ShieldCheck,
-  Filter
+  ChevronRight
 } from 'lucide-react';
 import { api } from '../services/api';
 import CytoscapeGraph from '../components/CytoscapeGraph';
-import RiskBadge from '../components/RiskBadge';
+
+const generateComplaintId = () => `CMP-2026-${Math.floor(1000 + Math.random() * 9000)}`;
 
 export default function ComplaintsPage({
   setCurrentPage,
@@ -56,7 +49,7 @@ export default function ComplaintsPage({
   const [linkingCase, setLinkingCase] = useState(false);
 
   // New Complaint Form State
-  const [newId, setNewId] = useState(`CMP-2026-${Math.floor(1000 + Math.random() * 9000)}`);
+  const [newId, setNewId] = useState(generateComplaintId);
   const [complainant, setComplainant] = useState('');
   const [accId, setAccId] = useState('');
   const [amount, setAmount] = useState('');

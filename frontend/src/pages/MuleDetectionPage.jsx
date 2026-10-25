@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
-  ShieldAlert,
-  Search,
-  Filter,
-  Cpu,
-  AlertTriangle,
-  ArrowRight,
   Network,
   Share2,
   Briefcase,
-  X,
-  FileWarning,
-  Activity,
-  CheckCircle2,
   Info
 } from 'lucide-react';
 import { api } from '../services/api';

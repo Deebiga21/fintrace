@@ -1,14 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import {
-  FileSpreadsheet,
-  Search,
-  Filter,
-  AlertTriangle,
-  ArrowRight,
-  RefreshCw,
-  Share2,
-  DollarSign
-} from 'lucide-react';
 import { api } from '../services/api';
 
 export default function TransactionsPage({
@@ -161,10 +151,10 @@ export default function TransactionsPage({
                       <td className="py-2.5 px-3 font-bold text-white">
                         {t.transaction_id}
                       </td>
-                      <td className="py-2.5 px-3 text-[#B86B7A] hover:underline" onClick={(e) => { e.stopPropagation(); onAccountSelect && onAccountSelect(t.sender_account); }}>
+                      <td className="py-2.5 px-3 text-[#B86B7A] hover:underline" onClick={(e) => { e.stopPropagation(); if (onAccountSelect) onAccountSelect(t.sender_account); }}>
                         {t.sender_account}
                       </td>
-                      <td className="py-2.5 px-3 text-[#B86B7A] hover:underline" onClick={(e) => { e.stopPropagation(); onAccountSelect && onAccountSelect(t.receiver_account); }}>
+                      <td className="py-2.5 px-3 text-[#B86B7A] hover:underline" onClick={(e) => { e.stopPropagation(); if (onAccountSelect) onAccountSelect(t.receiver_account); }}>
                         {t.receiver_account}
                       </td>
                       <td className="py-2.5 px-3 font-bold text-white tabular-nums">

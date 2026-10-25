@@ -1,34 +1,26 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Briefcase,
   Search,
   Plus,
-  Filter,
   ArrowRight,
   ShieldAlert,
   Clock,
-  UserCheck,
   FileText,
   AlertCircle,
   CheckCircle2,
   RefreshCw,
-  TrendingUp,
   AlertTriangle,
   GitCommit,
-  Radio,
   SlidersHorizontal,
   X,
   HelpCircle,
   Network,
-  Share2,
   Copy,
   Check,
   ChevronDown,
   ChevronUp,
-  Info,
-  ExternalLink,
-  ShieldCheck,
-  Layers
+  Info
 } from 'lucide-react';
 import { api } from '../services/api';
 import { wsService } from '../services/websocket';
@@ -186,6 +178,11 @@ export default function CasesPage({
     }
   }, [refreshTrigger, fetchCasesAndSummary]);
 
+  const showSyncBadge = (msg) => {
+    setSyncNotice(msg);
+    setTimeout(() => setSyncNotice(null), 3000);
+  };
+
   // Real-time listener for WebSocket and cross-tab sync events
   useEffect(() => {
     const handleCaseEvent = (msg) => {
@@ -268,11 +265,6 @@ export default function CasesPage({
     const unsubscribe = wsService.subscribe(handleCaseEvent);
     return () => unsubscribe();
   }, [fetchCasesAndSummary]);
-
-  const showSyncBadge = (msg) => {
-    setSyncNotice(msg);
-    setTimeout(() => setSyncNotice(null), 3000);
-  };
 
   const handleOpenCase = (caseId) => {
     if (setSelectedCaseId) setSelectedCaseId(caseId);

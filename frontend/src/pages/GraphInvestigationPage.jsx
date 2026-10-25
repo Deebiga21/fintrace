@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
   Network,
-  RotateCcw,
-  Share2,
   Briefcase,
   AlertTriangle,
-  FileWarning,
   ArrowRight,
   RefreshCw,
-  Search,
-  Eye,
-  Layers
+  Eye
 } from 'lucide-react';
 import { api } from '../services/api';
 import CytoscapeGraph from '../components/CytoscapeGraph';

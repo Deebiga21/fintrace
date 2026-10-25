@@ -9,15 +9,13 @@ import {
   Shield,
   ArrowUpRight,
   Star,
-  Globe,
-  Search,
+  Globe
 } from 'lucide-react';
 import BriarGlobe from '../components/BriarGlobe';
 import DitherVeil from '../components/DitherVeil';
 import ElectricLogo from '../components/ElectricLogo';
 import InvestigationFlowAnimation from '../components/InvestigationFlowAnimation';
 import ThemeToggle from '../components/ThemeToggle';
-import AnimatedContent from '../components/AnimatedContent';
 import { useTheme } from '../context/ThemeContext';
 
 class GlobeErrorBoundary extends React.Component {

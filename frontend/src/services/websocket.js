@@ -20,7 +20,7 @@ class WebSocketService {
           }
         };
       }
-    } catch (e) {
+    } catch {
       this.broadcastChannel = null;
     }
   }
@@ -74,7 +74,7 @@ class WebSocketService {
         try {
           const data = JSON.parse(event.data);
           this.notifyListeners(data, true);
-        } catch (e) {
+        } catch {
           // Ignore keepalive responses
         }
       };
@@ -94,7 +94,7 @@ class WebSocketService {
         this.isConnected = false;
         this.socket?.close();
       };
-    } catch (err) {
+    } catch {
       this.isConnected = false;
       this.urlIndex++;
       this.scheduleReconnect();
@@ -108,7 +108,7 @@ class WebSocketService {
     if (broadcastToTabs && this.broadcastChannel) {
       try {
         this.broadcastChannel.postMessage(data);
-      } catch (e) {}
+      } catch {}
     }
 
     // Call all subscribed React components
