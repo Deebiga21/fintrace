@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import CreateCaseModal from './components/CreateCaseModal';
@@ -21,6 +21,11 @@ import SettingsModelPage from './pages/SettingsModelPage';
 import SystemPipelinePage from './pages/SystemPipelinePage';
 import LegalPrivacyPage from './pages/LegalPrivacyPage';
 import { wsService } from './services/websocket';
+
+// Design-system approval gate. Dev-only: never shipped to the judge build.
+const ThemePreviewPage = import.meta.env.DEV
+  ? lazy(() => import('./pages/ThemePreviewPage'))
+  : null;
 
 export default function App() {
   // Support direct URL hash deep linking e.g. #case-details?id=CASE-2026-001 or #cases
@@ -293,6 +298,18 @@ export default function App() {
             <LegalPrivacyPage
               setCurrentPage={setCurrentPage}
             />
+          )}
+
+          {import.meta.env.DEV && currentPage === 'theme-preview' && (
+            <Suspense
+              fallback={
+                <div className="p-6 text-xs font-mono text-fintech-muted">
+                  Loading design preview…
+                </div>
+              }
+            >
+              <ThemePreviewPage setCurrentPage={setCurrentPage} />
+            </Suspense>
           )}
         </main>
       </div>

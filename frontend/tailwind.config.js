@@ -53,6 +53,21 @@ export default {
           gain: '#22C55E',
           loss: '#FF5C6C',
         },
+        // Editorial dark language (theme-invariant; see index.css)
+        canvas: {
+          DEFAULT: 'var(--canvas)',
+          raised: 'var(--canvas-raised)',
+        },
+        ink: {
+          DEFAULT: 'var(--ink)',
+          muted: 'var(--ink-muted)',
+          faint: 'var(--ink-faint)',
+        },
+        rule: {
+          DEFAULT: 'var(--rule)',
+          strong: 'var(--rule-strong)',
+        },
+        spec: 'var(--spec)',
         // Brand references
         turquoise: {
           dark: '#1FC8DB',
