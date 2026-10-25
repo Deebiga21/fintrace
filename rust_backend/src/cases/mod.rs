@@ -165,6 +165,8 @@ async fn list_cases(
     let mut query = String::from(
         "SELECT case_id, case_number, title, priority, assigned_investigator, status, primary_account_id, created_at, updated_at, created_by, source_type, source_reference_id, summary, findings, closure_reason, version FROM cases WHERE 1=1",
     );
+    // Values are always passed as bound parameters; only fixed SQL fragments are formatted in.
+    let mut bindings: Vec<String> = Vec::new();
 
     if let Some(ref st) = params.status {
         let trimmed = st.trim();
@@ -172,7 +174,8 @@ async fn list_cases(
             if trimmed == "Under_Investigation" || trimmed == "Under Investigation" {
                 query.push_str(" AND (status = 'Under_Investigation' OR status = 'Under Investigation' OR status = 'Active Investigation')");
             } else {
-                query.push_str(&format!(" AND status = '{}'", trimmed));
+                query.push_str(" AND status = ?");
+                bindings.push(trimmed.to_string());
             }
         }
     }
@@ -180,32 +183,37 @@ async fn list_cases(
     if let Some(ref pr) = params.priority {
         let trimmed = pr.trim();
         if !trimmed.is_empty() && trimmed.to_uppercase() != "ALL" {
-            query.push_str(&format!(" AND priority = '{}'", trimmed));
+            query.push_str(" AND priority = ?");
+            bindings.push(trimmed.to_string());
         }
     }
 
     if let Some(ref inv) = params.investigator {
         let trimmed = inv.trim();
         if !trimmed.is_empty() && trimmed.to_uppercase() != "ALL" {
-            query.push_str(&format!(" AND assigned_investigator = '{}'", trimmed));
+            query.push_str(" AND assigned_investigator = ?");
+            bindings.push(trimmed.to_string());
         }
     }
 
     if let Some(ref src) = params.source_type {
         let trimmed = src.trim();
         if !trimmed.is_empty() && trimmed.to_uppercase() != "ALL" {
-            query.push_str(&format!(" AND source_type = '{}'", trimmed));
+            query.push_str(" AND source_type = ?");
+            bindings.push(trimmed.to_string());
         }
     }
 
     if let Some(ref s) = params.search {
         let trimmed = s.trim();
         if !trimmed.is_empty() {
-            let escaped = trimmed.replace("'", "''");
-            query.push_str(&format!(
-                " AND (case_id LIKE '%{0}%' OR case_number LIKE '%{0}%' OR title LIKE '%{0}%' OR summary LIKE '%{0}%' OR primary_account_id LIKE '%{0}%' OR assigned_investigator LIKE '%{0}%')",
-                escaped
-            ));
+            let pattern = format!("%{}%", trimmed);
+            query.push_str(
+                " AND (case_id LIKE ? OR case_number LIKE ? OR title LIKE ? OR summary LIKE ? OR primary_account_id LIKE ? OR assigned_investigator LIKE ?)",
+            );
+            for _ in 0..6 {
+                bindings.push(pattern.clone());
+            }
         }
     }
 
@@ -226,9 +234,13 @@ async fn list_cases(
     let offset = params.offset.unwrap_or(0).max(0);
     query.push_str(&format!(" LIMIT {} OFFSET {}", limit, offset));
 
-    let cases = sqlx::query_as::<_, InvestigationCase>(&query)
-        .fetch_all(pool)
-        .await?;
+    let cases = {
+        let mut q = sqlx::query_as::<_, InvestigationCase>(&query);
+        for value in &bindings {
+            q = q.bind(value);
+        }
+        q.fetch_all(pool).await?
+    };
 
     let total_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM cases")
         .fetch_one(pool)

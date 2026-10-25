@@ -20,4 +20,5 @@ pub mod money_trail;
 pub mod pipeline;
 pub mod surveillance;
 pub mod transactions;
+pub mod utils;
 pub mod ws;

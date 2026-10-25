@@ -1,4 +1,7 @@
-use crate::{database::DbPool, errors::AppError, transactions::update_account_graph_metrics};
+use crate::{
+    database::DbPool, errors::AppError, transactions::update_account_graph_metrics,
+    utils::sanitize_upload_filename,
+};
 use axum::{
     extract::{Multipart, Path, State},
     response::IntoResponse,
@@ -146,7 +149,7 @@ async fn upload_csv_pipeline(
         let name = field.name().unwrap_or("").to_string();
         if name == "file" {
             if let Some(fn_val) = field.file_name() {
-                filename = fn_val.to_string();
+                filename = sanitize_upload_filename(fn_val);
             }
             file_bytes = field
                 .bytes()

@@ -1,4 +1,5 @@
 use axum::{
+    extract::DefaultBodyLimit,
     http::{HeaderValue, Method},
     response::IntoResponse,
     routing::get,
@@ -15,6 +16,9 @@ use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
+
+/// Hard ceiling for request bodies; handlers still enforce the 50 MB CSV limit.
+const MAX_UPLOAD_BYTES: usize = 64 * 1024 * 1024;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -103,6 +107,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/health", get(health_handler))
         .merge(ws_router)
         .nest("/api/v1", api_v1)
+        // Axum defaults to a 2 MB body limit, which rejects real fraud CSVs before
+        // the handlers can apply their own 50 MB validation message.
+        .layer(DefaultBodyLimit::max(MAX_UPLOAD_BYTES))
         .layer(cors)
         .layer(TraceLayer::new_for_http());
 

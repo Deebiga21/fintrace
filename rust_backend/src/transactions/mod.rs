@@ -10,6 +10,7 @@ use crate::{
     database::DbPool,
     errors::AppError,
     models::transaction::{Transaction, TransactionFilterParams},
+    utils::sanitize_upload_filename,
 };
 
 pub fn router(pool: DbPool) -> Router {
@@ -140,7 +141,7 @@ async fn upload_transactions_csv(
         let name = field.name().unwrap_or("").to_string();
         if name == "file" {
             if let Some(fn_val) = field.file_name() {
-                uploaded_filename = fn_val.to_string();
+                uploaded_filename = sanitize_upload_filename(fn_val);
             }
             let data = field
                 .bytes()

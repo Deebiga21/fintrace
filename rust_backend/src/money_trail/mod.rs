@@ -280,25 +280,36 @@ async fn run_money_trail_analysis(
             }
 
             let mut query_str = String::from(
-                "SELECT transaction_id, sender_account, receiver_account, amount, timestamp, status, transaction_type, description, is_suspicious, flag_reason FROM transactions WHERE receiver_account = $1 AND amount >= $2 AND amount <= $3"
+                "SELECT transaction_id, sender_account, receiver_account, amount, timestamp, status, transaction_type, description, is_suspicious, flag_reason FROM transactions WHERE receiver_account = ? AND amount >= ? AND amount <= ?"
             );
+            let mut date_bindings: Vec<String> = Vec::new();
             if suspicious_only {
                 query_str.push_str(" AND is_suspicious = 1");
             }
             if let Some(ref s_date) = req.start_date {
-                query_str.push_str(&format!(" AND timestamp >= '{}'", s_date));
+                if !s_date.trim().is_empty() {
+                    query_str.push_str(" AND timestamp >= ?");
+                    date_bindings.push(s_date.clone());
+                }
             }
             if let Some(ref e_date) = req.end_date {
-                query_str.push_str(&format!(" AND timestamp <= '{}'", e_date));
+                if !e_date.trim().is_empty() {
+                    query_str.push_str(" AND timestamp <= ?");
+                    date_bindings.push(e_date.clone());
+                }
             }
             query_str.push_str(" ORDER BY timestamp DESC LIMIT 30");
 
-            let upstream = sqlx::query_as::<_, Transaction>(&query_str)
-                .bind(&curr)
-                .bind(min_amt)
-                .bind(max_amt)
-                .fetch_all(pool)
-                .await?;
+            let upstream = {
+                let mut q = sqlx::query_as::<_, Transaction>(&query_str)
+                    .bind(&curr)
+                    .bind(min_amt)
+                    .bind(max_amt);
+                for value in &date_bindings {
+                    q = q.bind(value);
+                }
+                q.fetch_all(pool).await?
+            };
 
             for t in upstream {
                 if seen_in_txns.insert(t.transaction_id.clone()) {
@@ -361,25 +372,36 @@ async fn run_money_trail_analysis(
             }
 
             let mut query_str = String::from(
-                "SELECT transaction_id, sender_account, receiver_account, amount, timestamp, status, transaction_type, description, is_suspicious, flag_reason FROM transactions WHERE sender_account = $1 AND amount >= $2 AND amount <= $3"
+                "SELECT transaction_id, sender_account, receiver_account, amount, timestamp, status, transaction_type, description, is_suspicious, flag_reason FROM transactions WHERE sender_account = ? AND amount >= ? AND amount <= ?"
             );
+            let mut date_bindings: Vec<String> = Vec::new();
             if suspicious_only {
                 query_str.push_str(" AND is_suspicious = 1");
             }
             if let Some(ref s_date) = req.start_date {
-                query_str.push_str(&format!(" AND timestamp >= '{}'", s_date));
+                if !s_date.trim().is_empty() {
+                    query_str.push_str(" AND timestamp >= ?");
+                    date_bindings.push(s_date.clone());
+                }
             }
             if let Some(ref e_date) = req.end_date {
-                query_str.push_str(&format!(" AND timestamp <= '{}'", e_date));
+                if !e_date.trim().is_empty() {
+                    query_str.push_str(" AND timestamp <= ?");
+                    date_bindings.push(e_date.clone());
+                }
             }
             query_str.push_str(" ORDER BY timestamp ASC LIMIT 30");
 
-            let downstream = sqlx::query_as::<_, Transaction>(&query_str)
-                .bind(&curr)
-                .bind(min_amt)
-                .bind(max_amt)
-                .fetch_all(pool)
-                .await?;
+            let downstream = {
+                let mut q = sqlx::query_as::<_, Transaction>(&query_str)
+                    .bind(&curr)
+                    .bind(min_amt)
+                    .bind(max_amt);
+                for value in &date_bindings {
+                    q = q.bind(value);
+                }
+                q.fetch_all(pool).await?
+            };
 
             for t in downstream {
                 if seen_out_txns.insert(t.transaction_id.clone()) {

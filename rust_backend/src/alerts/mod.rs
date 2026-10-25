@@ -43,18 +43,27 @@ async fn list_alerts(
     Query(params): Query<AlertFilterParams>,
 ) -> Result<impl IntoResponse, AppError> {
     let mut query = String::from("SELECT alert_id, target_type, target_id, severity, reason_code, status, assigned_to, notes, created_at, updated_at FROM alerts WHERE 1=1");
+    let mut bindings: Vec<String> = Vec::new();
 
     if let Some(ref st) = params.status {
-        query.push_str(&format!(" AND status = '{}'", st));
+        query.push_str(" AND status = ?");
+        bindings.push(st.to_string());
     }
 
     if let Some(ref sv) = params.severity {
-        query.push_str(&format!(" AND severity = '{}'", sv));
+        query.push_str(" AND severity = ?");
+        bindings.push(sv.to_string());
     }
 
     query.push_str(" ORDER BY created_at DESC");
 
-    let alerts = sqlx::query_as::<_, Alert>(&query).fetch_all(&pool).await?;
+    let alerts = {
+        let mut q = sqlx::query_as::<_, Alert>(&query);
+        for value in &bindings {
+            q = q.bind(value);
+        }
+        q.fetch_all(&pool).await?
+    };
 
     Ok(Json(json!({
         "total": alerts.len(),
