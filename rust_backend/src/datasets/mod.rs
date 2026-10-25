@@ -507,6 +507,220 @@ async fn seed_demo_transactions(pool: &DbPool) -> Result<usize, AppError> {
     Ok(loaded)
 }
 
+/// Demo-only triage scores derived from the packaged dataset's ground-truth labels.
+///
+/// This is NOT GraphSAGE output. It exists so a cold start shows a populated risk
+/// queue instead of 74 unscored accounts; running the GNN overwrites these values.
+async fn seed_demo_risk_scores(pool: &DbPool) -> Result<usize, AppError> {
+    #[derive(sqlx::FromRow)]
+    struct SuspiciousFlow {
+        account_id: String,
+        incoming: f64,
+        outgoing: f64,
+        txn_count: i64,
+    }
+
+    let flows = sqlx::query_as::<_, SuspiciousFlow>(
+        r#"
+        SELECT account_id,
+               SUM(incoming) AS incoming,
+               SUM(outgoing) AS outgoing,
+               SUM(txn_count) AS txn_count
+        FROM (
+            SELECT sender_account AS account_id, 0.0 AS incoming, amount AS outgoing, 1 AS txn_count
+                FROM transactions WHERE is_suspicious = 1
+            UNION ALL
+            SELECT receiver_account AS account_id, amount AS incoming, 0.0 AS outgoing, 1 AS txn_count
+                FROM transactions WHERE is_suspicious = 1
+        )
+        GROUP BY account_id
+        "#,
+    )
+    .fetch_all(pool)
+    .await?;
+
+    let mut scored = 0usize;
+
+    for flow in flows {
+        let (score, flags, note) = if flow.incoming > 0.0 && flow.outgoing > 0.0 {
+            (
+                0.86 + (flow.txn_count.min(4) as f64 * 0.02),
+                r#"["layering_conduit","rapid_movement"]"#,
+                "Demo triage: receives and forwards labelled suspicious funds (layering conduit). Not model inference.",
+            )
+        } else if flow.outgoing > 0.0 {
+            (
+                0.74,
+                r#"["originator","unverified_origin"]"#,
+                "Demo triage: originates labelled suspicious transfers. Not model inference.",
+            )
+        } else {
+            (
+                0.58,
+                r#"["mule_beneficiary","cash_out"]"#,
+                "Demo triage: receives labelled suspicious funds as a downstream beneficiary. Not model inference.",
+            )
+        };
+
+        let score = (score * 100.0).round() / 100.0;
+        let level = if score >= 0.70 { "High" } else { "Medium" };
+
+        sqlx::query(
+            "UPDATE accounts SET risk_score = $1, risk_level = $2, is_ground_truth_mule = 1, flags_json = $3, notes = $4 WHERE account_id = $5",
+        )
+        .bind(score)
+        .bind(level)
+        .bind(flags)
+        .bind(note)
+        .bind(&flow.account_id)
+        .execute(pool)
+        .await?;
+
+        scored += 1;
+    }
+
+    Ok(scored)
+}
+
+struct DemoCase {
+    id: &'static str,
+    title: &'static str,
+    priority: &'static str,
+    status: &'static str,
+    investigator: &'static str,
+    primary_account: &'static str,
+    summary: &'static str,
+    findings: &'static str,
+    transactions: &'static [&'static str],
+    accounts: &'static [&'static str],
+    hours_ago: i64,
+}
+
+const DEMO_CASES: &[DemoCase] = &[
+    DemoCase {
+        id: "CASE-2026-SMURF01",
+        title: "Structured fan-out from DISP_SMURF_88 to five mule beneficiaries",
+        priority: "High",
+        status: "Under_Investigation",
+        investigator: "Lead Financial Crime Specialist",
+        primary_account: "DISP_SMURF_88",
+        summary: "Five equal ₹48,500 stipends leave DISP_SMURF_88 within one hour, one to each MULE_SUB_01 to MULE_SUB_05 account. Equal-value fan-out to freshly opened beneficiaries is consistent with smurfing and disbursement layering.",
+        findings: "Fan-out window 18:20-19:20 on 2026-10-15, one transfer every 15 minutes. Five outbound transfers totalling ₹2,42,500 to five distinct beneficiaries, all carrying the benchmark's suspicious label. The originating credit of ₹2,50,000 arrived from UNIDENTIFIED_ORIGIN_99, an account with no prior history in the dataset.",
+        transactions: &["TXN_10178", "TXN_10179", "TXN_10180", "TXN_10181", "TXN_10182"],
+        accounts: &["DISP_SMURF_88", "UNIDENTIFIED_ORIGIN_99"],
+        hours_ago: 6,
+    },
+    DemoCase {
+        id: "CASE-2026-CIRC01",
+        title: "Circular layering ring CIRC_MULE_A to B to C to D and back",
+        priority: "Critical",
+        status: "Escalated",
+        investigator: "Lead Financial Crime Specialist",
+        primary_account: "CIRC_MULE_A",
+        summary: "₹7.31 lakh moves across a closed four-hop ring CIRC_MULE_A → B → C → D → A, and ₹1.81 lakh lands back in the starting account. A closed cycle with steadily shrinking amounts is a classic layering signature intended to obscure the audit trail.",
+        findings: "Each hop loses exactly ₹1,500, consistent with fee skimming rather than genuine trade settlement. All four transfers carry the suspicious label and complete within 2 hours 15 minutes on 2026-10-13 to 2026-10-14. The ring should be frozen before the next cycle starts.",
+        transactions: &["TXN_10169", "TXN_10170", "TXN_10171", "TXN_10172"],
+        accounts: &["CIRC_MULE_A", "CIRC_MULE_B", "CIRC_MULE_C", "CIRC_MULE_D"],
+        hours_ago: 20,
+    },
+    DemoCase {
+        id: "CASE-2026-CRYPTO1",
+        title: "Aggregation account forwards ₹3.40 lakh into an OTC crypto cash-out chain",
+        priority: "High",
+        status: "New",
+        investigator: "Lead Financial Crime Specialist",
+        primary_account: "MULE_AGG_01",
+        summary: "Six inbound credits totalling ₹3.47 lakh drain from MULE_AGG_01 through a single ₹3.40 lakh transfer to MULE_LAYER_02, which forwards ₹3.35 lakh to CASHOUT_CRYPTO_09 for an OTC digital asset purchase. A 6-in / 1-out shape with near-total pass-through is an aggregation-and-cash-out pattern.",
+        findings: "MULE_AGG_01 receives ₹3,47,060 across six counterparties and forwards ₹3,40,000 in one hop (97.97% of inflow). MULE_LAYER_02 retains only ₹5,000 before forwarding ₹3,35,000 (98.53% of its inflow) to CASHOUT_CRYPTO_09. No operating balance is retained at either hop, so both accounts behave as conduits rather than trading entities.",
+        transactions: &["TXN_10167", "TXN_10168"],
+        accounts: &["MULE_AGG_01", "MULE_LAYER_02", "CASHOUT_CRYPTO_09"],
+        hours_ago: 34,
+    },
+];
+
+/// Seed three investigation dossiers that reference only records present in the
+/// packaged dataset, so the Cases workspace is not empty on a cold start.
+async fn seed_demo_cases(pool: &DbPool) -> Result<usize, AppError> {
+    let mut created = 0usize;
+
+    for demo in DEMO_CASES {
+        let created_at = (Utc::now() - chrono::Duration::hours(demo.hours_ago)).to_rfc3339();
+
+        let result = sqlx::query(
+            r#"
+            INSERT OR IGNORE INTO cases
+                (case_id, case_number, title, priority, assigned_investigator, status,
+                 primary_account_id, created_at, updated_at, created_by, source_type,
+                 source_reference_id, summary, findings, version)
+            VALUES ($1, $1, $2, $3, $4, $5, $6, $7, $7, 'SYSTEM', 'DemoSeed', $8, $9, $10, 1)
+            "#,
+        )
+        .bind(demo.id)
+        .bind(demo.title)
+        .bind(demo.priority)
+        .bind(demo.investigator)
+        .bind(demo.status)
+        .bind(demo.primary_account)
+        .bind(&created_at)
+        .bind("SYNTHETIC_DEMO")
+        .bind(demo.summary)
+        .bind(demo.findings)
+        .execute(pool)
+        .await?;
+
+        if result.rows_affected() == 0 {
+            continue;
+        }
+        created += 1;
+
+        for account in demo.accounts {
+            let _ = sqlx::query(
+                "INSERT OR IGNORE INTO case_accounts (case_id, account_id, role, notes, linked_at, linked_by) VALUES ($1, $2, 'Suspect Account', 'Linked during cold-start demo seeding', $3, 'SYSTEM')",
+            )
+            .bind(demo.id)
+            .bind(account)
+            .bind(&created_at)
+            .execute(pool)
+            .await;
+        }
+
+        for txn in demo.transactions {
+            let _ = sqlx::query(
+                "INSERT OR IGNORE INTO case_transactions (case_id, transaction_id, relevance, notes, linked_at, linked_by) VALUES ($1, $2, 'Flagged Layering Transfer', 'Labelled suspicious transaction in the packaged dataset', $3, 'SYSTEM')",
+            )
+            .bind(demo.id)
+            .bind(txn)
+            .bind(&created_at)
+            .execute(pool)
+            .await;
+
+            let _ = sqlx::query(
+                "INSERT INTO case_evidence (case_id, evidence_type, reference_id, description, metadata_json, created_at, status, attached_by) VALUES ($1, 'TRANSACTION', $2, $3, '{}', $4, 'Active', 'SYSTEM')",
+            )
+            .bind(demo.id)
+            .bind(txn)
+            .bind(format!("Labelled suspicious transfer {}", txn))
+            .bind(&created_at)
+            .execute(pool)
+            .await;
+        }
+
+        for account in demo.accounts {
+            let _ = sqlx::query(
+                "INSERT INTO case_evidence (case_id, evidence_type, reference_id, description, metadata_json, created_at, status, attached_by) VALUES ($1, 'ACCOUNT', $2, $3, '{}', $4, 'Active', 'SYSTEM')",
+            )
+            .bind(demo.id)
+            .bind(account)
+            .bind(format!("Subject account {} linked to the flagged flow", account))
+            .bind(&created_at)
+            .execute(pool)
+            .await;
+        }
+    }
+
+    Ok(created)
+}
+
 /// Seed the packaged demo network when the database has no transactions yet.
 ///
 /// Returns how many rows were inserted (0 when data already existed), so the
@@ -523,14 +737,16 @@ pub async fn ensure_demo_seed(pool: &DbPool) -> Result<usize, AppError> {
     let loaded = seed_demo_transactions(pool).await?;
 
     if loaded > 0 {
+        let scored = seed_demo_risk_scores(pool).await?;
+        let cases = seed_demo_cases(pool).await?;
         let now = Utc::now().to_rfc3339();
         let _ = sqlx::query(
             "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, 'SYSTEM', 'DEMO_DATA_AUTO_SEEDED', 'DATASET', 'SYNTHETIC_DEMO', $2)",
         )
         .bind(&now)
         .bind(format!(
-            "Cold-start seed: {} synthetic transactions loaded before first request.",
-            loaded
+            "Cold-start seed: {} synthetic transactions, {} triage account scores and {} investigation cases loaded before first request.",
+            loaded, scored, cases
         ))
         .execute(pool)
         .await;
@@ -542,6 +758,8 @@ pub async fn ensure_demo_seed(pool: &DbPool) -> Result<usize, AppError> {
 async fn load_demo_dataset(State(pool): State<DbPool>) -> Result<impl IntoResponse, AppError> {
     let now = Utc::now().to_rfc3339();
     let loaded = seed_demo_transactions(&pool).await?;
+    let scored = seed_demo_risk_scores(&pool).await?;
+    let cases = seed_demo_cases(&pool).await?;
 
     let node_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM accounts")
         .fetch_one(&pool)
@@ -557,7 +775,10 @@ async fn load_demo_dataset(State(pool): State<DbPool>) -> Result<impl IntoRespon
         "INSERT INTO audit_logs (timestamp, user, action, target_type, target_id, details) VALUES ($1, 'Investigator', 'DEMO_DATA_LOADED', 'DATASET', 'SYNTHETIC_DEMO', $2)"
     )
     .bind(&now)
-    .bind(format!("Loaded synthetic demo network: {} transactions.", loaded))
+    .bind(format!(
+        "Loaded synthetic demo network: {} transactions, {} triage scores, {} investigation cases.",
+        loaded, scored, cases
+    ))
     .execute(&pool)
     .await;
 

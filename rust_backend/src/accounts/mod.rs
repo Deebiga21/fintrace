@@ -133,6 +133,21 @@ async fn list_accounts(
                 .and_then(|f| serde_json::from_str(f).ok())
                 .unwrap_or_default();
 
+            // Distinguish a cold-start label-derived score from real model output so
+            // the UI never presents seeded triage numbers as GNN confidence.
+            let score_source = if acc.risk_score.unwrap_or(0.0) <= 0.0 {
+                "unscored"
+            } else if acc
+                .notes
+                .as_deref()
+                .map(|note| note.starts_with("Demo triage"))
+                .unwrap_or(false)
+            {
+                "demo_label"
+            } else {
+                "model"
+            };
+
             json!({
                 "account_id": acc.account_id,
                 "customer_name": acc.customer_name.unwrap_or_else(|| acc.account_id.clone()),
@@ -143,6 +158,7 @@ async fn list_accounts(
                 "status": acc.status.unwrap_or_else(|| "Active".to_string()),
                 "risk_score": acc.risk_score.unwrap_or(0.0),
                 "risk_level": acc.risk_level.unwrap_or_else(|| "Low".to_string()),
+                "score_source": score_source,
                 "prediction_confidence": acc.prediction_confidence.unwrap_or_else(|| {
                     let s = acc.risk_score.unwrap_or(0.0);
                     ((s - 0.5).abs() * 2.0).clamp(0.0, 1.0)
