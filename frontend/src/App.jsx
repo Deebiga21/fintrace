@@ -139,7 +139,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-fintech-bg text-fintech-text overflow-hidden font-sans relative">
+    <div className="flex h-screen bg-canvas text-ink overflow-hidden font-sans relative">
       <SiteBackground />
             {/* Consistent Navigation Sidebar */}
       <Sidebar

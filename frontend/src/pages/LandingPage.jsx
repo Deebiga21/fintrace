@@ -15,7 +15,6 @@ import BriarGlobe from '../components/BriarGlobe';
 import DitherVeil from '../components/DitherVeil';
 import ElectricLogo from '../components/ElectricLogo';
 import InvestigationFlowAnimation from '../components/InvestigationFlowAnimation';
-import ThemeToggle from '../components/ThemeToggle';
 import { useTheme } from '../context/ThemeContext';
 
 class GlobeErrorBoundary extends React.Component {
@@ -52,7 +51,7 @@ export default function LandingPage({
   onOpenLivePipeline,
   refreshTrigger
 }) {
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark } = useTheme();
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
@@ -181,9 +180,8 @@ export default function LandingPage({
             </button>
           </nav>
 
-          {/* Right Action: Pill CTA + Dark/Light Theme Toggle */}
+          {/* Right Action: Pill CTA */}
           <div className="flex items-center gap-3">
-            <ThemeToggle size="sm" showLabel={false} />
             <button
               onClick={() => setCurrentPage('dashboard')}
               className="group flex items-center gap-2.5 px-6 py-2.5 rounded-full font-bold text-xs transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm"

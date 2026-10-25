@@ -204,6 +204,7 @@ html {
 }
 
 /* Type roles ------------------------------------------------------------- */
+@layer components {
 .ft-display {
   font-family: 'Inter', sans-serif;
   font-weight: 800;
@@ -422,4 +423,5 @@ html {
 
 .ft-table tbody tr:last-child td {
   border-bottom: none;
+}
 }
