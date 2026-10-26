@@ -238,7 +238,7 @@ export default function TransactionsPage({
                     if (onAccountSelect) onAccountSelect(selectedTxn.sender_account);
                     setCurrentPage('graph');
                   }}
-                  className="w-full py-2 bg-[#101117] hover:bg-[#1FC8DB] text-[#101117] font-sans font-bold text-xs uppercase tracking-wider transition"
+                  className="w-full py-2 bg-[#1FC8DB]/15 border border-[#1FC8DB]/50 text-[#1FC8DB] hover:bg-[#1FC8DB] hover:text-[#0B0B0F] font-sans font-bold text-xs uppercase tracking-wider transition"
                 >
                   PLOT ROUTE ON GRAPH
                 </button>

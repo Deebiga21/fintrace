@@ -473,7 +473,7 @@ export default function SystemPipelinePage({
                     type="button"
                     onClick={() => handleRunStage(selectedStage.stage_number)}
                     disabled={runningStage === selectedStage.stage_number}
-                    className="flex-1 py-1.5 bg-[#101117] hover:bg-[#1FC8DB] text-[#101117] font-bold text-xs uppercase tracking-wider transition disabled:opacity-50 flex items-center justify-center gap-1.5"
+                    className="flex-1 py-1.5 bg-[#1FC8DB]/15 border border-[#1FC8DB]/50 text-[#1FC8DB] hover:bg-[#1FC8DB] hover:text-[#0B0B0F] font-bold text-xs uppercase tracking-wider transition disabled:opacity-50 flex items-center justify-center gap-1.5"
                   >
                     <Play className="w-3 h-3 fill-current text-current" />
                     <span>{runningStage === selectedStage.stage_number ? 'EXECUTING...' : 'EXECUTE STAGE NOW'}</span>

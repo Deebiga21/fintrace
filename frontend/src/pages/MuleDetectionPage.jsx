@@ -79,49 +79,49 @@ export default function MuleDetectionPage({
   const hasEvidence = evidenceItems.length > 0 || detectedPatterns.length > 0;
 
   return (
-    <div className="bg-[#FFF5F5] text-[#4A4A4A] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6 space-y-6">
+    <div className="bg-[#0B0B0F] text-[#FFFFFF] min-h-screen p-4 sm:p-6 font-sans select-none -m-6 space-y-6">
       {/* Top HUD Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#E8C2BB]">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[rgba(255,255,255,0.14)]">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 bg-[#B86B7A] rotate-45 shrink-0" />
-          <span className="font-['Krona_One',sans-serif] text-base sm:text-lg text-[#4A4A4A] tracking-widest uppercase">
+          <div className="w-2.5 h-2.5 bg-[#1FC8DB] rotate-45 shrink-0" />
+          <span className="font-display text-base sm:text-lg text-[#FFFFFF] tracking-widest uppercase">
             INTELLIGENCE // MULE_DETECTION
           </span>
-          <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase ml-2">
+          <span className="bg-[#1FC8DB]/15 text-[#1FC8DB] font-sans text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase ml-2">
             GRAPHSAGE SCORING
           </span>
         </div>
 
-        <div className="flex items-center gap-3 font-['Share_Tech_Mono',monospace] text-xs text-[#6E6264]">
-          <span className="text-[#B86B7A] font-bold">2-HOP MESSAGE PASSING</span>
+        <div className="flex items-center gap-3 font-mono text-xs text-[#9CA3AF]">
+          <span className="text-[#1FC8DB] font-bold">2-HOP MESSAGE PASSING</span>
           <span>|</span>
           <span>THRESHOLDS: HIGH ≥ 75% · MED ≥ 40%</span>
         </div>
       </div>
 
       {/* Filter & Command Strip */}
-      <div className="p-3 bg-[#FFFFFF] border border-[#E8C2BB] flex flex-wrap items-center justify-between gap-4 text-xs">
+      <div className="p-3 bg-[#101117] border border-[rgba(255,255,255,0.14)] flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="relative flex-1 min-w-[260px] flex items-center">
-          <span className="text-[#B86B7A] font-['Share_Tech_Mono',monospace] text-sm mr-2 font-bold">&gt;</span>
+          <span className="text-[#1FC8DB] font-mono text-sm mr-2 font-bold">&gt;</span>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="search account ID, customer, hash..."
-            className="w-full bg-transparent border-b border-[#E8C2BB] text-xs text-[#4A4A4A] placeholder-[#8A7D7F] font-['Share_Tech_Mono',monospace] focus:outline-none focus:border-[#E2B4BD] pb-1"
+            className="w-full bg-transparent border-b border-[rgba(255,255,255,0.14)] text-xs text-[#FFFFFF] placeholder-[#8A909B] font-mono focus:outline-none focus:border-[rgba(255,255,255,0.20)] pb-1"
           />
         </div>
 
-        <div className="flex items-center gap-1.5 font-['Rajdhani',sans-serif] text-xs">
-          <span className="text-[#6E6264] uppercase tracking-wider font-bold mr-1">RISK FILTER:</span>
+        <div className="flex items-center gap-1.5 font-sans text-xs">
+          <span className="text-[#9CA3AF] uppercase tracking-wider font-bold mr-1">RISK FILTER:</span>
           {['ALL', 'HIGH', 'MEDIUM', 'LOW'].map((lvl) => (
             <button
               key={lvl}
               onClick={() => setRiskFilter(lvl)}
               className={`px-3 py-1 uppercase font-bold tracking-wider transition border ${
                 riskFilter === lvl
-                  ? 'bg-[#FFFFFF] text-[#171B23] border-[#FFFFFF]'
-                  : 'bg-[#FFF5F5] text-[#6E6264] hover:text-[#B86B7A] border-[#E8C2BB] hover:border-[#E2B4BD]'
+                  ? 'bg-[#1FC8DB]/15 text-[#1FC8DB] border-[rgba(255,255,255,0.16)]'
+                  : 'bg-[#0B0B0F] text-[#9CA3AF] hover:text-[#1FC8DB] border-[rgba(255,255,255,0.14)] hover:border-[rgba(255,255,255,0.20)]'
               }`}
             >
               {lvl}
@@ -133,21 +133,21 @@ export default function MuleDetectionPage({
       {/* Main Grid: Accounts Table + Detail Inspection Drawer */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Accounts Table (8 cols) */}
-        <div className="lg:col-span-8 bg-[#FFFFFF] border border-[#E8C2BB] flex flex-col overflow-hidden">
+        <div className="lg:col-span-8 bg-[#101117] border border-[rgba(255,255,255,0.14)] flex flex-col overflow-hidden">
           {/* Table Header Bar */}
-          <div className="h-10 px-3 bg-[#FFF5F5] flex items-center justify-between shrink-0 border-b border-[#E8C2BB]">
-            <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
+          <div className="h-10 px-3 bg-[#0B0B0F] flex items-center justify-between shrink-0 border-b border-[rgba(255,255,255,0.14)]">
+            <span className="bg-[#1FC8DB]/15 text-[#1FC8DB] font-sans text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
               ACCOUNT LEDGER ({accounts.length})
             </span>
-            <span className="font-['Share_Tech_Mono',monospace] text-[10px] text-[#6E6264]">
+            <span className="font-mono text-[10px] text-[#9CA3AF]">
               SORT: RISK_SCORE_DESC
             </span>
           </div>
 
           <div className="overflow-x-auto flex-1">
-            <table className="w-full text-left text-xs font-['Share_Tech_Mono',monospace]">
+            <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="bg-[#FFF5F5] border-b border-[#E8C2BB] text-[#6E6264] text-[10px]">
+                <tr className="bg-[#0B0B0F] border-b border-[rgba(255,255,255,0.14)] text-[#9CA3AF] text-[10px]">
                   <th className="py-2.5 px-3 uppercase tracking-wider">ACCOUNT ID</th>
                   <th className="py-2.5 px-3 uppercase tracking-wider">SEVERITY</th>
                   <th className="py-2.5 px-3 uppercase tracking-wider">SCORE</th>
@@ -156,17 +156,17 @@ export default function MuleDetectionPage({
                   <th className="py-2.5 px-3 uppercase tracking-wider text-right">ACTION</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#333D50]">
+              <tbody className="divide-y divide-[#6B7280]">
                 {loading && accounts.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="py-8 px-3 text-center text-[#6E6264]">
+                    <td colSpan={6} className="py-8 px-3 text-center text-[#9CA3AF]">
                       Loading accounts from the core ledger…
                     </td>
                   </tr>
                 )}
                 {!loading && accounts.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="py-8 px-3 text-center text-[#6E6264]">
+                    <td colSpan={6} className="py-8 px-3 text-center text-[#9CA3AF]">
                       No accounts match this filter.
                     </td>
                   </tr>
@@ -182,31 +182,31 @@ export default function MuleDetectionPage({
                       onClick={() => handleSelectAccount(acc.account_id)}
                       className={`cursor-pointer transition ${
                         isSelected
-                          ? 'bg-[#F7D6D0] border-l-2 border-[#E2B4BD]'
-                          : 'hover:bg-[#FFFFFF]'
+                          ? 'bg-[#14151C] border-l-2 border-[rgba(255,255,255,0.20)]'
+                          : 'hover:bg-[#101117]'
                       }`}
                     >
                       <td className="py-2.5 px-3">
-                        <div className="font-bold text-[#4A4A4A] flex items-center gap-1.5">
-                          <span className={isCritical ? 'text-[#FF3B4E]' : isSuspicious ? 'text-[#6E6264]' : 'text-[#B86B7A]'}>
+                        <div className="font-bold text-[#FFFFFF] flex items-center gap-1.5">
+                          <span className={isCritical ? 'text-[#FF5C6C]' : isSuspicious ? 'text-[#9CA3AF]' : 'text-[#1FC8DB]'}>
                             {isCritical ? '◆' : isSuspicious ? '◇' : '○'}
                           </span>
                           {acc.account_id}
                         </div>
-                        <div className="text-[10px] text-[#6E6264] font-['Titillium_Web',sans-serif]">{acc.customer_name}</div>
+                        <div className="text-[10px] text-[#9CA3AF] font-sans">{acc.customer_name}</div>
                       </td>
                       <td className="py-2.5 px-3">
                         <RiskBadge level={acc.risk_level} score={acc.risk_score} showScore={false} size="sm" />
                       </td>
-                      <td className="py-2.5 px-3 font-bold text-white tabular-nums">
+                      <td className="py-2.5 px-3 font-bold text-[#FFFFFF] tabular-nums">
                         {(acc.risk_score * 100).toFixed(0)}%
                       </td>
-                      <td className="py-2.5 px-3 text-[#6E6264] tabular-nums" title={acc.score_source === 'model' ? 'Model confidence' : 'Cold-start scores come from dataset labels, so no model confidence exists'}>
+                      <td className="py-2.5 px-3 text-[#9CA3AF] tabular-nums" title={acc.score_source === 'model' ? 'Model confidence' : 'Cold-start scores come from dataset labels, so no model confidence exists'}>
                         {acc.score_source === 'model' && acc.prediction_confidence != null
                           ? `${(acc.prediction_confidence * 100).toFixed(0)}%`
                           : '—'}
                       </td>
-                      <td className="py-2.5 px-3 text-[#6E6264] tabular-nums">
+                      <td className="py-2.5 px-3 text-[#9CA3AF] tabular-nums">
                         {acc.turnover_ratio ? `${(acc.turnover_ratio * 100).toFixed(0)}%` : '—'}
                       </td>
                       <td className="py-2.5 px-3 text-right">
@@ -216,7 +216,7 @@ export default function MuleDetectionPage({
                             e.stopPropagation();
                             handleSelectAccount(acc.account_id);
                           }}
-                          className="px-2 py-0.5 bg-[#FFF5F5] hover:bg-[#F7D6D0] border border-[#E8C2BB] hover:border-[#E2B4BD] text-[#6E6264] hover:text-[#B86B7A] font-['Rajdhani',sans-serif] font-bold text-xs uppercase tracking-wider"
+                          className="px-2 py-0.5 bg-[#0B0B0F] hover:bg-[#14151C] border border-[rgba(255,255,255,0.14)] hover:border-[rgba(255,255,255,0.20)] text-[#9CA3AF] hover:text-[#1FC8DB] font-sans font-bold text-xs uppercase tracking-wider"
                         >
                           EXAMINE
                         </button>
@@ -230,40 +230,40 @@ export default function MuleDetectionPage({
         </div>
 
         {/* Risk Explanation Drawer (4 cols) */}
-        <div className="lg:col-span-4 bg-[#FFFFFF] border border-[#E8C2BB] flex flex-col h-full">
+        <div className="lg:col-span-4 bg-[#101117] border border-[rgba(255,255,255,0.14)] flex flex-col h-full">
           {/* Drawer Header */}
-          <div className="h-10 px-3 bg-[#FFF5F5] flex items-center justify-between shrink-0 border-b border-[#E8C2BB]">
-            <span className="bg-[#FFFFFF] text-[#171B23] font-['Rajdhani',sans-serif] text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
+          <div className="h-10 px-3 bg-[#0B0B0F] flex items-center justify-between shrink-0 border-b border-[rgba(255,255,255,0.14)]">
+            <span className="bg-[#1FC8DB]/15 text-[#1FC8DB] font-sans text-[12px] font-bold px-2 py-0.5 tracking-wider uppercase">
               NODE DOSSIER
             </span>
-            <span className="font-['Share_Tech_Mono',monospace] text-[10px] text-[#B86B7A]">
+            <span className="font-mono text-[10px] text-[#1FC8DB]">
               {selectedAccount || 'SELECT NODE'}
             </span>
           </div>
 
-          <div className="p-4 space-y-4 flex-1 overflow-y-auto font-['Share_Tech_Mono',monospace]">
+          <div className="p-4 space-y-4 flex-1 overflow-y-auto font-mono">
             {loadingExplanation ? (
-              <div className="h-48 flex flex-col items-center justify-center text-[#6E6264] text-xs gap-2">
-                <div className="w-5 h-5 border-2 border-[#E2B4BD] border-t-transparent animate-spin" />
+              <div className="h-48 flex flex-col items-center justify-center text-[#9CA3AF] text-xs gap-2">
+                <div className="w-5 h-5 border-2 border-[rgba(255,255,255,0.20)] border-t-transparent animate-spin" />
                 <span>COMPUTING GNN GRAPH EXPLANATION...</span>
               </div>
             ) : explanation ? (
               <div className="space-y-4 text-xs">
                 {/* Node Identity Card */}
-                <div className="p-3 bg-[#FFF5F5] border border-[#E8C2BB] space-y-2">
+                <div className="p-3 bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)] space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-[#4A4A4A] text-sm">{explanation.account_id}</span>
+                    <span className="font-bold text-[#FFFFFF] text-sm">{explanation.account_id}</span>
                     <RiskBadge level={explanation.risk_level} score={explanation.risk_score} size="sm" />
                   </div>
-                  <div className="text-[11px] text-[#6E6264] font-['Titillium_Web',sans-serif]">
-                    Customer: <span className="text-[#4A4A4A] font-semibold">{explanation.customer_name || 'Classified Entity'}</span>
+                  <div className="text-[11px] text-[#9CA3AF] font-sans">
+                    Customer: <span className="text-[#FFFFFF] font-semibold">{explanation.customer_name || 'Classified Entity'}</span>
                   </div>
                 </div>
 
                 {/* Supporting Evidence */}
                 <div className="space-y-2">
-                  <div className="font-['Rajdhani',sans-serif] text-xs font-bold text-[#6E6264] uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="text-[#B86B7A]">◇</span> CONTRIBUTING ANOMALY SIGNALS
+                  <div className="font-sans text-xs font-bold text-[#9CA3AF] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="text-[#1FC8DB]">◇</span> CONTRIBUTING ANOMALY SIGNALS
                   </div>
                   <div className="space-y-1.5">
                     {evidenceItems.map((item, idx) => {
@@ -276,20 +276,20 @@ export default function MuleDetectionPage({
                       const metrics = isStructured ? item.metrics : null;
 
                       return (
-                        <div key={`evidence-${idx}`} className="p-2 bg-[#FFF5F5] border border-[#E8C2BB] text-[11px] text-[#6E6264] flex items-start gap-2">
-                          <span className="text-[#FF3B4E] font-bold">▸</span>
+                        <div key={`evidence-${idx}`} className="p-2 bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)] text-[11px] text-[#9CA3AF] flex items-start gap-2">
+                          <span className="text-[#FF5C6C] font-bold">▸</span>
                           <div className="space-y-0.5 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-bold text-[#4A4A4A]">{title}</span>
+                              <span className="font-bold text-[#FFFFFF]">{title}</span>
                               {severity && (
-                                <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 border border-[#E2B4BD] text-[#B86B7A] bg-[#FFFFFF]">
+                                <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 border border-[rgba(255,255,255,0.20)] text-[#1FC8DB] bg-[#101117]">
                                   {severity}
                                 </span>
                               )}
                             </div>
                             {description && <p className="leading-snug">{description}</p>}
                             {metrics && (
-                              <p className="text-[10px] font-['Share_Tech_Mono',monospace] text-[#8A7D7F]">
+                              <p className="text-[10px] font-mono text-[#8A909B]">
                                 {metrics}
                               </p>
                             )}
@@ -299,14 +299,14 @@ export default function MuleDetectionPage({
                     })}
 
                     {detectedPatterns.map((pattern, idx) => (
-                      <div key={`pattern-${idx}`} className="p-2 bg-[#FFF5F5] border border-[#E8C2BB] text-[11px] text-[#6E6264] flex items-start gap-2">
-                        <span className="text-[#FF3B4E] font-bold">▸</span>
+                      <div key={`pattern-${idx}`} className="p-2 bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)] text-[11px] text-[#9CA3AF] flex items-start gap-2">
+                        <span className="text-[#FF5C6C] font-bold">▸</span>
                         <span>{pattern}</span>
                       </div>
                     ))}
 
                     {!hasEvidence && (
-                      <div className="p-2 bg-[#FFF5F5] border border-[#E8C2BB] text-[11px] text-[#6E6264]">
+                      <div className="p-2 bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)] text-[11px] text-[#9CA3AF]">
                         No supporting evidence available.
                       </div>
                     )}
@@ -314,10 +314,10 @@ export default function MuleDetectionPage({
                 </div>
 
                 {/* Quick Action Buttons */}
-                <div className="pt-2 flex flex-col gap-2 font-['Rajdhani',sans-serif]">
+                <div className="pt-2 flex flex-col gap-2 font-sans">
                   <button
                     onClick={() => setCurrentPage('graph')}
-                    className="w-full py-2 bg-[#FFF5F5] hover:bg-[#F7D6D0] border border-[#E2B4BD] text-[#B86B7A] hover:text-[#4A4A4A] font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+                    className="w-full py-2 bg-[#0B0B0F] hover:bg-[#14151C] border border-[rgba(255,255,255,0.20)] text-[#1FC8DB] hover:text-[#FFFFFF] font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
                   >
                     <Network className="w-4 h-4" />
                     <span>EXPLORE TOPOLOGY GRAPH</span>
@@ -325,15 +325,15 @@ export default function MuleDetectionPage({
 
                   <button
                     onClick={() => setCurrentPage('money-trail')}
-                    className="w-full py-2 bg-[#FFF5F5] hover:bg-[#F7D6D0] border border-[#E8C2BB] hover:border-[#E2B4BD] text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+                    className="w-full py-2 bg-[#0B0B0F] hover:bg-[#14151C] border border-[rgba(255,255,255,0.14)] hover:border-[rgba(255,255,255,0.20)] text-[#FFFFFF] font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
                   >
-                    <Share2 className="w-4 h-4 text-[#B86B7A]" />
+                    <Share2 className="w-4 h-4 text-[#1FC8DB]" />
                     <span>TRACE MONEY TRAIL</span>
                   </button>
 
                   <button
                     onClick={() => onOpenCreateCase && onOpenCreateCase({ account_id: explanation.account_id, risk_score: explanation.risk_score })}
-                    className="w-full py-2 bg-[#FFFFFF] hover:bg-[#B86B7A] text-[#171B23] font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+                    className="w-full py-2 bg-[#1FC8DB]/15 border border-[#1FC8DB]/50 text-[#1FC8DB] hover:bg-[#1FC8DB] hover:text-[#0B0B0F] font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
                   >
                     <Briefcase className="w-4 h-4 text-current" />
                     <span>OPEN INVESTIGATION CASE</span>
@@ -341,8 +341,8 @@ export default function MuleDetectionPage({
                 </div>
               </div>
             ) : (
-              <div className="h-48 flex flex-col items-center justify-center text-[#8A7D7F] text-xs text-center gap-2">
-                <Info className="w-6 h-6 text-[#8A7D7F]" />
+              <div className="h-48 flex flex-col items-center justify-center text-[#8A909B] text-xs text-center gap-2">
+                <Info className="w-6 h-6 text-[#8A909B]" />
                 <span>SELECT AN ACCOUNT TO INSPECT GNN TOPOLOGY & BEHAVIORAL FACTORS</span>
               </div>
             )}
