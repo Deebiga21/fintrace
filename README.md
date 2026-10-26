@@ -33,7 +33,7 @@
 
 * **Rust API Backend (`rust_backend/`)**: Acts as the single source of truth for accounts, transactions, cases, evidence, complaints, alerts, and audit logs. Provides WebSocket streaming (`/ws`) for real-time AML updates.
 * **Python ML Microservice (`backend/`)**: Dedicated generative AI and deep learning microservice executing PyTorch neural networks for synthetic transaction synthesis and GraphSAGE neighborhood aggregation.
-* **Frontend Web Application (`frontend/`)**: High-performance black-and-yellow fintech console built with React 19, Cytoscape.js, Recharts, and Tailwind CSS. The investigation console uses a dark operator theme; the landing page and legal pages use a light editorial layout.
+* **Frontend Web Application (`frontend/`)**: Editorial-dark investigation console built with React 19, Cytoscape.js, Recharts, and Tailwind CSS. Every screen — dashboard, ledger, dossiers, analytics, pipeline and legal — shares one near-black/cyan design system; the landing page keeps a deliberately light 3D globe canvas inside the dark editorial layout.
 
 > **API surface note:** the dashboard and every end-user flow call only the Rust API on port 8000. The Python service still keeps standalone CRUD routes for ML debugging and notebook-style experiments, but Compose does not publish port 8001 and the UI never calls it. Rust remains the single source of truth at runtime.
 
