@@ -22,9 +22,9 @@ export default function CytoscapeGraph({
   const [riskFilter, setRiskFilter] = useState('ALL');
   const [minAmount, setMinAmount] = useState(0);
 
-  const primaryTurquoise = isDark ? '#1FC8DB' : '#0E9FB3';
+  const primaryTurquoise = isDark ? '#1FC8DB' : '#1FC8DB';
   const nodeBg = isDark ? '#15161D' : '#FFFFFF';
-  const nodeBorder = isDark ? '#262833' : '#E5E7EB';
+  const nodeBorder = isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.12)';
   const textColor = isDark ? '#FFFFFF' : '#0B0B0F';
   const edgeColor = isDark ? 'rgba(156, 163, 175, 0.35)' : 'rgba(107, 114, 128, 0.35)';
 
@@ -66,6 +66,7 @@ export default function CytoscapeGraph({
       } catch (e) {
         // ignore
       }
+      cyRef.current = null;
     }
 
     const cy = cytoscape({
@@ -180,15 +181,20 @@ export default function CytoscapeGraph({
             'line-style': 'solid'
           }
         }
-      ],
-      layout: {
-        name: layoutName,
-        animate: true,
-        animationDuration: 500,
-        nodeDimensionsIncludeLabels: true,
-        padding: 50
-      }
+      ]
     });
+
+    // Keep the layout handle so teardown can stop it before destroying the
+    // instance. If the layout keeps running past cy.destroy(), its next step
+    // calls cy.endBatch() and crashes on the now-null renderer ("notify").
+    const layout = cy.layout({
+      name: layoutName,
+      animate: true,
+      animationDuration: 500,
+      nodeDimensionsIncludeLabels: true,
+      padding: 50
+    });
+    layout.run();
 
     // Handle node clicks
     cy.on('tap', 'node', function (evt) {
@@ -209,15 +215,27 @@ export default function CytoscapeGraph({
     cyRef.current = cy;
 
     return () => {
-      if (cyRef.current) {
-        try {
-          cyRef.current.stop();
-          cyRef.current.destroy();
-          cyRef.current = null;
-        } catch (e) {
-          // ignore
-        }
+      // Destroy the instance created by *this* effect, not whatever
+      // cyRef.current happens to point at now (a newer run may have replaced
+      // it). Stopping an animated cose layout leaves one requestAnimationFrame
+      // queued; when it fires it calls done() → refresh() → positions(), and
+      // positions() ends in cy.endBatch() against the already-null renderer
+      // ("Cannot read properties of null (reading 'notify')"). Make those two
+      // calls inert before destroying so the stale frame is harmless.
+      try {
+        layout.stop();
+      } catch (e) {
+        // layout may already be finished
       }
+      cy.endBatch = () => cy;
+      cy.fit = () => cy;
+      try {
+        cy.stop();
+        cy.destroy();
+      } catch (e) {
+        // ignore
+      }
+      if (cyRef.current === cy) cyRef.current = null;
     };
   }, [graphData, layoutName, riskFilter, minAmount, isDark]);
 
@@ -241,15 +259,21 @@ export default function CytoscapeGraph({
 
   // Center on selected node if passed
   useEffect(() => {
-    if (!cyRef.current || !selectedNodeId) return;
-    const node = cyRef.current.getElementById(selectedNodeId);
+    const cy = cyRef.current;
+    if (!cy || !selectedNodeId || cy.destroyed()) return;
+    const node = cy.getElementById(selectedNodeId);
     if (node && node.length > 0) {
-      cyRef.current.animate({
-        center: { eles: node },
-        zoom: 1.5,
-        duration: 500
-      });
-      node.select();
+      try {
+        cy.stop();
+        cy.animate({
+          center: { eles: node },
+          zoom: 1.5,
+          duration: 500
+        });
+        node.select();
+      } catch (e) {
+        // graph was torn down between render and animation start
+      }
     }
   }, [selectedNodeId]);
 

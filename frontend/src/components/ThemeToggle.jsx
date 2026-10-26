@@ -13,8 +13,8 @@ export default function ThemeToggle({ className = '', showLabel = true, size = '
       aria-label={`Switch to ${isDark ? 'Light' : 'Dark'} Theme`}
       className={`group relative inline-flex items-center gap-2 rounded-full p-1 transition-all duration-200 border ${
         isDark
-          ? 'bg-[#15161D] border-[#262833] text-[#9CA3AF] hover:border-[#1FC8DB]/50 hover:text-[#FFFFFF]'
-          : 'bg-[#F5F7FA] border-[#E5E7EB] text-[#6B7280] hover:border-[#0E9FB3]/50 hover:text-[#0B0B0F]'
+          ? 'bg-[#15161D] border-[rgba(255,255,255,0.14)] text-[#9CA3AF] hover:border-[#1FC8DB]/50 hover:text-[#FFFFFF]'
+          : 'bg-[#0B0B0F] border-[rgba(255,255,255,0.12)] text-[#6B7280] hover:border-[#1FC8DB]/50 hover:text-[#0B0B0F]'
       } ${className}`}
     >
       {/* Sliding indicator */}

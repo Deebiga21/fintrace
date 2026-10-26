@@ -204,6 +204,16 @@ html {
 }
 
 /* Type roles ------------------------------------------------------------- */
+@layer base {
+  /* Native dropdown popups ignore most utility classes on <option>; give them
+     the same dark surface so text is never white-on-white in Windows. */
+  select option,
+  select optgroup {
+    background-color: #0B0B0F;
+    color: #FFFFFF;
+  }
+}
+
 @layer components {
 .ft-display {
   font-family: 'Inter', sans-serif;

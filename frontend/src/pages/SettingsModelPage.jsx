@@ -393,7 +393,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                       </a>
                     </span>
                     {status?.active_dataset === 'paysim' && (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#FF5C6C] text-[#FFFFFF]">ACTIVE</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#FF5C6C] text-[#0B0B0F]">ACTIVE</span>
                     )}
                   </div>
                   <p className="text-xs text-[#9CA3AF] leading-relaxed">
@@ -421,7 +421,7 @@ export default function SettingsModelPage({ refreshTrigger, setRefreshTrigger, o
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-sm font-bold text-[#FFFFFF]">Multi-Typology Benchmark</span>
                     {status?.active_dataset === 'benchmark' && (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-500 text-[#FFFFFF]">ACTIVE</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#1FC8DB] text-[#0B0B0F]">ACTIVE</span>
                     )}
                   </div>
                   <p className="text-xs text-[#9CA3AF] leading-relaxed">

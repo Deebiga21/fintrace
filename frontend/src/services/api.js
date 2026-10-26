@@ -1,6 +1,23 @@
-const API_BASE = (typeof window !== "undefined" && window.location)
-  ? `http://${window.location.hostname || "127.0.0.1"}:8000/api/v1`
-  : "http://127.0.0.1:8000/api/v1";
+// The Rust engine binds 127.0.0.1. Browsers may resolve `localhost` to ::1,
+// which makes direct API calls fail with an opaque "Failed to fetch"; pin the
+// loopback literal so dev and demo machines behave identically.
+const LOCAL_HOST =
+  typeof window !== "undefined" && window.location
+    ? (window.location.hostname === "localhost" ? "127.0.0.1" : window.location.hostname || "127.0.0.1")
+    : "127.0.0.1";
+
+const API_BASE = `http://${LOCAL_HOST}:8000/api/v1`;
+
+// URLSearchParams turns `undefined` into the literal string "undefined", which
+// then gets applied as a real filter by the backend. Drop empty values instead.
+function buildQuery(params = {}) {
+  const q = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === '') continue;
+    q.set(key, String(value));
+  }
+  return q.toString();
+}
 
 async function request(endpoint, options = {}) {
   // Normalize trailing slash before query parameters to prevent Axum 404
@@ -37,7 +54,7 @@ export const api = {
 
   // Transactions
   getTransactions: async (params = {}) => {
-    const q = new URLSearchParams(params).toString();
+    const q = buildQuery(params);
     const res = await request(`/transactions?${q}`);
     return Array.isArray(res) ? res : (res?.transactions || []);
   },
@@ -59,7 +76,7 @@ export const api = {
 
   // Accounts
   getAccounts: async (params = {}) => {
-    const q = new URLSearchParams(params).toString();
+    const q = buildQuery(params);
     const res = await request(`/accounts?${q}`);
     return Array.isArray(res) ? res : (res?.accounts || []);
   },
@@ -77,7 +94,7 @@ export const api = {
 
   // Graph
   getGraphData: (params = {}) => {
-    const q = new URLSearchParams(params).toString();
+    const q = buildQuery(params);
     return request(`/graph?${q}`);
   },
   getSubgraph: (accountId, radius = 2) =>
@@ -105,7 +122,7 @@ export const api = {
 
   // Complaints
   getComplaints: async (params = {}) => {
-    const q = new URLSearchParams(params).toString();
+    const q = buildQuery(params);
     const res = await request(`/complaints?${q}`);
     return Array.isArray(res) ? res : (res?.complaints || []);
   },
@@ -145,7 +162,7 @@ export const api = {
 
   // Cases & Investigation Management
   getCases: async (params = {}) => {
-    const q = new URLSearchParams(params).toString();
+    const q = buildQuery(params);
     const res = await request(`/cases?${q}`);
     return Array.isArray(res) ? res : (res?.cases || []);
   },

@@ -60,6 +60,21 @@ async fn list_transactions(
         });
     }
 
+    if let Some(ref term) = params.search {
+        let trimmed = term.trim();
+        if !trimmed.is_empty() {
+            // Substring match over the fields an analyst would recognise in
+            // the ledger. SQLite's LIKE is case-insensitive for ASCII.
+            conditions.push(
+                "(transaction_id LIKE ? OR sender_account LIKE ? OR receiver_account LIKE ? OR COALESCE(description, '') LIKE ?)",
+            );
+            let like = format!("%{}%", trimmed);
+            for _ in 0..4 {
+                bindings.push(like.clone());
+            }
+        }
+    }
+
     if let Some(min_amt) = params.min_amount {
         conditions.push("amount >= ?");
         bindings.push(min_amt.to_string());

@@ -155,7 +155,18 @@ export default function MoneyTrailPage({
     setLoadingReport(true);
     try {
       const report = await api.getMoneyTrailReport(trailData.trail_id);
-      setReportData(report);
+      // The endpoint wraps the analysed findings in `trail_findings` and
+      // stamps `report_generated_at`; flatten them so the modal can read a
+      // single shape whether the trail came from the live API or a cache.
+      const findings = report?.trail_findings || {};
+      setReportData({
+        ...findings,
+        ...report,
+        turnover_ratio:
+          report?.turnover_ratio ?? findings.turnover_ratio ?? findings.layering_analysis?.turnover_ratio,
+        generated_at: report?.report_generated_at || findings.generated_at || report?.generated_at,
+        summary: findings.summary || report?.summary,
+      });
     } catch (err) {
       alert("Failed to fetch trail report: " + err.message);
     } finally {

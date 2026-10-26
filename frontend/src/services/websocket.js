@@ -31,7 +31,11 @@ class WebSocketService {
     }
     const isSecure = window.location.protocol === 'https:';
     const proto = isSecure ? 'wss://' : 'ws://';
-    const hostname = window.location.hostname || '127.0.0.1';
+    // Match api.js: pin the loopback IPv4 literal, because `localhost` can
+    // resolve to ::1 while the Rust engine only listens on 127.0.0.1.
+    const hostname = !window.location.hostname || window.location.hostname === 'localhost'
+      ? '127.0.0.1'
+      : window.location.hostname;
 
     // Primary: direct connection to Axum on port 8000 (matches api.js API_BASE)
     // Secondary: Vite dev proxy on /ws

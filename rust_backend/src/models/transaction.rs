@@ -24,4 +24,7 @@ pub struct TransactionFilterParams {
     pub is_suspicious: Option<bool>,
     pub min_amount: Option<f64>,
     pub max_amount: Option<f64>,
+    /// Free-text lookup used by the ledger search box; matches the id, both
+    /// counterparties and the description.
+    pub search: Option<String>,
 }

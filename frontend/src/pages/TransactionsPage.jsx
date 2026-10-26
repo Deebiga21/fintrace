@@ -9,15 +9,23 @@ export default function TransactionsPage({
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  // Debounce the free-text filter: firing one request per keystroke lets an
+  // older response land after a newer one and repaint stale rows.
+  const [searchTerm, setSearchTerm] = useState('');
   const [isSuspiciousOnly, setIsSuspiciousOnly] = useState(false);
   const [minAmount, setMinAmount] = useState('');
   const [selectedTxn, setSelectedTxn] = useState(null);
+
+  useEffect(() => {
+    const id = setTimeout(() => setSearchTerm(search.trim()), 300);
+    return () => clearTimeout(id);
+  }, [search]);
 
   const fetchTransactions = async () => {
     setLoading(true);
     try {
       const params = { limit: 200 };
-      if (search) params.search = search;
+      if (searchTerm) params.search = searchTerm;
       if (isSuspiciousOnly) params.is_suspicious = true;
       if (minAmount) params.min_amount = minAmount;
 
@@ -32,7 +40,7 @@ export default function TransactionsPage({
 
   useEffect(() => {
     fetchTransactions();
-  }, [search, isSuspiciousOnly, minAmount, refreshTrigger]);
+  }, [searchTerm, isSuspiciousOnly, minAmount, refreshTrigger]);
 
   const totalFilteredVolume = transactions.reduce((acc, t) => acc + (t.amount || 0), 0);
 
@@ -177,6 +185,13 @@ export default function TransactionsPage({
                     </tr>
                   );
                 })}
+                {!loading && transactions.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-8 px-3 text-center text-[11px] text-[#9CA3AF] font-mono">
+                      NO TRANSACTIONS MATCH THIS FILTER — clear the search or lower the minimum amount.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

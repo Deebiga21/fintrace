@@ -790,7 +790,10 @@ async fn run_money_trail_analysis(
         "is_potential_conduit": is_potential_conduit,
         "total_inflow_nodes": inflow_source_nodes.len(),
         "total_outflow_nodes": outflow_destination_nodes.len(),
-        "detected_layering_hops": layering_depth
+        "detected_layering_hops": layering_depth,
+        // Outflow as a share of inflow. ~100% means the account passes funds
+        // straight through instead of retaining them.
+        "turnover_ratio": (total_outbound_volume / total_inbound_volume.max(1.0) * 1000.0).round() / 1000.0
     });
 
     let summary_str = format!(

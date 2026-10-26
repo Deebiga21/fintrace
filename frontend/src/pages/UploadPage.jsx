@@ -868,7 +868,7 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
             <div>
               <h3 className="text-sm font-bold text-[#FFFFFF]">Ready-to-Test Investigation CSV Datasets</h3>
               <p className="text-[11px] text-[#9CA3AF]">
-                Pre-loaded in folder <code className="text-[#9CA3AF] font-mono">e:\FinTrace\sample_test_csvs\</code>. Click <strong>Test Ingest</strong> to test directly or drag them from your folder.
+                Bundled with the app under <code className="text-[#9CA3AF] font-mono">/sample_test_csvs</code>. Click <strong>Test Ingest</strong> to run one directly, or download a CSV and upload it from your machine.
               </p>
             </div>
           </div>

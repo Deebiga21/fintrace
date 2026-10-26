@@ -111,6 +111,13 @@ export default function App() {
     setSelectedAccount(accountId);
   };
 
+  // A modal belongs to the screen that opened it. Without this, navigating
+  // while a dialog is open leaves it floating over the next page.
+  useEffect(() => {
+    setIsCreateCaseOpen(false);
+    setIsLivePipelineOpen(false);
+  }, [currentPage]);
+
   // Standalone Full-Screen Landing Showcase (Integrated Dashboard-First Experience)
   if (currentPage === 'landing') {
     return (
