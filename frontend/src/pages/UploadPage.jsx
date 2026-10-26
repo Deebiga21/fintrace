@@ -293,16 +293,16 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Live Graph Status Header Bar */}
-      <div className="p-4 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] flex items-center justify-between flex-wrap gap-4 shadow-sm">
+      <div className="p-4 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] flex items-center justify-between flex-wrap gap-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-none bg-[#B86B7A]/10 text-[#B86B7A] border border-[#E2B4BD]">
+          <div className="p-2.5 rounded-none bg-[#1FC8DB]/10 text-[#1FC8DB] border border-[rgba(255,255,255,0.20)]">
             <GitGraph className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xs text-[#6E6264] font-medium">FINTRACE TRANSACTION GRAPH ENGINE</div>
-            <div className="text-sm font-bold text-[#4A4A4A] flex items-center gap-2 mt-0.5">
+            <div className="text-xs text-[#9CA3AF] font-medium">FINTRACE TRANSACTION GRAPH ENGINE</div>
+            <div className="text-sm font-bold text-[#FFFFFF] flex items-center gap-2 mt-0.5">
               <span>High-Performance Ingestion & Graph Builder</span>
-              <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-[#93C5FD]/10 text-[#6E6264] border border-[#93C5FD]/20">
+              <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-[#1FC8DB]/10 text-[#9CA3AF] border border-[#1FC8DB]/20">
                 Active
               </span>
             </div>
@@ -311,25 +311,25 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
 
         {graphStatus && (
           <div className="flex items-center gap-4 text-xs font-mono">
-            <div className="px-3 py-1.5 rounded-none bg-[#FFF5F5] border border-[#E8C2BB]">
-              <span className="text-[#6E6264] text-[10px] block">NODES (ACCOUNTS)</span>
-              <span className="text-[#4A4A4A] font-bold">{graphStatus.total_nodes?.toLocaleString()}</span>
+            <div className="px-3 py-1.5 rounded-none bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)]">
+              <span className="text-[#9CA3AF] text-[10px] block">NODES (ACCOUNTS)</span>
+              <span className="text-[#FFFFFF] font-bold">{graphStatus.total_nodes?.toLocaleString()}</span>
             </div>
-            <div className="px-3 py-1.5 rounded-none bg-[#FFF5F5] border border-[#E8C2BB]">
-              <span className="text-[#6E6264] text-[10px] block">EDGES (TRANSFERS)</span>
-              <span className="text-[#4A4A4A] font-bold">{graphStatus.total_edges?.toLocaleString()}</span>
+            <div className="px-3 py-1.5 rounded-none bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)]">
+              <span className="text-[#9CA3AF] text-[10px] block">EDGES (TRANSFERS)</span>
+              <span className="text-[#FFFFFF] font-bold">{graphStatus.total_edges?.toLocaleString()}</span>
             </div>
-            <div className="px-3 py-1.5 rounded-none bg-[#FFF5F5] border border-[#E8C2BB]">
-              <span className="text-[#6E6264] text-[10px] block">AVG DEGREE</span>
-              <span className="text-[#B86B7A] font-bold">{graphStatus.average_degree}</span>
+            <div className="px-3 py-1.5 rounded-none bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)]">
+              <span className="text-[#9CA3AF] text-[10px] block">AVG DEGREE</span>
+              <span className="text-[#1FC8DB] font-bold">{graphStatus.average_degree}</span>
             </div>
             <button
               onClick={handleRebuildGraph}
               disabled={isRebuildingGraph}
-              className="p-2 rounded-none bg-[#FFFFFF] hover:bg-slate-700 text-[#6E6264] transition flex items-center gap-1.5 text-xs font-sans disabled:opacity-50"
+              className="p-2 rounded-none bg-[#101117] hover:bg-slate-700 text-[#9CA3AF] transition flex items-center gap-1.5 text-xs font-sans disabled:opacity-50"
               title="Recalculate Graph Metrics"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRebuildingGraph ? 'animate-spin text-[#B86B7A]' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isRebuildingGraph ? 'animate-spin text-[#1FC8DB]' : ''}`} />
               <span className="hidden sm:inline">Recalculate Graph</span>
             </button>
           </div>
@@ -338,20 +338,20 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
 
       {/* SUCCESS BANNER */}
       {commitResult && (
-        <div className="p-6 rounded-none bg-gradient-to-r from-navy-900 to-navy-950 border-2 border-[#93C5FD] shadow-glow-emerald space-y-4 animate-in fade-in duration-200">
+        <div className="p-6 rounded-none bg-gradient-to-r from-navy-900 to-navy-950 border-2 border-[#1FC8DB] shadow-glow-emerald space-y-4 animate-in fade-in duration-200">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-none bg-[#93C5FD]/20 text-[#6E6264]">
+              <div className="p-2 rounded-none bg-[#1FC8DB]/20 text-[#9CA3AF]">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#4A4A4A] flex items-center gap-2">
+                <h3 className="text-base font-bold text-[#FFFFFF] flex items-center gap-2">
                   <span>Ingestion & Graph Construction Completed</span>
-                  <span className="text-xs font-mono font-normal text-[#6E6264] px-2 py-0.5 rounded bg-[#93C5FD]/15 border border-emerald-600/40">
+                  <span className="text-xs font-mono font-normal text-[#9CA3AF] px-2 py-0.5 rounded bg-[#1FC8DB]/15 border border-emerald-600/40">
                     {commitResult.filename || "Uploaded Dataset"}
                   </span>
                 </h3>
-                <p className="text-xs text-[#6E6264] mt-0.5">
+                <p className="text-xs text-[#9CA3AF] mt-0.5">
                   Transactions committed to database, accounts mapped, and graph degree metrics updated.
                 </p>
               </div>
@@ -360,13 +360,13 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage("graph")}
-                className="px-4 py-2 bg-[#FFFFFF] hover:bg-slate-700 text-white font-semibold text-xs rounded-none transition"
+                className="px-4 py-2 bg-[#101117] hover:bg-slate-700 text-[#FFFFFF] font-semibold text-xs rounded-none transition"
               >
                 View in Graph
               </button>
               <button
                 onClick={() => setCurrentPage("mule-detection")}
-                className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-electric-600 hover:from-emerald-500 hover:to-electric-500 text-white font-bold text-xs rounded-none flex items-center gap-2 shadow-glow-rose transition transform active:scale-95"
+                className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-electric-600 hover:from-emerald-500 hover:to-electric-500 text-[#FFFFFF] font-bold text-xs rounded-none flex items-center gap-2 shadow-glow-rose transition transform active:scale-95"
               >
                 <span>Proceed to Mule Detection</span>
                 <ArrowRight className="w-4 h-4" />
@@ -375,20 +375,20 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-            <div className="p-3 bg-[#93C5FD]/15/40 rounded-none border border-[#93C5FD]/40">
-              <div className="text-[10px] text-[#6E6264] font-medium uppercase tracking-wider">Inserted Transactions</div>
-              <div className="text-xl font-mono font-bold text-[#6E6264] mt-1">{commitResult.inserted_transactions ?? 0}</div>
+            <div className="p-3 bg-[#1FC8DB]/15 rounded-none border border-[#1FC8DB]/40">
+              <div className="text-[10px] text-[#9CA3AF] font-medium uppercase tracking-wider">Inserted Transactions</div>
+              <div className="text-xl font-mono font-bold text-[#9CA3AF] mt-1">{commitResult.inserted_transactions ?? 0}</div>
             </div>
-            <div className="p-3 bg-[#FFF5F5]/80 rounded-none border border-[#E8C2BB]">
-              <div className="text-[10px] text-[#6E6264] font-medium uppercase tracking-wider">New Accounts Spawned</div>
-              <div className="text-xl font-mono font-bold text-[#B86B7A] mt-1">{commitResult.new_accounts_created ?? 0}</div>
+            <div className="p-3 bg-[#0B0B0F]/80 rounded-none border border-[rgba(255,255,255,0.14)]">
+              <div className="text-[10px] text-[#9CA3AF] font-medium uppercase tracking-wider">New Accounts Spawned</div>
+              <div className="text-xl font-mono font-bold text-[#1FC8DB] mt-1">{commitResult.new_accounts_created ?? 0}</div>
             </div>
-            <div className="p-3 bg-[#FFF5F5]/80 rounded-none border border-[#E8C2BB]">
-              <div className="text-[10px] text-[#6E6264] font-medium uppercase tracking-wider">Quarantined Records</div>
-              <div className="text-xl font-mono font-bold text-[#6E6264] mt-1">{commitResult.quarantined_records ?? 0}</div>
+            <div className="p-3 bg-[#0B0B0F]/80 rounded-none border border-[rgba(255,255,255,0.14)]">
+              <div className="text-[10px] text-[#9CA3AF] font-medium uppercase tracking-wider">Quarantined Records</div>
+              <div className="text-xl font-mono font-bold text-[#9CA3AF] mt-1">{commitResult.quarantined_records ?? 0}</div>
             </div>
-            <div className="p-3 bg-[#FFF5F5]/80 rounded-none border border-[#E8C2BB]">
-              <div className="text-[10px] text-[#6E6264] font-medium uppercase tracking-wider">Active Graph Nodes</div>
+            <div className="p-3 bg-[#0B0B0F]/80 rounded-none border border-[rgba(255,255,255,0.14)]">
+              <div className="text-[10px] text-[#9CA3AF] font-medium uppercase tracking-wider">Active Graph Nodes</div>
               <div className="text-xl font-mono font-bold text-sky-400 mt-1">{commitResult.graph_nodes ?? 0}</div>
             </div>
           </div>
@@ -397,17 +397,17 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
 
       {/* ERROR BANNER */}
       {error && (
-        <div className="p-4 rounded-none bg-[#FF3B4E]/15/80 border-2 border-[#FF3B4E] text-rose-200 flex items-start justify-between gap-3 shadow-lg">
+        <div className="p-4 rounded-none bg-[#FF5C6C]/15 border-2 border-[#FF5C6C] text-rose-200 flex items-start justify-between gap-3 shadow-lg">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 shrink-0 text-[#FF3B4E] mt-0.5" />
+            <AlertTriangle className="w-5 h-5 shrink-0 text-[#FF5C6C] mt-0.5" />
             <div className="text-xs">
-              <div className="font-bold text-[#4A4A4A] mb-0.5">Ingestion Warning / Error</div>
+              <div className="font-bold text-[#FFFFFF] mb-0.5">Ingestion Warning / Error</div>
               {error}
             </div>
           </div>
           <button
             onClick={() => setError(null)}
-            className="p-1 rounded hover:bg-[#FF3B4E]/20/50 text-[#FF3B4E] hover:text-[#4A4A4A] transition"
+            className="p-1 rounded hover:bg-[#FF5C6C]/20 text-[#FF5C6C] hover:text-[#FFFFFF] transition"
             title="Dismiss error"
           >
             <X className="w-4 h-4" />
@@ -416,24 +416,24 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
       )}
 
       {/* PIPELINE PROGRESS INDICATOR */}
-      <div className="p-4 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] flex items-center justify-between text-xs font-mono">
-        <div className={`flex items-center gap-2 ${stage === 'IDLE' ? 'text-[#B86B7A] font-bold' : 'text-[#6E6264]'}`}>
-          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-[#FFF5F5] border border-current text-[11px]">1</span>
+      <div className="p-4 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] flex items-center justify-between text-xs font-mono">
+        <div className={`flex items-center gap-2 ${stage === 'IDLE' ? 'text-[#1FC8DB] font-bold' : 'text-[#9CA3AF]'}`}>
+          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-[#0B0B0F] border border-current text-[11px]">1</span>
           <span>Upload CSV</span>
         </div>
         <ChevronRight className="w-4 h-4 text-slate-600" />
-        <div className={`flex items-center gap-2 ${stage === 'MAPPING' ? 'text-[#B86B7A] font-bold' : stage === 'VALIDATED' || stage === 'COMMITTED' ? 'text-[#6E6264] font-semibold' : 'text-[#8A7D7F]'}`}>
-          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-[#FFF5F5] border border-current text-[11px]">2</span>
+        <div className={`flex items-center gap-2 ${stage === 'MAPPING' ? 'text-[#1FC8DB] font-bold' : stage === 'VALIDATED' || stage === 'COMMITTED' ? 'text-[#9CA3AF] font-semibold' : 'text-[#8A909B]'}`}>
+          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-[#0B0B0F] border border-current text-[11px]">2</span>
           <span>Map Schema</span>
         </div>
         <ChevronRight className="w-4 h-4 text-slate-600" />
-        <div className={`flex items-center gap-2 ${stage === 'VALIDATED' ? 'text-[#B86B7A] font-bold' : stage === 'COMMITTED' ? 'text-[#6E6264] font-semibold' : 'text-[#8A7D7F]'}`}>
-          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-[#FFF5F5] border border-current text-[11px]">3</span>
+        <div className={`flex items-center gap-2 ${stage === 'VALIDATED' ? 'text-[#1FC8DB] font-bold' : stage === 'COMMITTED' ? 'text-[#9CA3AF] font-semibold' : 'text-[#8A909B]'}`}>
+          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-[#0B0B0F] border border-current text-[11px]">3</span>
           <span>Quality Scoring</span>
         </div>
         <ChevronRight className="w-4 h-4 text-slate-600" />
-        <div className={`flex items-center gap-2 ${stage === 'COMMITTED' ? 'text-[#6E6264] font-bold' : 'text-[#8A7D7F]'}`}>
-          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-[#FFF5F5] border border-current text-[11px]">4</span>
+        <div className={`flex items-center gap-2 ${stage === 'COMMITTED' ? 'text-[#9CA3AF] font-bold' : 'text-[#8A909B]'}`}>
+          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-[#0B0B0F] border border-current text-[11px]">4</span>
           <span>Commit & Graph Build</span>
         </div>
       </div>
@@ -442,13 +442,13 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
       {stage === 'IDLE' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Custom CSV Upload */}
-          <div className="p-6 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] flex flex-col justify-between space-y-4">
+          <div className="p-6 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <UploadCloud className="w-5 h-5 text-[#B86B7A]" />
-                <h3 className="text-sm font-bold text-[#4A4A4A]">Upload Investigation CSV</h3>
+                <UploadCloud className="w-5 h-5 text-[#1FC8DB]" />
+                <h3 className="text-sm font-bold text-[#FFFFFF]">Upload Investigation CSV</h3>
               </div>
-              <p className="text-xs text-[#6E6264]">
+              <p className="text-xs text-[#9CA3AF]">
                 Upload institutional banking statement, core banking export, or transaction ledger in CSV format.
               </p>
             </div>
@@ -460,8 +460,8 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
               onDrop={handleDrop}
               className={`border-2 border-dashed rounded-none p-6 text-center cursor-pointer transition ${
                 isDragging
-                  ? "border-[#E2B4BD] bg-electric-950/30 scale-[1.01]"
-                  : "border-[#E8C2BB] hover:border-[#E2B4BD] bg-[#FFF5F5]/40"
+                  ? "border-[rgba(255,255,255,0.20)] bg-electric-950/30 scale-[1.01]"
+                  : "border-[rgba(255,255,255,0.14)] hover:border-[rgba(255,255,255,0.20)] bg-[#0B0B0F]/40"
               }`}
             >
               <input
@@ -472,14 +472,14 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
                 id="csv-file-input"
               />
               <label htmlFor="csv-file-input" className="cursor-pointer space-y-2 block">
-                <FileSpreadsheet className={`w-9 h-9 mx-auto transition ${selectedFile ? "text-[#6E6264]" : "text-[#6E6264]"}`} />
-                <div className="text-xs text-[#4A4A4A] font-medium">
+                <FileSpreadsheet className={`w-9 h-9 mx-auto transition ${selectedFile ? "text-[#9CA3AF]" : "text-[#9CA3AF]"}`} />
+                <div className="text-xs text-[#FFFFFF] font-medium">
                   {selectedFile ? (
                     <div className="space-y-1">
-                      <span className="text-[#6E6264] font-mono font-bold text-sm block">
+                      <span className="text-[#9CA3AF] font-mono font-bold text-sm block">
                         ✓ {selectedFile.name}
                       </span>
-                      <span className="text-[10px] text-[#6E6264] font-mono">
+                      <span className="text-[10px] text-[#9CA3AF] font-mono">
                         {(selectedFile.size / 1024).toFixed(1)} KB — Ready to analyze
                       </span>
                     </div>
@@ -487,18 +487,18 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
                     <span>Click to browse or drag & drop CSV file here</span>
                   )}
                 </div>
-                <p className="text-[10px] text-[#8A7D7F]">Max file size 50MB (.csv format)</p>
+                <p className="text-[10px] text-[#8A909B]">Max file size 50MB (.csv format)</p>
               </label>
             </div>
 
             <button
               onClick={handleUploadAndAnalyze}
               disabled={!selectedFile || isUploading}
-              className="w-full py-3 rounded-none font-bold text-xs shadow-glow-rose transition flex items-center justify-center gap-2 bg-electric-600 hover:bg-[#B86B7A] text-white disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full py-3 rounded-none font-bold text-xs shadow-glow-rose transition flex items-center justify-center gap-2 bg-electric-600 hover:bg-[#1FC8DB] text-[#FFFFFF] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[#FFFFFF]" />
                   <span>Parsing Headers & Generating Ingestion Job...</span>
                 </>
               ) : (
@@ -508,38 +508,38 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
           </div>
 
           {/* Load Benchmark Banking Data */}
-          <div className="p-6 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] flex flex-col justify-between space-y-4">
+          <div className="p-6 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Database className="w-5 h-5 text-sky-400" />
-                <h3 className="text-sm font-bold text-[#4A4A4A]">Load Benchmark Banking Network</h3>
+                <h3 className="text-sm font-bold text-[#FFFFFF]">Load Benchmark Banking Network</h3>
               </div>
-              <p className="text-xs text-[#6E6264]">
+              <p className="text-xs text-[#9CA3AF]">
                 Institutional investigation dataset with verified counterparty provenance. Covers 182 transactions, 74 accounts, and 4 distinct banking crime topologies.
               </p>
             </div>
 
-            <div className="p-4 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] text-xs space-y-2 text-[#6E6264]">
-              <div className="font-semibold text-[#4A4A4A] flex items-center gap-1.5">
+            <div className="p-4 rounded-none bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)] text-xs space-y-2 text-[#9CA3AF]">
+              <div className="font-semibold text-[#FFFFFF] flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-sky-400" />
                 <span>Included Banking Topologies:</span>
               </div>
-              <ul className="list-disc pl-4 space-y-1 text-[11px] text-[#6E6264]">
-                <li><strong className="text-[#6E6264]">Smurfing Aggregator:</strong> Inflow victims funneled to <code className="text-[#FF3B4E] font-mono">MULE_AGG_01</code></li>
-                <li><strong className="text-[#6E6264]">Circular Layering Ring:</strong> Accounts cycling funds in closed multi-hop loops</li>
-                <li><strong className="text-[#6E6264]">Rapid Pass-Through:</strong> High-value inward debit drained within minutes</li>
-                <li><strong className="text-[#6E6264]">Clean Retail Baseline:</strong> Legitimate merchant payments with 0 flags</li>
+              <ul className="list-disc pl-4 space-y-1 text-[11px] text-[#9CA3AF]">
+                <li><strong className="text-[#9CA3AF]">Smurfing Aggregator:</strong> Inflow victims funneled to <code className="text-[#FF5C6C] font-mono">MULE_AGG_01</code></li>
+                <li><strong className="text-[#9CA3AF]">Circular Layering Ring:</strong> Accounts cycling funds in closed multi-hop loops</li>
+                <li><strong className="text-[#9CA3AF]">Rapid Pass-Through:</strong> High-value inward debit drained within minutes</li>
+                <li><strong className="text-[#9CA3AF]">Clean Retail Baseline:</strong> Legitimate merchant payments with 0 flags</li>
               </ul>
             </div>
 
             <button
               onClick={handleLoadSyntheticNetwork}
               disabled={isUploading}
-              className="w-full py-3 rounded-none bg-gradient-to-r from-sky-600 to-electric-600 hover:from-sky-500 hover:to-electric-500 text-white font-bold text-xs shadow-glow-rose transition disabled:opacity-40 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-none bg-gradient-to-r from-sky-600 to-electric-600 hover:from-sky-500 hover:to-electric-500 text-[#FFFFFF] font-bold text-xs shadow-glow-rose transition disabled:opacity-40 flex items-center justify-center gap-2"
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[#FFFFFF]" />
                   <span>Loading Network...</span>
                 </>
               ) : (
@@ -552,16 +552,16 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
 
       {/* STAGE 2: COLUMN MAPPING REVIEW */}
       {stage === 'MAPPING' && uploadData && (
-        <div className="p-6 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] space-y-6">
+        <div className="p-6 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#4A4A4A] flex items-center gap-2">
+              <h3 className="text-sm font-bold text-[#FFFFFF] flex items-center gap-2">
                 <span>Step 2: Automatic Column Mapping Review</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FFFFFF] text-[#B86B7A] border border-[#E8C2BB]">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#101117] text-[#1FC8DB] border border-[rgba(255,255,255,0.14)]">
                   Job {uploadData.job_id}
                 </span>
               </h3>
-              <p className="text-xs text-[#6E6264] mt-1">
+              <p className="text-xs text-[#9CA3AF] mt-1">
                 Detected <strong>{uploadData.detected_columns?.length}</strong> columns in <strong>{uploadData.filename}</strong>. Review canonical mappings before validating.
               </p>
             </div>
@@ -569,7 +569,7 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setColumnMapping(uploadData.suggested_mapping || {})}
-                className="px-3 py-1.5 rounded-none bg-[#FFF5F5] hover:bg-[#FFFFFF] text-[#B86B7A] border border-[#E2B4BD] text-xs font-mono transition flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-none bg-[#0B0B0F] hover:bg-[#101117] text-[#1FC8DB] border border-[rgba(255,255,255,0.20)] text-xs font-mono transition flex items-center gap-1.5"
                 title="Reset dropdowns to automatically detected columns"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -577,7 +577,7 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
               </button>
               <button
                 onClick={handleCancelJob}
-                className="px-3 py-1.5 rounded-none bg-[#FFFFFF] hover:bg-slate-700 text-[#6E6264] hover:text-[#4A4A4A] text-xs font-mono transition"
+                className="px-3 py-1.5 rounded-none bg-[#101117] hover:bg-slate-700 text-[#9CA3AF] hover:text-[#FFFFFF] text-xs font-mono transition"
               >
                 Cancel / Change File
               </button>
@@ -592,30 +592,30 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
               return (
                 <div
                   key={field.key}
-                  className={`p-3.5 rounded-none bg-[#FFF5F5] border transition ${
+                  className={`p-3.5 rounded-none bg-[#0B0B0F] border transition ${
                     isMapped
-                      ? "border-[#93C5FD]/30 bg-[#93C5FD]/15/10"
+                      ? "border-[#1FC8DB]/30 bg-[#1FC8DB]/15"
                       : field.required
-                      ? "border-[#93C5FD]/40 bg-[#93C5FD]/15/10"
-                      : "border-[#E8C2BB]"
+                      ? "border-[#1FC8DB]/40 bg-[#1FC8DB]/15"
+                      : "border-[rgba(255,255,255,0.14)]"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-bold text-[#4A4A4A] flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-[#FFFFFF] flex items-center gap-1.5">
                       <span>{field.label}</span>
                       {field.required && (
-                        <span className="text-[9px] text-[#6E6264] font-mono font-normal">*Required</span>
+                        <span className="text-[9px] text-[#9CA3AF] font-mono font-normal">*Required</span>
                       )}
                     </span>
                     {isMapped ? (
-                      <Check className="w-3.5 h-3.5 text-[#6E6264]" />
+                      <Check className="w-3.5 h-3.5 text-[#9CA3AF]" />
                     ) : field.required ? (
-                      <AlertCircle className="w-3.5 h-3.5 text-[#6E6264]" />
+                      <AlertCircle className="w-3.5 h-3.5 text-[#9CA3AF]" />
                     ) : (
-                      <span className="text-[9px] text-[#8A7D7F]">Optional</span>
+                      <span className="text-[9px] text-[#8A909B]">Optional</span>
                     )}
                   </div>
-                  <p className="text-[10px] text-[#6E6264] mb-2">{field.desc}</p>
+                  <p className="text-[10px] text-[#9CA3AF] mb-2">{field.desc}</p>
 
                   <select
                     value={currentVal}
@@ -626,7 +626,7 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
                         [field.key]: val
                       }));
                     }}
-                    className="w-full bg-[#FFFFFF] border border-[#E8C2BB] rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#E2B4BD] font-mono"
+                    className="w-full bg-[#101117] border border-[rgba(255,255,255,0.14)] rounded px-2.5 py-1.5 text-xs text-[#FFFFFF] focus:outline-none focus:border-[rgba(255,255,255,0.20)] font-mono"
                   >
                     <option value="">-- Not Mapped --</option>
                     {uploadData.detected_columns?.map((col) => (
@@ -643,13 +643,13 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
           {/* Sample Preview Table */}
           {uploadData.preview && uploadData.preview.length > 0 && (
             <div className="space-y-2">
-              <div className="text-xs font-bold text-[#6E6264] font-mono flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-[#B86B7A]" />
+              <div className="text-xs font-bold text-[#9CA3AF] font-mono flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-[#1FC8DB]" />
                 <span>Raw CSV Preview (First {uploadData.preview.length} Rows)</span>
               </div>
-              <div className="overflow-x-auto rounded-none border border-[#E8C2BB]">
-                <table className="w-full text-left text-[11px] font-mono text-[#6E6264]">
-                  <thead className="bg-[#FFF5F5] text-[#6E6264] text-[10px] border-b border-[#E8C2BB] uppercase">
+              <div className="overflow-x-auto rounded-none border border-[rgba(255,255,255,0.14)]">
+                <table className="w-full text-left text-[11px] font-mono text-[#9CA3AF]">
+                  <thead className="bg-[#0B0B0F] text-[#9CA3AF] text-[10px] border-b border-[rgba(255,255,255,0.14)] uppercase">
                     <tr>
                       {uploadData.detected_columns?.map((col) => (
                         <th key={col} className="p-2 font-semibold">
@@ -658,9 +658,9 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#333D50] bg-[#FFFFFF]/40">
+                  <tbody className="divide-y divide-[#6B7280] bg-[#101117]/40">
                     {uploadData.preview.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-[#FFFFFF]/20">
+                      <tr key={idx} className="hover:bg-[#101117]/20">
                         {uploadData.detected_columns?.map((col) => (
                           <td key={col} className="p-2 whitespace-nowrap">
                             {row[col] ?? "-"}
@@ -675,18 +675,18 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
           )}
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-2 border-t border-[#E8C2BB]">
-            <span className="text-xs text-[#6E6264]">
+          <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.14)]">
+            <span className="text-xs text-[#9CA3AF]">
               Ensure <strong>Source Account</strong>, <strong>Destination Account</strong>, and <strong>Amount</strong> are mapped.
             </span>
             <button
               onClick={handleValidateDataset}
               disabled={isUploading || !columnMapping.source_account || !columnMapping.destination_account || !columnMapping.amount}
-              className="px-6 py-2.5 bg-gradient-to-r from-[#B86B7A] to-[#3B82F6] hover:from-electric-500 hover:to-[#3B82F6] text-white font-bold text-xs rounded-none shadow-glow-rose transition disabled:opacity-40 flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-[#1FC8DB] to-[#1FC8DB] hover:from-electric-500 hover:to-[#1FC8DB] text-[#FFFFFF] font-bold text-xs rounded-none shadow-glow-rose transition disabled:opacity-40 flex items-center gap-2"
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[#FFFFFF]" />
                   <span>Computing 10-Point Quality Score...</span>
                 </>
               ) : (
@@ -702,20 +702,20 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
 
       {/* STAGE 3: VALIDATION & 10-POINT TRANSPARENT QUALITY SCORING */}
       {stage === 'VALIDATED' && validationReport && (
-        <div className="p-6 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] space-y-6">
+        <div className="p-6 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#4A4A4A] flex items-center gap-2">
+              <h3 className="text-sm font-bold text-[#FFFFFF] flex items-center gap-2">
                 <span>Step 3: Dataset Quality & Model Readiness Audit</span>
                 <span className={`text-[11px] font-mono font-bold px-2.5 py-0.5 rounded border ${
                   validationReport.can_proceed
-                    ? "text-[#6E6264] bg-[#93C5FD]/10 border-[#93C5FD]/30"
-                    : "text-[#6E6264] bg-amber-500/10 border-[#93C5FD]/30"
+                    ? "text-[#9CA3AF] bg-[#1FC8DB]/10 border-[#1FC8DB]/30"
+                    : "text-[#9CA3AF] bg-amber-500/10 border-[#1FC8DB]/30"
                 }`}>
                   Score: {validationReport.dataset_quality_score} / 10.0
                 </span>
               </h3>
-              <p className="text-xs text-[#6E6264] mt-1">
+              <p className="text-xs text-[#9CA3AF] mt-1">
                 Audited against FINTRACE schema standards, graph connectivity criteria, and model compatibility.
               </p>
             </div>
@@ -723,13 +723,13 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setStage('MAPPING')}
-                className="px-3 py-1.5 rounded-none bg-[#FFFFFF] hover:bg-slate-700 text-[#6E6264] text-xs font-mono transition"
+                className="px-3 py-1.5 rounded-none bg-[#101117] hover:bg-slate-700 text-[#9CA3AF] text-xs font-mono transition"
               >
                 Modify Mappings
               </button>
               <button
                 onClick={handleCancelJob}
-                className="px-3 py-1.5 rounded-none bg-[#FFFFFF] hover:bg-slate-700 text-[#6E6264] hover:text-[#4A4A4A] text-xs font-mono transition"
+                className="px-3 py-1.5 rounded-none bg-[#101117] hover:bg-slate-700 text-[#9CA3AF] hover:text-[#FFFFFF] text-xs font-mono transition"
               >
                 Discard
               </button>
@@ -737,20 +737,20 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
           </div>
 
           {/* 10-Point Score Rubric Breakdown */}
-          <div className="p-4 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] space-y-3">
-            <div className="text-xs font-bold text-[#4A4A4A] flex items-center justify-between">
+          <div className="p-4 rounded-none bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)] space-y-3">
+            <div className="text-xs font-bold text-[#FFFFFF] flex items-center justify-between">
               <span>Transparent 10-Point Quality Rubric</span>
-              <span className="text-[#6E6264] font-mono text-[11px]">Threshold: &ge; 7.0 / 10.0</span>
+              <span className="text-[#9CA3AF] font-mono text-[11px]">Threshold: &ge; 7.0 / 10.0</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
               {validationReport.quality_report?.breakdown?.map((item, idx) => (
-                <div key={idx} className="p-3 rounded-none bg-[#FFFFFF] border border-[#E8C2BB] space-y-1">
-                  <div className="text-[10px] text-[#6E6264] font-medium uppercase">{item.component}</div>
-                  <div className="text-base font-bold font-mono text-[#6E6264]">
-                    {item.score} <span className="text-[10px] text-[#8A7D7F] font-normal">/ {item.max}</span>
+                <div key={idx} className="p-3 rounded-none bg-[#101117] border border-[rgba(255,255,255,0.14)] space-y-1">
+                  <div className="text-[10px] text-[#9CA3AF] font-medium uppercase">{item.component}</div>
+                  <div className="text-base font-bold font-mono text-[#9CA3AF]">
+                    {item.score} <span className="text-[10px] text-[#8A909B] font-normal">/ {item.max}</span>
                   </div>
-                  <div className="text-[10px] text-[#6E6264] leading-tight">{item.details}</div>
+                  <div className="text-[10px] text-[#9CA3AF] leading-tight">{item.details}</div>
                 </div>
               ))}
             </div>
@@ -758,32 +758,32 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
 
           {/* Validation Metrics Row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3 bg-[#FFF5F5] rounded-none border border-[#E8C2BB]">
-              <div className="text-[10px] text-[#6E6264] uppercase font-mono">Total Rows</div>
-              <div className="text-lg font-mono font-bold text-[#4A4A4A] mt-1">{validationReport.total_rows}</div>
+            <div className="p-3 bg-[#0B0B0F] rounded-none border border-[rgba(255,255,255,0.14)]">
+              <div className="text-[10px] text-[#9CA3AF] uppercase font-mono">Total Rows</div>
+              <div className="text-lg font-mono font-bold text-[#FFFFFF] mt-1">{validationReport.total_rows}</div>
             </div>
-            <div className="p-3 bg-[#93C5FD]/15/30 rounded-none border border-[#93C5FD]/30">
-              <div className="text-[10px] text-[#6E6264] uppercase font-mono">Valid Records</div>
-              <div className="text-lg font-mono font-bold text-[#6E6264] mt-1">{validationReport.valid_rows}</div>
+            <div className="p-3 bg-[#1FC8DB]/15 rounded-none border border-[#1FC8DB]/30">
+              <div className="text-[10px] text-[#9CA3AF] uppercase font-mono">Valid Records</div>
+              <div className="text-lg font-mono font-bold text-[#9CA3AF] mt-1">{validationReport.valid_rows}</div>
             </div>
-            <div className="p-3 bg-[#FFF5F5] rounded-none border border-[#E8C2BB]">
-              <div className="text-[10px] text-[#6E6264] uppercase font-mono">Quarantined Rows</div>
-              <div className="text-lg font-mono font-bold text-[#FF3B4E] mt-1">{validationReport.invalid_rows}</div>
+            <div className="p-3 bg-[#0B0B0F] rounded-none border border-[rgba(255,255,255,0.14)]">
+              <div className="text-[10px] text-[#9CA3AF] uppercase font-mono">Quarantined Rows</div>
+              <div className="text-lg font-mono font-bold text-[#FF5C6C] mt-1">{validationReport.invalid_rows}</div>
             </div>
-            <div className="p-3 bg-[#FFF5F5] rounded-none border border-[#E8C2BB]">
-              <div className="text-[10px] text-[#6E6264] uppercase font-mono">Duplicates Found</div>
-              <div className="text-lg font-mono font-bold text-[#6E6264] mt-1">{validationReport.duplicate_rows}</div>
+            <div className="p-3 bg-[#0B0B0F] rounded-none border border-[rgba(255,255,255,0.14)]">
+              <div className="text-[10px] text-[#9CA3AF] uppercase font-mono">Duplicates Found</div>
+              <div className="text-lg font-mono font-bold text-[#9CA3AF] mt-1">{validationReport.duplicate_rows}</div>
             </div>
           </div>
 
           {/* Fraud Label Distribution */}
           {validationReport.fraud_label_distribution && (
-            <div className="p-4 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] flex items-center justify-between flex-wrap gap-4 text-xs font-mono">
+            <div className="p-4 rounded-none bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)] flex items-center justify-between flex-wrap gap-4 text-xs font-mono">
               <div className="flex items-center gap-3">
-                <BarChart3 className="w-5 h-5 text-[#B86B7A]" />
+                <BarChart3 className="w-5 h-5 text-[#1FC8DB]" />
                 <div>
-                  <div className="text-[#4A4A4A] font-bold">Fraud Label Distribution</div>
-                  <div className="text-[#6E6264] text-[11px]">
+                  <div className="text-[#FFFFFF] font-bold">Fraud Label Distribution</div>
+                  <div className="text-[#9CA3AF] text-[11px]">
                     {validationReport.fraud_label_distribution.labels_available
                       ? "Supervised labels detected for minority class analysis & GAN augmentation."
                       : "Unlabeled dataset. Will rely on unsupervised GNN topology scoring."}
@@ -794,16 +794,16 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
               {validationReport.fraud_label_distribution.labels_available && (
                 <div className="flex items-center gap-4">
                   <div>
-                    <span className="text-[#6E6264] text-[10px] block">LEGITIMATE</span>
-                    <span className="text-[#6E6264] font-bold">{validationReport.fraud_label_distribution.legitimate_count}</span>
+                    <span className="text-[#9CA3AF] text-[10px] block">LEGITIMATE</span>
+                    <span className="text-[#9CA3AF] font-bold">{validationReport.fraud_label_distribution.legitimate_count}</span>
                   </div>
                   <div>
-                    <span className="text-[#6E6264] text-[10px] block">FRAUDULENT</span>
-                    <span className="text-[#FF3B4E] font-bold">{validationReport.fraud_label_distribution.fraud_count}</span>
+                    <span className="text-[#9CA3AF] text-[10px] block">FRAUDULENT</span>
+                    <span className="text-[#FF5C6C] font-bold">{validationReport.fraud_label_distribution.fraud_count}</span>
                   </div>
                   <div>
-                    <span className="text-[#6E6264] text-[10px] block">FRAUD %</span>
-                    <span className="text-[#6E6264] font-bold">{validationReport.fraud_label_distribution.fraud_percentage}%</span>
+                    <span className="text-[#9CA3AF] text-[10px] block">FRAUD %</span>
+                    <span className="text-[#9CA3AF] font-bold">{validationReport.fraud_label_distribution.fraud_percentage}%</span>
                   </div>
                 </div>
               )}
@@ -812,27 +812,27 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
 
           {/* Quarantine Warning Sample */}
           {validationReport.quarantine_sample && validationReport.quarantine_sample.length > 0 && (
-            <div className="p-3 rounded-none bg-[#FF3B4E]/15/30 border border-[#FF3B4E]/30 text-xs space-y-1 font-mono">
-              <div className="font-semibold text-[#FF3B4E] flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-[#FF3B4E]" />
+            <div className="p-3 rounded-none bg-[#FF5C6C]/15 border border-[#FF5C6C]/30 text-xs space-y-1 font-mono">
+              <div className="font-semibold text-[#FF5C6C] flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-[#FF5C6C]" />
                 <span>Quarantined Records Sample (Will be skipped safely without aborting import):</span>
               </div>
               {validationReport.quarantine_sample.map((err, i) => (
-                <div key={i} className="text-[11px] text-[#FF3B4E] pl-4">• {err}</div>
+                <div key={i} className="text-[11px] text-[#FF5C6C] pl-4">• {err}</div>
               ))}
             </div>
           )}
 
           {/* Commit Actions */}
-          <div className="flex items-center justify-between pt-2 border-t border-[#E8C2BB]">
-            <div className="text-xs text-[#6E6264]">
+          <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.14)]">
+            <div className="text-xs text-[#9CA3AF]">
               {validationReport.can_proceed ? (
-                <span className="text-[#6E6264] flex items-center gap-1.5">
+                <span className="text-[#9CA3AF] flex items-center gap-1.5">
                   <Check className="w-4 h-4" />
                   <span>Quality threshold met (&ge; 7.0/10). Dataset ready to commit.</span>
                 </span>
               ) : (
-                <span className="text-[#6E6264] flex items-center gap-1.5">
+                <span className="text-[#9CA3AF] flex items-center gap-1.5">
                   <AlertTriangle className="w-4 h-4" />
                   <span>Quality threshold below 7.0. Recommended to check mappings.</span>
                 </span>
@@ -842,11 +842,11 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
             <button
               onClick={handleCommitDataset}
               disabled={isUploading}
-              className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-electric-600 hover:from-emerald-500 hover:to-electric-500 text-white font-bold text-xs rounded-none shadow-glow-rose transition disabled:opacity-40 flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-electric-600 hover:from-emerald-500 hover:to-electric-500 text-[#FFFFFF] font-bold text-xs rounded-none shadow-glow-rose transition disabled:opacity-40 flex items-center gap-2"
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[#FFFFFF]" />
                   <span>Inserting Transactions & Updating Graph...</span>
                 </>
               ) : (
@@ -861,25 +861,25 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
       )}
 
       {/* READY-TO-TEST INVESTIGATION CSV DATASETS */}
-      <div className="p-6 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] space-y-4">
+      <div className="p-6 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <FolderOpen className="w-5 h-5 text-[#B86B7A]" />
+            <FolderOpen className="w-5 h-5 text-[#1FC8DB]" />
             <div>
-              <h3 className="text-sm font-bold text-[#4A4A4A]">Ready-to-Test Investigation CSV Datasets</h3>
-              <p className="text-[11px] text-[#6E6264]">
-                Pre-loaded in folder <code className="text-[#6E6264] font-mono">e:\FinTrace\sample_test_csvs\</code>. Click <strong>Test Ingest</strong> to test directly or drag them from your folder.
+              <h3 className="text-sm font-bold text-[#FFFFFF]">Ready-to-Test Investigation CSV Datasets</h3>
+              <p className="text-[11px] text-[#9CA3AF]">
+                Pre-loaded in folder <code className="text-[#9CA3AF] font-mono">e:\FinTrace\sample_test_csvs\</code>. Click <strong>Test Ingest</strong> to test directly or drag them from your folder.
               </p>
             </div>
           </div>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FFFFFF] text-[#6E6264] border border-[#E8C2BB]">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#101117] text-[#9CA3AF] border border-[rgba(255,255,255,0.14)]">
             {readyDatasets.length} Available Datasets
           </span>
         </div>
 
         {isLoadingDatasets ? (
-          <div className="py-8 text-center text-xs text-[#8A7D7F] flex items-center justify-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin text-[#B86B7A]" />
+          <div className="py-8 text-center text-xs text-[#8A909B] flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin text-[#1FC8DB]" />
             <span>Loading Ready-to-Test Datasets...</span>
           </div>
         ) : (
@@ -887,37 +887,37 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
             {readyDatasets.map((item) => (
               <div
                 key={item.dataset_id}
-                className="p-3.5 rounded-none bg-[#FFF5F5] border border-[#E8C2BB] hover:border-[#E8C2BB] transition flex flex-col justify-between space-y-3"
+                className="p-3.5 rounded-none bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)] hover:border-[rgba(255,255,255,0.14)] transition flex flex-col justify-between space-y-3"
               >
                 <div>
                   <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border text-[#6E6264] border-[#E2B4BD]/30 bg-[#B86B7A]/10">
+                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border text-[#9CA3AF] border-[rgba(255,255,255,0.20)]/30 bg-[#1FC8DB]/10">
                       {item.tag || item.scenario_category}
                     </span>
-                    <span className="text-[10px] text-[#6E6264] font-mono">
+                    <span className="text-[10px] text-[#9CA3AF] font-mono">
                       {item.rows} rows &bull; Score: {item.quality_score}/10
                     </span>
                   </div>
-                  <div className="font-bold text-xs text-white">{item.title}</div>
-                  <div className="text-[10px] text-[#6E6264] mt-1 leading-relaxed">
-                    Provenance: <span className="text-[#6E6264] font-medium">{item.provenance}</span>
+                  <div className="font-bold text-xs text-[#FFFFFF]">{item.title}</div>
+                  <div className="text-[10px] text-[#9CA3AF] mt-1 leading-relaxed">
+                    Provenance: <span className="text-[#9CA3AF] font-medium">{item.provenance}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-1 border-t border-[#E8C2BB]">
+                <div className="flex items-center gap-2 pt-1 border-t border-[rgba(255,255,255,0.14)]">
                   <button
                     onClick={() => handleTestIngest(item)}
                     disabled={activeTestingId === item.dataset_id || isUploading}
-                    className="flex-1 py-1.5 px-2 bg-[#B86B7A]/30 hover:bg-[#B86B7A]/50 border border-[#E2B4BD]/40 text-[#6E6264] text-[11px] font-semibold rounded flex items-center justify-center gap-1.5 transition disabled:opacity-40"
+                    className="flex-1 py-1.5 px-2 bg-[#1FC8DB]/30 hover:bg-[#1FC8DB]/50 border border-[rgba(255,255,255,0.20)]/40 text-[#9CA3AF] text-[11px] font-semibold rounded flex items-center justify-center gap-1.5 transition disabled:opacity-40"
                   >
                     {activeTestingId === item.dataset_id ? (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin text-[#B86B7A]" />
+                        <Loader2 className="w-3 h-3 animate-spin text-[#1FC8DB]" />
                         <span>Ingesting...</span>
                       </>
                     ) : (
                       <>
-                        <Play className="w-3 h-3 text-[#B86B7A] fill-[#B86B7A]" />
+                        <Play className="w-3 h-3 text-[#1FC8DB] fill-[#1FC8DB]" />
                         <span>Test Ingest</span>
                       </>
                     )}
@@ -925,7 +925,7 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
                   <a
                     href={`/sample_test_csvs/${item.filename}`}
                     download={item.filename}
-                    className="p-1.5 rounded bg-[#FFFFFF] hover:bg-slate-700 text-[#6E6264] transition"
+                    className="p-1.5 rounded bg-[#101117] hover:bg-slate-700 text-[#9CA3AF] transition"
                     title="Download CSV"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -939,20 +939,20 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
 
       {/* RECENT INGESTION AUDIT TRAIL */}
       {recentJobs && recentJobs.length > 0 && (
-        <div className="p-5 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] space-y-3">
+        <div className="p-5 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#B86B7A]" />
-              <h3 className="text-xs font-bold text-[#4A4A4A] uppercase tracking-wider font-mono">
+              <ShieldCheck className="w-4 h-4 text-[#1FC8DB]" />
+              <h3 className="text-xs font-bold text-[#FFFFFF] uppercase tracking-wider font-mono">
                 Recent Ingestion Jobs & Audit Trail
               </h3>
             </div>
-            <span className="text-[10px] text-[#8A7D7F] font-mono">Stored in ingestion_jobs</span>
+            <span className="text-[10px] text-[#8A909B] font-mono">Stored in ingestion_jobs</span>
           </div>
 
-          <div className="overflow-x-auto rounded-none border border-[#E8C2BB]">
-            <table className="w-full text-left text-[11px] font-mono text-[#6E6264]">
-              <thead className="bg-[#FFF5F5] text-[#6E6264] text-[10px] border-b border-[#E8C2BB] uppercase">
+          <div className="overflow-x-auto rounded-none border border-[rgba(255,255,255,0.14)]">
+            <table className="w-full text-left text-[11px] font-mono text-[#9CA3AF]">
+              <thead className="bg-[#0B0B0F] text-[#9CA3AF] text-[10px] border-b border-[rgba(255,255,255,0.14)] uppercase">
                 <tr>
                   <th className="p-2.5">Job ID</th>
                   <th className="p-2.5">File Name</th>
@@ -964,23 +964,23 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
                   <th className="p-2.5">Timestamp</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#333D50] bg-[#FFFFFF]/40">
+              <tbody className="divide-y divide-[#6B7280] bg-[#101117]/40">
                 {recentJobs.slice(0, 5).map((job) => (
-                  <tr key={job.job_id} className="hover:bg-[#FFFFFF]/20">
-                    <td className="p-2.5 font-bold text-white">{job.job_id}</td>
-                    <td className="p-2.5 text-[#6E6264]">{job.filename}</td>
+                  <tr key={job.job_id} className="hover:bg-[#101117]/20">
+                    <td className="p-2.5 font-bold text-[#FFFFFF]">{job.job_id}</td>
+                    <td className="p-2.5 text-[#9CA3AF]">{job.filename}</td>
                     <td className="p-2.5">{job.total_rows}</td>
-                    <td className="p-2.5 text-[#6E6264]">{job.valid_rows}</td>
-                    <td className="p-2.5 text-[#FF3B4E]">{job.invalid_rows}</td>
-                    <td className="p-2.5 text-[#B86B7A] font-bold">{job.readiness_score}/10</td>
+                    <td className="p-2.5 text-[#9CA3AF]">{job.valid_rows}</td>
+                    <td className="p-2.5 text-[#FF5C6C]">{job.invalid_rows}</td>
+                    <td className="p-2.5 text-[#1FC8DB] font-bold">{job.readiness_score}/10</td>
                     <td className="p-2.5">
                       <span className={`px-1.5 py-0.5 rounded text-[9px] ${
-                        job.stage === 'COMPLETED' ? 'bg-[#93C5FD]/10 text-[#6E6264] border border-[#93C5FD]/20' : 'bg-[#FFFFFF] text-[#6E6264]'
+                        job.stage === 'COMPLETED' ? 'bg-[#1FC8DB]/10 text-[#9CA3AF] border border-[#1FC8DB]/20' : 'bg-[#101117] text-[#9CA3AF]'
                       }`}>
                         {job.stage}
                       </span>
                     </td>
-                    <td className="p-2.5 text-[#8A7D7F]">{job.created_at?.slice(0, 19).replace('T', ' ')}</td>
+                    <td className="p-2.5 text-[#8A909B]">{job.created_at?.slice(0, 19).replace('T', ' ')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -990,20 +990,20 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
       )}
 
       {/* Canonical Required Schema Specification */}
-      <div className="p-5 rounded-none bg-[#FFFFFF]/75 backdrop-blur-2xl border border-[#E8C2BB] space-y-3">
+      <div className="p-5 rounded-none bg-[#101117]/75 backdrop-blur-2xl border border-[rgba(255,255,255,0.14)] space-y-3">
         <div className="flex items-center gap-2">
-          <Info className="w-4 h-4 text-[#B86B7A]" />
-          <h3 className="text-xs font-bold text-[#4A4A4A] uppercase tracking-wider font-mono">
+          <Info className="w-4 h-4 text-[#1FC8DB]" />
+          <h3 className="text-xs font-bold text-[#FFFFFF] uppercase tracking-wider font-mono">
             CANONICAL CSV SCHEMA CRITERIA
           </h3>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {canonicalFieldsConfig.slice(0, 6).map((col) => (
-            <div key={col.key} className="p-3 rounded-none bg-[#FFF5F5] border border-[#E8C2BB]">
-              <div className="font-mono text-xs font-bold text-[#B86B7A]">{col.key}</div>
-              <div className="text-[10px] text-[#6E6264] mt-1">{col.desc}</div>
-              <div className="mt-2 flex items-center gap-1 text-[9px] text-[#6E6264] font-mono">
+            <div key={col.key} className="p-3 rounded-none bg-[#0B0B0F] border border-[rgba(255,255,255,0.14)]">
+              <div className="font-mono text-xs font-bold text-[#1FC8DB]">{col.key}</div>
+              <div className="text-[10px] text-[#9CA3AF] mt-1">{col.desc}</div>
+              <div className="mt-2 flex items-center gap-1 text-[9px] text-[#9CA3AF] font-mono">
                 <Check className="w-3 h-3" />
                 <span>{col.required ? 'MANDATORY' : 'OPTIONAL'}</span>
               </div>
