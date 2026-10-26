@@ -50,6 +50,19 @@ pub struct ValidateJobRequest {
     pub column_mapping: Option<HashMap<String, String>>,
 }
 
+/// Dataset quality is reported on a 0–10 scale by every ingestion endpoint and
+/// by the UI (score, maximum, and commit threshold all share this scale).
+const MAX_DATASET_QUALITY_SCORE: f64 = 10.0;
+
+/// Minimum quality score required before a dataset may be committed.
+const DATASET_QUALITY_THRESHOLD: f64 = 7.0;
+
+/// Round a 0–10 score to one decimal place, clamping to the documented range.
+fn round_quality_score(score: f64) -> f64 {
+    let clamped = score.clamp(0.0, MAX_DATASET_QUALITY_SCORE);
+    (clamped * 10.0).round() / 10.0
+}
+
 pub fn router(pool: DbPool) -> Router {
     Router::new()
         .route("/upload", post(upload_csv_pipeline))
@@ -601,6 +614,12 @@ async fn validate_dataset_handler(
     score += model_score;
     score_breakdown.push(json!({"component": "GAN/GNN Model Readiness", "score": model_score, "max": 2.0, "details": if has_labels { "Supervised fraud labels present; minority class augmentation viable." } else { "Unsupervised graph feature learning supported." }}));
 
+    // Single source of truth for the displayed score and the commit gate. Both
+    // use the same rounded 0–10 value so a dataset shown as "7.0/10" is never
+    // rejected by a threshold evaluated on the unrounded score.
+    let dataset_quality_score = round_quality_score(score);
+    let meets_threshold = dataset_quality_score >= DATASET_QUALITY_THRESHOLD;
+
     if duplicate_rows > 0 {
         warnings.push(format!(
             "Detected {} potential duplicate transaction IDs or identical rows.",
@@ -629,18 +648,24 @@ async fn validate_dataset_handler(
     });
 
     let quality_report = json!({
-        "readiness_score": (score * 10.0).round() / 10.0,
-        "max_score": 10.0,
-        "meets_threshold": score >= 7.0,
+        "readiness_score": dataset_quality_score,
+        "max_score": MAX_DATASET_QUALITY_SCORE,
+        "meets_threshold": meets_threshold,
         "breakdown": score_breakdown,
         "warnings": warnings,
         "quarantine_count": invalid_rows,
-        "recommended_action": if score >= 7.0 { "Confirm and proceed to cleaning & database commit." } else { "Review column mappings and correct missing fields." }
+        "recommended_action": if meets_threshold { "Confirm and proceed to cleaning & database commit." } else { "Review column mappings and correct missing fields." }
     });
 
     let report_str = serde_json::to_string(&quality_report).unwrap_or_default();
     let fraud_str = serde_json::to_string(&fraud_distribution).unwrap_or_default();
     let quarantine_str = serde_json::to_string(&quarantine_sample).unwrap_or_default();
+
+    // Persist the exact mapping that was used for validation. Commit reloads
+    // column_mapping_json, so without this write any mapping confirmed in the
+    // request (or edited in the UI) would be silently replaced by the mapping
+    // suggested at upload time.
+    let mapping_str = serde_json::to_string(&mapping).unwrap_or_default();
 
     // Update job record
     sqlx::query(
@@ -654,8 +679,9 @@ async fn validate_dataset_handler(
             quality_report_json = $5,
             fraud_distribution_json = $6,
             quarantine_sample_json = $7,
-            updated_at = $8
-        WHERE job_id = $9
+            updated_at = $8,
+            column_mapping_json = $9
+        WHERE job_id = $10
         "#,
     )
     .bind(valid_rows)
@@ -666,6 +692,7 @@ async fn validate_dataset_handler(
     .bind(&fraud_str)
     .bind(&quarantine_str)
     .bind(&now)
+    .bind(&mapping_str)
     .bind(&job_id)
     .execute(&pool)
     .await?;
@@ -680,13 +707,13 @@ async fn validate_dataset_handler(
         "duplicate_rows": duplicate_rows,
         "missing_value_counts": missing_counts,
         "column_mapping": mapping,
-        "dataset_quality_score": (score * 10.0).round() / 10.0,
+        "dataset_quality_score": dataset_quality_score,
         "quality_report": quality_report,
         "fraud_label_distribution": fraud_distribution,
         "validation_warnings": warnings,
         "quarantine_sample": quarantine_sample,
-        "can_proceed": score >= 7.0,
-        "message": format!("Validation finished: {} valid rows, score {:.1}/10", valid_rows, score)
+        "can_proceed": meets_threshold,
+        "message": format!("Validation finished: {} valid rows, score {:.1}/{:.1}", valid_rows, dataset_quality_score, MAX_DATASET_QUALITY_SCORE)
     })))
 }
 

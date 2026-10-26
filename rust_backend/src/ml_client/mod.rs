@@ -394,13 +394,15 @@ async fn legacy_infer_gnn(
         Ok(res) => {
             if res.status().is_success() {
                 let json_val: serde_json::Value = res.json().await.unwrap_or_default();
-                Ok(Json(json_val))
+                // The Python service returns HTTP 200 even when no checkpoint
+                // exists; the body's status/scored count is the source of truth.
+                Ok(Json(validate_inference_payload(json_val)?))
             } else {
                 let err_text = res
                     .text()
                     .await
                     .unwrap_or_else(|_| "GNN inference failed upstream".to_string());
-                Err(AppError::Internal(err_text))
+                Err(AppError::BadGateway(err_text))
             }
         }
         Err(e) => {
@@ -411,6 +413,59 @@ async fn legacy_infer_gnn(
             );
             Err(AppError::ReqwestError(e))
         }
+    }
+}
+
+/// Only pass through inference payloads that confirm predictions were produced.
+/// Returns a non-2xx error for missing/incompatible checkpoints, empty graphs,
+/// or contradictory completion responses instead of reporting a fake success.
+pub(crate) fn validate_inference_payload(
+    payload: serde_json::Value,
+) -> Result<serde_json::Value, AppError> {
+    let status = payload
+        .get("status")
+        .and_then(|value| value.as_str())
+        .unwrap_or("");
+    let scored = payload
+        .get("total_accounts_scored")
+        .and_then(|value| value.as_u64())
+        .unwrap_or(0);
+    let trained = payload
+        .get("is_trained_model")
+        .and_then(|value| value.as_bool())
+        .unwrap_or(false);
+    let upstream_message = payload
+        .get("message")
+        .and_then(|value| value.as_str())
+        .unwrap_or("");
+
+    match status {
+        "completed" if trained && scored > 0 => Ok(payload),
+        "model_unavailable" | "checkpoint_incompatible" => Err(AppError::ServiceUnavailable(
+            if upstream_message.is_empty() {
+                "GraphSAGE model is not available for inference.".to_string()
+            } else {
+                upstream_message.to_string()
+            },
+        )),
+        "empty_graph" => Err(AppError::Conflict(if upstream_message.is_empty() {
+            "No accounts are available to score.".to_string()
+        } else {
+            upstream_message.to_string()
+        })),
+        "completed" if scored == 0 => Err(AppError::BadGateway(
+            "ML service reported completion without scoring any accounts.".to_string(),
+        )),
+        "completed" => Err(AppError::BadGateway(
+            "ML service reported completion without confirming a trained model.".to_string(),
+        )),
+        "" => Err(AppError::BadGateway(
+            "ML service returned an inference response without a status.".to_string(),
+        )),
+        other => Err(AppError::BadGateway(format!(
+            "Unexpected inference status from ML service: {}",
+            other
+        ))),
     }
 }
 

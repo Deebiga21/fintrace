@@ -65,6 +65,19 @@ export default function MuleDetectionPage({
     fetchExplanation(accId);
   };
 
+  // Only render evidence the API actually returned. The explanation endpoint
+  // supplies `supporting_evidence` (objects with signal_name/description/
+  // metrics/severity) and `detected_patterns` (plain flag strings).
+  const evidenceItems = Array.isArray(explanation?.supporting_evidence)
+    ? explanation.supporting_evidence.filter(Boolean)
+    : [];
+  const detectedPatterns = Array.isArray(explanation?.detected_patterns)
+    ? explanation.detected_patterns.filter(
+        (pattern) => pattern != null && String(pattern).trim() !== ''
+      )
+    : [];
+  const hasEvidence = evidenceItems.length > 0 || detectedPatterns.length > 0;
+
   return (
     <div className="bg-[#FFF5F5] text-[#4A4A4A] min-h-screen p-4 sm:p-6 font-['Titillium_Web',sans-serif] select-none -m-6 space-y-6">
       {/* Top HUD Header */}
@@ -247,22 +260,56 @@ export default function MuleDetectionPage({
                   </div>
                 </div>
 
-                {/* Behavioral Reasons */}
+                {/* Supporting Evidence */}
                 <div className="space-y-2">
                   <div className="font-['Rajdhani',sans-serif] text-xs font-bold text-[#6E6264] uppercase tracking-wider flex items-center gap-1.5">
                     <span className="text-[#B86B7A]">◇</span> CONTRIBUTING ANOMALY SIGNALS
                   </div>
                   <div className="space-y-1.5">
-                    {(explanation.reasons || explanation.top_reasons || [
-                      'Rapid fund passthrough (94% within 15 mins)',
-                      'High fan-out structuring to mule subnets',
-                      'Circular transaction loop detected'
-                    ]).map((reason, idx) => (
-                      <div key={idx} className="p-2 bg-[#FFF5F5] border border-[#E8C2BB] text-[11px] text-[#6E6264] flex items-start gap-2">
+                    {evidenceItems.map((item, idx) => {
+                      const isStructured = item !== null && typeof item === 'object';
+                      const title = isStructured
+                        ? (item.signal_name || item.pattern || 'Supporting evidence')
+                        : String(item);
+                      const severity = isStructured ? item.severity : null;
+                      const description = isStructured ? item.description : null;
+                      const metrics = isStructured ? item.metrics : null;
+
+                      return (
+                        <div key={`evidence-${idx}`} className="p-2 bg-[#FFF5F5] border border-[#E8C2BB] text-[11px] text-[#6E6264] flex items-start gap-2">
+                          <span className="text-[#FF3B4E] font-bold">▸</span>
+                          <div className="space-y-0.5 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-[#4A4A4A]">{title}</span>
+                              {severity && (
+                                <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 border border-[#E2B4BD] text-[#B86B7A] bg-[#FFFFFF]">
+                                  {severity}
+                                </span>
+                              )}
+                            </div>
+                            {description && <p className="leading-snug">{description}</p>}
+                            {metrics && (
+                              <p className="text-[10px] font-['Share_Tech_Mono',monospace] text-[#8A7D7F]">
+                                {metrics}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {detectedPatterns.map((pattern, idx) => (
+                      <div key={`pattern-${idx}`} className="p-2 bg-[#FFF5F5] border border-[#E8C2BB] text-[11px] text-[#6E6264] flex items-start gap-2">
                         <span className="text-[#FF3B4E] font-bold">▸</span>
-                        <span>{reason}</span>
+                        <span>{pattern}</span>
                       </div>
                     ))}
+
+                    {!hasEvidence && (
+                      <div className="p-2 bg-[#FFF5F5] border border-[#E8C2BB] text-[11px] text-[#6E6264]">
+                        No supporting evidence available.
+                      </div>
+                    )}
                   </div>
                 </div>
 

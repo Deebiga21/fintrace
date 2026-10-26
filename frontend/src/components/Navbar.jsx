@@ -51,13 +51,39 @@ export default function Navbar({
     setIsSyncing(true);
     try {
       const res = await api.runInference();
+      const scored = Number.isFinite(res?.total_accounts_scored)
+        ? res.total_accounts_scored
+        : 0;
+      const modelRan =
+        res?.status === 'completed' &&
+        res?.is_trained_model === true &&
+        scored > 0;
+
+      if (!modelRan) {
+        const reason = res?.message || 'The model did not produce predictions.';
+        setActionNotice({
+          type: 'error',
+          text: `Inference unavailable: ${reason}`
+        });
+        return;
+      }
+
+      const highRiskText = Number.isFinite(res.high_risk_count)
+        ? ` (${res.high_risk_count} High Risk)`
+        : '';
       setActionNotice({
         type: 'success',
-        text: `GNN Scored ${res.total_accounts_scored} accounts (${res.high_risk_count} High Risk).`
+        text: `GNN scored ${scored} accounts${highRiskText}.`
       });
       if (setRefreshTrigger) setRefreshTrigger(prev => prev + 1);
     } catch (err) {
-      setActionNotice({ type: 'error', text: `Inference failed: ${err.message}` });
+      const prefix =
+        err?.status === 503
+          ? 'Model unavailable'
+          : err?.status === 409
+            ? 'No accounts to score'
+            : 'Inference failed';
+      setActionNotice({ type: 'error', text: `${prefix}: ${err.message}` });
     } finally {
       setIsSyncing(false);
       setTimeout(() => setActionNotice(null), 4000);
