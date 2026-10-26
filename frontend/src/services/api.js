@@ -1,12 +1,8 @@
-// The Rust engine binds 127.0.0.1. Browsers may resolve `localhost` to ::1,
-// which makes direct API calls fail with an opaque "Failed to fetch"; pin the
-// loopback literal so dev and demo machines behave identically.
-const LOCAL_HOST =
-  typeof window !== "undefined" && window.location
-    ? (window.location.hostname === "localhost" ? "127.0.0.1" : window.location.hostname || "127.0.0.1")
-    : "127.0.0.1";
-
-const API_BASE = `http://${LOCAL_HOST}:8000/api/v1`;
+// In development (Vite dev server), use relative paths so requests go through
+// the Vite proxy (vite.config.js) which handles CORS. In production (nginx),
+// the absolute URL is correct because the frontend is served from the same origin.
+const isDev = typeof window !== "undefined" && window.location && window.location.port === "5173";
+const API_BASE = isDev ? "/api/v1" : `http://${window?.location?.hostname || "127.0.0.1"}:8000/api/v1`;
 
 // URLSearchParams turns `undefined` into the literal string "undefined", which
 // then gets applied as a real filter by the backend. Drop empty values instead.
