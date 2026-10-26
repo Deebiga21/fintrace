@@ -95,7 +95,7 @@ async fn train_gnn(
 
 async fn score_gnn(State(state): State<Arc<ModelsState>>) -> Result<impl IntoResponse, AppError> {
     let result = forward_post(&state, "/gnn/infer", json!({})).await?;
-    Ok(Json(result))
+    Ok(Json(crate::ml_client::validate_inference_payload(result)?))
 }
 
 async fn get_gnn_evaluation(

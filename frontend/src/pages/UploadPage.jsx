@@ -150,7 +150,10 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
     setError(null);
 
     try {
-      const res = await api.validateIngestionDataset(activeJobId, columnMapping);
+      // Persist the confirmed mapping before scoring so validation and commit
+      // both read the exact schema the user reviewed.
+      await api.mapIngestionColumns(activeJobId, columnMapping);
+      const res = await api.validateIngestionDataset(activeJobId);
       setValidationReport(res);
       setStage('VALIDATED');
       setSuccessNotice(`Validation complete: Quality Score ${res.dataset_quality_score}/10 (${res.valid_rows} valid transactions).`);
@@ -705,7 +708,7 @@ export default function UploadPage({ setCurrentPage, setRefreshTrigger }) {
               <h3 className="text-sm font-bold text-[#4A4A4A] flex items-center gap-2">
                 <span>Step 3: Dataset Quality & Model Readiness Audit</span>
                 <span className={`text-[11px] font-mono font-bold px-2.5 py-0.5 rounded border ${
-                  validationReport.dataset_quality_score >= 7.0
+                  validationReport.can_proceed
                     ? "text-[#6E6264] bg-[#93C5FD]/10 border-[#93C5FD]/30"
                     : "text-[#6E6264] bg-amber-500/10 border-[#93C5FD]/30"
                 }`}>
